@@ -1,0 +1,183 @@
+﻿using System.Xml;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Web.Mvc;
+using SimChartMedicalOffice.Common;
+<<<<<<< Updated upstream
+using System.Collections.Generic;
+using System.Web;
+using SimChartMedicalOffice.Common.Utility;
+using System.IO;
+using SimChartMedicalOffice.Core.Json;
+using System;
+using System.Linq;
+using System.Text;
+=======
+using SimChartMedicalOffice.Common.Utility;
+using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
+>>>>>>> Stashed changes
+
+namespace SimChartMedicalOffice.Web.Controllers
+{
+    public class CompetencyController : BaseController
+    {
+        private readonly ICompetencyService _competencyService;
+
+        public CompetencyController(ICompetencyService competencyService)
+        {
+            this._competencyService = competencyService;
+        }
+
+        public ActionResult LoadMaster(int iReferenceOfMasterToLoad)
+        {
+            ViewBag.MasterName = (int)AppEnum.Master.Competency;
+            IList<string> competencyCategoryList = _competencyService.GetAllCategories();
+            ViewData["CompetencyCategory"] = new SelectList(competencyCategoryList, "CompetencyCategory");
+            return View();
+        }
+<<<<<<< Updated upstream
+        /// <summary>
+        /// method to save competency
+        /// </summary>
+        /// <returns></returns>
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult SaveCompetency()
+        {
+            Competency questionObject = new Competency();
+            string competencyObjJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+            questionObject = JsonSerializer.DeserializeObject<Competency>(competencyObjJson);
+            // _competencyService.SaveCompetencyList(questionObject);
+            return Json(new { Success = "" });
+        }
+
+        public ActionResult GetCompetencyList(jQueryDataTableParamModel param, string searchByText)
+        {
+            int competencyCount = 0;
+
+            IList<Competency> competencyList = _competencyService.GetAllCompetencies();
+            if(searchByText!="")
+            {
+               competencyList = (from com in competencyList where com.Category.ToLower().StartsWith(searchByText.ToLower().ToString()) || com.Name.ToLower().StartsWith(searchByText.ToLower().ToString())   select com).Distinct().ToList();
+
+            }
+             
+            int sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
+            string sortColumnOrder = Request["sSortDir_0"];
+            // Func<Competency> orderingFunction = (c => sortColumnIndex == 1 ? c.Category : sortColumnIndex == 2 ? c.CompetencyReferenceGUID : c.QuestionType);
+            string sortColumnName = "";
+
+            switch (sortColumnIndex)
+            {
+                case 1:
+                    if (sortColumnOrder == "asc")
+                    {
+                        competencyList = competencyList.OrderBy(qb => qb.Category).ToList();
+                    }
+                    else
+                    {
+                        competencyList = competencyList.OrderByDescending(qb => qb.Name).ToList();
+                    }
+                    break;
+                case 2:
+                    if (sortColumnOrder == "asc")
+                    {
+                        competencyList = competencyList.OrderBy(qb => qb.Name).ToList();
+                    }
+                    else
+                    {
+                        competencyList = competencyList.OrderByDescending(qb => qb.Name).ToList();
+                    }
+                    break;
+                case 3:
+                    if (sortColumnOrder == "asc")
+                    {
+                        competencyList = competencyList.OrderBy(qb => qb.Focus).ToList();
+                    }
+                    else
+                    {
+                        competencyList = competencyList.OrderByDescending(qb => qb.Focus).ToList();
+                    }
+                    break;
+                default:
+                    if (sortColumnOrder == "asc")
+                    {
+                        competencyList = competencyList.OrderBy(qb => Convert.ToDateTime(qb.CreatedTimeStamp)).ToList();
+                    }
+                    else
+                    {
+                        competencyList = competencyList.OrderByDescending(qb => Convert.ToDateTime(qb.CreatedTimeStamp)).ToList();
+                    }
+                    break;
+            }
+            if (sortColumnOrder == "asc")
+            {
+                competencyList.OrderBy(x => x.GetType().GetProperty(sortColumnName).GetValue(x, null));
+            }
+            else
+            {
+                competencyList.OrderByDescending(x => x.GetType().GetProperty(sortColumnName).GetValue(x, null));
+            }
+            IList<Competency> competencyListToRender = competencyList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
+            competencyCount = competencyList.Count;
+            var data = (from competencyItem in competencyListToRender
+                        select new[]
+                                   {
+                                       (competencyItem.IsActive)? "<input type='checkbox' />": "",
+                                       !string.IsNullOrEmpty(competencyItem.Category) ? competencyItem.Category : "",
+                                       !string.IsNullOrEmpty(competencyItem.Name) ?  "<a href='#'>" +competencyItem.Name+ "</a>" : "",
+                                       ((competencyItem.Sources.Count)>0) ? ( string.Join(",",competencyItem.Sources.OrderBy(sour=>sour.Name).Select(sour=> sour.Name.ToString()).ToArray())).ToString() : "",
+                                       !string.IsNullOrEmpty(competencyItem.Focus) ? competencyItem.Focus : "",
+                                       (competencyItem.IsActive) ? "Active" : "Deleted"
+                                       }).ToArray();
+            return Json(new
+            {
+                sEcho = param.sEcho,
+                iTotalRecords = competencyCount,
+                iTotalDisplayRecords = competencyCount,
+                aaData = data
+            },
+            JsonRequestBehavior.AllowGet);
+        }
+=======
+
+        //public ActionResult ExportCompetencyToXmlDocument()
+        //{
+        //    List<Core.Competency.Competency> competencyList = _competencyService.GetAllCompetencies().ToList();
+
+        //    var competencyData = (from competency in competencyList
+        //                          select new
+        //                                     {
+        //                                         Competency_Category = competency.Category,
+        //                                         Competency_Name = competency.Name,
+        //                                         ABHES_Number =
+        //                              competency.Sources.OrderBy(source => source.Name).Where(
+        //                                  source => source.Name.Equals("ABHES")).Select(
+        //                                      sour => sour.Number),
+        //                                         Source =
+        //                              (string.Join(",",
+        //                                           competency.Sources.OrderBy(source => source.Name).Select(
+        //                                               source => source.Name.ToString()).
+        //                                               ToArray())),
+        //                                         Focus = competency.Focus,
+        //                                         Status = competency.IsActive,
+        //                                         CAAHEP_Number =
+        //                              competency.Sources.OrderBy(source => source.Name).Where(
+        //                                  source => source.Name.Equals("CAAHEP")).Select(
+        //                                      source => source.Number),
+
+        //                                     }).ToList();
+
+        //    XmlDocument competencyXmlDocument = (XmlDocument) JsonSerializer.DeserializeXmlObject(
+        //        JsonSerializer.SerializeObject(competencyData));
+        //    string folderLocation = ConfigurationManager.AppSettings["CompetencyExcelRep"];
+        //    XmlTextWriter competencyWriter = new XmlTextWriter(folderLocation, null);
+        //    competencyWriter.Formatting = Formatting.Indented;
+        //    competencyXmlDocument.Save(competencyWriter);
+
+        //    return Json(new {Result = "success"});
+        //}
+>>>>>>> Stashed changes
+
+    }
+}

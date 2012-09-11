@@ -1,0 +1,22 @@
+﻿@{
+    Layout = null;
+}
+<div class="standard-text div-with-border" style="height: 360px;margin-left: -4px;">
+    <ul class="menu info-panel-questionbank">
+        <li id="infopanel_header" class="info-panel-header">INFO PANEL</li>
+        <li id="infopanel_library" class="subfolder-panel-header">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Library</li>
+        <li class="info-panel-content-return" id="ReturnToPatientBuilder" >
+            <a class="select-hand" id="redirectToPatientBuilder" onclick="redirectToPatientBuilder()">
+                <span>Return to Library Patient Builder</span></a></li>
+    </ul>
+    
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+      $("#ReturnToPatientBuilder a").css('color', '#7c8383');
+    });   
+    function redirectToPatientBuilder() {
+        $("#authoringPractice").load("../Authoring/PatientBuilder");
+        
+    }
+</script>

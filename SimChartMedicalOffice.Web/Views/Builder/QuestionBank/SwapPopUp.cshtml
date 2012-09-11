@@ -1,0 +1,95 @@
+﻿@using System.Collections
+@using System.Collections.Generic
+@using SimChartMedicalOffice.Core.QuestionBanks
+@{
+    Layout = null;
+}
+<script language="javascript" type="text/javascript">
+    // HOTFIX: We can't upgrade to jQuery UI 1.8.6 (yet)
+    // This hotfix makes older versions of jQuery UI drag-and-drop work in IE9
+    (function ($) {
+        var a = $.ui.mouse.prototype._mouseMove;
+        $.ui.mouse.prototype._mouseMove = function (b) {
+            if ($.browser.msie && document.documentMode >= 9)
+            { b.button = 1 }; a.apply(this, [b]);
+        }
+    } (jQuery));
+    parent.folderCount = parseInt('@ViewData["folderCount"]');
+    var maxSequenceNumber = parseInt('@ViewData["MaxSequenceNumber"]');
+    $(function () {
+        $("#sortable").sortable({
+            revert: true,
+            scroll: true,
+            start: function (event, ui) {
+                $(ui.item).css("background-color", "#F5F5F5");
+                parent.clearEmptySelection();
+            },
+            stop: function (event, ui) {
+                parent.clearEmptySelection();
+                $(ui.item).addClass("grid_16");
+                $(ui.item).css("background-color", "transparent");
+                $(ui.item).css("margin-bottom", "2px");
+            }
+        });
+        $("#sortable").disableSelection();
+        //$( "#sortable" ).draggable();
+    });
+</script>
+<div id="rearrangeFoldersDialog" class="container_32 div-default-style no-paddings">
+    @{
+        IList<Folder> lstFolderToRender = (IList<Folder>)Model;
+    }
+    <div class="clear">
+        &nbsp;</div>
+    <div class="clear">
+        &nbsp;</div>
+    <div class="div-default-style standard-text" style="background-color: white; height: 300px;
+        overflow-y: auto;">
+        <div id="sortable" class="list-items" style="padding-left: 15px;">
+            @{
+
+                if (lstFolderToRender.Count != 0)
+                {
+                    foreach (Folder folderProxyItem in lstFolderToRender)
+                    {
+                <div class="grid_32 standard-text div-with-border rearrange-folder-icons" id="swap+@folderProxyItem.UniqueIdentifier"
+                             style="width: 640px; padding: 4px; border-spacing: 10px; margin-bottom: 2px;">
+                    <img alt="" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder_normal.png")"
+                             class="align-inline" />
+                    <a class="align-inline standard-text folder-text-align" style="color: black">
+                        @folderProxyItem.Name
+                    </a>
+                </div>
+
+                    }
+                }
+            }
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div id="rearrangeFolders_Btns" class="prefix_12 grid_20" style="padding-top: 5px;">
+        <div class="align-div-inline">
+            <div class="align-div-inline">
+                <img id="Rearrange_BtnSelect-LeftCurve" alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+            <input id="Rearrange_BtnOk" type="submit" class="navigation-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 50px;" value="OK" onclick="" />
+            <div class="align-div-inline">
+                <img id="Rearrange_BtnSelect-RightCurve" alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        </div>
+        <div class="grid_1 button-seperator">
+            &nbsp;</div>
+        <div class="align-div-inline">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+            <input type="submit" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 60px;" value="Cancel" id="Rearrange_BtnCancel" onclick="" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+        </div>
+    </div>
+</div>

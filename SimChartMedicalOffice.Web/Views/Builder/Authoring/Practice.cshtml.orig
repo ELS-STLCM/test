@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Master1</title>
+</head>
+<body>
+    <div id="authoring" class=" standard-text">
+        <ul id="ul_authoring">
+            <li style="width: 130px;"><a href="../Authoring/PatientBuilder" title="#authoringPractice">
+                <span id="practiceTab" class="tab-header">Practice</span></a></li>
+            <li style="width: 130px;"><a href="../Authoring/SkillSetLanding" title="#authoringSkillSetBuilder">
+                <span class="tab-header">Skill Set Builder</span></a></li>
+<<<<<<< Updated upstream
+            <li style="width: 130px;"><a href="../Authoring/QuestionBankLanding" title="#authoringQuestionBank"><span id="questionBankTab"
+                class="tab-header">Question Bank</span></a></li>
+            <li style="width: 130px;"><a href="../Authoring/AssignmentBuilderLanding" title="#authoringAssignmentBuilder">
+            <span id ="assignmentBuilderTab" class="tab-header">Assignment Builder</span></a></li>
+=======
+            <li style="width: 130px;"><a href="../Authoring/QuestionBankLanding" title="#authoringQuestionBank">
+                <span id="questionBankTab" class="tab-header">Question Bank</span></a></li>
+            <li style="width: 130px;"><a href="../Authoring/AssignmentBuilder" title=#authoringAssignmentBuilder">
+                Assignment Builder</span></a></li>
+>>>>>>> Stashed changes
+        </ul>
+        <div id="authoringPractice">
+        </div>
+        <div id="authoringSkillSetBuilder">
+        </div>
+        <div id="authoringQuestionBank">
+        </div>
+        <div id="authoringAssignmentBuilder">
+            
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(function () {
+            $("#authoring").tabs({
+                spinner: ""
+            });
+
+            var practice_links = $('div[id=authoring] a');
+            // On mouse hover
+            practice_links.hover(
+            // In: Store and remove title
+                function () {
+                    old_title = $(this).attr('title');
+                    $(this).attr('title', '');
+                },
+            // Out: Replace title
+                function () {
+                    $(this).attr('title', old_title);
+                }
+            );
+
+            $('#authoring').tabs({ selected: 3 });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+﻿@using SimChartMedicalOffice.Core.Competency
+@{
+    Layout = null;
+}
+@{
+   
+    string strName = (ViewBag.Name != null) ? ViewBag.Name : String.Empty;
+    string strFocus = (ViewBag.Focus != null) ? ViewBag.Focus : String.Empty;
+    string strCategory = (ViewBag.Category != null) ? ViewBag.Category : String.Empty;
+    string strNotes = (ViewBag.Notes != null) ? ViewBag.Notes : String.Empty;
+    bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
+    string strUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty;
+    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : String.Empty;
+}
+<div id="competency_content" class="container_32" style="display: none; width: 530px">
+    <div class="grid_32">
+         <div class="grid_32  header-text">
+         Fields with " <span class="mandatory-field">*</span> " are mandatory
+         </div>
+        <div id="validationSummary" class="errormessage grid_32">
+            @Html.ValidationSummary()</div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div id="questionTypes">
+            <div class="standard-text grid_10 header-text">
+                Category&nbsp;<span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_22" id="CompetencyCategory">
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-text grid_10 header-text">
+                Name&nbsp;<span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_22">
+                @Html.TextBox("Name", strName, new { id = "Name", @class = "grid_28", maxlength =250 })
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-text grid_10 header-text">
+                Notes:
+            </div>
+            <div class="grid_22">
+                @Html.TextArea("Notes", strNotes, new { id = "Notes", @class = "grid_28", rows = 5 })
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-text grid_10 header-text ">
+                CAAHEP #:
+            </div>
+            <div class="grid_22">
+                @Html.TextBox("CAAHEP", "", new { id = "CAAHEP", @class = "grid_28", maxlength = 250 })
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-text grid_10 header-text">
+                ABHES #:
+            </div>
+            <div class="grid_22">
+                @Html.TextBox("ABHES", "", new { id = "ABHES", @class = "grid_28", rows = 5, maxlength = 250 })
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-text grid_10 header-text">
+                Source&nbsp;<span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_11">
+                @Html.TextBox("Source", "", new { id = "Source", @class = "grid_32", maxlength = 250 })
+            </div>
+            <div class="grid_11">
+                <div class="grid_1 button-seperator">
+                    &nbsp;</div>
+                <div class="align-div-inline">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                        style="width: 56px;" value="Add New" onclick="addSource()" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                                     class="standard-height-for-buttons" /></div>
+                </div>
+                <div class="grid_1 button-seperator">
+                    &nbsp;</div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_10">
+                &nbsp;
+            </div>
+            <div id="sourceList" class="div-with-border grid_22" style="width: 290px; height: 60px;
+                overflow-y: scroll;">
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-text grid_10 header-text">
+                Focus&nbsp;<span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_21">
+                @Html.DropDownList("CompetencyFocus", null, null, new { @class = "standard-text grid_30" })
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div id="saveCompetencyInEdit" class="prefix_10 grid_7">
+                <div class="align-div-inline">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                        style="width: 56px;" value="Save" onclick="saveCompetency()" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                                     class="standard-height-for-buttons" /></div>
+                </div>
+                <div class="grid_1 button-seperator">
+                    &nbsp;</div>
+            </div>
+            <div id="cancelCompetencyInEdit" class="grid_10 header-text">
+                <div class="align-div-inline">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                        style="width: 55px;" value="Cancel" onclick="cancelCompetency()" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+                </div>
+                <div class="grid_1 button-seperator">
+                    &nbsp;</div>
+            </div>
+            <div class="grid_10 header-text" id ="deleteCompetencyInEditMode" style="display:none;">
+                <div class="align-div-inline">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                        style="width: 56px;" value="Delete" onclick="deleteCompetencyInPopUp()" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                                     class="standard-height-for-buttons" /></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+var comptencyUrl ="@strUrl";
+var categoryList = @Html.Raw(Json.Encode(ViewBag.CompetencyCategory)); 
+var sourceList = @Html.Raw(Json.Encode(ViewBag.CompetencySource));
+var isEditMode = @isEditMode.ToString().ToLower(); 
+var competencyCategory ="@strCategory";
+var competencySourceList = @Html.Raw(Json.Encode(ViewBag.Sources)); 
+    $(document).ready(function () 
+    {
+        $("#validationSummary").hide();
+        $("#deleteCompetencyInEditMode").hide();
+        waterMarkTextForSource();
+        competency.commonFunctions.loadSourceList(sourceList);
+        if(isEditMode){
+                $("#deleteCompetencyInEditMode").show();
+                $("#saveCompetencyInEdit").removeClass("prefix_10 grid_7").addClass("prefix_8 grid_5");
+                $("#cancelCompetencyInEdit").removeClass("grid_10").addClass("grid_5 prefix_1");
+                $("#deleteCompetencyInEditMode").removeClass("grid_10").addClass("grid_7 prefix_1");
+                $("input[type=hidden][id=CompetencyCategory_hidden]").val("1");
+                $("#CompetencyCategory_input").val("@strCategory");
+                $("#CompetencyCategory_input").removeClass('watermark watermark-text');
+                $("#CompetencyFocus").val("@strFocus");
+                if(competencySourceList != null){
+                   for(var sourceIndex =0;sourceIndex<competencySourceList.length;sourceIndex++){
+                        $("input[type=checkbox][name^='CompetencySourceCheckBox']").each(function () {
+                        var competencySource = $(this)[0].value;
+                                if (competencySource == competencySourceList[sourceIndex].Name) {
+                                      $(this).attr('checked', true);
+                                        if(competencySourceList[sourceIndex].Name ==CAAHEP_COMPETENCY_SOURCE){
+                                        $("#CAAHEP").val(competencySourceList[sourceIndex].Number);
+                                        }
+                                        if(competencySourceList[sourceIndex].Name ==ABHES_COMPETENCY_SOURCE){
+                                        $("#ABHES").val(competencySourceList[sourceIndex].Number);
+                                        }
+                                }
+                            
+                        });
+                   }
+               }
+       }
+
+    });
+    function waterMarkTextForSource() {
+        $('#Source').val('');
+        $("#Source").watermark("Enter text to add new", { className: 'watermark-text' });
+    }
+    function addSource() {
+        competency.commonFunctions.funSourceLstAdd();
+    }
+    function saveCompetency(){
+    competency.commonFunctions.saveCompetency(comptencyUrl,isEditMode);
+    }
+    function cancelCompetency(){
+    competency.commonFunctions.cancelCompetency();
+    }
+    function deleteCompetencyInPopUp(){
+    competency.commonFunctions.deleteCompetencyAjaxCall('@strUniqueIdentifier');
+    }
+    
+</script>

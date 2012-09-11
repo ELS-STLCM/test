@@ -1,0 +1,378 @@
+﻿<script type="text/javascript">
+    $("#savePatientRecord-2").click(function () {
+        forms.ReferralForm.Save('@ViewBag.FormValue');
+    });
+    $(document).ready(function () {
+        forms.PatientSearch.DisableSelectBtn("savePatientRecord-" + '@ViewBag.FormValue');
+        forms.ReferralForm.DisableControls();
+    });
+    $("#searchPatientButton").click(function () {
+        // load patient search popup 
+        forms.PatientSearch.LoadPatientSearch('@ViewBag.FormValue');
+    });
+
+    //dateOfBirth datepicker events
+    $("#dateOfBirthReferral").live('click', function () {
+        if ($('#ui-datepicker-div').is(':visible')) {
+            $("#dateOfBirthReferral").datepicker("hide");
+        }
+        else {
+            $("#dateOfBirthReferral").datepicker();
+            $("#dateOfBirthReferral").datepicker("show");
+        }
+        $("#dateOfBirthReferral").die();
+    });
+
+    function printpage() {
+        forms.ReferralForm.Print();
+    }
+    $("#BtnCancel").click(function () {
+        var status = "Are you sure you want to cancel? Your changes will not be saved.";
+        jConfirm(status, 'Cancel', function (isCancel) {
+            if (isCancel) {
+                forms.ReferralForm.ResetPage();
+                forms.PatientSearch.DisableSelectBtn("savePatientRecord-2");
+            }
+        });
+    });
+</script>
+<div class="grid_24 standard-text">
+    <div class="form-page-header">
+        Referral
+    </div>
+    @*<div class="grid_32">
+            <div class="grid_3 align-contact-info question-header-text">
+                Fax:</div>
+            <div id="faxNumber" class="grid_29">(0)-1234 443 675
+                </div>
+            <div class="grid_3 align-contact-info question-header-text">
+                Phone:</div>
+            <div id="phoneNumber" class="grid_29">(0)-1234 445 674
+                </div>
+            <div class="grid_3 align-contact-info">
+                Toll Free:</div>
+            <div id="tollFreeNumber" class="grid_29">1800-234-543
+                </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>*@
+    <div class="grid_32 alpha  guidance-message ">
+        <div class="grid_32 guidance-text-spacing">
+        </div>
+        <div class="grid_32 ">
+            Please perform a patient search to find a specific patient.
+        </div>
+        <div class="grid_32 guidance-text-spacing">
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="referralContent" class="div-with-border grid_32 form-content vertical-content-scroll">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_16">
+            <div class="standard-text grid_14 ">
+                Diagnosis/Code:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("diagnosisOrCode", "", new { id = "diagnosisOrCode", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14 ">
+                Surgical Procedure/ Date:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("surgicalProcedureOrDate", "", new { id = "surgicalProcedureOrDate", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14 ">
+                Significant Clinical Information/Symptoms:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("clinicalInformationOrSymptoms", "", new { id = "clinicalInformationOrSymptoms", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14 ">
+                Previous Clinical Treatments:
+            </div>
+            <div class="grid_18">
+                @Html.TextArea("previousClinicalTreatments", "", new { id = "previousClinicalTreatments", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="grid_16">
+            <div class="standard-text grid_14 ">
+                Patient Name:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("patientName", "", new { id = "patientName", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14 ">
+                Address:
+            </div>
+            <div class="grid_18">
+                @Html.TextArea("patientAddress", "", new { id = "patientAddress", @class = "grid_32 standard-text", rows = 5 })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14 ">
+                Patient Phone:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("patientPhone", "", new { id = "patientPhone", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14 ">
+                Alternate Contact:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("alternateContact", "", new { id = "alternateContact", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14 ">
+                Date of Birth:
+            </div>
+            <div class="grid_7">
+                @*@Html.TextBox("dateOfBirth", "", new { id = "dateOfBirth", @class = "grid_30 standard-text" })*@
+                <input type="text" id="dateOfBirthReferral" class="grid_29 standard-text" name=""
+                    value="" readonly="readonly" />
+            </div>
+            <div class="standard-text grid_6">
+                Health ID:
+            </div>
+            <div class="grid_6">
+                @Html.TextBox("healthId", "", new { id = "healthId", @class = "grid_30 standard-text" })
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 section-seperator">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_16">
+            <div class="standard-text grid_14 ">
+                Allergies:
+            </div>
+            <div class="grid_18">
+                @Html.TextArea("allergies", "", new { id = "allergies", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="grid_16">
+            <div class="standard-text grid_14 ">
+                Diabetic:
+            </div>
+            <div class="grid_18 standard-text">
+                @Html.RadioButton("diabetic", "Yes", false, new { @id = "diabeticYes", @class = "standard-text" })
+                <label for="diabeticYes">
+                    Yes</label>
+                @Html.RadioButton("diabetic", "No", false, new { @id = "diabeticNo", @class = "standard-text" })
+                <label for="diabeticNo">
+                    No</label>
+            </div>
+        </div>
+        <div class="grid_32">
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_7 ">
+                Medications:
+            </div>
+            <div class="grid_25 alpha">
+                @Html.TextArea("medications", "", new { id = "medications", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 section-seperator">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_16">
+            <div class="standard-text grid_14 ">
+                Place of Service:
+            </div>
+            <div class="grid_18 standard-text">
+                @Html.TextBox("placeOfService", "", new { id = "placeOfService", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear" style="height:45px;">
+            </div>
+            <div class="standard-text grid_14 ">
+                Number of Visits:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("numberOfVisits", "", new { id = "numberOfVisits", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="grid_16">
+            <div class="standard-text grid_14 ">
+                Address:
+            </div>
+            <div class="grid_18 standard-text">
+                @Html.TextArea("serviceAddress", "", new { id = "serviceAddress", @class = "grid_32 standard-text" , @style="height:50px;"})
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14 ">
+                Length of Stay:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("lengthOfStay", "", new { id = "lengthOfStay", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 section-seperator">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_16">
+            <div class="standard-text grid_14">
+                Referring Provider:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("referringProvider", "", new { id = "referringProvider", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14">
+                Name (print):
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("providerName", "", new { id = "providerName", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14">
+                Signature:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("signature", "", new { id = "signature", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14">
+                Family Physician Name (print):
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("familyPhysicianName", "", new { id = "familyPhysicianName", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="grid_16">
+            <div class="standard-text grid_14">
+                Phone:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("providerPhone", "", new { id = "providerPhone", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14">
+                NPI Number:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("NPINumber", "", new { id = "NPINumber", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_14">
+                Date:
+            </div>
+            <div class="grid_18">
+                @Html.TextBox("providingDate", "", new { id = "providingDate", @class = "grid_32 standard-text" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="standard-text grid_32">
+                @Html.CheckBox("sameAsReferringPhysician", false, new { id = "sameAsReferringPhysician", @class = "standard-text" })
+                <label for="sameAsReferringPhysician">
+                    Same as Referring Physician</label>
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 section-seperator">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 standard-text">
+            <div class=" grid_13">
+                Form initiated by (if other than Referring Provider):
+            </div>
+            <div class="grid_19">
+                @Html.TextBox("formInitiatedBy", "", new { id = "formInitiatedBy", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 standard-text">
+            <div class=" grid_6">
+                Authorization Number:
+            </div>
+            <div class="grid_6">
+                @Html.TextBox("authorizationNumber", "", new { id = "authorizationNumber", @class = "grid_32 standard-text" })
+            </div>
+            <div class=" grid_5 prefix_1">
+                Effective Date:
+            </div>
+            <div class="grid_5">
+                @Html.TextBox("effectiveDate", "", new { id = "effectiveDate", @class = "grid_32 standard-text" })
+            </div>
+            <div class=" grid_5">
+                Expiration Date:
+            </div>
+            <div class="grid_5">
+                @Html.TextBox("expirationDate", "", new { id = "expirationDate", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 standard-text">
+            <div class=" grid_6">
+                Name (print), Position:
+            </div>
+            <div class="grid_14">
+                @Html.TextBox("referrerNamePosition", "", new { id = "referrerNamePosition", @class = "grid_32 standard-text" })
+            </div>
+            <div class=" grid_3">
+                Phone:
+            </div>
+            <div class="grid_9">
+                @Html.TextBox("referrerPhone", "", new { id = "referrerPhone", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 standard-text">
+            <div class=" grid_6">
+                Signature:
+            </div>
+            <div class="grid_14">
+                @Html.TextBox("referrerSignature", "", new { id = "referrerSignature", @class = "grid_32 standard-text" })
+            </div>
+            <div class=" grid_3">
+                Date:
+            </div>
+            <div class="grid_9">
+                @Html.TextBox("referrerSignatureDate", "", new { id = "referrerSignatureDate", @class = "grid_32 standard-text" })
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+    </div>
+</div>

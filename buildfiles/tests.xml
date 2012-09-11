@@ -1,0 +1,16 @@
+<project name="unit tests" default="Run Unit Tests" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+  
+	<target name="Run Unit Tests" verbose="true" >
+	
+		<echo message="Running Unit tests..." />
+		
+		
+		<echo message="Unit tests complete." />
+		
+	</target>
+
+  
+  
+</project>

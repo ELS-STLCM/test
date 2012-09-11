@@ -1,0 +1,42 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_24">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_22 form-page-header" style="padding-top: 0px">
+        Competency Maintenance
+    </div>
+    <div class="grid_10 remove-div-space" style="float:right" >
+        @Html.TextBox("competencySearchByText", "", new { id = "competencySearchByText", @class = "grid_27" })
+        <img id="competencyButtonSearch" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")"  onclick ="searchCompetency()"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        @Html.Partial("../../Views/Competency/_CompetencyGrid")
+    </div>
+    <div id="showCreateNewCompetency">   
+    </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            //disableAButton("btnDeleteCompetency");
+            waterMarkTextForSearch();
+            setMaxLenthSearchText("competencySearchByText");
+        });
+        function waterMarkTextForSearch() {
+            $('#competencySearchByText').val('');
+            $("#competencySearchByText").watermark(SEARCH_TEXT_COMPETENCY, { className: 'watermark-text' });
+        }
+        function searchCompetency() {
+            competency.commonFunctions.searchCompetency();
+        }
+        $("#competencySearchByText").keyup(function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                competency.commonFunctions.searchCompetency();
+            }
+        });
+</script>

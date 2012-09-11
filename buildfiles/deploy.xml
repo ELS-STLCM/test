@@ -1,0 +1,28 @@
+<project name="stage" default="Stage to dev" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+
+	<target name="Stage to dev" >
+	
+		<!-- Deploy to Stage staging directory for dev-->
+		<property name="Stage.DEV" 	value="${Stage.dir}/DEV" />
+		<property name="Stage.DEV.CUR" value="${Stage.DEV}/CURRENT" />
+		
+		<delete dir="${Stage.DEV.CUR}" if="${directory::exists(Stage.DEV.CUR)}" />
+		<mkdir dir="${Stage.DEV.CUR}" if="${not directory::exists(Stage.DEV.CUR)}"/>
+		
+		<copy todir="${Stage.DEV.CUR}" verbose="true" >
+			<fileset basedir="${ProjBuildDir}" >
+				<include name="**/*.*" />
+			</fileset>
+		</copy>
+		
+		<copy file="${ProjBuildDir}/configs/dev/web.config" tofile="${Stage.DEV.CUR}/web.config" />
+		
+		<if test = "${file::exists(BuildZip)}" >
+			<copy file="${BuildZip}" tofile="${Stage.DEV}/${build.name}.zip" />
+		</if>
+	
+	</target>
+
+</project>

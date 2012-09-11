@@ -1,0 +1,31 @@
+<project name="Configure" default="Configure" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+	
+	<include buildfile="config.properties.${CFG.ENV}.xml"/>
+
+  <target name="Configure" >
+  
+	<echo message="Creating web.config for: ${config.env}" />
+	
+	<mkdir dir="${ProjBuildDir}" if="${not directory::exists(ProjBuildDir)}" />
+	
+	<property name="Configsdir" value="${ProjBuildDir}/configs/${CFG.ENV}" />
+	<mkdir dir="${Configsdir}" if="${not directory::exists('Configsdir')}" />
+  
+	<copy todir="${Configsdir}"  verbose="true" overwrite="true">
+		<fileset basedir="${PublishDir}" >
+			<include name="*.tmpl"/>
+		</fileset>
+		<filterchain>
+			<replacetokens>
+				<token key="" value="" />
+			</replacetokens>
+		</filterchain>
+	</copy>
+  
+	<move file="${Configsdir}\web.config.tmpl" tofile="${Configsdir}\web.config" overwrite="true" />
+	
+  </target>
+
+</project>

@@ -1,0 +1,165 @@
+<project name="compile" default="Compile" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+  
+	<property name="Is64BitOperatingSystem" value="false" />
+	<property name="Is64BitProcess" value="false" />
+	<property name="IsWow64Process" value="false" />
+	
+	<target name="Compile" verbose="true" >
+	
+		<if test="${string::contains(precompile.task,'yes')}">
+			<call target="Pre-Compile custom tasks" />
+		</if>
+		
+		<echo message="Building Project: ${ProjName} on ${CurDate}" />
+		
+		<!-- determine processor OS architecture -->
+		<property name="IsWow64Process" value="${MyWin32Calls::IsWow64Process()}" />
+		<property name="Is64BitProcess" value="${environment::get-variable('PROCESSOR_ARCHITECTURE')!='x86'}" />
+		<property name="Is64BitOperatingSystem" value="${IsWow64Process or Is64BitProcess}" />
+		
+		<choose>
+			<when test="${Is64BitOperatingSystem}">
+				<property name="OS.ARCH" value="x86_64" />
+				<property name="PROGRAMS.PATH" value="C:\Program Files (x86)" />
+			</when>
+			<otherwise>
+				<property name="OS.ARCH" value="x86" />
+				<property name="PROGRAMS.PATH" value="C:\Program Files" />
+			</otherwise>
+		</choose>
+
+		<choose>
+			<when test="${string::contains(build.type,'MSBuild')}" >
+				<call target="Building with MSBuild" />
+			</when>
+			
+			<when test="${string::contains(build.type,'VisualStudio')}" >
+				<call target="Building with Visual Studio" />
+			</when>
+			
+			<when test="${string::contains(build.type,'NAnt')}" >
+				<call target="Building with NAnt" />
+			</when>
+			
+			<otherwise>
+				<fail message="build.type: ${build.type}, is invalid. Please update to MSBuild, VisualStudio or NAnt" />
+			</otherwise>
+		</choose>
+		
+		<if test="${string::contains(postcompile.task,'yes')}">
+			<call target="Post-Compile custom tasks"/>
+		</if>
+		
+	</target>
+	
+	<target name="Building with MSBuild" >
+		<choose>
+			<when test = "${string::contains(nant.settings.currentframework,'net-1')}" >
+				<fail message="ERROR: MSBuild not a valid option for .Net 1.0 or .Net 1.1 applications" />
+			</when>
+				
+			<when test = "${nant.settings.currentframework=='net-2.0'}">
+				<property name="build.exe" value="C:\WINDOWS\Microsoft.NET\Framework\v2.0.50727\MSBuild.exe" />
+			</when>
+					
+			<when test = "${nant.settings.currentframework=='net-3.5'}">
+				<property name="build.exe"  value="C:\WINDOWS\Microsoft.NET\Framework\v3.5\MSBuild.exe" />
+			</when>
+					
+			<when test = "${nant.settings.currentframework=='net-4.0'}">
+				<property name="build.exe" value="C:\WINDOWS\Microsoft.NET\Framework\v4.0.30319\MSBuild.exe" />
+			</when>
+					
+			<otherwise>
+				<fail message ="ERROR: The .NET SDK (MSBuild) is not installed for your target framework: ${nant.settings.currentframework}. 
+				Install it or choose a different framework target." />
+			</otherwise>
+		</choose>
+				
+		<if test="${not file::exists(build.exe)}" >
+			<fail message="ERROR: ${build.exe} doesn't exist!" />
+		</if>
+				
+		<call target="Display Build Environment" />
+		<exec program="${build.exe}">
+			<arg value="/t:Rebuild" />
+			<arg value="/p:Configuration=${debug.type}" />
+			<arg value="${SolutionFile}" />
+		</exec>
+		
+	</target> 
+	
+	<target name="Building with Visual Studio" >
+	
+		<!-- this framework expects the Visual Studio installations to be in the default locations by architecture -->
+		<choose>
+			<when test = "${build.type.vs=='VS2003'}" >
+				<property name="build.exe" value="${PROGRAMS.PATH}\Microsoft Visual Studio .NET 2003\Common7\IDE\devenv.exe" />
+			</when>
+					
+			<when test = "${build.type.vs=='VS2005'}" >
+				<property name="build.exe"  value="${PROGRAMS.PATH}\Microsoft Visual Studio 8\Common7\IDE\devenv.exe" />
+			</when>
+					
+			<when test = "${build.type.vs=='VS2008'}" >
+				<property name="build.exe"  value="${PROGRAMS.PATH}\Microsoft Visual Studio 9.0\Common7\IDE\devenv.exe" />
+			</when>
+					
+			<when test = "${build.type.vs=='VS2010'}" >
+				<property name="build.exe"  value="${PROGRAMS.PATH}\Microsoft Visual Studio 10.0\Common7\IDE\devenv.exe" />
+			</when>
+					
+			<otherwise>
+				<fail message ="ERROR: Visual Studio is not installed for your target version: ${build.type.vs}. 
+				Install it or choose a different Visual Studio version: VS2003, VS2005, VS2008, or VS2010." />
+			</otherwise>
+		</choose>
+				
+		<if test="${not file::exists(build.exe)}" >
+			<fail message="ERROR: ${build.exe} doesn't exist!" />
+		</if>
+				
+		<call target="Display Build Environment" />
+		<exec program="${build.exe}">
+			<arg value="/rebuild" />
+			<arg value="${debug.type}" />
+			<arg value="${SolutionFile}" />
+		</exec>
+		
+	</target> 
+	
+	<target name="Building with NAnt" >
+	
+		<if test = "${not string::contains(nant.settings.currentframework,'net-1')}" >
+			<fail message="ERROR: NAnt solution builds are only valid options for .Net 1.0 or .Net 1.1 applications" />
+		</if>
+		
+		<solution configuration="${debug.type}" solutionfile="${SolutionFile}" />
+					
+	</target> 
+	
+	<script language="C#" prefix="MyWin32Calls">
+		<references>
+			<include name="system.dll" />
+		</references>
+		<code>
+			<![CDATA[
+				[System.Runtime.InteropServices.DllImport("kernel32.dll")]
+				public static extern bool IsWow64Process(System.IntPtr hProcess, out bool lpSystemInfo);
+	 
+				[Function("IsWow64Process")]
+				public bool IsWow64Process()
+				{
+					bool retVal = false;
+	 
+					IsWow64Process(System.Diagnostics.Process.GetCurrentProcess().Handle, out retVal);
+	 
+					return retVal;
+				}
+				]]>
+		</code>
+	</script>
+	
+</project>

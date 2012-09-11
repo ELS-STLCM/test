@@ -1,0 +1,102 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32 standard-text" id="assignmentHolder">
+<div class="grid_32 div-with-bottom-border">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_15 form-page-header" style="padding-top: 0px">
+        Assignment Builder
+    </div>
+    <div class="grid_7 align-div-inline" id="filterByModuleForSearch">
+    </div>
+    <div class="align-div-inline standard-text">And / Or</div>
+    <div class="grid_8 align-div-inline">
+        @Html.TextBox("searchByTextAssign", "", new { id = "searchByTextAssign", @class = "grid_28" })
+        <img id="buttonSearchAssign" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+    <div class="grid_8">
+        @Html.Partial("../../Views/Builder/Assignment/ReturnToAssignmentBuilder")
+    </div>
+    <div class="grid_24">
+    <div class="grid_32 search-result-text">Search Results for "@ViewBag.SearchText"</div>
+        <div class="clear clear-height-spacing">
+    </div>
+        <div class="clear clear-height-spacing">
+    </div>
+       @Html.Partial("../../Views/Builder/Assignment/_AssignmentSearchGrid")
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+</div> 
+
+<script type="text/javascript">
+    var filterByModuleList = @Html.Raw(Json.Encode(ViewBag.ModuleList)); 
+    var searchText="@ViewBag.SearchText";
+    var searchModule="@ViewBag.SearchModule";
+    $(document).ready(function () {
+        setMaxLenthSearchText("searchByTextAssign");
+        isSearchPageForAssignment = true;
+        initializeFlexBoxForFilterByModuleForSearch("filterByModuleForSearch", filterByModuleList);
+        $("#buttonSearchAssign").click(function () {
+            assignBuilder.commonFunctions.searchByText();
+        });
+        $("#searchByTextAssign").keyup(function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                assignBuilder.commonFunctions.searchByText();
+            }
+        });
+        if(!isNullOrEmpty(searchModule)){
+            isModuleFilterValueSelectedForSearch=true;
+        }
+        $("#searchByTextAssign").val(searchText);
+        $('#filterByModuleForSearch_input').val(searchModule);
+    }); 
+
+function initializeFlexBoxForFilterByModuleForSearch(divId, lstOfItems) {
+        var lstOfItemsTemp = { };
+    lstOfItemsTemp.results = lstOfItems;
+    lstOfItemsTemp.total = lstOfItemsTemp.results.length;
+    $('#' + divId).flexbox(lstOfItemsTemp, {
+        resultTemplate: '{name}',
+        width: 147,
+        paging: false,
+        maxVisibleRows: 10,
+        noResultsText: '',
+        noResultsClass: '',
+        matchClass: '',
+        matchAny: true,
+            onSelect: function () {
+            isSearchPageForAssignment = true;
+            isModuleFilterValueSelectedForSearch = true;
+            assignBuilder.commonFunctions.searchByText();
+        }
+    });
+    $('#' + divId + "_input").watermark("Filter by Module", { className: 'watermark watermark-text' });
+    $('#filterByModuleForSearch_input').live('blur', function () {
+        if ($('#filterByModuleForSearch_input').val() == "") {
+            $('#filterByModuleForSearch_input').text = "Filter by Module";
+            $('#filterByModuleForSearch_input').addClass('watermark watermark-text');
+        } else {
+            $('#filterByModuleForSearch_input').removeClass('watermark watermark-text');
+        }
+    });
+    $('#filterByModuleForSearch_input').live('keyup', function () {
+        if (isModuleFilterValueSelectedForSearch) {
+            if ($('#filterByModuleForSearch_input').val() == "") {
+                startAjaxLoader();
+                isModuleFilterValueClearedForSearch=true;
+                strListOfSelectedAssignmentItems = "";
+                assignmentSearchDataTable.fnDraw();
+            }
+        }
+    });
+}
+</script>
+
+
+

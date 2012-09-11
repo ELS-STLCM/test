@@ -1,0 +1,114 @@
+﻿@{
+    Layout = null;
+}
+<div class="page-title">
+    Calendar Search Results for @ViewBag.PatientName 
+    <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+    <div class="grid_4">
+        <button id="previousMonth" class="select-hand" onclick="smoCalendar.goToPreviousMonth()">
+            ◄</button>
+        <button id="nextMonth" class="select-hand" onclick="smoCalendar.goToNextMonth()">
+                ►</button></div> <div class="grid_28">@String.Format("{0:MMMM yyyy}", Convert.ToDateTime(ViewBag.FilterDate))</div>
+</div>
+<div id="appointment-patient-search" style="overflow-x: auto; overflow-y: auto; width: 97%;"
+    class="grid_32">
+    <table id="appointmentPatientSearchGrid" class="standard-text table-scroll-border">
+        <thead style="text-align: center;">
+            <tr class="dataTables_scrollHeadInner">
+                <th class="datatable-background" style="width: 10%">
+                </th>
+                <th title="Day/Time" class="datatable-tooltip datatable-background" style="width: 20%">
+                    Day/Time
+                </th>
+                <th title="Visit Type" class="datatable-tooltip datatable-background" style="width: 24%">
+                    Visit Type
+                </th>
+                <th title="Status" class="datatable-tooltip datatable-background" style="width: 20%">
+                    Status
+                </th>
+                <th title="Provider" class="datatable-tooltip datatable-background" style="width: 24%">
+                    Provider
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+<div class="grid_32">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="navigation-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 50px;" value="Select" title="Select" onclick="" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 50px;" value="Cancel" title="Cancel" onclick="smoCalendar.cancelSearchPatientAppointmnet()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+</div>
+<script type="text/javascript">
+    appointmentPatientSearchDataTable = $('#appointment-patient-search #appointmentPatientSearchGrid').dataTable({
+        "bProcessing": false,
+        "bServerSide": true,
+        "sAjaxSource": "../Appointment/GetAppointmentPatientSearchList?patientUniqueIdentifier=" + "@ViewBag.PatientUniqueIdentifier" + "&filterDate=" + "@ViewBag.FilterDate",
+        "fnInitComplete": function (oSettings, json) {
+            //startAjaxLoader();
+        },
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            //startAjaxLoader();
+            $.getJSON(sSource, aoData, function (json) {
+                /* Do whatever additional processing you want on the callback, then tell DataTables */
+                fnCallback(json);
+                if ($('#appointment-patient-search .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                    setScrollableTableBorder(true, 'appointment-patient-search');
+                }
+                else {
+                    setScrollableTableBorder(false, 'appointment-patient-search');
+                }
+                closeAjaxLoader();
+            });
+        },
+        "aoColumns": [
+            { "bSortable": false, "sName": "Select" },
+            { "bSortable": true, "sName": "DayTime" },
+            { "bSortable": true, "sName": "VisitType" },
+            { "bSortable": true, "sName": "Status" },
+            { "bSortable": true, "sName": "Provider" }
+        ],
+        "aaSorting": [[1, 'desc']],
+        "oLanguage": { "sZeroRecords": "No search result" },
+        "bAutoWidth": false,
+        "bFilter": false,
+        "bLengthChange": false,
+        "iDisplayLength": 15,
+        "bPaginate": true,
+        "sPaginationType": "full_numbers",
+        "bSort": true,
+        "sScrollY": "270px",
+        "sScrollX": "100%",
+        "bScrollCollapse": true,
+        "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
+        "fnDrawCallback": function () {
+            setScrollableTableHeight(this);
+        }
+    });
+
+
+
+</script>

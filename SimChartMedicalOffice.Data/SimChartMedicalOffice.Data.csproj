@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{34EA4DD9-A7CE-4C49-ABA2-DF6B738CEC92}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SimChartMedicalOffice.Data</RootNamespace>
+    <AssemblyName>SimChartMedicalOffice.Data</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Assignment\AssignmentDocument.cs" />
+    <Compile Include="Assignment\AssignmentReposistoryDocument.cs" />
+    <Compile Include="AttachmentDocument.cs" />
+    <Compile Include="Competency\ApplicationModuleDocument.cs" />
+    <Compile Include="Competency\CompetencySourceDocument.cs" />
+    <Compile Include="Forms\BillOfRightsDocument.cs" />
+    <Compile Include="Forms\NoticeOfPrivacyPracticeDocument.cs" />
+    <Compile Include="Forms\ReferralFormDocument.cs" />
+    <Compile Include="Authoring\AuthoringDocument.cs" />
+    <Compile Include="Competency\CompetencyDocument.cs" />
+    <Compile Include="Forms\PatientRecordsAccessFormDocument.cs" />
+    <Compile Include="Forms\PatientDocument.cs" />
+    <Compile Include="FrontOffice\AppointmentDocument.cs" />
+    <Compile Include="MasterDocument.cs" />
+    <Compile Include="FrontOffice\BlockAppointmentDocument.cs" />
+    <Compile Include="FrontOffice\OtherAppointmentDocument.cs" />
+    <Compile Include="FrontOffice\PatientVisitAppointmentDocument.cs" />
+    <Compile Include="FrontOffice\RecurrenceGroupDocument.cs" />
+    <Compile Include="QuestionBanks\AnswerOptionDocument.cs" />
+    <Compile Include="QuestionBanks\QuestionDocument.cs" />
+    <Compile Include="QuestionBanks\QuestionBankDocument.cs" />
+    <Compile Include="QuestionBanks\FolderDocument.cs" />
+    <Compile Include="SimAppDocument.cs" />
+    <Compile Include="Forms\PriorAuthorizationRequestFormDocument.cs" />
+    <Compile Include="SkillSet\SkillSetDocument.cs" />
+    <Compile Include="SkillSet\SkillSetReposistoryDocument.cs" />
+    <Compile Include="TempObject\AppointmentDocument.cs" />
+    <Compile Include="TempObject\RegistrationDocument.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Repository\KeyValueRepository.cs" />
+    <Compile Include="TestDocument.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimChartMedicalOffice.Common\SimChartMedicalOffice.Common.csproj">
+      <Project>{BCFE0C76-F073-4662-A05E-D2E170412608}</Project>
+      <Name>SimChartMedicalOffice.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimChartMedicalOffice.Core\SimChartMedicalOffice.Core.csproj">
+      <Project>{F762F00A-A3D1-4400-938C-512E72467604}</Project>
+      <Name>SimChartMedicalOffice.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

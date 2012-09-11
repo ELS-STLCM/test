@@ -1,0 +1,22 @@
+﻿@{
+    Layout = null;
+}
+<div class="standard-text div-with-border" style="height: 370px;">
+    <ul class="menu info-panel-questionbank">
+        <li id="infopanel_header" class="info-panel-header">INFO PANEL</li>
+         <li id="infopanel_library" class="subfolder-panel-header">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Library</li>
+        <li class="info-panel-content-return-assignment" id="ReturnToQuestionBank" >
+            <a class="select-hand" id="returntoQuestionBank">
+                <span>Return To Library Assignment Builder</span></a></li>
+    </ul>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#ReturnToQuestionBank a").css('color', '#7c8383');
+    });
+    $(function () {
+        $("#returntoQuestionBank").click(function () {
+            assignBuilder.commonFunctions.returnToAssignment();
+        });
+    });
+</script>

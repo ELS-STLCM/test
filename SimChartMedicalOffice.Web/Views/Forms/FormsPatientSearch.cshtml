@@ -1,0 +1,168 @@
+﻿<div id="PatientSearch" class="container_32">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div id="searchFilterShow" class="grid_1 link-underline-color standard-text" style="display:none">
+        Show
+    </div>
+    <div id="searchFilter" class="grid_32 div-with-border">
+        <div class="grid_20 header-text">
+            Filters: Narrow the list
+        </div>
+        <div class="grid_1 prefix_11 omega link-underline-color standard-text" id="searchFilterHide">
+            Hide
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32">
+            <div class="grid_6">
+                MRN:
+            </div>
+            <div class="grid_7">
+                First Name:
+            </div>
+            <div class="grid_7">
+                Last Name:
+            </div>
+            <div class="grid_6">
+                Date of birth:
+            </div>
+        </div>
+        <div class="grid_32">
+            <div class="grid_6">
+                @Html.TextBox("FilterMRN", "", new { id = "FilterMRN", @class = "grid_25" })
+            </div>
+            <div class="grid_7">
+                @Html.TextBox("FilterFirstName")
+            </div>
+            <div class="grid_7">
+                @Html.TextBox("FilterLastName")
+            </div>
+            <div class="grid_5">
+                <input type="text" id="filterDateOfBirth" class="grid_25" name="" value="" readonly="readonly" />
+                <div class="grid_3 prefix_1">
+                    <img id="filterDOBCalendarImage" alt="" src="@Url.Content("~/Content/Images/Buttons/smo_calendar.png")"/>
+                    <div id="patientCalendar">
+                    </div>
+                </div>
+            </div>
+            <div class="grid_6 prefix_1">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")" style="height: 22px;" />
+                </div>
+                <input id="fiterPatientButton" type="submit" class="navigation-button align-div-inline standard-text standard-height-for-buttons" style="width: 30px;"
+                value="Go"  onclick=""/>
+                <div class="align-div-inline">
+                    <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")" style="height: 22px;" />
+                </div>
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32 header-text">List of Patients</div>
+    <div id="patient_grid_display" style="overflow-x: hidden;overflow-y: hidden;width:804px;height:235px;" class="grid_32">
+        <table id="patientGrid" class="standard-text">
+            <thead style="text-align: center;">
+                <tr>
+                    <th title="" class="datatable-background" style="width: 1%">
+                    
+                    </th>
+                    <th title="First Name" class="datatable-tooltip datatable-background" style="width: 14%">
+                        First Name
+                    </th>
+                    <th title="Last Name" class="datatable-tooltip datatable-background" style="width: 14%">
+                        Last Name
+                    </th>
+                    <th title="Gender" class="datatable-tooltip datatable-background" style="width: 10%">
+                        Gender
+                    </th>
+                    <th title="DOB" class="datatable-tooltip datatable-background" style="width: 14%">
+                        DOB
+                    </th>
+                    <th title="MRN" class="datatable-tooltip datatable-background" style="width: 14%">
+                        MRN
+                    </th>
+                    <th title="Phone" class="datatable-tooltip datatable-background" style="width: 14%">
+                        Phone
+                    </th>
+                    <th title="Address" class="datatable-tooltip datatable-background" style="width: 19%">
+                        Address
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+           
+        <script type="text/javascript">
+            patientDataTable = $('#patient_grid_display #patientGrid').dataTable({
+                "bProcessing": false,
+                "bServerSide": true,
+                "sDom": '<"top"iflp<"clear">>',
+                "oTableTools": {
+                    "aButtons": [],
+                    "sRowSelect": "single"
+                },
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    aoData.push({ "name": "MRNNumber", "value": $("#FilterMRN").val() != null ? $("#FilterMRN").val() : "" });
+                    aoData.push({ "name": "firstName", "value": $("#FilterFirstName").val() != null ? $("#FilterFirstName").val() : "" });
+                    aoData.push({ "name": "lastName", "value": $("#FilterLastName").val() != null ? $("#FilterLastName").val() : "" });
+                    aoData.push({ "name": "DOB", "value": $("#filterDateOfBirth").val() != null ? $("#filterDateOfBirth").val() : "" });
+                    $.getJSON(sSource, aoData, function (json) {
+                        fnCallback(json);
+                    });
+                },
+                "sAjaxSource": '@Url.Action("GetPatientListForGrid", "Forms")',
+                "bRetrieve": false,
+                "aoColumns": [
+                    { "bSortable": false, "sName": "Select" },
+                    { "bSortable": true, "sName": "FirstName" },
+                    { "bSortable": true, "sName": "LastName" },
+                    { "bSortable": true, "sName": "Gender" },
+                    { "bSortable": true, "sName": "DOB" },
+                    { "bSortable": false, "sName": "MRN" },
+                    { "bSortable": false, "sName": "Phone" },
+                    { "bSortable": false, "sName": "Address" }
+                ],
+                "aaSorting": [[1, 'desc']],
+                "bAutoWidth": false,
+                "bFilter": false,
+                "bLengthChange": false,
+                "iDisplayLength": 8,
+                "sScrollY": "350px",
+                "bPaginate": true,
+                "sPaginationType": "full_numbers",
+                "bSort": true
+            });
+        </script>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div id="PatientSearch_Btns" class="prefix_12 grid_20" style="padding-top: 5px;">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img id="PatientSearch_BtnSelect-LeftCurve" alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 style="height: 22px;" /></div>
+        <input id="PatientSearch_BtnSelect" type="submit" class="navigation-button align-div-inline standard-text standard-height-for-buttons" style="width: 60px;"
+               value="Select"  onclick=""/>
+        <div class="align-div-inline">
+            <img id="PatientSearch_BtnSelect-RightCurve" alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">&nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+        <input type="submit" class="cancel-button align-div-inline standard-text standard-height-for-buttons" style="width:60px;"
+            value="Cancel" id="PatientSearch_BtnCancel" onclick=""/>
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+    </div>
+</div>
+</div>

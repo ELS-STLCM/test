@@ -1,0 +1,98 @@
+﻿@{
+    Layout = null;
+}
+@{
+    bool isPublished = ViewBag.SkillSetStatus!=null?(bool)ViewBag.SkillSetStatus:false;
+}
+    <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+<div id="skillSetPreviewContent" class="div-with-border grid_32 skill-set-preview-content vertical-content-scroll">
+<div class="grid_32 page-title">
+    Step 4 of 4: Preview & Publish
+</div>
+<div class="grid_32 skill-set-info">
+    <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+    <div class="grid_5 header-text">
+        Skill Set Name:</div>
+    <div class="grid_27">
+        @ViewBag.SkillSetName
+    </div>
+    <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+    <div class="grid_5 header-text">
+        Module:</div>
+    <div class="grid_27">
+       @ViewBag.SkillFocus
+    </div>
+    <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+</div>
+<div class="clear clear-min-height-spacing">
+    &nbsp;</div>
+<div class="grid_32 header-text skill-set-step4-header">
+    Linked Competencies and Questions
+</div>
+<div class="clear clear-min-height-spacing">
+    &nbsp;</div>
+<div id="divExpandCollapse">
+    <a href="javascript:;" id="expandAll" class="link-color grid_4 select-hand">Expand All</a>
+    <a href="javascript:;" id="collapseAll" class="link-color select-hand">Collapse All</a>
+</div>
+<div class="clear clear-min-height-spacing">
+    &nbsp;</div>
+
+   @Html.Partial("../../Views/Builder/SkillSet/PreviewAndPublishAccordions")
+</div>
+<div class="clear clear-min-height-spacing">
+    &nbsp;</div>
+<div class="align-div-inline" id="backToStep3SkillSet">
+    <div class="align-div-inline">
+        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")" class="standard-height-for-buttons" /></div>
+    <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+        style="width: 60px;" value="Back" id="btnBackToStep3" title="Back" />
+    <div class="align-div-inline">
+        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")" class="standard-height-for-buttons" /></div>
+</div>
+<div class="prefix_9 align-div-inline" id="previewStep4SkillSet">
+    <div class="align-div-inline">
+        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")" class="standard-height-for-buttons" id="btnPreviewLeftCurve"/></div>
+    <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+        style="width: 60px;" value="Preview" id="btnPreview" title="Preview"/>
+    <div class="align-div-inline">
+        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")" class="standard-height-for-buttons" id="btnPreviewRightCurve"/></div>
+</div>
+<div class="grid_1 button-seperator">
+    &nbsp;</div>
+<div class="align-div-inline">
+    <div class="align-div-inline">
+        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")" class="standard-height-for-buttons" id="btnPublishLeftCurve"/></div>
+    <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+        style="width: 60px;" value="Publish" id="btnPublish" title="Publish"/>
+    <div class="align-div-inline">
+        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")" class="standard-height-for-buttons"  id="btnPublishRightCurve"/></div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var isPublished = @isPublished.ToString().ToLower();
+        if (isPublished) {
+            skillSet.commonFunctions.previewPublish.publishedSettings();
+        }
+        skillSet.commonFunctions.loadImageForAStep("4");
+        $("#btnPublish").click(function () {
+            skillSet.commonFunctions.previewPublish.publish();
+        });
+        $("#btnBackToStep3").click(function () {
+            skillSet.commonFunctions.loadStep3(skillSet.commonFunctions.getSkillSetUniqueIdentifier());
+        });
+        $("#btnPreview").click(function () {
+            skillSet.commonFunctions.previewPublish.preview();
+        });
+        $("#expandAll").click(function () {
+            expandAllAccordions();
+        });
+        $("#collapseAll").click(function () {
+            collapseAllAccordions();
+        });
+    });
+</script>

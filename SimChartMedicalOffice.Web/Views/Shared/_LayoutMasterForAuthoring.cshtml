@@ -1,0 +1,55 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+@using SimChartMedicalOffice.Common
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Master1</title>
+</head>
+<body> 
+    <div id="smoMainContent" class="main-content-holder standard-text">
+        <ul>
+            <li><a href="#smoPatientBuilder"><span class="tab-header">Home</span></a></li>
+            <li><a href="#smoSkillSetBuilder"><span class="tab-header">Front Office</span></a></li>
+            <li><a href=""><span class="tab-header" title="smoQuestionBankBuilder">Coding</span></a></li>
+            <li><a href="#smoAssignmentBuilder"><span class="tab-header">Billing</span></a></li>
+        </ul>
+        <div id="smoPatientBuilder">
+        </div>
+        <div id="smoSkillSetBuilder">
+        </div>
+        <div title="smoQuestionBankBuilder">
+        </div>
+        <div id="smoAssignmentBuilder">
+        </div>
+    </div> 
+        @RenderBody()
+    <script type="text/javascript">
+        $(function () {
+            getTabForContent("smoMainContent");
+        });
+        function refreshFrontOfficeTab(iIndexOfFormToLoad) {
+            startAjaxLoader();
+            var strUrlOfTabToRefresh = "../Forms/FormsRepository?iReferenceOfFormToLoad=" + iIndexOfFormToLoad;
+            $("#smoFrontOffice").load(strUrlOfTabToRefresh);
+            closeAjaxLoader();
+        }
+        $(document).ready(function () {
+            $("#frontOfficeInfoPanel a").live('click', function () {
+                var iIndexOfFormToLoad = this.id;
+                refreshFrontOfficeTab(iIndexOfFormToLoad);
+                highlightInfoPanelForSelection(iIndexOfFormToLoad);
+            });
+        });
+
+        function highlightInfoPanelForSelection(iIndexOfFormToLoad) {
+            var objAnchorSelected = $("#frontOfficeInfoPanel #" + iIndexOfFormToLoad);
+            $("div .info-panel-open").removeClass('info-panel-open').addClass('info-panel-content');
+            $("div .info-panel-open").removeClass('info-panel-inner-content-open').addClass('info-panel-inner-content');
+        }
+    </script>
+</body>
+</html>

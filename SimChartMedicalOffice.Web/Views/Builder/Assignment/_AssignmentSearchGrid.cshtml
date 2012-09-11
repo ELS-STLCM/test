@@ -1,0 +1,86 @@
+﻿<div id="assignment_search" style="overflow-x: auto;
+    overflow-y: auto;width:102%;" class="grid_32">
+    <table id="assignmentSearchGrid" class="standard-text table-scroll-border">
+        <thead style="text-align: center;">
+               <tr class="dataTables_scrollHeadInner">
+                <th title="Patient" class="datatable-tooltip datatable-background" style="width: 15%">
+                    Patient
+                </th>
+                <th title="Assignment Title" class="datatable-tooltip datatable-background" style="width: 15%">
+                    Assignment Title
+                </th>
+                <th title="Module" class="datatable-tooltip datatable-background" style="width: 10%">
+                    Modules
+                </th>
+                <th title="Linked Competencies" class="datatable-tooltip datatable-background" style="width: 15%">
+                    Linked Competencies
+                </th>
+                   <th title="Duration" class="datatable-tooltip datatable-background" style="width: 15%">
+                       Duration
+                   </th>
+                   <th title="FolderName" class="datatable-tooltip datatable-background" style="width: 10%">
+                    Folder Name
+                </th>
+                <th title="Created On" class="datatable-tooltip datatable-background" style="width: 10%">
+                    Created On
+                </th>
+                <th title="Status" class="datatable-tooltip datatable-background" style="width: 10%">
+                    Status
+                </th>
+               </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    assignmentSearchDataTable = $('#assignment_search #assignmentSearchGrid').dataTable({
+        "bProcessing": false,
+        "bServerSide": true,
+        "sAjaxSource": "../AssignmentBuilder/GetAssignmentSearchList?strSearchText=" + "@ViewBag.SearchText" + "&strModule=" + "@ViewBag.SearchModule",
+        "fnInitComplete": function (oSettings, json) {
+            //startAjaxLoader();
+        },
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            //startAjaxLoader();
+            $.getJSON(sSource, aoData, function (json) {
+                /* Do whatever additional processing you want on the callback, then tell DataTables */
+                fnCallback(json);
+                if ($('#assignment_search .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                    setScrollableTableBorder(true, 'assignment_search');
+                }
+                else {
+                    setScrollableTableBorder(false, 'assignment_search');
+                }
+                closeAjaxLoader();
+            });
+        },
+        "aoColumns": [
+            { "bSortable": true, "sName": "Patient" },
+            { "bSortable": true, "sName": "Assignment Title" },
+            { "bSortable": true, "sName": "Module" },
+            { "bSortable": true, "sName": "LinkedCompetencies" },
+            { "bSortable": true, "sName": "Duration" },
+            { "bSortable": true, "sName": "FolderName" },
+            { "bSortable": true, "sName": "CreatedTimeStamp" },
+            { "bSortable": true, "sName": "status" }
+        ],
+        "aaSorting": [[6, 'desc']],
+        "oLanguage": { "sZeroRecords": "No search result" },
+        "bAutoWidth": false,
+        "bFilter": false,
+        "bLengthChange": false,
+        "iDisplayLength": 15,
+        "bPaginate": true,
+        "sPaginationType": "full_numbers",
+        "bSort": true,
+        "sScrollY": "270px",
+        "sScrollX": "100%",
+        "bScrollCollapse": true,
+        "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
+        "fnDrawCallback": function () {            
+            setScrollableTableHeight(this);
+        }
+    });
+</script>
+

@@ -1,0 +1,82 @@
+<project name="init" default="init" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+
+  <!-- general non-project properties -->
+  <include buildfile="custom.properties.xml"/>
+  
+  <!-- date functions and property setting -->
+	<property name="CurDate" value="${datetime::now()}" />
+	<property name="FormattedDate"
+		  value="${datetime::get-year(datetime::now())}${datetime::get-month(datetime::now())}${datetime::get-day(datetime::now())}" />
+	<property name="HourMinStamp"
+		  value="${datetime::get-hour(datetime::now())}${datetime::get-minute(datetime::now())}${datetime::get-second(datetime::now())}" />
+	<property name="MyDate" value="${FormattedDate}.${HourMinStamp}" />
+  
+  <!-- End properties   -->
+  
+  <!-- begin framework targets -->
+	<target name="init">
+		
+		<property name="ProjectBaseDir" value="${project::get-base-directory()}" />
+		
+		<call target="find-svnrevision" />
+		<call target="Validate Project" />
+		
+		<!-- <property name="build.name" value="${ProjName}.${ReleaseVersion}.${SVN.REV}" /> -->
+		<property name="build.name" value="${BUILD.JOB}.${BUILD.NUMBER}" />
+		
+		<property name="ProjBuildDir" value="${BuildBaseDir}/${build.name}"/>
+		<delete dir="${ProjBuildDir}" if="${directory::exists('ProjBuildDir')}" />
+		
+	</target>
+	
+	<target name="find-svnrevision">
+	
+		<property name="svn.revision" value="0"/>
+		<exec program="svn"
+			  commandline='info "${ProjectBaseDir}" --xml'
+			  output="svninfo.xml"
+			  failonerror="false"/>
+		<xmlpeek
+			  file="svninfo.xml"
+			  xpath="/info/entry/@revision"
+			  property="svn.revision"
+			  failonerror="false"/>
+			<property name="SVN.REV" value="${svn.revision}"/>
+			
+		<xmlpeek file="svninfo.xml" xpath="/info/entry/url" property="svn.url" />
+		<property name="SVN.Branch" value="${svn.url}" />
+		
+		<delete file="svninfo.xml" failonerror="false" />
+	
+	</target>
+	
+	<target name="Validate Project" verbose="true" >
+	
+		<if test="${string::contains(ProjName,'[project name here]')}">
+			<fail message="Incomplete custom_properties.xml. Review and update." />
+		</if>
+		
+		<if test="${property::exists('ReleaseVersion')}">
+			<property name="ProjRepo" value="${SVNBranches}/${ReleaseVersion}" />
+		</if>
+
+		<if test="${not property::exists('ReleaseVersion')}">
+			<property name="ReleaseVersion" value="trunk" />
+			<property name="ProjRepo" value="${SVNTrunkDir}" />
+		</if>
+		
+		<if test="${not string::contains(SVN.Branch, ProjRepo)}" >
+			<fail message="SVN URL Path mismatch:
+			Provided URL: ${ProjRepo}
+			Current URL : ${SVN.Branch}" />
+		</if>
+		<echo message="Project verified. Proceeding to build."/>
+	</target>
+	
+	
+	
+
+  
+</project>

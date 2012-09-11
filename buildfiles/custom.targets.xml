@@ -1,0 +1,60 @@
+<project name="create.targets" default="Package" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+
+  <!-- Custom targets to be used for project specific build dependencies -->
+	<target name="Pre-Compile custom tasks">
+
+	</target>
+	
+	<target name="Post-Compile custom tasks">
+	
+	</target>
+	
+	<target name="Pre-Package custom tasks">
+	
+		<!-- Create the dev configs -->
+		<property name="CFG.ENV" value="dev" />
+		<exec program="nant.exe" verbose="true">
+			<arg line="/f:buildfiles/config.xml -D:CFG.ENV=${CFG.ENV} -D:ProjBuildDir=${ProjBuildDir} -D:PublishDir=../${PublishDir}"/>
+		</exec>
+		
+		<!-- Create the int configs -->
+		<property name="CFG.ENV" value="int" />
+		<exec program="nant.exe" verbose="true">
+			<arg line="/f:buildfiles/config.xml -D:CFG.ENV=${CFG.ENV} -D:ProjBuildDir=${ProjBuildDir} -D:PublishDir=../${PublishDir}"/>
+		</exec>
+		
+		<!-- Create the cert configs -->
+		<property name="CFG.ENV" value="cert" />
+		<exec program="nant.exe" verbose="true">
+			<arg line="/f:buildfiles/config.xml -D:CFG.ENV=${CFG.ENV} -D:ProjBuildDir=${ProjBuildDir} -D:PublishDir=../${PublishDir}"/>
+		</exec>
+		
+		<!-- Create the training configs -->
+		<property name="CFG.ENV" value="train" />
+		<exec program="nant.exe" verbose="true">
+			<arg line="/f:buildfiles/config.xml -D:CFG.ENV=${CFG.ENV} -D:ProjBuildDir=${ProjBuildDir} -D:PublishDir=../${PublishDir}"/>
+		</exec>
+		
+		<!-- Create the prod configs -->
+		<property name="CFG.ENV" value="prod" />
+		<exec program="nant.exe" verbose="true">
+			<arg line="/f:buildfiles/config.xml -D:CFG.ENV=${CFG.ENV} -D:ProjBuildDir=${ProjBuildDir} -D:PublishDir=../${PublishDir}"/>
+		</exec>
+		
+	</target>
+	
+	<target name="Post-Package custom tasks">
+	
+	</target>
+	
+	<target name="Pre-Deploy custom tasks">
+	
+	</target>
+	
+	<target name="Post-Deploy custom tasks" >
+	
+	</target>
+  
+</project>

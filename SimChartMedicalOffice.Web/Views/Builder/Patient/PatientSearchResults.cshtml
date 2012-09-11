@@ -1,0 +1,25 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32 standard-text" id="patientSearchHolder">
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32 form-page-header">
+        Patient Builder
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_8">
+        @Html.Partial("../../Views/Builder/Patient/ReturnToPatientBuilder")
+    </div>
+    <div class="grid_24">
+    <div class="grid_32 search-result-text">Search Results for "@ViewBag.SearchText"</div>
+        <div class="clear clear-height-spacing">
+    </div>
+        <div class="clear clear-height-spacing">
+    </div>
+       @Html.Partial("../../Views/Builder/Patient/_PatientSearchGrid") 
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+</div>

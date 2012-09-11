@@ -1,0 +1,184 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="grid_32">
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+  <div class="header-text-large">
+        DropBox Test Harness</div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_16">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="header-text">
+            Please choose your type of Drop box Entry:
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <table>
+            <tr>
+                <th>
+                    Select
+                </th>
+                <th>
+                    User
+                </th>
+                <th>
+                    Entry Purpose
+                </th>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" name="admin_questionBank" />
+                    <br />
+                </td>
+                <td>
+                    Admin or Instructor
+                </td>
+                <td>
+                    Question Bank Builder
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="radio" name="student_Form" />
+                    <br />
+                </td>
+                <td>
+                    Student
+                </td>
+                <td>
+                    Forms Repository
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class='grid_16'>
+        <div class='grid_32'>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="div-with-border">
+                <div id='param_title' class='boxlet-head'>
+                    DropBox Link Parameters:
+                </div>
+                <div class='grid_32 div-with-border' style="font-size: 17px; color: black">
+                    <div class='grid_32'>
+                        <label class='grid_6 header-text-large'>
+                            Target:</label>
+                        <input id="target" class='grid_24' name="target" type="text" />
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                    @*<div class='grid_32'>
+                    <label class='grid_6 header-text-large'>
+                            SID:</label>
+                        <input id="sid" name="sid" type="text" class='grid_24' />
+                    </div>*@
+@*                    <div class="clear clear-height-spacing">
+                    </div>*@
+                    <div class='grid_32'>
+                     <label class='grid_6 header-text-large'>
+                            UID:</label>
+                        <input id="uid" name="uid" type="text" class='grid_24' />
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                    <div class='grid_32'>
+                       <label class='grid_6 header-text-large'>
+                            CID:</label>
+                        <input id="cid" name="cid" type="text" class='grid_24' />
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                    <div class='grid_32'>
+                       <label class='grid_6 header-text-large'>
+                            SID:</label>
+                        <input id="sid" name="sid" type="text" class='grid_24' />
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                   @* <div class='grid_32'>
+             <label class='grid_6 header-text-large'>
+                            EID:</label>
+                        <input id="eid" name="eid" type="text" class='grid_24' />
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>*@
+                    @*<div class='grid_32'>
+                     <label class='grid_6 header-text-large'>
+                            FN:</label>
+                        <input id="fn" name="fn" type="text" class='grid_24' />
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                    <div class='grid_32'>
+                      <label class='grid_6 header-text-large'>
+                            LN:</label>
+                        <input id="ln" name="ln" type="text" class='grid_24' />
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                    <div class='grid_32'>
+                     <label class='grid_6 header-text-large'>
+                            Email:</label>
+                        <input id="email" name="email" type="text" class='grid_24' /><br />
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>*@
+                </div>
+            </div>
+            <input class='grid_10 control-content-2' id="btnGenerate" name="btnGenerate"
+                type="button" value="Generate Link" />
+            <div class='grid_28 prefix_2 div-with-border boxlet-head'>
+                <a id="dropBoxLink" href="javascript:alert('blank link');" class="header-text">Blank
+                    link</a>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var UserName = "@User.Identity.Name";
+    var UserRole = "";
+    
+    var dropBoxUsers = {
+        'target': 'none',
+        'uid': UserName,
+        'cid': 'ELSEVIER_CID',
+        'sid': 'ScenarioId1'
+    };
+    $(document).ready(function () {
+        $('#dropBoxLink').hide();
+        $("#logindisplay").hide();
+        $("input[name='student_Form']").click(function (event) {
+            $("input[name='admin_questionBank']").attr('checked', false);
+            UserRole = "Student";
+            dropBoxUsers.cid = "ALL_swhitcomb5_0001";
+            LoadDropBoxLinkInfo("FormsRepository");
+
+        });
+        $("input[name='admin_questionBank']").click(function (event) {
+            $("input[name='student_Form']").attr('checked', false);
+            UserRole = "Admin";
+            dropBoxUsers.cid ="ELSEVIER_CID";
+            LoadDropBoxLinkInfo("QuestionBankBuilder");
+        });
+    });
+    function LoadDropBoxLinkInfo(target) {
+        $('#target').val(target);
+        $("#uid").val(dropBoxUsers.uid);
+        $("#cid").val(dropBoxUsers.cid);
+        $("#sid").val(dropBoxUsers.sid);
+        
+    }
+    $('#btnGenerate').click(function (event) {
+        var loc = "../SMOInterface/" + $('#target').val() + '?target=' + $('#target').val() + '&UID=' + $('#uid').val() + '&CID=' + $('#cid').val() + '&SID=' + $('#sid').val() + '&UserRole=' + UserRole;
+        $('#dropBoxLink').show();
+        $('#dropBoxLink').attr('href', loc);
+        $("#dropBoxLink")[0].innerHTML = $('#target').val() + "- - # " + $('#cid').val();
+        //alert (loc);
+        //window.document.location = loc;
+    });
+</script>

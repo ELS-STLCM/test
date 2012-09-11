@@ -1,0 +1,122 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32 page-title">
+    Step 4 of 5: Office Setting
+</div>
+<div class="header-text grid_26">
+    Crop Patients
+</div>
+<div class="grid_6 disabled-text" style="float: right">
+    <u>Access Medical Office</u>
+</div>
+<div class="grid_32 clear guidance-text-spacing" />
+<div class="grid_32 standard-text guidance-message" style="width: 760px;">
+    Crop patient data to modify a patient record for the purpose of an assignment
+</div>
+<div class="grid_32 clear guidance-text-spacing" />
+<div class="grid_8 div-with-border align-div-inline" style="height: 270px;">
+    <div class="header-text div-with-bottom-border">
+        Select Patients
+    </div>
+    <div id="patient-list" class="grid_32" style="height: 250px; overflow-y: auto; overflow-x: hidden;">
+    </div>
+</div>
+<div class="grid_24 standard-text div-with-border align-div-inline" style="height: 270px">
+    <div class="div-with-border" style="height: 72px;">
+        <div id="patient_image" class="align-div-inline align-div-inline image-holder-div">
+            <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="Image" id="assignmentPatientImage" class="image-holder" />
+        </div>
+        <div class="grid_26">
+            <div class="grid_32 clear clear-height-spacing" />
+            <label class="grid_32" id="patient-name">
+            </label>
+            <div class="grid_32 clear clear-height-spacing" />
+            <label class="grid_32" id="patient-gender">
+            </label>
+            <div class="grid_32 clear clear-height-spacing" />
+            <label class="grid_6">
+                Date of birth:</label><label id="patient-DOB"></label>
+            <div class="grid_32 clear clear-height-spacing" />
+        </div>
+    </div>
+    <div id="patient-content" class="standard-text div-with-bottom-border">
+        <div class="grid_32">
+            No content</div>
+    </div>
+</div>
+<div class="grid_32 clear clear-height-spacing" />
+<div class="grid_32">
+    <div class="grid_10">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 50px;" value="Back" onclick="backToStep3()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="grid_4">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 50px;" value="Save" onclick="" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_6">
+        <div class="align-div-inline">
+            <img alt="left" id="btnProceedSkillSetLeftCurve" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 100px;" onclick="redirectToStep5()" value="Save & Proceed" id="btnProceedSkillSet" />
+        <div class="align-div-inline">
+            <img alt="right" id="btnProceedSkillSetRightCurve" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+    </div>
+    <div class="grid_5">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" id="" value="Cancel" onclick="CancelAndReloadStep4()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $.ajaxSetup({
+        cache: false,
+        asynch: false,
+        type: "POST"
+    });
+
+    $(document).ready(function () {
+        $("#stepwiseImage").empty();
+        $("#stepwiseImage").append("<img alt='' src='../../Content/Images/Buttons/step4AssignmentBuilder.PNG'/>");
+        assignment.officeSetting.loadOfficeSettingpage();
+    });
+
+    function redirectToStep5() {
+        assignBuilder.redirectionFunctions.loadStep5OfAssignmentBuilder();
+    }
+    function backToStep3() {
+        assignBuilder.redirectionFunctions.loadStep3OfAssignmentBuilder();
+    }
+
+    function CancelAndReloadStep4() {
+        var status = "Are you sure you want to cancel? Your changes will not be saved.";
+        jConfirm(status, 'Cancel', function (isCancel) {
+            if (isCancel) {
+                assignBuilder.redirectionFunctions.loadStep4OfAssignmentBuilder();
+            }
+        });
+    }
+
+</script>

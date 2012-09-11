@@ -1,0 +1,12 @@
+<project name="config.properties" default="config" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+
+  <!-- Environment Specific variables - TRAINING -->
+	<property name="web.config" value="web.config.train" />
+	<property name="config.env" value="TRAINING" />
+
+  <!-- web.config properties -->
+    
+  
+</project>

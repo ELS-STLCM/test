@@ -1,0 +1,48 @@
+﻿@{
+    Layout = null;
+    }
+<div class="standard-text div-with-border" style="height: 410px;">
+    <div class="folder-panel-header">
+        <label class="header-text">
+            Folders
+        </label>
+    </div>
+    <div class="folder-tools div-with-border">
+        <div class="grid_4 folder-icons">
+            <img id="addFolder" alt="Add a folder" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder-add_normal.png")" title="New folder" 
+            />
+        </div>
+        <div class="grid_2">
+            <img alt="" src="@Url.Content("~/Content/Images/FolderIcons/lcm_tool-bar_seperator.png")"/>
+        </div>
+        <div class="grid_4 folder-icons">
+            <img id="renameFolder" alt="Rename a folder" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder-rename_disable.png")" title="Rename folder"/>
+        </div>
+        <div class="grid_2">
+            <img alt="" src="@Url.Content("~/Content/Images/FolderIcons/lcm_tool-bar_seperator.png")"/>
+        </div>
+        <div class="grid_4 folder-icons">
+            <img id="deleteFolder" alt="Delete folder" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder-delete_disable.png")" title="Delete folder" />
+        </div>
+        <div class="grid_2">
+            <img alt="" src="@Url.Content("~/Content/Images/FolderIcons/lcm_tool-bar_seperator.png")"/>
+        </div>
+        <div class="grid_4 folder-icons">
+            <img id="rearrangeFolders" alt="Rearrange folder" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder-swap_disable.png")" title="Rearrange folders" />
+        </div>
+    </div>
+    <div class="clear clear-height-spacing"></div>
+   @* <div id="folderListContent">
+        @Html.Partial("../../Views/Builder/QuestionBank/FolderList")
+    </div>*@
+</div>
+
+<script type="text/javascript" language="javascript">
+    $.ajaxSetup({
+        asynch: false,
+        cache: false
+    });
+    $(document).ready(function () {
+        $("#rearrangeFolders").attr('disabled', true);
+    });
+</script>

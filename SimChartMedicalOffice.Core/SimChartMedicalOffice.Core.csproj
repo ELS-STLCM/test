@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F762F00A-A3D1-4400-938C-512E72467604}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SimChartMedicalOffice.Core</RootNamespace>
+    <AssemblyName>SimChartMedicalOffice.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractEntity.cs" />
+    <Compile Include="AbstractForms.cs" />
+    <Compile Include="Account\AccountModels.cs" />
+    <Compile Include="AjaxResult.cs" />
+    <Compile Include="AssignmentBuilder\Assignment.cs" />
+    <Compile Include="AssignmentBuilder\AssignmentRepository.cs" />
+    <Compile Include="AssignmentBuilder\Resource.cs" />
+    <Compile Include="DataInterfaces\FrontOffice\IAppointmentDocument.cs" />
+    <Compile Include="DataInterfaces\IMasterDocument.cs" />
+    <Compile Include="DataInterfaces\FrontOffice\IBlockAppointmentDocument.cs" />
+    <Compile Include="DataInterfaces\FrontOffice\IOtherAppointmentDocument.cs" />
+    <Compile Include="DataInterfaces\FrontOffice\IPatientVisitAppointmentDocument.cs" />
+    <Compile Include="DataInterfaces\FrontOffice\IRecurrenceGroupDocument.cs" />
+    <Compile Include="DataInterfaces\TempObject\IAppointmentDocument.cs" />
+    <Compile Include="DocumentListProxy.cs" />
+    <Compile Include="FrontOfficeCalendar\Appointment.cs" />
+    <Compile Include="FrontOffice\Appointments\Appointment.cs" />
+    <Compile Include="FrontOffice\Appointments\BlockAppointment.cs" />
+    <Compile Include="FrontOffice\Appointments\OtherAppointment.cs" />
+    <Compile Include="FrontOffice\Appointments\PatientVisit.cs" />
+    <Compile Include="FrontOffice\Appointments\RecurrenceGroup.cs" />
+    <Compile Include="ProxyObjects\CalendarEventProxy.cs" />
+    <Compile Include="ProxyObjects\AssignmentProxySave.cs" />
+    <Compile Include="ProxyObjects\AssignmentSkillSetProxy.cs" />
+    <Compile Include="ProxyObjects\CalendarFilterProxy.cs" />
+    <Compile Include="SkillSetBuilder\SkillSetProxy.cs" />
+    <Compile Include="DataInterfaces\Assignment\IAssignmentDocument.cs" />
+    <Compile Include="DataInterfaces\Assignment\IAssignmentRepositoryDocument.cs" />
+    <Compile Include="ProxyObjects\AssignmentProxy.cs" />
+    <Compile Include="SkillSetBuilder\SkillSet.cs" />
+    <Compile Include="Competency\ApplicationModules.cs" />
+    <Compile Include="Competency\CompetencySources.cs" />
+    <Compile Include="DataInterfaces\Competency\IApplicationModuleDocument.cs" />
+    <Compile Include="DataInterfaces\Competency\ICompetencySourceDocument.cs" />
+    <Compile Include="DataInterfaces\Forms\IBillOfRightsDocument.cs" />
+    <Compile Include="DataInterfaces\Forms\INoticeOfPrivacyPracticeDocument.cs" />
+    <Compile Include="Competency\Source.cs" />
+    <Compile Include="DataInterfaces\Forms\IReferralFormDocument.cs" />
+    <Compile Include="Authoring\Authoring.cs" />
+    <Compile Include="Attachment.cs" />
+    <Compile Include="DataInterfaces\IAttachmentDocument.cs" />
+    <Compile Include="Competency\Competency.cs" />
+    <Compile Include="DataInterfaces\Authoring\IAuthoringDocument.cs" />
+    <Compile Include="DataInterfaces\Competency\ICompetencyDocument.cs" />
+    <Compile Include="DataInterfaces\Forms\IPatientRecordsAccessFormDocument.cs" />
+    <Compile Include="DataInterfaces\ISimAppDocument.cs" />
+    <Compile Include="DataInterfaces\Forms\IPriorAuthorizationRequestFormDocument.cs" />
+    <Compile Include="DataInterfaces\ITestDocument.cs" />
+    <Compile Include="DataInterfaces\Patient\IPatientDocument.cs" />
+    <Compile Include="DataInterfaces\QuestionBanks\IQuestionBankDocument.cs" />
+    <Compile Include="DataInterfaces\QuestionBanks\IQuestionDocument.cs" />
+    <Compile Include="DataInterfaces\QuestionBanks\IFolderDocument.cs" />
+    <Compile Include="DataInterfaces\QuestionBanks\IAnswerOptionDocument.cs" />
+    <Compile Include="DataInterfaces\SkillSet\ISkillSetDocument.cs" />
+    <Compile Include="DataInterfaces\SkillSet\ISkillSetRepositoryDocument.cs" />
+    <Compile Include="DataInterfaces\TempObject\IRegistrationDocument.cs" />
+    <Compile Include="DocumentEntity.cs" />
+    <Compile Include="DocumentSectionEntity.cs" />
+    <Compile Include="DataInterfaces\Repository\IKeyValueRepository.cs" />
+    <Compile Include="DropBox\DropBoxLink.cs" />
+    <Compile Include="Forms\BillOfRights.cs" />
+    <Compile Include="Forms\NoticeOfPrivacyPractice.cs" />
+    <Compile Include="Forms\ReferralForm.cs" />
+    <Compile Include="Forms\PatientRecordsAccessForm.cs" />
+    <Compile Include="Forms\PriorAuthorizationRequestForm.cs" />
+    <Compile Include="Json\JqueryDataTableParamModel.cs" />
+    <Compile Include="Patient\Patient.cs" />
+    <Compile Include="Patient\PatientProxy.cs" />
+    <Compile Include="ProxyObjects\AutoCompleteProxy.cs" />
+    <Compile Include="ProxyObjects\BreadCrumbProxy.cs" />
+    <Compile Include="ProxyObjects\FolderProxy.cs" />
+    <Compile Include="DocumentProxy.cs" />
+    <Compile Include="QuestionBanks\AnswerOption.cs" />
+    <Compile Include="QuestionBanks\FolderStructure.cs" />
+    <Compile Include="QuestionBanks\Question.cs" />
+    <Compile Include="QuestionBanks\QuestionBankFolder.cs" />
+    <Compile Include="QuestionBanks\Folder.cs" />
+    <Compile Include="SimApp.cs" />
+    <Compile Include="SkillSetBuilder\SkillSetRepository.cs" />
+    <Compile Include="TempObject\AptoList.cs" />
+    <Compile Include="TempObject\Registration.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Master\" />
+    <Folder Include="ViewObjects\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimChartMedicalOffice.Common\SimChartMedicalOffice.Common.csproj">
+      <Project>{BCFE0C76-F073-4662-A05E-D2E170412608}</Project>
+      <Name>SimChartMedicalOffice.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

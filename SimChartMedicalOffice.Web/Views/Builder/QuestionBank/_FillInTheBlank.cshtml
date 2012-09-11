@@ -1,0 +1,167 @@
+@{
+    Layout = null;
+}
+@{
+    string strquestionText = (ViewBag.QuestionText != null) ? ViewBag.QuestionText : String.Empty;
+    string strRationaleText = (ViewBag.CorrectAnswerRationale != null) ? ViewBag.CorrectAnswerRationale : String.Empty;
+    string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
+    string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
+    string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty;
+    string strQuestionguid = string.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty;
+    string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
+    bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
+    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
+    string blankOrientation = (ViewBag.BlankOrientationToLoad != "" || ViewBag.BlankOrientationToLoad != null) ? ViewBag.BlankOrientationToLoad : "";
+    string answerText1 = (ViewData["AnswerOption_1"] != null) ? ViewData["AnswerOption_1"].ToString() : String.Empty;
+    string answerText2 = (ViewData["AnswerOption_2"] != null) ? ViewData["AnswerOption_2"].ToString() : String.Empty;
+    string answerText3 = (ViewData["AnswerOption_3"] != null) ? ViewData["AnswerOption_3"].ToString() : String.Empty;
+    string answerText4 = (ViewData["AnswerOption_4"] != null) ? ViewData["AnswerOption_4"].ToString() : String.Empty;
+}
+<div class="grid_32">
+    <div id="validationSummary" class="errormessage grid_32">
+        @Html.ValidationSummary()</div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_26">
+        <label class="header-text">
+            Fill-in-the-Blank:</label></div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div class="grid_32 mandatory-field-note">
+        Fields with " <span class="mandatory-field">*</span> " are mandatory
+    </div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div>
+        <div class="grid_8">
+            <label class="header-text">
+                Blank Orientation <span class="mandatory-field">*</span>:</label>
+        </div>
+        <div id="blank_orientation" class="grid_15">
+            @Html.DropDownList("BlankOrientation", null, new { @class = "standard-text" })
+        </div>
+    </div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div class="grid_26">
+        <label class="header-text">
+            Question <span class="mandatory-field">*</span>:</label>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="dynamicRenderDiv"></div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="linkedCompetency" class="grid_32 multiple-choice-dashed-line ">
+    @Html.Partial("../../Views/Builder/Authoring/_LinkedCompetency")
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_25 header-text multiple-choice-right-border-dashed">
+        <label class="header-text">
+            Answer 1:</label>
+        <div class="clear"></div>
+        @Html.TextBox("AnswerOption_1", answerText1, new { id = "AnswerOption_1", @class = "grid_28 alpha standard-text", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })
+        <div class="clear"></div>
+        <div class="clear spacing-between-controls">
+        </div>
+        <div class="clear spacing-between-controls">
+        </div>
+        <label class="header-text">
+            Answer 2:</label>
+        <div class="clear"></div>
+        @Html.TextBox("AnswerOption_2", answerText2, new { id = "AnswerOption_2", @class = "grid_28 alpha standard-text", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })
+        <div class="clear"></div>
+        <div class="clear spacing-between-controls">
+        </div>
+        <div class="clear spacing-between-controls">
+        </div>
+        <label class="header-text">
+            Answer 3:</label>
+        <div class="clear"></div>
+        @Html.TextBox("AnswerOption_3", answerText3, new { id = "AnswerOption_3", @class = "grid_28 alpha standard-text", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })
+        <div class="clear"></div>
+        <div class="clear spacing-between-controls">
+        </div>
+        <div class="clear spacing-between-controls">
+        </div>
+        <label class="header-text">
+            Answer 4:</label>
+        <div class="clear"></div>
+        @Html.TextBox("AnswerOption_4", answerText4, new { id = "AnswerOption_4", @class = "grid_28 alpha standard-text", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })
+        <div class="clear"></div>
+        <div class="clear spacing-between-controls">
+        </div>
+        <div class="clear spacing-between-controls">
+        </div>
+    </div>
+    <div class="grid_7">
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("CorrectAnswer", "AnswerOption_1", false, new { @id = "Answer1", @value = "AnswerOption_1", disabled = true })
+            <label for="FirstAnswer">
+                Correct Answer</label></div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("CorrectAnswer", "AnswerOption_2", false, new { @id = "Answer2", @value = "AnswerOption_2", disabled = true })
+            <label for="SecondAnswer">
+                Correct Answer</label>
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("CorrectAnswer", "AnswerOption_3", false, new { @id = "Answer3", @value = "AnswerOption_3", disabled = true })
+            <label for="ThirdAnswer">
+                Correct Answer</label>
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("CorrectAnswer", "AnswerOption_4", false, new { @id = "Answer4", @value = "AnswerOption_4", disabled = true })
+            <label for="FourthAnswer">
+                Correct Answer</label>
+        </div>
+    </div>
+</div>
+<div id="rationaleLinkedCompetency" class="grid_32">
+    @Html.Partial("../../Views/Builder/Authoring/_RationaleAndLinkedCompetency")
+</div>
+<script>
+  var blankOrientation = "@blankOrientation";
+    $("#BlankOrientation").change(function () {
+        questionBank.commonFunctions.fillInTheBlank.renderDynamicControls(this[this.selectedIndex].text, "dynamicRenderDiv");
+    });
+
+    $(document).ready(function () {
+        questionBank.commonFunctions.enableValidRaioButtons();
+        if(@isEditMode.ToString().ToLower()) {
+            $("#BlankOrientation").val("@blankOrientation");
+            questionBank.commonFunctions.fillInTheBlank.renderDynamicControls("@blankOrientation", "dynamicRenderDiv");
+            questionBank.commonFunctions.loadPageInEditMode("@imgGuid", @Html.Raw(Json.Encode(strRationaleText)), "@strCompetencyText", "@strCorrectAnswerValue", "@questionUrl", @isEditMode.ToString().ToLower(), "@linkedCompetencyGuid", "@questionTypeLoadedFlag");
+            questionBank.commonFunctions.loadDynamicQuestionTextInEditMode(@Html.Raw(Json.Encode(strquestionText)) , "dynamicRenderDiv");
+        }
+    });
+</script>

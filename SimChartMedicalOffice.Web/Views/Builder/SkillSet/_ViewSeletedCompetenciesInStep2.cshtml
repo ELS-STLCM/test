@@ -1,0 +1,24 @@
+﻿@{
+
+    Layout = null;
+}
+<div id="ViewCompetency" class="container_32 remove-div-space">
+   <div class="grid_32" id="showSelectedCompetencies">
+    </div>
+    
+</div>
+<script type="text/javascript">
+    var CompetencyList = @Html.Raw(Json.Encode(ViewBag.CompetencyList));
+    var competencyListInPopUp ="";
+    $(document).ready(function() {
+        if(CompetencyList != null){
+        competencyListInPopUp +="<ol class='selected-competencies-view'>";
+             for (var indexSource = 0; indexSource < CompetencyList.length; indexSource++) {
+                competencyListInPopUp += '<li>' + CompetencyList[indexSource].name + '</li>';
+                competencyListInPopUp += "<div class='clear-height-spacing clear'></div>";                
+            }
+            competencyListInPopUp +="</ol>";
+            $("#showSelectedCompetencies").append(competencyListInPopUp);
+        }
+    });
+</script>

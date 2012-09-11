@@ -1,0 +1,1317 @@
+﻿/**********************Start**********Html Controls************************/
+/********************************Buttons************************/
+.cancel-button
+{
+    background: url('../../Content/Images/Buttons/button_middle_curve_grey.jpg') repeat-x;
+    color: #000;
+    font-family: Arial;
+    font-size: 11px;
+    border-style: none;
+    font-weight: bold;
+    width: 85px;
+    height: 22px;
+    cursor: pointer;
+}
+.remove-button
+{
+    background: url('../../Content/Images/Buttons/button_middle_curve_grey.jpg') repeat-x;
+    color: #000;
+    font-family: Arial;
+    font-size: 11px;
+    border-style: none;
+    font-weight: bold;
+    width: 50px;
+    height: 22px;
+    text-align: left;
+    padding: 0px;
+    cursor: pointer;
+}
+.disabled-button
+{
+    background: url('../../Content/Images/Buttons/button_middle_curve_grey.jpg') repeat-x;
+    font-family: Arial;
+    font-size: 11px;
+    border-style: none;
+    font-weight: bold;
+    width: 43px;
+    height: 22px;
+    text-align: center;
+    padding: 0px;
+    cursor: text;
+}
+.disable-button
+{
+    background: url('../../Content/Images/Buttons/button_middle_curve_grey.jpg') repeat-x;
+    color: #fff;
+    font-family: Arial;
+    font-size: 11px;
+    border-style: none;
+    font-weight: bold;
+    width: 43px;
+    height: 22px;
+}
+.navigation-button
+{
+    background: url('../../Content/Images/Buttons/Button_middle_curve_orange.png') repeat-x;
+    color: #fff;
+    font-family: Arial;
+    font-size: 11px;
+    border-style: none;
+    font-weight: bold;
+    width: 85px;
+    height: 22px;
+    cursor: pointer;
+}
+.dataTables_scrollHead
+{
+    height: 34px;
+}
+.dataTables_scrollHeadInner
+{
+    height: 34px;
+}
+
+.delete-action
+{
+    background: url('../../Content/Images/Buttons/Close.png');
+}
+.transaction-button
+{
+    background: url('../../Content/Images/Buttons/button_1px_tile_blue.jpg') repeat-x;
+    color: #fff;
+    font-family: Arial;
+    font-size: 11px;
+    border-style: none;
+    font-weight: bold;
+    width: 85px;
+    height: 22px;
+    cursor: pointer;
+}
+.upload-image-button
+{
+    font-size: 10px;
+    font-family: Helvetica, Arial, 'Liberation Sans' , FreeSans, sans-serif;
+}
+/*********************SimOffice*****Standards************************/
+.loader
+{
+    display: block;
+    text-align: center;
+}
+.loading
+{
+    background-repeat: repeat;
+}
+textarea
+{
+    resize: none;
+}
+.loading-time
+{
+    color: Red;
+    height: 120px;
+    overflow: auto;
+    background: white;
+}
+.debug-data
+{
+    background: white;
+    font-weight: bold;
+}
+.debug-font
+{
+    color: Red;
+    font-weight: bold;
+}
+.show-content
+{
+    display: block;
+}
+.watermark-text
+{
+    color: Gray;
+}
+.mandatory-field
+{
+    color: Red;
+}
+.mandatory-field-note
+{
+    color: Gray;
+}
+.hide-content
+{
+    display: none;
+}
+.image-view-larger
+{
+    height: 410px;
+    width: 410px;
+}
+.text-signature
+{
+    text-align: right;
+}
+.error-message
+{
+    padding: 0 0 0 10px;
+    font-size: 11px;
+    font-family: Arial;
+    color: red;
+    font-weight: normal;
+}
+.guidance-message
+{
+    background-color: #DCE6F2;
+    width: 98%;
+}
+.guidance-text-spacing
+{
+    height: 3px;
+}
+.text-icon-spacing
+{
+    padding-left: 3px;
+}
+.office-use
+{
+    background-color: #EEEEEE;
+}
+.disabled-text
+{
+    color: gray;
+}
+.section-seperator
+{
+    border-bottom-style: dashed;
+    border-bottom-color: #d9d9d9;
+    border-bottom-width: 1px;
+}
+.section-seperator-normal
+{
+    border-bottom-color: #d9d9d9;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+}
+.section-seperator-spacing
+{
+    height: 20px;
+}
+.button-seperator
+{
+    display: inline;
+    width: 10px;
+}
+.standard-text
+{
+    font-size: 11px;
+    font-family: Helvetica, Arial, 'Liberation Sans' , FreeSans, sans-serif;
+}
+.clear-height-spacing
+{
+    height: 10px;
+    margin: 0px;
+}
+.spacing-between-controls
+{
+    height: 12px;
+    margin: 0px;
+}
+.select-hand
+{
+    cursor: pointer;
+}
+.standard-date-control
+{
+    width: 50px;
+}
+.standard-time-control
+{
+    width: 50px;
+}
+.header-text
+{
+    font-weight: Bold;
+}
+.align-div-inline
+{
+    float: left;
+    display: inline;
+}
+.align-inline
+{
+    display: inline;
+}
+.align-content-right
+{
+    float: right;
+}
+.standard-height-for-buttons
+{
+    height: 22px;
+}
+.no-right-margin
+{
+    margin-right: 0;
+}
+.no-margins
+{
+    margin: 0px;
+}
+.no-paddings
+{
+    padding: 0px;
+}
+.control-content-1
+{
+    width: 98%;
+}
+.control-content-2
+{
+    width: 97%;
+}
+.main-content-holder
+{
+    height: 542px;
+}
+.link
+{
+    color: blue;
+}
+
+.align-text-right
+{
+    text-align: right;
+}
+.div-with-border
+{
+    border: 1px;
+    border-style: solid;
+    border-color: #d9d9d9;
+}
+ 
+.div-with-top-bottom-border
+{
+    border-bottom: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #d9d9d9;
+    border-top: 1px;
+    border-top-style: solid;
+    border-top-color: #d9d9d9;
+}
+.div-with--blue-border
+{
+    border: 1px;
+    border-style: solid;
+    border-color: #0060A8;
+}
+.standard-x-space
+{
+    white-space: normal;
+}
+.vertical-content-scroll
+{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+.watermark-text
+{
+    color: Gray;
+}
+.boxlet-head
+{
+    width: 100%;
+    float: left;
+    border: 1px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #dedede;
+}
+.age-years-months-days
+{
+    display: inline;
+    float: left;
+    font-size: 9px;
+}
+/**********Start*********navigational panels************************/
+.info-panel
+{
+    padding-top: 0px;
+    margin-left: 0px;
+    height: 370px;
+    background-color: rgb(238, 238, 238);
+}
+.info-panel-competency
+{
+    padding-top: 0px;
+    margin-left: 0px;
+    height: 410px;
+    background-color: rgb(238, 238, 238);
+}
+.align-competency
+{
+    padding-left: 5px;
+    padding-left: 5px;
+}
+.info-panel-questionbank
+{
+    padding-top: 0px;
+    margin-left: 0px;
+    height: 370px;
+    background-color: rgb(238, 238, 238);
+}
+.info-panel-content
+{
+    font-family: Arial;
+    font-size: 12px;
+    background-color: #EEEEEE;
+    color: gray;
+    font-weight: bold;
+    padding-left: 20px;
+    text-align: left;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cdcdcd;
+    height: 24px;
+    padding-top: 3px;
+}
+.info-panel-content-return
+{
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cdcdcd;
+    background-color: #efd5c2;
+    color: #7c8383;
+    font-family: Arial;
+    font-weight: bold;
+    font-size: 11px;
+    height: 32px;
+    padding-left: 20px;
+    padding-top: 3px;
+    text-align: left;  
+}
+
+.info-panel-content-return-assignment
+{
+    font-family: Arial;
+    background-color: #efd5c2;
+    color: #7c8383;
+    font-weight: bold;
+    padding-left: 8px;
+    text-align: left;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cdcdcd;
+    height: 37px;
+    padding-top: 3px;
+}
+.info-panel-open
+{
+    font-family: Arial;
+    font-size: 12px;
+    background-color: #FF8A09;
+    color: white;
+    font-weight: bold;
+    padding-left: 20px;
+    text-align: left;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cdcdcd;
+    background-repeat: no-repeat;
+    height: 24px;
+    padding-top: 3px;
+}
+.info-panel-inner-content
+{
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: #7c8383;
+    font-weight: bold;
+}
+.info-panel-inner-content-open
+{
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+}
+.info-panel-header
+{
+    background-color:#376cb4;
+    background-repeat:no-repeat; 
+    color:White;
+    font-size:14px;
+    font-weight:bold;      
+    text-align:center; 
+}
+.menu
+{
+    margin-top: 0px; /* gets rid of space at the top */
+    margin-left: 0px;
+    font-family: Arial;
+    padding-left: 0px;
+    list-style-type: none;
+    list-style-position: outside;
+    list-style-image: none;
+}
+.action-icons
+{
+    margin-left: 0px;
+    font-size: 11px;
+    font-family: Arial;
+    color: #0060A8;
+    float: left;
+    display: inline;
+}
+.tool-bar
+{
+    padding-left: 292px;
+}
+.assignments-tabs
+{
+    height: 48px;
+    margin: 0px;
+    padding-left: 0px;
+    list-style-type: none;
+    list-style-image: none;
+    background-image: url('../../Content/Images/SimOfficeLogo/GrayBackGroundFrontOfficeToolBar.png');
+    border-width: thick;
+    color: #7c8383;
+    vertical-align: middle;
+    font-size: 16px;
+}
+.event-header
+{
+    height: 30px;
+    border-bottom-color: #7c8383;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+}
+/**********************************Start*********Forms Repository********************************************/
+.assignment-header
+{
+    height: 20px;
+}
+.page-main-content
+{
+    margin: 0px;
+    height: 416px;
+    padding-right: 20px;
+    float: right;
+}
+.task-alert-text
+{
+    margin-left: 0px;
+    font-size: 16px;
+    font-family: Arial;
+    color: black;
+    font-weight: bold;
+}
+.header-info-panel-align
+{
+    padding-left: 12px;
+}
+.tab-header
+{
+    font-size: 12px;
+    font-family: Arial;
+    color: #7c8383;
+    font-weight: bold;
+}
+.form-page-header
+{
+    font-size: 16px;
+    font-family: Arial;
+    color: #0060A8;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 0px;
+}
+.page-title
+{
+    font-size: 14px;
+    font-family: Arial;
+    color: #0060A8;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 0px;
+}
+.confirmation-message
+{
+    font-size: 16px;
+    font-family: Arial;
+    color: #000000;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 0px;
+}
+.tool-bar-header
+{
+    font-size: 16px;
+    font-family: Arial;
+    color: #0060A8;
+    font-weight: bold;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-right: 0px;
+    padding-left: 15px;
+}
+.align-contact-info
+{
+    text-align: right;
+}
+.form-content
+{
+    height: 310px;
+    width: 98%;
+}
+.form-patient-records-content
+{
+    height: 297px;
+    width: 98%;
+}
+.form-authorization-height
+{
+    height: 373px;
+}
+.hippa-content-align
+{
+    margin-left: 30px;
+}
+.hippa-main-content-align
+{
+    margin-left: 12px;
+}
+.patient-bill-text
+{
+    text-align: justify;
+    padding-left: 12px;
+}
+.patient-bill-space-y
+{
+    height: 5px;
+    margin: 0px;
+}
+.patient-bill-content
+{
+    overflow: hidden;
+    height: 340px;
+}
+.notice-privacy-form-content
+{
+    overflow: hidden;
+    height: 340px;
+}
+.forms-pdf-content
+{
+    width: 687px;
+    height: 308px;
+}
+/**********************************End*********Forms Repository********************************************/
+/**********************Start****************Question Bank Builder*********************************************/
+.question-bank-select-list
+{
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #d9d9d9;
+}
+.multiple-choice-index-spacing
+{
+    padding-left: 5px;
+}
+.multiple-choice-dashed-line
+{
+    border-bottom-style: dashed;
+    border-bottom-color: #d9d9d9;
+    border-bottom-width: 1px;
+}
+.competency-suggest
+{
+    height: 15px;
+}
+.multiple-choice-right-border-dashed
+{
+    border-right-style: dashed;
+    border-right-width: 1px;
+    border-right-color: #d9d9d9;
+}
+.multiple-choice-textarea
+{
+    width: 98%;
+}
+.question-bank-note-text
+{
+    color: Gray;
+}
+.question-bank-panel
+{
+    height: 330px;
+}
+
+.assignment-builder-panel 
+{
+    height: 290px;   
+}
+.assignment-builder-panel-step1 
+{
+    height: 315px;   
+}
+.skillset-builder-panel-step1 
+{
+    height: 305px;   
+}
+.skillset-step-two
+{
+    height: 306px;
+}
+.skillset-builder-panel 
+{
+    height: 310px;   
+}
+.view-large-image
+{
+    color: #d9d9d9;
+    text-decoration-line: underline;
+    text-underline-color: #d9d9d9;
+}
+.text-inside-image
+{
+    position: absolute;
+    top: 45%;
+    right: 28%;
+}
+.folder-panel-header
+{
+    /*background-color:#0f5da5;*/
+    background: url('../../Content/Images/Buttons/Button_middle_curve_orange.png') repeat-x;
+    border-style: none;
+    padding-bottom: 2px;
+    background-color: #FF8A09;
+    background-repeat: no-repeat;
+    color: white;
+    padding-top: 2px;
+    text-align: center;
+}
+.folder-text-align
+{
+   padding-left:11px;
+   height: 15px;   
+   padding-top:15px;
+   position: relative;
+}
+.swap-div-color
+{
+     border:1px;
+     border-style:solid;
+     border-color:#EEEEEE;
+     background-color:transparent;
+}
+.folder-icons
+{
+    border-style: none;
+    cursor: pointer;
+    cursor: hand;
+}
+.rearrange-folder-icons
+{
+    cursor: pointer;
+    cursor: hand; 
+}
+.div-default-style
+{
+    float: left;
+    width: 100%;
+}
+.folder-tools
+{
+    height: 30PX;
+    padding-top: 3px;
+    text-align: center;
+    background-color: White;
+    color: white;
+}
+.background-panel
+{
+    height: 25PX;
+    text-align: left;
+    background-color: rgb(238, 238, 238);
+    color: black;
+    font-weight: bold;
+    padding-top: 4px;
+    padding-left: 5px;
+}
+.datatable-background
+{
+    background-image: url('../../Content/Images/table-header-background.png');
+    background-repeat: repeat-x;
+}
+.datatable-tooltip
+{
+    cursor: pointer;
+    cursor: hand;
+    font-size: 11px;
+    font-family: Arial;
+    color: #000000;
+    font-weight: bold;
+}
+.dataTables_info
+{
+    float: left;
+    font-size: 11px;
+    font-family: Arial;
+}
+.dataTables_paginate .paginate_button
+{
+    margin: 0 3px 0 3px;
+    cursor: pointer;
+    cursor: hand;
+    font-size: 11px;
+    font-family: Arial;
+    color: #0f5da5;
+    font-weight: normal;
+}
+.dataTables_paginate
+{
+    float: right;
+    cursor: hand;
+    font-size: 11px;
+    font-family: Arial;
+    font-weight: bold;
+}
+.link-color
+{
+    cursor: pointer;
+    cursor: hand;
+    font-size: 11px;
+    font-family: Arial;
+    color: #0f5da5;
+    font-weight: normal;
+}
+
+.link-underline-color
+{
+    cursor: pointer;
+    cursor: hand;
+    font-size: 11px;
+    font-family: Arial;
+    color: #0f5da5;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+.folder-section
+{
+    overflow-x: auto;
+    overflow-y: auto;
+    border-color: #cdcdcd;
+    border-top: 0px;
+    height: 290px;
+    width: 290px;
+}
+.div-with-bottom-border
+{
+    width: 100%;
+    float: left;
+    border: 1px;
+    border-style: none;
+    border-width: 1px;
+    border-color: #cdcdcd;
+    border-bottom-style: solid;
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+.div-with-right-border
+{
+    border: 1px;
+    border-style: none;
+    border-width: 1px;
+    border-color: #cdcdcd;
+    border-bottom-style: solid;
+    float: left;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-left: 0px;
+    padding-right: 1px;
+    width: 100%;
+}
+.image-holder-div
+{
+    height: 71px;
+    position: relative;
+    width: 71px;
+}
+.image-holder
+{
+    height: 71px;
+    width: 71px;
+}
+.search-result-text
+{
+    font-size: 13px;
+    font-weight: bold;
+}
+.white-space
+{
+    white-space: pre;
+}
+/***********************End************************************************************************************/
+
+/* table
+----------------------------------------------- */
+table
+{
+    width: 100%;
+    border: 1px solid #bbb;
+    margin-bottom: 10px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+col.colC
+{
+    width: 8em;
+}
+th, td
+{
+    padding: .2em 1em;
+    text-align: left;
+    border: 1px;
+    border-color: #cccccc;
+    border-style: solid;
+}
+thead th
+{
+    border-bottom: 2px solid #888;
+    background-image: url("../../../Content/Images/1px_tile_header_table.jpg");
+    padding: .4em 1em .2em;
+}
+thead th.table-head
+{
+    font-size: 1em;
+    font-weight: normal;
+    text-transform: uppercase;
+    color: #fff;
+    background: #555;
+    border: 1px solid #555;
+}
+tbody th, tbody td
+{
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    background: #eee;
+    font-size: 11px;
+}
+.table-row-alternate-style
+{
+    border-top: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    background: #fff;
+    font-size: 11px;
+}
+
+tbody tr.odd th, tbody tr.odd td
+{
+    background: #fff;
+}
+tfoot th, tfoot td
+{
+    border-top: 2px solid #666;
+    background: #eee;
+}
+tfoot tr.total th, tfoot tr.total td
+{
+    border-top: 6px double #666;
+}
+tfoot tr.total th
+{
+    text-transform: uppercase;
+}
+th.currency, td.currency
+{
+    text-align: right;
+}
+thead th.sorting_asc
+{
+    background: url('../../Content/Images/Buttons/Table_sort_arrow_up.jpg') no-repeat center right;
+    text-align: left;
+}
+thead th.sorting_desc
+{
+    background: url('../../Content/Images/Buttons/Table_sort_arrow_down.jpg') no-repeat center right;
+    text-align: left;
+}
+/*---------------------- Validation error messge------------------------ */
+.errormessage
+{
+    padding: 0 0 0 10px;
+    font-size: 11px;
+    font-family: Arial;
+    color: red;
+    font-weight: normal;
+}
+.validation_ul
+{
+    margin-bottom: 0px; /* gets rid of space at the bottom */
+}
+
+/* -------------- End --------------------------------------- */
+.header-back
+{
+    background: url('../../Content/Images/headerBackGround1.jpg') repeat-x;
+}
+.header-font
+{
+    font-size: 11px;
+}
+.remove-div-space
+{
+    margin: 0;
+    padding: 0;
+}
+.add-horizontal-space
+{
+    margin-left: 5px;
+}
+.clear-min-height-spacing
+{
+    height: 5px;
+    margin: 0px;
+}
+.div-border
+{
+    border-top-style: solid;
+    border-width: 1px 0;
+    border-color: #d9d9d9;
+}
+.container-folder-height
+{
+    height: 351px;
+}
+.container-grid-height
+{
+    height: 330px;
+}
+.container-folder-list-height
+{
+    height: 290px;
+}
+.header-text-large
+{
+    font-family: Arial;
+    font-size: 16px;
+    border-style: none;
+    font-weight: bold;
+}
+
+.dialog-color
+{
+    background-color: blue;
+}
+.info-panel-Sub-Content
+{
+    font-family: Arial;
+    font-size: 12px;
+    background-color: #FF8A09;
+    color: white;
+    font-weight: bold;
+    padding-left: 20px;
+    text-align: left;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #cdcdcd;
+    height: 24px;
+    padding-top: 3px;
+}
+
+.ui-widget-content a
+{
+    color: gray;
+}
+.print_container_32
+{
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.subfolder-panel-header
+{
+    /*background-color:#0f5da5;*/
+    background: url('../../Content/Images/Buttons/Button_middle_curve_orange.png') repeat-x;
+    border-style: none;
+    background-color: #FF8A09;
+    background-repeat: no-repeat;
+    color: white;
+    font-size:12px;
+    font-weight:bold;
+    padding-bottom: 2px; 
+    padding-top: 2px;
+    text-align:left; 
+}
+.ol-padding
+{
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+.para-ol-pading
+{
+    margin-bottom: 5px;
+}
+
+.question-slide-in 
+{
+    width: 749px;
+}
+
+.question-slide-out 
+{
+    width: 596px;
+}
+/**********Skill set Start ***************/
+.assignment-info
+{
+   background-color: #DCE6F2;
+    width: 98%;
+}
+.assignment-step5-header
+{
+      font-size:12px;
+}
+.assignment-preview-content
+{
+    height: 335px;
+    width: 98%;
+}
+.assignment-accordion
+{
+    background-color:#EEEEEE;
+}
+.assignment-questions
+{
+    padding-left:25px;
+    margin-bottom:10px;
+}
+.assignment-accordion-body
+{
+    background-color:White;
+}
+.skill-set-info {
+    background-color: #DCE6F2;
+    width: 98%;
+}
+.skill-set-step4-header
+{
+    font-size:12px;
+}
+.skill-set-preview-content
+{
+    height: 335px;
+    width: 98%;
+}
+.skill-set-accordion
+{
+    background-color:#EEEEEE;
+}
+.skill-set-accordion-close
+{
+    
+}
+.skill-set-accordion-open
+{
+     
+}
+.skill-set-accordion-body
+{
+    background-color:White;
+}
+.skill-set-questions
+{
+    padding-left:25px;
+    margin-bottom:10px;
+}
+.info-image
+{
+    height:30px;
+}
+.question-slide-in-skillset 
+{
+    width: 752px;
+}
+
+.question-slide-out-skillset 
+{
+    width: 598.5px;
+}
+.list-left-panel 
+{
+    height: 140px;   
+}
+.list-right-panel 
+{
+    height: 230px;   
+}
+.list-left-search-panel 
+{
+    height: 90px; 
+      
+}
+.list-middle-buffer
+{
+    height: 100px;   
+}
+.div-without-bottom-border {
+  border: 1px;
+    border-bottom: none;
+    border-style: solid;
+    border-bottom-style: none;
+    border-color: #d9d9d9;
+}
+.vertical-text
+    {
+    color:#333;
+	border:0px solid red;
+	writing-mode:tb-rl;
+	-webkit-transform:rotate(270deg);
+	-moz-transform:rotate(270deg);
+	-o-transform: rotate(270deg);
+	white-space:nowrap;
+	display:block;
+	bottom:0;
+	width:20px;
+	height:20px;
+	padding-top:35px;
+	background:#dedede;
+	text-shadow: 0px 0px 1px #333;
+}
+.div-without-top-border {
+    border: 1px;
+    border-top: none;
+    border-style: solid;
+    border-top-style: none;
+    border-color: #d9d9d9;
+}
+.list-search-background {
+    background-color: #EEEEEE;
+}
+.skill-tree-padding 
+{
+    padding-top: 3px;
+}
+.question-highlight 
+{
+    background-color: #3399FF;
+    color: #FFFFFF;
+    border-color: #3399FF;
+}
+.competency-highlight 
+{
+    background-color: #3399FF;
+    color: #FFFFFF;
+    border-color: #3399FF;
+}
+.bottom-only-border {
+    border-bottom: 1px;
+    border-bottom-style: solid;
+    border-color: white;
+}
+.dual-list-align {
+    display:inline;
+	float: left;
+	position: relative;
+	margin-left: 0.2%;
+	margin-right: 0.2%;
+    }
+/**********Skill set End ***************/
+.leftnav
+{
+float: left;
+width: 140px;
+}
+
+.rightnav
+{
+float: left;
+width: 84.4%;
+left: 1%;
+position: relative;
+}
+
+.full-width
+{
+    width:100%;
+}
+.table-scroll-border
+{    
+    margin-bottom:0px;    
+    border-top:0px;
+}
+.competency-table-header
+{
+    border-top:0px;
+}
+.skill-set-without-validation 
+{
+    height: 217px;
+}
+
+.skill-set-with-validation 
+{
+    height: 170px;
+}
+
+.skill-set-tree-without-validation 
+{
+    height: 188px;
+}
+
+.skill-set-tree-with-validation 
+{
+    height: 141px;
+}
+.skill-set-MetaData-without-validation 
+{
+    height: 280px;
+}
+.skill-set-MetaData-with-validation 
+{
+    height: 233px;
+}
+.skill-set-swap-step3-icons
+{
+    padding-left:17px
+}
+.skill-set-text-header
+{
+    padding-top:5px;
+}
+.selected-competencies-view
+{
+    padding-left:15px;
+}
+.Linked-competencies-view {
+	padding-left: 10px;
+	}
+	
+/* to override the default tinyMCE body class */
+.mceContentBody {
+    font-size: 11px;
+    font-family: Helvetica, Arial, 'Liberation Sans' , FreeSans, sans-serif;
+}
+
+/* End */
+
+/* Calendar Appointment styles */
+.appointment-new-patient
+{
+    height: 380px;
+    width: 440px;
+    display:none;
+}
+/* End */
+.disabled-text-background
+{
+    background-color: gainsboro;
+}
+

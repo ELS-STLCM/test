@@ -1,0 +1,86 @@
+﻿<div id="competency_grid_display" style="overflow-x: hidden;
+    overflow-y: hidden;width:102%;" class="grid_32">
+    <table id="competencyGrid" class="standard-text table-scroll-border competency-table-header">
+        <thead style="text-align: center;">
+            <tr class="dataTables_scrollHeadInner">
+                <th title="" class="datatable-background" style="width:1%">
+                </th>
+                <th title="Category" class="datatable-tooltip datatable-background" style="width:20%">
+                    Category
+                </th>
+                <th title="Name" class="datatable-tooltip datatable-background" style="width:28%">
+                    Name
+                </th>
+                <th title="Source" class="datatable-tooltip datatable-background" style="width:20%">
+                    Source
+                </th>
+                <th title="Focus" class="datatable-tooltip datatable-background" style="width:18%">
+                    Focus
+                </th>
+                <th title="Status" class="datatable-tooltip datatable-background" style="width:12%">
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<script type="text/javascript">
+    competencyDataTable = $('#competency_grid_display #competencyGrid').dataTable({
+        "bProcessing": false,
+        "bServerSide": true,
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            aoData.push({ "name": "searchByText", "value": $("#competencySearchByText").val() });
+            aoData.push({ "name": "selectedCompetencyList", "value": (strListOfSelectedCompetencyItems != null && strListOfSelectedCompetencyItems != undefined) ? strListOfSelectedCompetencyItems : "" });
+            aoData.push({ "name": "isCompetencySave", "value": isCompetencySave });
+            aoData.push({ "name": "isCompetencyDelete", "value": isCompetencyDelete });
+            $.getJSON(sSource, aoData, function (json) {
+                fnCallback(json);                
+                // to set border for the table div when the table height increases
+                if ($('#competency_grid_display .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                    setScrollableTableBorder(true, 'competency_grid_display');
+                }
+                else {
+                    setScrollableTableBorder(false, 'competency_grid_display');
+                }
+            });
+        },
+        "sAjaxSource": '@Url.Action("GetCompetencyList", "Competency")',
+        "bRetrieve": true,
+        "aoColumns": [
+            { "bSortable": false, "sName": "Select" },
+            { "bSortable": true, "sName": "Category" },
+            { "bSortable": true, "sName": "Name" },
+            { "bSortable": true, "sName": "Source" },
+            { "bSortable": true, "sName": "Focus" },
+            { "bSortable": true, "sName": "Status" }
+        ],
+        "aaSorting": [[5, 'desc']],
+        "oLanguage": { "sZeroRecords": "No content in this folder" },
+        "bAutoWidth": false,
+        "bFilter": false,
+        "bLengthChange": false,
+        "iDisplayLength": 15,
+        "bPaginate": true,
+        "sPaginationType": "full_numbers",
+        "bSort": true,
+        "sScrollY": "270px",
+        "sScrollX": "100%",
+        "bScrollCollapse": true,
+        "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
+        "fnDrawCallback": function () {
+            setScrollableTableHeight(this);
+        }
+    });
+
+    $("#competency_grid_Paging").ready(function () {
+        $("#competencyGrid_info").appendTo($("#competency_grid_Paging"));
+        $("#competencyGrid_paginate").appendTo($("#competency_grid_Paging"));
+    });
+
+
+</script>
+
+

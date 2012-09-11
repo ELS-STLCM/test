@@ -1,0 +1,100 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32 standard-text" id="questionHolder">
+<div class="grid_32 div-with-bottom-border">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_15 form-page-header" style="padding-top: 0px">
+        Question Bank
+    </div>
+    <div class="grid_7 align-div-inline" id="FilterByQuestionTypeForSearch">
+    </div>
+    <div class="align-div-inline standard-text">And / Or</div>
+    <div class="grid_8 align-div-inline">
+        @Html.TextBox("searchByText", "", new { id = "searchByText", @class = "grid_28" })
+        <img id="buttonSearch" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+    <div class="grid_8">
+        @Html.Partial("../../Views/Builder/QuestionBank/ReturnToQuestionBank")
+    </div>
+    <div class="grid_24">
+    <div class="grid_32 search-result-text">@if (!string.IsNullOrEmpty(ViewBag.SearchText))
+                                            { <text> Search Results for "@ViewBag.SearchText" </text> }</div>
+        <div class="clear clear-height-spacing">
+    </div>
+        <div class="clear clear-height-spacing">
+    </div>
+       @Html.Partial("../../Views/Builder/QuestionBank/_QuestionBankSearchGrid") 
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+</div> 
+
+<script type="text/javascript">
+    var filterByTypeList = @Html.Raw(Json.Encode(ViewBag.filterByQuestionTypeSearch)); 
+    var searchText="@ViewBag.SearchText";
+    var searchType="@ViewBag.SearchQuestionType";
+    var searchTypeText="@ViewBag.SearchQuestionTypeText";
+    $(document).ready(function () {
+        setMaxLenthSearchText("searchByText");
+        initializeFlexBoxForFilterByTypeForSearch("FilterByQuestionTypeForSearch",filterByTypeList)
+        $("#buttonSearch").click(function () {
+            questionBank.commonFunctions.searchByText(true);
+        });
+        $("#searchByText").keyup(function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                questionBank.commonFunctions.searchByText(true);
+            }
+        });
+        $("#searchByText").val(searchText)
+        $('#FilterByQuestionTypeForSearch_input').val(searchType);
+        $('#FilterByQuestionTypeForSearch_hidden').val(searchTypeText);         
+    }); 
+
+function initializeFlexBoxForFilterByTypeForSearch(divId, lstOfItems) {
+    var lstOfItemsTemp = { };
+    lstOfItemsTemp.results = lstOfItems;
+    lstOfItemsTemp.total = lstOfItemsTemp.results.length;
+    $('#' + divId).flexbox(lstOfItemsTemp, {
+        resultTemplate: '{name}',
+        width: 147,
+        paging: false,
+        maxVisibleRows: 10,
+        noResultsText: '',
+        noResultsClass: '',
+        matchClass: '',
+        matchAny: true,
+        onSelect: function () {
+            isSearchPage = true;
+            isFilterValueSelectedForSearch = true;
+            isFilterValueClearedForSearch = false;
+            questionBank.commonFunctions.searchByText(false);
+        }
+    });
+    $('#' + divId + "_input").watermark("Filter by question type", { className: 'watermark watermark-text' });
+    $('#FilterByQuestionTypeForSearch_input').live('blur', function () {
+        if ($('#FilterByQuestionTypeForSearch_input').val() == "") {
+            $('#FilterByQuestionTypeForSearch_input').text = "Filter by question type";
+            $('#FilterByQuestionTypeForSearch_input').addClass('watermark watermark-text');
+        } else {
+            $('#FilterByQuestionTypeForSearch_input').removeClass('watermark watermark-text');
+        }
+    });
+     $('#FilterByQuestionTypeForSearch_input').die('keyup').live('keyup', function () {
+        if (isFilterValueSelectedForSearch) {
+            if ($('#FilterByQuestionTypeForSearch_input').val() == "") {
+                isFilterValueClearedForSearch = true;
+                questionBank.commonFunctions.searchByText(false);
+            }
+        }
+    });
+}
+</script>
+
+
+

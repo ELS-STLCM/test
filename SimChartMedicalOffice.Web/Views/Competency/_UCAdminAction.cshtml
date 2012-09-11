@@ -1,0 +1,52 @@
+﻿@{
+    Layout = null;
+}
+<div class="prefix_8 grid_22">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="navigation-button align-div-inline standard-text standard-height-for-buttons"
+            value="Create New" onclick="CreateNewCompetency()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 class="standard-height-for-buttons"  id="btnDeleteCompetencyLeftCurve" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            value="Delete" onclick="deleteCompetency()" style="width:50px;" id="btnDeleteCompetency"/>
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 class="standard-height-for-buttons"  id="btnDeleteCompetencyRightCurve" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            value="Export to Excel" style="width:110px;"  onclick="location.href='@Url.Action("ExportCompetencyToXmlDocument", "Competency")'"/>
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+</div>
+
+<script type ="text/javascript">
+    $(document).ready(function () {
+
+    });
+
+    function CreateNewCompetency() {
+        competency.commonFunctions.loadCompetency("");
+    }
+    function deleteCompetency() {
+        competency.commonFunctions.deleteCompetency();
+    }
+</script>

@@ -1,0 +1,261 @@
+﻿@{
+    Layout = null;
+    ViewBag.Title = "Calendar";
+}
+<link href="@Url.Content("~/Content/SMO/simOfficeCalendarOverride.css?08292012")" rel="stylesheet" type="text/css" />
+@Html.Partial("../../Views/Forms/_FormsTools")
+<div class="container_32">
+    <div class="grid_31 section-seperator-normal"></div>
+@Html.Partial("../../Views/SimOfficeCalendar/_CalendarLeftPane") 
+@Html.Partial("../../Views/SimOfficeCalendar/_CalendarRightPane")
+</div>
+<div id="appointment_new_patient" class="container_32 appointment-new-patient">
+</div>
+<div id="appointment_search_patient" class="grid_32 container-grid-height" style="display: none">
+</div>
+<div id="appointment_load_view_content_view" style="height:420px; width:420px;display:none " class="container_32">
+</div>
+<div id="appointment_cancel_view" style="height:175px; width:250px;display:none " class="container_32">
+<div id="appointment_load_view_readonly" style="height:420px; width:420px;display:none " class="container_32">
+</div>
+<div id="view_more" style="display: none;padding:5px;" class="container_32">
+        
+ </div>
+<script language="javascript" type="text/javascript">
+    var resourceListForExamRoom = @Html.Raw(Json.Encode(ViewBag.ExamRoomViewResourceList));
+    $(document).ready(function () {
+        $("#frontOfficeTitle").html("@ViewBag.Title");
+        initializeCalendarView();
+        apply6pmTimeLine();
+        smoCalendar.setDefaultSettingsForCalendar();
+    });
+function apply6pmTimeLine(){
+    $(".fc-slot19 th").html("6pm").css("padding-top", "15px");
+}
+    function getColorForToolTip(className) {
+        switch (className) {
+        case "patient-visit":
+            return "#A0C1E8";
+        case "blocked-appointment":
+            return "#E6B9B8";
+        case "other-appointment":
+            return "#D7E4BD";
+        }
+    }
+
+    function refreshdatePickerForCalendarView() {
+        var startDate;
+        var endDate;
+        $("#dvDate").datepicker('destroy');
+        $("#dvDate").datepicker({
+            //set the class 'week-highlight' for the whole week
+            firstDay: 0,
+            beforeShowDay: function (date) {
+                var cssClass = beforeShowDayCustomized(date);
+                return [true, cssClass];
+            },
+            onChangeMonthYear: function(year, month, inst) {
+            if (inst.currentMonth!=inst.selectedMonth){
+                    var currentDate = $(this).datepicker('getDate');
+                    $('#calendar').fullCalendar('gotoDate', new Date(inst.selectedYear,inst.selectedMonth,inst.selectedDay));
+                }
+            },
+            onSelect: function (dateText, inst) {
+                startAjaxLoader();
+                var currentDate = $(this).datepicker('getDate');
+                startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay());
+                endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay() + 6);
+                $('.ui-datepicker-calendar').find('.ui-datepicker-current-day a').addClass('ui-state-active')
+                //Patient search click of day. check if calendar is available in UI. and change to day view
+                if($('#calendar')[0].style.display=='none'){       
+                    if(smoCalendar.getCurrentCalendarViewObject().name !='agendaDay'){
+                        $('#calendar').fullCalendar('changeView', 'agendaDay');
+                    }
+                    resetSearchByPatient();
+                    $("#searchPatientForAppointment").hide();
+                    $('#calendar').show();
+                }
+                $('#calendar').fullCalendar('gotoDate', currentDate);
+                closeAjaxLoader();
+            },
+            selectWeek: true
+        });
+        $("#dvDate").datepicker("setDate", smoCalendarFilter.StartDate);
+        $("#dvDate").datepicker("show");
+        $('tr').find('td.week-highlight').children('a').addClass("ui-state-active");
+         closeAjaxLoader();
+    }
+
+    function refreshdatePickerForExamView() {
+        var startDate;
+        var endDate;
+        $("#dvDateExam").datepicker('destroy');
+        $("#dvDateExam").datepicker({
+            //set the class 'week-highlight' for the whole week
+            firstDay: 0,
+            beforeShowDay: function (date) {
+                var cssClass = '';
+                if (date.toDateString() == smoCurrentExamViewDate.toDateString()) {
+                    cssClass = 'ui-state-active week-highlight ';
+                }
+                return [true, cssClass];
+            },
+            onSelect: function (dateText, inst) { 
+                var currentDate = $(this).datepicker('getDate');
+                startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay());
+                endDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate() - currentDate.getDay() + 6);
+                smoCalendarFilter.CurrentDate=convertDateToString(currentDate);
+                 $('#calendarExamRoom').fullCalendar('gotoDate', currentDate);
+            },
+            selectWeek: true
+        });
+        $("#dvDateExam").datepicker("setDate", smoCurrentExamViewDate);
+        $("#dvDateExam").datepicker("show");
+        closeAjaxLoader();
+    }
+
+    function beforeShowDayCustomized(date) { 
+        var cssClass = "";
+        switch (smoCalendarFilter.CalendarView) {
+        case "agendaWeek":
+        case "month":
+            if (date >= convertStringToDate(smoCalendarFilter.StartDate) && date < convertStringToDate(smoCalendarFilter.EndDate)) {
+                cssClass = 'ui-state-active week-highlight';
+            }
+            break;
+        case "agendaDay":
+            if (date.toDateString() == convertStringToDate(smoCalendarFilter.StartDate).toDateString()) {
+                cssClass = 'ui-state-active week-highlight ';
+            }
+            break;
+        }
+        return cssClass;
+    }
+function initializeExamRoomView() {
+    if (!$('#calendarExamRoom').hasClass('fc')) {
+        //Exam Room View Calendar             
+        $('#calendarExamRoom').fullCalendar({
+            header: {
+                left: 'prev,next',
+                center: 'title',
+                right: ''
+            },
+            defaultView: 'resourceDay',
+            titleFormat: 'ddd, MMM dd, yyyy',
+            selectable: true,
+            selectHelper: true,
+            allDaySlot: false,
+            firstHour: 8,
+            minTime: '8:00 am',
+            maxTime: '6:00 pm',
+            timeFormat: '',
+            viewDisplay: function (view) {
+                startAjaxLoader();
+                smoCalendar.getExamRoomViewFilter();
+                smoCalendar.setCurrentExamRoomViewData(view); 
+            },
+            eventAfterRender: function (event, element, view) {
+                $(element).find('.fc-event-inner.fc-event-skin').removeClass('fc-event-skin').addClass('event-provider-color');
+            },
+            eventRender: function (event, element) {
+                         element.qtip({
+                            content: replaceHTMLBreak(event.tooltip),
+                            overwrite: false,
+                            style: {
+                                title: {'color': 'Black' },
+                                background: getColorForToolTip(event.className[0]),
+                                tip: true
+                            },
+                            show: {
+                                when: 'mouseover',
+                                fixed: true
+                            },
+                            hide: {
+                                when: 'mouseout',
+                                fixed: true
+                            }
+                        }); 
+            },
+            contentHeight: 341,
+            resources: resourceListForExamRoom
+        });
+        refreshdatePickerForExamView();
+        apply6pmTimeLine();
+    }else{
+        smoCalendar.getExamRoomEventsForCalendar();
+    }
+}
+
+function initializeCalendarView(){
+if(!$('#calendar').hasClass('fc')){
+$('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next',
+                center: 'title',
+                right: 'agendaDay,agendaWeek,month'
+            },
+            defaultView: 'agendaDay',
+            allDaySlot: false,
+            buttonText: {
+                month: 'Month',
+                week: 'Week',
+                day: 'Day'
+            },
+            firstHour: 8,
+            minTime: '8:00am',
+            maxTime: '6:00pm',
+            selectable: true,
+            selectHelper: true,
+            allDayDefault: false,
+            titleFormat: {
+                month: 'MMMM, yyyy',
+                week: "MMMM d{ '&#8212;'[ MMMM] d, yyyy}",
+                day: 'dddd, MMMM d, yyyy'
+            },
+            select: function (start, end, allDay) {
+                smoCalendar.showAppointmentsOfADay(start, end, allDay);
+            },
+            eventClick: function (calEvent, jsView, view) {
+                if(calEvent.title!=VIEW_MORE_TEXT){
+                 smoCalendar.editmodeAppointment(calEvent, jsView, view);
+                }else{
+                     smoCalendar.viewMoreForDayInMonth(calEvent.start,jsView.pageX,jsView.pageY);   
+                }
+            },
+            eventRender: function (event, element) {
+                if(event.title!=VIEW_MORE_TEXT){
+                        element.qtip({
+                            content: replaceHTMLBreak(event.tooltip),
+                            overwrite: false,
+                            style: {
+                                title: { 'color': 'Black' },
+                                background: getColorForToolTip(event.className[0]),
+                                tip: true
+                            },
+                            show: {
+                                when: 'mouseover',
+                                fixed: true
+                            },
+                            hide: {
+                                when: 'mouseout',
+                                fixed: true
+                            }
+                        });
+                    }
+            },
+            timeFormat: '',
+            eventAfterRender: function (event, element, view) {
+                $(element).find('.fc-event-inner.fc-event-skin').removeClass('fc-event-skin').addClass('event-provider-color');
+            },
+            viewDisplay: function (view) {
+                startAjaxLoader();
+                smoCalendar.setCurrentViewFilterData(view); 
+            },
+            contentHeight: 341
+        });
+        
+        }
+}    
+</script>
+
+

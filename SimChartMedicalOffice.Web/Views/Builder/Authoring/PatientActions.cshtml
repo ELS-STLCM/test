@@ -1,0 +1,95 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="navigation-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 90px;" value="Create New" title="Create New" onclick="createNew()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" value="Delete" id="btnDeleteQuestions" onclick="" disabled="disabled" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" id="btnCopyQuestions" value="Copy" onclick="" disabled="disabled" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" id="btnMoveQuestions" value="Move" onclick="" disabled="disabled" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+</div>
+<script type="text/javascript">
+    function redirectToQuestionBank() {
+        $("#authoringQuestionBank").load("../QuestionBank/QuestionBank", function () {
+            closeAjaxLoader();
+        });
+    }
+    function redirectToAssignmentBuilder() {
+//        $("#authoringAssignmentBuilder").load("../AssignmentBuilder/AssignmentBuilder", function () {
+//            $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentMetaData", function () {
+//                closeAjaxLoader();
+//            });
+        //        });
+        
+        // reset AssignmentUinqueIdentifier if any
+        assignBuilder.commonFunctions.setAssignmentUniqueIdentifier("");
+        assignBuilder.redirectionFunctions.loadStep1OfAssignmentBuilder();
+    }
+    function redirectToSkillSetBuilder() {
+        isSkillSetEditMode = false;
+        skillSet.commonFunctions.loadStep1("");
+    }
+    function createNew() {
+        startAjaxLoader();
+        var index = jQuery('#authoring').data('tabs').options.selected;
+        if (index == 2) {
+            strListOfSelectedQuestionItems = "";
+            redirectToQuestionBank();
+        }
+        else if (index == 0) {
+            createNewPatient();
+        }
+        else if (index == 1) {
+            redirectToSkillSetBuilder();
+        }
+        else if (index == 3) {
+            redirectToAssignmentBuilder();
+        }
+    }
+    function createNewPatient() {
+        $("#authoringPractice").load("../Patient/Patient", function () {
+            closeAjaxLoader();
+        });
+    }
+</script>

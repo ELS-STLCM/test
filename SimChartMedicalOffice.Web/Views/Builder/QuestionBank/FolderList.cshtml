@@ -1,0 +1,275 @@
+﻿@{
+    Layout = null;
+}
+@*@if (ViewBag != null && ViewBag.FolderList != null && ViewBag.FolderList.Count > 0)
+{
+    foreach (KeyValuePair<String, SimChartMedicalOffice.Core.QuestionBanks.Folder> folder in ViewBag.FolderList)
+    {
+        int subFoldersCount = (folder.Value != null && folder.Value.SubFolders != null) ? folder.Value.SubFolders.Count : 0;
+        string folderImage = "~/Content/Images/FolderIcons/" + ((folder.Value != null && folder.Value.SubFolders != null && folder.Value.SubFolders.Count > 0) ? "icon_folder-open_normal.png" : "icon_folder_normal.png");
+    <div id="folderGuid-@folder.Value.UniqueIdentifier" class="grid_32 folder-icons">
+        <img class="grid_4" id="addFolder1" alt="" src="@Url.Content(folderImage)" title="folder"/>
+        <div class="grid_22">
+            @folder.Value.Name
+        </div>
+    </div>          
+    }
+}*@
+<script language="javascript" type="text/javascript">
+    function renderFolders(parentFolderName, currentTab,folderUrl) {
+        
+        var pageUrl = (pageUrl!="" && pageUrl!=undefined)?pageUrl:("@Url.Content("~/QuestionBank/GetSubfolders?parentFolderIdentifier=")");
+        pageUrl=pageUrl+parentFolderName+"&folderType="+getFolderType(currentTab)+"&folderUrl="+(isNullOrEmpty(folderUrl)?"":folderUrl);
+        setDivData(getDivObject(currentTab),"currentFolder",folderUrl);
+        setDivData(getDivObject(currentTab),"currentFolderIdentifier",parentFolderName  );
+        //get the newly added or renamed folder's id, if any
+        var newFolderId = getDivData(currentTab, "NewAddedFolder");
+        var renamedFolderId = getDivData(currentTab, "selectedFolderId");
+        
+        loadFolderTools(currentTab);
+//        $('#folders').data('currentFolder', parentFolderName);
+        //startAjaxLoader();
+        $.ajax({
+            url: pageUrl,
+            type: "POST",
+            dataType: 'json',
+            error: function (result) {
+                if (result != null) {
+                    alert('Error');
+                }
+            },
+            success: function (result) {
+                (getDivObject("folders_"+currentTab)).empty();
+                var folderContent = '';
+                var folderList =  result.Result;
+                var breadCrumbList = result.BreadCrumbFolders;
+                var maxSequenceNumber = 0;
+                
+                
+                // variables for new/rename folders
+                var newOrRenamedFolderHasContent = "";
+                var newOrRenamedFolderUrl = "";
+                var newOrRenamedFolderName = "";
+                var folderRenamedOrCreated = false;
+                
+                if (folderList != null) {
+                    
+                    activateFolderTools(currentTab, folderList.length);
+                    for (var folderIndex = 0; folderIndex <= folderList.length - 1; folderIndex++) {
+                        var folderImage = "../../Content/Images/FolderIcons/" + (folderHasContent(folderList[folderIndex],currentTab) ? "icon_folder-open_normal.png" : "icon_folder_normal.png");
+                        var folder = "<div id='folderDiv_" + folderList[folderIndex].UniqueIdentifier + "' class='grid_32' onclick='triggerFolderSelection(" + folderHasContent(folderList[folderIndex],currentTab) + ",\"" + folderList[folderIndex].UniqueIdentifier + "\",\"" + folderList[folderIndex].Url +  "\",\"" + folderList[folderIndex].Name.replace("\"","&quot") +  "\",\"" + currentTab + "\")' ondblclick='renderFoldersOnDoubleclick(\"" + folderList[folderIndex].UniqueIdentifier +"\",\""+currentTab+"\",\""+folderList[folderIndex].Url+"\",\"" + folderList[folderIndex].Name.replace("\"","&quot") + "\")'><img class='grid_4' id='folderImage_" + folderList[folderIndex].UniqueIdentifier + "' alt='" + folderList[folderIndex].Name.replace("\"","&quot") + "' src='" + folderImage + "' title='" + folderList[folderIndex].Name.replace("\"","&quot") + "'/><div class='grid_26 white-space'>" + folderList[folderIndex].Name.replace("\"","&quot") + "</div></div>";
+                        // if new folder added, place it at top and higlight it
+                        if (newFolderId!=null && newFolderId!="" && newFolderId==folderList[folderIndex].UniqueIdentifier){
+                            folderContent = folder + folderContent;
+                            // set variables for highlighting this folder once all folders rendered
+                            newOrRenamedFolderHasContent = false;
+                            newOrRenamedFolderUrl = folderList[folderIndex].Url;
+                            newOrRenamedFolderName = folderList[folderIndex].Name;
+                            folderRenamedOrCreated = true;
+                        }
+                        else {
+                            folderContent = folderContent + folder;
+                        }
+                        
+                        //if new folder not set and selectedFolderId div data set, 
+                        // set variables for highlighting this renamed folder once all folders rendered
+                        if ((newFolderId==null || newFolderId=="") && renamedFolderId==folderList[folderIndex].UniqueIdentifier) {
+                            newOrRenamedFolderHasContent = folderHasContent(folderList[folderIndex],currentTab);
+                            newOrRenamedFolderUrl = folderList[folderIndex].Url;
+                            newOrRenamedFolderName = folderList[folderIndex].Name;
+                            folderRenamedOrCreated = true;
+                        }
+                        
+                        //comparing and setting maxSequenceNumber
+                        if (folderList[folderIndex].SequenceNumber!=null && parseInt(folderList[folderIndex].SequenceNumber)>maxSequenceNumber) {
+                            maxSequenceNumber = parseInt(folderList[folderIndex].SequenceNumber);
+                        }
+                    }
+                    //reset "NewAddedFolder" div data if newFolderId not ""
+                    if (newFolderId!="") {
+                        setDivData(getDivObject(currentTab), "NewAddedFolder", "");
+                    }
+                    //reset "selectedFolderId" div data if selectedFolderId not ""
+                    if (renamedFolderId != "") {
+                        setDivData(getDivObject(currentTab), "selectedFolderId", "");
+                    }
+                    //saving the maxSequenceNumber in div data for new added folder's sequence number
+                    setDivData(getDivObject(currentTab), "MaxSequenceNumber", maxSequenceNumber);
+                    
+                    (getDivObject("folders_"+currentTab)).append(folderContent);
+
+                    // highlight new/renamed folder
+                    if((newFolderId!="" || renamedFolderId!="") && folderRenamedOrCreated) {
+                        triggerFolderSelection(newOrRenamedFolderHasContent, (newFolderId != null && newFolderId != "" ? newFolderId : renamedFolderId), newOrRenamedFolderUrl, newOrRenamedFolderName, currentTab);
+                    }
+                }
+                RenderBreadCrumb(breadCrumbList, currentTab);
+            }
+        });
+        //closeAjaxLoader();
+    }
+    function renderFoldersOnDoubleclick(parentFolderName, currentTab,folderUrl, folderActualName)
+    {
+        strListOfSelectedQuestionItems = "";
+        startAjaxLoader();
+        //SetBreadCrumb(parentFolderName, currentTab, folderUrl, folderActualName);
+     renderFolders(parentFolderName, currentTab,folderUrl);
+     getDataGridPopulated(currentTab);
+        closeAjaxLoader();
+    }
+    
+    // to render the bread crumb during folder render
+    function RenderBreadCrumb (breadCrumbList, currentTab) {
+        if (breadCrumbList!=null && breadCrumbList!=undefined) {
+            var breadCrumbDiv = "";
+            for (var folderIndex = 0; folderIndex < breadCrumbList.length; folderIndex++) {
+                var parentFolderName = breadCrumbList[folderIndex].UniqueIdentifier;
+                var folderUrl = breadCrumbList[folderIndex].Url;
+                var folderActualName = breadCrumbList[folderIndex].Name;
+
+                // if not last folder, i.e. not current rendered folder create link
+                if (folderIndex != breadCrumbList.length - 1) {
+
+                    var renderDoubleClick = parentFolderName == "" ? "renderFoldersOnDoubleclick(\"" : "renderFoldersOnDoubleclick(\"";
+
+                    var currentNodeLink = "<div class='align-div-inline'><a class='link select-hand' onclick='" + renderDoubleClick + parentFolderName + "\",\"" + currentTab + "\",\"" + folderUrl + "\",\"" + folderActualName + "\")'><u>" + folderActualName + "</u></a>&nbsp;>&nbsp;</div>";
+                    breadCrumbDiv = breadCrumbDiv + currentNodeLink;
+                }
+                    //if last folder i.e. current rendered folder create a label
+                else {
+                    var currentNodeLabel = "<div class='align-div-inline'>" + folderActualName + "&nbsp;</div>";
+                    breadCrumbDiv = breadCrumbDiv + currentNodeLabel;
+                }
+            }
+        }
+        // for removing duplicate breadCrumb divs in other tabs
+        switch(currentTab) 
+        {
+            case "questionBankTab":
+                // remove breadCrumb divs from all other tabs to avoid dupilcate data
+                RemoveOtherTabBreadCrumbs("authoringPractice");
+                RemoveOtherTabBreadCrumbs("authoringSkillSetBuilder");
+                RemoveOtherTabBreadCrumbs("authoringAssignmentBuilder");
+                break;
+            case "practiceTab":
+                // remove breadCrumb divs from all other tabs to avoid dupilcate data
+                RemoveOtherTabBreadCrumbs("authoringQuestionBank");
+                RemoveOtherTabBreadCrumbs("authoringSkillSetBuilder");
+                RemoveOtherTabBreadCrumbs("authoringAssignmentBuilder");
+                break;
+            case "assignmentBuilderTab":
+                RemoveOtherTabBreadCrumbs("authoringQuestionBank");
+                RemoveOtherTabBreadCrumbs("authoringSkillSetBuilder");
+                RemoveOtherTabBreadCrumbs("authoringPractice");
+                break;
+            case "skillSetBuilderTab":
+                // remove breadCrumb divs from all other tabs to avoid dupilcate data
+                RemoveOtherTabBreadCrumbs("authoringPractice");
+                RemoveOtherTabBreadCrumbs("authoringQuestionBank");
+                RemoveOtherTabBreadCrumbs("authoringAssignmentBuilder");
+                break;                
+                    //add other tab cases
+        }
+
+        $("#BreadCrumb_Main").empty();
+        if (breadCrumbDiv!="") {
+            $("#BreadCrumb_Main").append(breadCrumbDiv);
+        }
+    }
+
+    function SetBreadCrumb(parentFolderName, currentTab,folderUrl, folderActualName) {
+        var hiddendBreadCrumb = "";
+        var visibleBreadCrumb = "";
+        var renderDoubleClick = parentFolderName == "" ? "renderFoldersOnDoubleclick(\"" : "renderFoldersOnDoubleclick(\"";
+        var parentFolderNameSub = "";
+        var currentNodeLabel = "";
+        
+        if (parentFolderName!="") {
+            parentFolderNameSub = parentFolderName;
+        }
+        // if parentFolderName is "" means tab click, reset all set contents
+        else {
+            // set folderActualName and parentFolderName to current tab name
+            switch(currentTab) {
+                case "questionBankTab":
+                    folderActualName = "QuestionBank";
+                    parentFolderNameSub = "QuestionBank";
+                    
+                    // remove breadCrumb divs from all other tabs to avoid dupilcate data
+                    RemoveOtherTabBreadCrumbs("authoringPractice");
+                    RemoveOtherTabBreadCrumbs("authoringSkillSetBuilder");
+                    RemoveOtherTabBreadCrumbs("authoringAssignmentBuilder");
+                    break;
+                case "practiceTab":
+                    folderActualName = "Practice";
+                    parentFolderNameSub = "Practice";
+                    
+                    // remove breadCrumb divs from all other tabs to avoid dupilcate data
+                    RemoveOtherTabBreadCrumbs("authoringQuestionBank");
+                    RemoveOtherTabBreadCrumbs("authoringSkillSetBuilder");
+                    RemoveOtherTabBreadCrumbs("authoringAssignmentBuilder");
+                    break;
+                case "assignmentBuilderTab":
+                    folderActualName = "AssignmentRepository";
+                    parentFolderNameSub = "AssignmentRepository";
+                    
+                    // remove breadCrumb divs from all other tabs to avoid dupilcate data
+                    RemoveOtherTabBreadCrumbs("authoringQuestionBank");
+                    RemoveOtherTabBreadCrumbs("authoringSkillSetBuilder");
+                    RemoveOtherTabBreadCrumbs("authoringPractice");
+                    break;
+                case "skillSetBuilderTab":
+                    folderActualName = "SkillSetBuilder";
+                    parentFolderNameSub = "SkillSetBuilder";
+                    
+                    // remove breadCrumb divs from all other tabs to avoid dupilcate data
+                    RemoveOtherTabBreadCrumbs("authoringQuestionBank");
+                    RemoveOtherTabBreadCrumbs("authoringPractice");
+                    RemoveOtherTabBreadCrumbs("authoringAssignmentBuilder");
+                    break;                       
+
+                //add other tab cases
+            }
+            
+            //reset setDivData
+            setDivData(getDivObject("smoMainContent_BreabCrumb"), "HiddenBreadCrumbURL", "");
+            setDivData(getDivObject("smoMainContent_BreabCrumb"), "VisibleBreadCrumb", "");
+        }
+        var currentNodeLink = "<div id='BreadCrumb_"+parentFolderNameSub+"' class=' align-div-inline white-space'><a id='BreadCrumbLink_" + parentFolderName + "' class='link select-hand' onclick='"+renderDoubleClick+parentFolderName+ "\",\"" + currentTab + "\",\""+ folderUrl +"\",\"" + folderActualName+ "\")'><u>"+folderActualName+"</u></a>&nbsp;>&nbsp;</div>";
+        if (parentFolderName!="") {
+            currentNodeLabel = "<div class='white-space align-div-inline' id='BreadCrumb_" + parentFolderNameSub + "'>" + folderActualName + "&nbsp;</div>";
+        }
+        hiddendBreadCrumb = SetHiddenBreadCrumb(parentFolderNameSub);
+        visibleBreadCrumb = hiddendBreadCrumb + currentNodeLabel;
+        hiddendBreadCrumb = hiddendBreadCrumb + currentNodeLink;
+        $("#BreadCrumb_Main").empty();
+        setDivData(getDivObject("smoMainContent_BreabCrumb"), "HiddenBreadCrumbURL", hiddendBreadCrumb);
+        setDivData(getDivObject("smoMainContent_BreabCrumb"), "VisibleBreadCrumb", visibleBreadCrumb);
+        $("#BreadCrumb_Main").append(visibleBreadCrumb);
+    }
+    
+    // for clicking a middle link and truncating the Breabcrumb till that link
+    function SetHiddenBreadCrumb (parentFolderNameSub) {
+        var hiddenBreadCrumb = getDivData("smoMainContent_BreabCrumb", "HiddenBreadCrumbURL");
+        $("div[id='BreadCrumb_Hidden']").append(hiddenBreadCrumb);
+        var hiddenCrumb = "";
+        $("div[id='BreadCrumb_Hidden']").children().each(function() {
+            if ($(this).is('div') && $(this).attr('id')!=("BreadCrumb_"+parentFolderNameSub)) {
+                hiddenCrumb = hiddenCrumb + $(this).get()[0].outerHTML;
+            }
+            else {
+                //once the current folder's link encountered
+                return false;
+            }
+        });
+        $("div[id='BreadCrumb_Hidden']").empty();
+        return hiddenCrumb;
+    }
+    
+    function RemoveOtherTabBreadCrumbs(tabName) {
+        $("#"+tabName+" #BreadCrumb_Main").remove();
+        $("#"+tabName+" #BreadCrumb_Hidden").remove();
+    }
+</script>
+<div id="@("folders_" + @ViewData["currentFolderPanel"])" class="grid_32 folder-section remove-div-space alpha omega" style="width: 100%">
+</div>

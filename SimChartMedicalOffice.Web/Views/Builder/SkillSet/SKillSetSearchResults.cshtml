@@ -1,0 +1,106 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32 standard-text" id="skillsetHolder">
+<div class="grid_32 div-with-bottom-border">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_15 form-page-header" style="padding-top: 0px">
+        Skill Set
+    </div>
+    <div class="grid_7 align-div-inline" id="FilterBySourceForSearch">
+    </div>
+    <div class="align-div-inline standard-text">And / Or</div>
+    <div class="grid_8 align-div-inline">
+        @Html.TextBox("searchByTextSSB", "", new { id = "searchByTextSSB", @class = "grid_28" })
+        <img id="buttonSearchSSB" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+    <div class="grid_8">
+        @Html.Partial("../../Views/Builder/Skillset/ReturnToSkillSetBuilder")
+    </div>
+    <div class="grid_24">
+    <div class="grid_32 search-result-text">Search Results for "@ViewBag.SearchText"</div>
+        <div class="clear clear-height-spacing">
+    </div>
+        <div class="clear clear-height-spacing">
+    </div>
+       @Html.Partial("../../Views/Builder/Skillset/_SkillSetSearchGrid")
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+</div> 
+
+<script type="text/javascript">
+    var filterBySourceList = @Html.Raw(Json.Encode(ViewBag.FilterBySource)); 
+    var searchText="@ViewBag.SearchText";
+    var searchSource="@ViewBag.searchSource";
+    var searchSourceText="@ViewBag.SearchSourceText";
+    $(document).ready(function () {
+        setMaxLenthSearchText("searchByText");
+        isSearchPageForSkillSet = true;
+        initializeFlexBoxForFilterBySourceForSearch("FilterBySourceForSearch", filterBySourceList);
+        $("#buttonSearchSSB").click(function () {
+            skillSet.commonFunctions.searchByText();
+        });
+        $("#searchByTextSSB").keyup(function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                skillSet.commonFunctions.searchByText();
+            }
+        });
+        if(!isNullOrEmpty(searchSource)){
+            isSourceFilterValueSelectedForSearch=true;
+        }
+        $("#searchByTextSSB").val(searchText);
+        $('#FilterBySourceForSearch_input').val(searchSource);
+        //$('#FilterBySourceForSearch_hidden').val(searchSourceText);
+    }); 
+
+function initializeFlexBoxForFilterBySourceForSearch(divId, lstOfItems) {
+    var lstOfItemsTemp = { };
+    lstOfItemsTemp.results = lstOfItems;
+    lstOfItemsTemp.total = lstOfItemsTemp.results.length;
+    $('#' + divId).flexbox(lstOfItemsTemp, {
+        resultTemplate: '{name}',
+        width: 147,
+        paging: false,
+        maxVisibleRows: 15,
+        noResultsText: '',
+        noResultsClass: '',
+        matchClass: '',
+        matchAny: true,
+        onSelect: function () {
+            isSearchPageForSkillSet = true;
+            isSourceFilterValueSelectedForSearch = true;
+            skillSet.commonFunctions.searchByText();
+        }
+    });
+    $('#' + divId + "_input").watermark("Filter by Source", { className: 'watermark watermark-text' });
+      $('#FilterBySourceForSearch_input').live('blur', function () {
+        if ($('#FilterBySourceForSearch_input').val() == "") {
+            $('#FilterBySourceForSearch_input').text = "Filter by Sources";
+            $('#FilterBySourceForSearch_input').addClass('watermark watermark-text');
+            //            startAjaxLoader();
+            //            questionBankDataTable.fnDraw();
+        } else {
+            $('#FilterBySourceForSearch_input').removeClass('watermark watermark-text');
+        }
+    });
+    $('#FilterBySourceForSearch_input').live('keyup', function () {
+        if (isSourceFilterValueSelectedForSearch) {
+            if ($('#FilterBySourceForSearch_input').val() == "") {
+                startAjaxLoader();
+                isSourceFilterValueClearedForSearch=true;
+                strListOfSelectedSkillSetItems = "";
+                skillSetSearchDataTable.fnDraw();
+            }
+        }
+    });
+  }
+</script>
+
+
+

@@ -1,0 +1,88 @@
+﻿<div id="skillSetBuilder_grid_display" style="overflow-x: auto;
+    overflow-y: hidden;width:98%" class="grid_32">
+    <table id="SkillSetBuilderGrid" class="standard-text table-scroll-border">
+        <thead style="text-align: center;">
+          <tr class="dataTables_scrollHeadInner">
+                <th title="" class="datatable-background" style="width: 1%">
+                    
+                </th>
+                <th title="Skill Set Title" class="datatable-tooltip datatable-background" style="width: 20%">
+                    Skill Set Title
+                </th>
+                <th title="Linked Competencies" class="datatable-tooltip datatable-background" style="width: 45%">
+                    Linked Competencies
+                </th>
+                <th title="Source" class="datatable-tooltip datatable-background" style="width: 15%">
+                    Source
+                </th>
+                <th title="Created On" class="datatable-tooltip datatable-background" style="width: 10%">
+                    Created On
+                </th>
+                <th title="Status" class="datatable-tooltip datatable-background" style="width: 15%">
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    skillSetBuilderDataTable = $('#skillSetBuilder_grid_display #SkillSetBuilderGrid').dataTable({
+        "bProcessing": false,
+        "bServerSide": true,
+        "oTableTools": {
+            "aButtons": [],
+            "sRowSelect": "single"
+        },
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            aoData.push({ "name": "parentFolderIdentifier", "value": getDivData("skillSetBuilderTab", "currentFolderIdentifier") });
+            aoData.push({ "name": "folderType", "value": 4 });
+            aoData.push({ "name": "filterBySource", "value": ($("#FilterBySource_input").val() == undefined) ? "" : $("#FilterBySource_input").val() });
+            aoData.push({ "name": "filterBySearch", "value": ($("#searchByTextSSB").val() != "Search by text") ? $("#searchByTextSSB").val() : "" });
+            aoData.push({ "name": "selectedSkillSetList", "value": (strListOfSelectedSkillSetItems != null && strListOfSelectedSkillSetItems != undefined) ? strListOfSelectedSkillSetItems : "" });
+            aoData.push({ "name": "folderUrl", "value": getDivData("skillSetBuilderTab", "currentFolder") });
+            $.getJSON(sSource, aoData, function (json) {
+                fnCallback(json);                        
+                if ($('#skillSetBuilder_grid_display .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                    setScrollableTableBorder(true, 'skillSetBuilder_grid_display');
+                }
+                else {
+                    setScrollableTableBorder(false, 'skillSetBuilder_grid_display');
+                }                
+                closeAjaxLoader();
+            });
+        },
+
+        "sAjaxSource": '@Url.Action("GetSkillSetList","SkillSet")',
+        "bRetrieve": true,
+        "aoColumns": [
+            { "bSortable": false, "sName": "Select" },
+            { "bSortable": true, "sName": "SkillSetTitle" },
+            { "bSortable": true, "sName": "Competency" },
+            { "bSortable": true, "sName": "Source" },
+            { "bSortable": true, "sName": "CreatedOn" },
+            { "bSortable": true, "sName": "Status" }
+        ],
+        "aaSorting": [[4, 'desc']],
+        "oLanguage": { "sZeroRecords": "No content in this folder" },
+        "bAutoWidth": false,
+        "bFilter": false,
+        "bLengthChange": false,
+        "iDisplayLength": 15,
+        "bPaginate": true,
+        "sPaginationType": "full_numbers",
+        "bSort": true,
+        "sScrollY": "270px",
+        "sScrollX": "100%",
+        "bScrollCollapse": true,
+        "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
+        "fnDrawCallback": function () {                    
+            setScrollableTableHeight(this);
+        }
+    });
+        $("#skillSetBuilder_grid_Pagination").ready(function () {
+        $("#skillSetBuilderGrid_info").appendTo($("#skillSetBuilder_grid_Pagination"));
+        $("#skillSetBuilderGrid_paginate").appendTo($("#skillSetBuilder_grid_Pagination"));
+    });
+</script>

@@ -1,0 +1,33 @@
+﻿@{
+    Layout = null;
+}
+<script type="text/javascript" language="javascript">
+    $(document).ready(function () {
+        initializeAjaxForm("ajaxUploadForm");
+        resetImageUploadForm();
+    });
+</script>
+<form id="ajaxUploadForm" class="file-upload-popup" action=@Url.Content("~/QuestionBank/AjaxUploadAFile") method="post"
+      enctype="multipart/form-data">
+    <div id="validation_summary" class="error-message validation-summary"></div>
+    <div class="clear clear-height-spacing">&nbsp;</div>
+        <div class="grid_2 header-text"> Note:</div>
+         <div class="grid_30">Images of type jpeg, png, gif and bmp only can be uploaded.</div>
+            <div class="clear clear-height-spacing">&nbsp;</div>
+        <div class="grid_16">
+            <label id="lblUpload">
+                File to Upload:
+                <input type="file" name="file"  class="standard-text file-upload-input"
+                    /></label>
+        </div>
+    <div class="grid_16">
+        <div class="align-div-inline">
+            <img alt="x" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")" class="standard-height-for-buttons" /></div>
+        <div class="align-div-inline">
+            <input   type="submit" value='Upload' class="transaction-button standard-height-for-buttons" /> 
+        </div>
+        <div class="align-div-inline">
+            <img alt="x" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"  class="standard-height-for-buttons"/></div>
+    </div>
+        <div class="clear clear-height-spacing">&nbsp;</div>
+</form>

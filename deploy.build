@@ -1,0 +1,204 @@
+<project name="DOTNET Deploy" default="help" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  
+	<!--/ see help target for info /-->
+
+	<!-- includes -->
+	<property name="BuildFiles.Directory" value="buildfiles"/>
+	<include buildfile="${BuildFiles.Directory}\custom.properties.xml"/>
+	
+	<call target="Check Environment" />
+	
+	<property name="WORKSPACE" 		value="${environment::get-variable('WORKSPACE')}" />
+	<property name="JOB" 			value="${environment::get-variable('PROMOTED_JOB_NAME')}" />
+	<property name="BUILD.NUM" 		value="${environment::get-variable('PROMOTED_NUMBER')}" />
+	<property name="BUILD.ZIP"		value="${JOB}.${BUILD.NUM}.zip" />
+	<property name="RELEASE.ZIP" 	value="${PKG.REPO}\${BUILD.ZIP}" />
+	<property name="RELEASE.XML" 	value="${PKG.REPO}\${JOB}.${BUILD.NUM}.xml" />
+
+	<if test="${not file::exists(RELEASE.XML)}" >
+		<call target="Fail Email" />
+		<fail message="Unable to find release properties file: ${RELEASE.XML}" />
+	</if>
+	
+	<if test="${not file::exists(RELEASE.ZIP)}" >
+		<call target="Fail Email" />
+		<fail message="Unable to find release package: ${RELEASE.ZIP}" />
+	</if>
+	
+	<include buildfile="D:\jenkins\svn_variables.xml" />
+	<include buildfile="${RELEASE.XML}"/>
+	
+<!-- properties -->	
+	<property name="DEV" 			value="${Stage.dir}\DEV${ENV.NUM}" />
+	<property name="INT" 			value="${Stage.dir}\INT${ENV.NUM}" />
+	<property name="CERT" 			value="${Stage.dir}\CERT${ENV.NUM}" />
+	<property name="PROD" 			value="${Stage.dir}\PROD" />
+	
+	<!-- targets -->
+	<target name="init" >
+	
+		<echo message="Validating deployment info..." />
+		
+		<if test="${not property::exists('FROM')}" >
+			<call target="Fail Email" />
+			<fail message="Missing command line parameter: FROM" />
+		</if>
+		
+		<if test="${not property::exists('TO')}" >
+			<call target="Fail Email" />
+			<fail message="Missing command line parameter: TO" />
+		</if>
+		
+		<choose>
+			<when test="${FROM=='BUILD'}" >
+				<property name="SOURCE" value="${PKG.REPO}" />
+				<property name="ZIP.TARGET" value="${DEV}" />
+				<property name="PKG.TARGET" value="${DEV}/CURRENT" />
+			</when>
+			<when test="${FROM=='DEV'}" >
+				<property name="SOURCE" value="${DEV}" />
+				<property name="ZIP.TARGET" value="${INT}" />
+				<property name="PKG.TARGET" value="${INT}/CURRENT" />
+			</when>
+			<when test="${FROM=='INT'}" >
+				<property name="SOURCE" value="${INT}" />
+				<property name="ZIP.TARGET" value="${CERT}" />
+				<property name="PKG.TARGET" value="${CERT}/CURRENT" />
+			</when>
+			<when test="${FROM=='CERT'}" >
+				<property name="SOURCE" value="${CERT}" />
+				<property name="ZIP.TARGET" value="${PROD}" />
+				<property name="PKG.TARGET" value="${PROD}/CURRENT" />
+			</when>
+			<otherwise>
+				<call target="help" />
+			</otherwise>
+		</choose>
+	
+		<property name="VALID.ZIP" value="${SOURCE}\${BUILD.ZIP}" />
+		<if test="${not file::exists(VALID.ZIP)}" >
+			<choose> 
+				<when test="${FROM=='BUILD'}" >
+					<call target="Fail Email" />
+					<fail message="Can't find ${VALID.ZIP}. Did this project build successfully?" />
+				</when>
+				<otherwise>
+					<call target="Fail Email" />
+					<fail message="Can't find ${VALID.ZIP}. Promote to ${FROM} first. Then re-execute this promotion" />
+				</otherwise>
+			</choose>
+		</if>
+		
+		<echo message="Validation Complete!" />
+	
+	</target>
+	
+	<target name="Promote" verbose="true" depends="init" >
+	
+		<echo message="Promoting ${BUILD.ZIP} from ${FROM} to ${TO}" />
+		
+		<copy file="${VALID.ZIP}" tofile="${ZIP.TARGET}\${BUILD.ZIP}" overwrite="true" />
+		<unzip zipfile="${VALID.ZIP}" todir="${WORKSPACE}" />
+		
+		<trycatch>
+			<try>
+				<exec program="robocopy" failonerror="false" resultproperty="EXITSTATUS">
+					<arg value="${WORKSPACE}\${JOB}.${BUILD.NUM}" />
+					<arg value="${PKG.TARGET}" />
+					<arg value="/MIR" />
+				</exec>
+				<echo message="Successful file copy. Exit code: ${EXITSTATUS}." if="${'7' >= EXITSTATUS}" />
+				<fail message="File copy failed! Exit code: ${EXITSTATUS}" if="${EXITSTATUS > '7'}" />
+			</try>
+		</trycatch>
+		
+		<property name="CONFIGS.DIR" value="${WORKSPACE}\${JOB}.${BUILD.NUM}\configs\${TO}" />
+		
+		<copy todir="${PKG.TARGET}" verbose="true" >
+			<fileset basedir="${CONFIGS.DIR}" >
+				<include name="**/**" />
+			</fileset>
+		</copy>
+		
+		<delete dir="${WORKSPACE}\${JOB}.${BUILD.NUM}" />
+		
+		<call target="Execute RepliWeb Deployment" />
+	
+	</target>
+	
+	<target name="help" >
+		<call target="Fail Email" />
+		<fail message="This file expects several parameters to be set at the command line during the call
+	Each of these parameters are set at the command line using the form: -D:VARIABLE=VALUE
+	
+	FROM	This is the identifier for the source of the package: BUILD, DEV, INT, CERT are valid
+	TO		This is the identifier for the target of the package: DEV, INT, CERT, PROD are valid " />
+	
+	</target>
+	
+	<target name="Check Environment" >
+	
+		<if test="${not environment::variable-exists('WORKSPACE')}">
+			<call target="Fail Email" />
+			<fail message="Something seems to be wrong with the environment.
+			Variable: WORKSPACE is NOT defined and should be. Try rebuilding the project" />
+		</if>
+		<if test="${not environment::variable-exists('PROMOTED_JOB_NAME')}">
+			<call target="Fail Email" />
+			<fail message="Something seems to be wrong with the environment.
+			Variable: PROMOTED_JOB_NAME is NOT defined and should be. Try rebuilding the project" />
+		</if>
+		<if test="${not environment::variable-exists('PROMOTED_NUMBER')}">
+			<call target="Fail Email" />
+			<fail message="Something seems to be wrong with the environment.
+			Variable: PROMOTED_NUMBER is NOT defined and should be. Try rebuilding the project" />
+		</if>
+		
+	</target>
+	
+	<target name="Fail Email">
+	<!-- This creates the failure email that gets sent out when the promotion fails in Nant -->
+	<!-- message can't follow normal indention convention because it will be indented in the email too.  -->
+		<mail 
+		from="ELSSTLCM@Elsevier.com" 
+		tolist="${EMAILS.TO}" 
+		cclist="" 
+		bcclist="" 
+		subject="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED" 
+		mailhost="ELSSTL-APPSMTP.science.regn.net"
+		message="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED
+
+Please check Jenkins promtion log to see what happened."> 
+		</mail>	
+	</target>	
+	
+	<target name="Execute Marimba Deployment" >
+		<exec program="perl" failonerror="true" resultproperty="EXITSTATUS">
+			<arg value="D:/tools/admin/tools/remote_deploy.pl" />
+			<arg value="${MARIMBA_USER}" />
+			<arg value="${MARIMBA_PASS}" />
+			<arg value="${Marimba.JobName}" />
+			<arg value="${TO}" />
+		</exec>
+		<if test="${EXITSTATUS!='0'}">
+			<call target="Fail Email" />	
+		</if>
+			
+	</target>
+	
+	<target name="Execute RepliWeb Deployment" >
+		<exec program="perl" failonerror="true" resultproperty="EXITSTATUS">
+			<arg value="D:/tools/admin/tools/repliweb_deploy.pl" />
+			<arg value="${SVN_USER}" />
+			<arg value="${SVN_PASS}" />
+			<arg value="${RepliWeb.JobName}" />
+			<arg value="${TO}" />
+		</exec>
+		<if test="${EXITSTATUS!='0'}">
+			<call target="Fail Email" />	
+		</if>
+	</target>
+  
+  
+</project>

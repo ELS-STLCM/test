@@ -1,0 +1,119 @@
+﻿
+/*Override classes for Jquery Tabs*/
+.ui-widget-content /* to remove the main content outline border*/
+{
+    border: 0px;
+    padding: 0px;
+}
+.ui-corner-all /* to remove the main content outline border*/
+{
+    border-radius: 0px;
+    border: 0px;
+}
+
+.ui-tabs .ui-tabs-panel /* to remove padding for content*/
+{
+    padding-left: 0px;
+    border: 0px;
+}
+
+.ui-widget /* to set the font style according to medical office*/
+{
+    font-size: 11px;
+    font-family: Helvetica, Arial, 'Liberation Sans' , FreeSans, sans-serif;
+    border: 0px;
+}
+.ui-widget-content a /* to set the font style according to medical office*/
+{
+    border: 0px;
+    color: blue;
+    
+} 
+.ui-widget-header
+{
+    background: url('../../Content/Images/headerBackGround2.jpg') repeat-x;    
+}
+.ui-tabs .ui-tabs-panel
+{
+    padding-top: 0px;
+}
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default
+{
+    background-image: url('');
+    background-color: #0060a8;
+    color: white;
+}
+.ui-tabs .ui-tabs-nav li.ui-tabs-selected
+{
+    background-image: url('');
+    background-color: #dedede;
+}
+.ui-tabs .ui-tabs-panel
+{
+    padding-right: 0px;
+}
+#ul_admin li.ui-tabs-selected 
+{
+   background:white; 
+}
+#ul_admin li a span
+{
+   color: white;
+}
+#ul_admin li.ui-tabs-selected a span
+{
+   color:  #FF8A09;
+}
+#ul_admin li
+{
+    background-color: #0f5da5;
+}
+#ul_admin 
+{
+    padding-left: 15px;
+}
+#ul_authoring  li.ui-tabs-selected
+{
+    background-image: url('');
+    background-color:  #FF8A09;
+}
+#ul_authoring li
+{
+    background:transparent; 
+}
+#ul_authoring 
+{
+   background:url('../../Content/Images/headerBackGround3.jpg') repeat-x;  
+
+}
+#ul_authoring  li.ui-tabs-selected a span
+{
+    color: white;
+}
+#ul_authoring 
+{
+    padding-left: 10px;
+    padding-bottom: 6px;
+    padding-top: 6px;
+}
+#ul_authoring li
+{
+    padding-left: 10px;
+    border-bottom-width: 0px;
+    border-top-width: 0px;
+    border-left-width: 0px;
+    border-right-width: 2px;
+    border-radius:0px;
+}
+.link a
+{
+    color: #4EB6F0;
+}
+.ui-dialog
+{
+    border-color:Black;
+    border:1px solid;
+}
+.ui-dialog .ui-dialog-content {
+    padding-right: 0px;
+}

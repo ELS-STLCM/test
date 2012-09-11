@@ -1,0 +1,57 @@
+<project name="DotNet_Build_Framework" default="build" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+	
+  <!-- Includes -->
+	<property name="BuildFiles.Directory" value="buildfiles"/>
+	<include buildfile="${BuildFiles.Directory}\custom.properties.xml"/>
+	<include buildfile="${BuildFiles.Directory}\custom.targets.xml"/>
+	<include buildfile="${BuildFiles.Directory}\init.xml"/> 
+	<include buildfile="${BuildFiles.Directory}\compile.xml"/>
+	<include buildfile="${BuildFiles.Directory}\tests.xml" />
+	<include buildfile="${BuildFiles.Directory}\package.xml"/>
+	<include buildfile="${BuildFiles.Directory}\deploy.xml"/>
+	<include buildfile="${BuildFiles.Directory}\environment.xml" />
+	<include buildfile="D:\jenkins\svn_variables.xml" />
+
+  <!-- End Includes   -->
+
+  <!-- main targets -->
+	<target name="build" depends="init" >
+		<!-- compile tasks -->
+		<call target="Compile" />	
+
+		<!-- testing tasks -->
+		<if test="${string::contains(runtests.task,'yes')}">
+			<call target="Run Unit Tests" />
+		</if>
+		
+		<!-- packaging tasks --> 
+		<call target="Package" />
+
+		<echo message="BUILD SUCCEEDED!" />
+		
+	</target>
+	
+	<target name="CI build" depends="init" >
+		<!-- compile tasks -->
+		<call target="Compile" />	
+
+		<!-- testing tasks -->
+		<if test="${string::contains(runtests.task,'yes')}">
+			<call target="Run Unit Tests" />
+		</if>
+		
+	</target>
+	
+	<target name="help" >
+	
+		<echo message="This build script/framework requires the following installed applications
+		in order to function properly:
+		  - NAnt (used to run this script)
+		  - .Net framework SDK's for the version you want to build with
+		  - Visual Studio version that matches your application
+		  - PERL interpreter" />
+	
+	</target>
+	
+</project>

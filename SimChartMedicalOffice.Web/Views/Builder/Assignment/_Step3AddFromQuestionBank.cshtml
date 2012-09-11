@@ -1,0 +1,248 @@
+﻿@{
+
+    Layout = null;
+}
+<div id="AddQuestionBank" class="container_32 remove-div-space">
+    <div class="grid_32">
+        Select the questions from the Question Bank for the assignment.
+    </div>
+    <div class="grid_32 clear clear-height-spacing" />
+    <div class="grid_32 remove-div-space" style="width: 600px">
+        <div class="grid_5">
+            Filter by Type:
+        </div>
+        <div class="grid_5 align-div-inline" id="FilterByQuestionTypeForAdd" style="width: 160px">
+        </div>
+        <div class="grid_3">
+            And / Or
+        </div>
+        <div class="grid_4">
+            Competency:
+        </div>
+        <div class="grid_12">
+            <div id="LinkedCompetencyForAdd" style="width: 250px"></div>
+        </div>
+    </div>
+    <div class="grid_32 clear clear-height-spacing" />
+    <div class="grid_32 header-text">
+        List of Questions
+    </div>
+    <div class="grid_32 clear clear-height-spacing" />
+    <div id="QuestionBnakCheckBoxList"class="div-with-border grid_32" style="height: 280px; width: 600px; overflow-y: auto">
+    </div>
+    <div class="grid_32 clear clear-height-spacing" />
+    <div class="prefix_12">
+        <div class="align-div-inline">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     style="height: 22px;" /></div>
+            <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                   style="width: 60px;" value="Save" onclick="SaveAddedQuestions()" title="Save"/>
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     style="height: 22px;" /></div>
+        </div>
+        <div class="grid_1 button-seperator">
+        &nbsp;</div>
+        <div class="align-div-inline">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+            <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                   style="width: 60px;" id="btnMoveQuestions" value="Cancel" onclick="CancelAddedQuestions()" title="Cancel"/>
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        </div>
+    </div>
+</div>
+<script>
+    var filterByTypeList = @Html.Raw(Json.Encode(ViewBag.FilterByQuestionTypeToAdd));
+    var competencyList = @Html.Raw(Json.Encode(ViewBag.CompetencyListForSelectedSkillSet));
+    $(document).ready(function() {
+        closeAjaxLoader();
+        initializeFlexBoxForFilterByTypeForAdd("FilterByQuestionTypeForAdd", filterByTypeList);
+        //initializeFlexBox("CompetencyListForAdd", competencyListToAddQuestions);
+        getListOfItemsForCompetencyFlexBoxForAdd();
+        //$("#LinkedCompetencyForAdd_ctr").attr("style", "left: 0px;top: 22px;width: 400px;");
+        populateQuestionsToAdd();
+    });
+    function getListOfItemsForCompetencyFlexBoxForAdd() {
+        var urlForString = "../AssignmentBuilder/GetCompetenciesForFlexBox?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier();
+        doAjaxCall("POST", "", urlForString, successCompetencyFetchForAdd);
+    }
+    function successCompetencyFetchForAdd(result) {
+        if (result.Result != null) {
+            competencyListForAdd = result.Result;
+//            competencyArray = result.Result;
+//            competencyStringListTemp.results = eval('(' + result.Result + ')');
+//            competencyStringListTemp.total = competencyStringListTemp.results.length;
+            initializeFlexBoxForAdd('LinkedCompetencyForAdd', competencyListForAdd);
+        }
+        else
+            return null;
+    }
+
+    function initializeFlexBoxForAdd(divId, lstOfItems) {
+        competencyListForAdd = {};
+        competencyListForAdd.results = lstOfItems;
+        competencyListForAdd.total = lstOfItemsInQuestionType.results.length;
+        $('#' + divId).flexbox(competencyListForAdd, {
+            resultTemplate: '{name}',
+            width: 200,
+            paging: false,
+            maxVisibleRows: 10,
+            noResultsText: '',
+            noResultsClass: '',
+            matchClass: '',
+            matchAny: true,
+            onSelect: function () {
+                populateQuestionsToAdd();
+            }
+        });
+        $('#' + divId + "_input").watermark(WATER_MARK_COMPETENCY, { className: 'watermark watermark-text' });
+        $('#LinkedCompetencyForAdd_input').live('blur', function () {
+            if ($('#LinkedCompetencyForAdd_input').val() == "") {
+                $('#LinkedCompetencyForAdd_input').text = WATER_MARK_COMPETENCY;
+                $('#LinkedCompetencyForAdd_input').addClass('watermark watermark-text');
+            } else {
+                $('#LinkedCompetencyForAdd_input').removeClass('watermark watermark-text');
+            }
+        });
+        $('#LinkedCompetencyForAdd_input').live('keyup', function () {
+            if ($('#LinkedCompetencyForAdd_input').val() == "") {
+                populateQuestionsToAdd();
+            }
+        });
+    }
+
+    function populateQuestionsToAdd() {
+        var competencyValue = ($('#LinkedCompetencyForAdd_input').val() == undefined) ? "":$('#LinkedCompetencyForAdd_input').val();
+        var filterValue = ($("#FilterByQuestionTypeForAdd_input").val() == undefined) ? "" : $("#FilterByQuestionTypeForAdd_input").val();
+        var urlForString = "../AssignmentBuilder/GetQuestionItemsBasedOnCompetencyAndFilter?selectedCompetency=" + competencyValue + "&selectedFilter=" + filterValue + "&assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier();
+        doAjaxCall("POST", "", urlForString, successQuestionItemsForAdd);
+    }
+
+    function successQuestionItemsForAdd(result) {
+        $("#QuestionBnakCheckBoxList").empty();
+        selectedQuestionGuidsToAdd = [];
+        var questionsList = result.Result;
+        if(questionsList != null && questionsList != "") {
+            for(var count = 0; count < questionsList.length; count++ ) {
+                var checkBox = $('<input>').attr({
+                                    type: 'checkbox',
+                                    name: 'chkQuestion',
+                                    value: questionsList[count].UniqueIdentifier,
+                                    id: 'chkQuestion_' + count
+                                });
+                checkBox.click(function () {
+                    if(this.checked == true) {
+                        selectedQuestionGuidsToAdd.push(this.value);
+                    }
+                    else {
+                        selectedQuestionGuidsToAdd.pop(this.value);
+                    }
+//                    if(this.checked == true) {
+//                        var questionGuid = {
+//                          id :  this.value 
+//                        };
+//                        selectedQuestionGuidsToAdd.push(questionGuid);
+//                    }
+//                    else {
+//                        var questionGuid = {
+//                          id :  this.value 
+//                        };
+//                        selectedQuestionGuidsToAdd.pop(questionGuid);
+//                    }
+                });
+                $("#QuestionBnakCheckBoxList").append(checkBox);
+                $("#QuestionBnakCheckBoxList").append("<label for='chkQuestion_" + count + "' class='word-wrap'>" + questionsList[count].Text + "</label><br/>");
+            }
+        }
+    }
+    var isFilterValueSelected = false;
+    function initializeFlexBoxForFilterByTypeForAdd(divId, lstOfItems) {
+        lstOfItemsInQuestionType = {};
+        lstOfItemsInQuestionType.results = lstOfItems;
+        lstOfItemsInQuestionType.total = lstOfItemsInQuestionType.results.length;
+        $('#' + divId).flexbox(lstOfItemsInQuestionType, {
+            resultTemplate: '{name}',
+            width: 147,
+            paging: false,
+            maxVisibleRows: 10,
+            noResultsText: '',
+            noResultsClass: '',
+            matchClass: '',
+            matchAny: true,
+            onSelect: function () {
+                isFilterValueSelected = true;
+                populateQuestionsToAdd();
+            }
+        });
+        $('#' + divId + "_input").watermark("Filter by question type", { className: 'watermark watermark-text' });
+        $('#FilterByQuestionTypeForAdd_input').live('blur', function () {
+            if ($('#FilterByQuestionTypeForAdd_input').val() == "") {
+                $('#FilterByQuestionTypeForAdd_input').text = "Filter by question type";
+                $('#FilterByQuestionTypeForAdd_input').addClass('watermark watermark-text');
+                isFilterValueSelected = false;
+            } else {
+                $('#FilterByQuestionTypeForAdd_input').removeClass('watermark watermark-text');
+            }
+        });
+        $('#FilterByQuestionTypeForAdd_input').live('keyup', function () {
+            if (isFilterValueSelected) {
+                if ($('#FilterByQuestionTypeForAdd_input').val() == "") {
+                    populateQuestionsToAdd();
+                }
+            }
+        });
+    }
+
+    function SaveAddedQuestions() {
+        startAjaxLoader();
+        if(selectedQuestionGuidsToAdd != "") {
+            var urlForGettingQuestions = "../AssignmentBuilder/GetSelectedQuestionObjectsFromGuid?questionGuids=" + selectedQuestionGuidsToAdd + "&assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier();
+            doAjaxCall("POST", "", urlForGettingQuestions, successQuestionsGet);
+        }
+        else {
+            
+        }
+    }
+    
+    function successQuestionsGet(result) {
+        var assignmentObj = {
+            "Questions": result.QuestionObjects,
+            "Url": assignBuilder.commonFunctions.getAssignmentUniqueIdentifier()
+        };
+        var urlForString = "../AssignmentBuilder/SaveAssignmentStep3";
+        doAjaxCall("POST", assignmentObj, urlForString, successQuestionAdd);
+    }
+
+    function successQuestionAdd(result) {
+        jAlert("Additional question(s) saved to assignment", "Alert", function(isOk) {
+            if (isOk) {
+                closeDialog("AddQuestionBank");
+                skillSetList = result.skillSetList;
+                questionList = result.questionList;
+                //renderSkillSetTree();
+                startAjaxLoader();
+                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function () {
+                    closeAjaxLoader();
+                });
+            }
+        });
+    }
+
+    function CancelAddedQuestions() {
+        var status = "Are you sure you want to cancel? Your changes will not be saved.";
+        jConfirm(status, 'Cancel', function (isCancel) {
+            if (isCancel) {
+                closeDialog("AddQuestionBank");
+                startAjaxLoader();
+                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function () {
+                    closeAjaxLoader();
+                });
+            }
+        });
+    }
+</script>

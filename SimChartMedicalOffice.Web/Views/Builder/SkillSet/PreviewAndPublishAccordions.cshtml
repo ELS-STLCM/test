@@ -1,0 +1,51 @@
+﻿@using SimChartMedicalOffice.Core.QuestionBanks
+@{
+    Layout = null;
+}
+@{
+    IList<DocumentProxy> documentProxyList = ViewBag.SkillSetQuestions != null ? (IList<DocumentProxy>)ViewBag.SkillSetQuestions : new List<DocumentProxy>();
+}
+<div class="clear clear-min-height-spacing">
+    &nbsp;</div>
+@{
+int accordionIndex=0;
+foreach (var item in documentProxyList)
+{string competencyVal=String.IsNullOrEmpty(item.Text)?"":item.Text;
+int indexVal = @accordionIndex++;
+    <div class="grid_32  div-with-border">
+    <div class="skill-set-accordion skill-set-accordion-header  select-hand" id="@indexVal">
+        <div class="clear clear-min-height-spacing">
+            &nbsp;</div>
+            @if (competencyVal != "")
+            {
+                <div class="grid_31 skill-set-step4-header header-text">@competencyVal</div>
+            }
+            else
+            {
+                <div class="grid_31 skill-set-step4-header header-text">&nbsp;</div>
+            }
+            <div class="align-div-inline">
+                <img id="accordion-img-@indexVal" src="../../../Content/Images/arrow_black_section_right_normal.png" alt="x" class="assignment-accordion-close"/></div>
+            <div class="clear clear-min-height-spacing">
+    &nbsp;</div>
+    </div>
+    <div class="hide-content skill-set-accordion-body" id="accordion-body-@indexVal">
+          <ul class="skill-set-questions">
+            @foreach (var questionItems in item.AnswerTexts)
+            {
+                <li>@questionItems</li>
+            }
+            </ul>   
+        </div>
+    </div>
+    
+    <div class="clear clear-min-height-spacing">
+    &nbsp;</div>
+}}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".skill-set-accordion-header").click(function () {
+            expandOrCollapseAnAccordion(this);
+        });
+    });
+</script>

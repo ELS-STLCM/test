@@ -1,0 +1,46 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32 div-with-bottom-border">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_17 form-page-header">
+        Question Bank
+    </div>
+    <div class="grid_6">
+        @Html.DropDownList("filterByType", null, new { id = "filterBQuestionType", @class = "grid_31" })
+    </div>
+    <div class="grid_2 standard-text">
+        And/Or
+    </div>
+    <div class="grid_8">
+        @Html.TextBox("searchByText", "", new { id = "searchByText", @class = "grid_28" })
+        <img id="buttonSearch" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")"/>
+    </div>
+</div>
+<div class="grid_32">
+    <div id="questionBankFolderPanel" class="grid_8 remove-div-space add-horizontal-space">
+        @Html.Partial("../../Views/Builder/QuestionBank/Folder", new ViewDataDictionary { new KeyValuePair<string, object>("currentFolderPanel", "questionBankFolderPanel") })
+    </div>
+    <div class="grid_24 div-border remove-div-space">
+         <div class="grid_32 container-height">
+    <div class="grid_24">
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32" style="height: 360px;">
+            @Html.Partial("../../Views/Builder/Authoring/_QuestionBankGrid")
+        </div>
+        <div class="grid_32">
+            @Html.Partial("../../Views/Builder/Authoring/PatientActions")
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        waterMarkTextForSearch();
+    });
+    function waterMarkTextForSearch() {
+        $('#searchByText').val('');
+        $("#searchByText").watermark("Search by text", { className: 'watermark-text' });
+    }
+</script>

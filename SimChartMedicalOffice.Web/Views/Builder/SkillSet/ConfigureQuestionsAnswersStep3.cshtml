@@ -1,0 +1,227 @@
+﻿@{
+    Layout = null;
+}
+<div class="page-title grid_32" id="mainStep3SkillSet">
+    Step 3 of 4: Configure Questions and Answers
+</div>
+<div class="grid_32 clear clear-height-spacing">
+</div>
+<div class="header-text grid_32">
+    Please configure all question templates in order to proceed to the next step.
+</div>
+<div class="grid_32 clear clear-height-spacing">
+</div>
+<div class="grid_32 div-with-border standard-text assignment-builder-panel isContentchanged"
+    style="width: 780px; height: 280px;" id="content_skillset_changed">
+     <div class="align-div-inline">
+        <img alt="x" src="@Url.Content("~/Content/Images/SkillSet_builder_Step3Expand.png")" id="QuestionBankSlideButton" style="display: none;" class="select-hand"/>
+    </div>
+    <div class="grid_32 remove-div-space align-div-inline" style="width: 780px;" id="slide-content-div-qn-skill-set">
+        <div class="grid_8 remove-div-space div-with-border" id="SkillSetSlideDiv">
+            <div class="background-panel">
+                <div class="grid_4" id="closeSkillSetSlide" style="padding-bottom: -5px">
+                    <img src="@Url.Content("~/Content/Images/Collapse_Left.png")" alt="swap-up" class="select-hand" />
+                </div>
+                <div class="grid_16 header-text skill-set-text-header">
+                    Question</div>
+                <div class="align-div-inline skill-set-swap-step3-icons">
+                    <img src="@Url.Content("~/Content/Images/Swap Up.png")" alt="swap-up" class="select-hand" id="upArrowSwap" />
+                    <img src="@Url.Content("~/Content/Images/Swap Down.png")" alt="swap-down" class="select-hand" id="downArrowSwap"/>
+                </div>
+            </div>
+            <div id="QuestionList" style="height: 251px; overflow-y: auto">
+            </div>
+        </div>
+        <div class="align-div-inline remove-div-space" id="QuestionTemplateSlide"
+            style="overflow-y: auto; overflow-x: hidden; height: 280px">
+            <div id="content_questions">
+                <div id="questionTypesLoading" class="hide-content">
+                    @Html.Partial("../../Views/Shared/_ProgressLoader")
+                </div>
+                <div id="questionLoaded" class="hide-content">
+                    <div id="questionTypes">
+                    </div>
+                    <div class="grid_32 clear clear-height-spacing">
+                    </div>
+                    <div class="grid_32">
+                        <div class="grid_32 clear clear-height-spacing">
+                        </div>
+                        <div class="multiple-choice-dashed-line">
+                        </div>
+                        <div class="grid_32 header-text" id="QuestionBankLabel">
+                            Selecting the following option will update the master Question Bank
+                        </div>
+                        <div class="grid_32 clear clear-height-spacing">
+                        </div>
+                        <div class="grid_32">
+                            @Html.CheckBox("AddQuestionToQuestionBank", new { @id = "AddQuestionToQuestionBank" })
+                            <label for="AddQuestionToQuestionBank" id="AddQuestionToQuestionBank_lbl">
+                            </label>
+                        </div>
+                        <div class="grid_32 clear clear-height-spacing">
+                        </div>
+                        <div class="grid_32" id="questiontosave">
+                            <div id="newQuestion" class="align-div-inline">
+                                @Html.RadioButton("saveToQuestionbank", "isNewQuestion", true, new { @id = "QuestionToQuestionBankNew", @value = "isNewQuestion" })
+                                <label for="QuestionToQuestionBankNew">
+                                    Save as a new question</label>&nbsp;&nbsp;
+                            </div>
+                            <div id="existingQuestion" class="align-div-inline">
+                                @Html.RadioButton("saveToQuestionbank", "isExistingQuestion", false, new { @id = "QuestionToQuestionBankExisting", @value = "isExistingQuestion" })
+                                <label for="QuestionToQuestionBankExisting">
+                                    Override the existing question</label>
+                            </div>
+                        </div>
+                        <div class="grid_32 clear clear-height-spacing" />
+                        <div id="newQuestionDiv" style="display: none;">
+                            <div class="grid_32 header-text">
+                                Selecting to save as a new question in the master Question Bank requires a unique
+                                question name
+                            </div>
+                            <div class="grid_32 clear clear-height-spacing" />
+                            <div class="grid_32 header-text">
+                                Question <span class="mandatory-field">*</span>:
+                            </div>
+                            <div id="newQuestionTextDivLabeling" style="display: none;">
+                                <div class="grid_10">
+                                    @Html.TextBox("QuestionTextNew", "", new { id = "QuestionTextNew", @class = "grid_32 standard-text" })
+                                </div>
+                            </div>
+                            <div class="grid_32" id="newQuestionTextDivMultiple" style="display: none;">
+                                @Html.TextArea("QuestionTextAreaNew", "", new { id = "QuestionTextAreaNew", rows = 5, cols = 55, @class = "standard-text" })
+                            </div>
+                            <div class="grid_32" id="newQuestionTextDivFillIn" style="display: none;">
+                            </div>
+                        </div>
+                        <div id="questionItemACtion">
+                        </div>
+                    </div>
+                    <div class="grid_32 clear clear-height-spacing">
+                    </div>
+                   <div class="grid_5 prefix_11">
+                        <div class="align-div-inline">
+                            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                            style="width: 60px;" value="Save" title="Save" onclick="saveSkillSetQuestion()" />
+                        <div class="align-div-inline">
+                            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    </div>
+                    <div class="grid_16">
+                        <div class="align-div-inline">
+                            <img alt="left"  src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                        <input type="button" id="btnCancel" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                            style="width: 60px;" value="Cancel" title="Cancel" onclick="cancelSkillSetQuestion()" />
+                        <div class="align-div-inline">
+                            <img alt="right"  src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div id="imageLoad" style="display: none">
+            <div id="imageLoadContent">
+            </div>
+        </div>
+        <div id="image_view_load" style="display: none">
+            <div id="image_view_load_inner_content" style="height: 420px;">
+                <img id="image_view" src="" alt="x" class="image-view-larger" />
+            </div>
+        </div>
+    </div>
+</div>
+<div class="grid_32 clear clear-height-spacing">
+</div>
+<div class="grid_32">
+    <div class="grid_13">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 50px;" value="Back" title="Back" onclick="skillSet.commonFunctions.loadStep2()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    
+    <div class="grid_4">
+        <div class="align-div-inline">
+         <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                            style="width: 60px;" value="Proceed" title="Proceed" id="btnProceedSkillSetStep4"/>
+        <div class="align-div-inline">
+                            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="grid_5">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" id="" value="Cancel" title="Cancel" onclick="skillSet.commonFunctions.cancelForskillset()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+</div>
+<script type="text/javascript">
+    $.ajaxSetup({
+        cache: false,
+        asynch: false,
+        type: "POST"
+    });
+    var QuestionList = @Html.Raw(Json.Encode(ViewBag.QuestionList));
+    var SkillSetUrl = "@ViewBag.SkillSetUrl";
+    isProceedToStep4Valid=@ViewBag.isProceedToStep4Valid.ToString().ToLower();
+    $(document).ready(function () {
+            $("#uploadImageLink").click(function () {
+            showImageUpload("QNIMAGE");
+        });
+          skillSet.commonFunctions.loadStep3SkillSet(SkillSetUrl);  
+    });
+    
+        function saveSkillSetQuestion(){
+              skillSet.commonFunctions.saveSkillSetQuestion();
+        }
+        function cancelSkillSetQuestion(){
+            skillSet.commonFunctions.cancel();
+        }
+        $("#QuestionBankSlideButton").click(function () {
+                $("#SkillSetSlideDiv").show();
+                $("#QuestionTemplateSlide").removeClass('question-slide-in-skillset').addClass('question-slide-out-skillset');
+                $("#slide-content-div-qn-skill-set").attr("style", "width:780px;");
+                $("#QuestionBankSlideButton").hide();
+                $('#LinkedCompetency_ctr').attr("style", "left: 0px;top: 22px;width: 368px;").hide();
+                $('#LinkedCompetency_input').attr("style", "width: 368px;");
+       });
+
+        $("#closeSkillSetSlide").click(function () {
+            $("#SkillSetSlideDiv").hide();
+            $("#QuestionTemplateSlide").removeClass('question-slide-out-skillset').addClass('question-slide-in-skillset');
+            $("#QuestionBankSlideButton").show();
+             $('#LinkedCompetency_ctr').attr("style", "left: 0px;top: 22px;width: 600px;").hide();
+             $("#slide-content-div-qn-skill-set").attr("style", "width:751px;");
+                $('#LinkedCompetency_input').attr("style", "width: 600px;");
+        });
+        
+        $("#btnProceedSkillSetStep4").click(function(){ 
+            skillSet.commonFunctions.proceedToStep4();
+        });
+
+        
+        $("#upArrowSwap").bind('click', function () {
+         skillSet.commonFunctions.swapQuestions("upArrow");
+        });
+        $("#downArrowSwap").bind('click', function () {
+         skillSet.commonFunctions.swapQuestions("downArrow");
+        });
+</script>

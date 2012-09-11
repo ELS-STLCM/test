@@ -1,0 +1,73 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32 div-with-bottom-border">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_17 form-page-header" style="padding-top: 0px">
+        Assignment Builder
+    </div>
+    <div class="grid_6 align-div-inline" id="filterByModule" style="width: 160px">
+    </div>
+    <div class="align-div-inline standard-text">
+        And / Or</div>
+    <div class="grid_8 align-div-inline">
+        @Html.TextBox("searchByTextAssign", "", new { id = "searchByTextAssign", @class = "grid_28" })
+        <img id="buttonSearchAssign" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+<div class="grid_32">
+    <div class="clear-min-height-spacing clear">
+    </div>
+    <div id="BreadCrumbEntry">
+        @Html.Partial("../../Views/Builder/Authoring/_BreadCrumb")
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+<div class="grid_32">
+    <div id="assignmentFolderPanel" class="grid_8 remove-div-space container-folder-height">
+        @Html.Partial("../../Views/Builder/QuestionBank/Folder", new ViewDataDictionary { new KeyValuePair<string, object>("currentFolderPanel", "assignmentBuilderTab") })
+    </div>
+    <div class="grid_24 remove-div-space" style="width:75%">
+        <div class="grid_32 container-folder-height" style="width:100%">
+            <div class="grid_32 container-grid-height" style="float: left;width:100%">
+                @Html.Partial("../../Views/Builder/Authoring/_AssignmentBuilderGrid")
+            </div>
+            <div class="grid_32">
+                @Html.Partial("../../Views/Builder/Authoring/PatientActions")
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var filterByModuleList = @Html.Raw(Json.Encode(ViewBag.ModuleList)); 
+    isSearchPageForAssignment=false;
+    $(document).ready(function () {
+       setMaxLenthSearchText("searchByTextAssign");
+       disableAButton("btnDeleteQuestions");
+       disableAButton("btnCopyQuestions");
+       disableAButton("btnMoveQuestions");
+       startAjaxLoader();
+       waterMarkTextForSearch();
+       initializeFlexBoxForFilterByModules("filterByModule", filterByModuleList);
+    });
+    function waterMarkTextForSearch() {
+        $('#searchByTextAssign').val('');
+        $("#searchByTextAssign").watermark("Search by text", { className: 'watermark-text' });
+    }
+
+    $(function () {
+        $("#buttonSearchAssign").click(function () {        
+            assignBuilder.commonFunctions.searchByText();
+        });
+        $("#searchByTextAssign").keyup(function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                assignBuilder.commonFunctions.searchByText();
+            }
+        });
+    });
+</script>

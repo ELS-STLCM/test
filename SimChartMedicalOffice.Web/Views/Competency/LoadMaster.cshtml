@@ -1,0 +1,16 @@
+﻿@{
+    Layout = null;
+}
+<div >
+    <div class="grid_32 section-seperator-normal">
+    &nbsp;
+    </div> 
+    <div class="grid_8">
+    @Html.Partial("../../Views/Competency/_AdminNav")
+    </div>
+    @if (ViewBag.MasterName != null && (int)ViewBag.MasterName == (int)SimChartMedicalOffice.Common.AppEnum.Master.Competency)
+    {
+        @Html.Partial("../../Views/Competency/Competency")
+    }
+    @Html.Partial("../../Views/Competency/_UCAdminAction")
+</div>

@@ -1,0 +1,680 @@
+﻿@{
+    Layout = null;
+}
+@{
+    string strquestionText = (ViewBag.QuestionText != null) ? ViewBag.QuestionText : String.Empty;
+    string strRationaleText = (ViewBag.CorrectAnswerRationale != null) ? ViewBag.CorrectAnswerRationale : String.Empty;
+    string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
+    string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
+    string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty; ;
+    string strQuestionguid = string.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty; ;
+    string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
+    bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
+    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
+    string answerText1 = (ViewData["AnswerOption_1"] != null) ? ViewData["AnswerOption_1"].ToString() : String.Empty;
+    string answerText2 = (ViewData["AnswerOption_2"] != null) ? ViewData["AnswerOption_2"].ToString() : String.Empty;
+    string answerText3 = (ViewData["AnswerOption_3"] != null) ? ViewData["AnswerOption_3"].ToString() : String.Empty;
+    string answerText4 = (ViewData["AnswerOption_4"] != null) ? ViewData["AnswerOption_4"].ToString() : String.Empty;
+    string answerText5 = (ViewData["AnswerOption_5"] != null) ? ViewData["AnswerOption_5"].ToString() : String.Empty;
+    string answerText6 = (ViewData["AnswerOption_6"] != null) ? ViewData["AnswerOption_6"].ToString() : String.Empty;
+    string answerText7 = (ViewData["AnswerOption_7"] != null) ? ViewData["AnswerOption_7"].ToString() : String.Empty;
+    string answerText8 = (ViewData["AnswerOption_8"] != null) ? ViewData["AnswerOption_8"].ToString() : String.Empty;
+    string answerText9 = (ViewData["AnswerOption_9"] != null) ? ViewData["AnswerOption_9"].ToString() : String.Empty;
+    string answerText10 = (ViewData["AnswerOption_10"] != null) ? ViewData["AnswerOption_10"].ToString() : String.Empty;
+    string answerMatch_1 = (ViewData["AnswerMatch_1"] != null) ? ViewData["AnswerMatch_1"].ToString() : String.Empty;
+    string answerMatch_2 = (ViewData["AnswerMatch_2"] != null) ? ViewData["AnswerMatch_2"].ToString() : String.Empty;
+    string answerMatch_3 = (ViewData["AnswerMatch_3"] != null) ? ViewData["AnswerMatch_3"].ToString() : String.Empty;
+    string answerMatch_4 = (ViewData["AnswerMatch_4"] != null) ? ViewData["AnswerMatch_4"].ToString() : String.Empty;
+    string answerMatch_5 = (ViewData["AnswerMatch_5"] != null) ? ViewData["AnswerMatch_5"].ToString() : String.Empty;
+    string answerMatch_6 = (ViewData["AnswerMatch_6"] != null) ? ViewData["AnswerMatch_6"].ToString() : String.Empty;
+    string answerMatch_7 = (ViewData["AnswerMatch_7"] != null) ? ViewData["AnswerMatch_7"].ToString() : String.Empty;
+    string answerMatch_8 = (ViewData["AnswerMatch_8"] != null) ? ViewData["AnswerMatch_8"].ToString() : String.Empty;
+    string answerMatch_9 = (ViewData["AnswerMatch_9"] != null) ? ViewData["AnswerMatch_9"].ToString() : String.Empty;
+    string answerMatch_10 = (ViewData["AnswerMatch_10"] != null) ? ViewData["AnswerMatch_10"].ToString() : String.Empty;
+    string answerImage1 = (ViewData["AnsImage_1"] != null) ? ViewData["AnsImage_1"].ToString() : String.Empty;
+    string answerImage2 = (ViewData["AnsImage_2"] != null) ? ViewData["AnsImage_2"].ToString() : String.Empty;
+    string answerImage3 = (ViewData["AnsImage_3"] != null) ? ViewData["AnsImage_3"].ToString() : String.Empty;
+    string answerImage4 = (ViewData["AnsImage_4"] != null) ? ViewData["AnsImage_4"].ToString() : String.Empty;
+    string answerImage5 = (ViewData["AnsImage_5"] != null) ? ViewData["AnsImage_5"].ToString() : String.Empty;
+    string answerImage6 = (ViewData["AnsImage_6"] != null) ? ViewData["AnsImage_6"].ToString() : String.Empty;
+    string answerImage7 = (ViewData["AnsImage_7"] != null) ? ViewData["AnsImage_7"].ToString() : String.Empty;
+    string answerImage8 = (ViewData["AnsImage_8"] != null) ? ViewData["AnsImage_8"].ToString() : String.Empty;
+    string answerImage9 = (ViewData["AnsImage_9"] != null) ? ViewData["AnsImage_9"].ToString() : String.Empty;
+    string answerImage10 = (ViewData["AnsImage_10"] != null) ? ViewData["AnsImage_10"].ToString() : String.Empty; 
+}
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_24">
+    <div id="validationSummary" class="errormessage grid_32">
+        @Html.ValidationSummary()</div>
+    <div class="clear clear-height-spacing">
+    </div>  
+    <span class="header-text">Matching:</span>
+</div>
+<div class="grid_32 clear clear-height-spacing">
+</div>
+<div class="grid_32 mandatory-field-note">
+    Fields with " <span class="mandatory-field">*</span> " are mandatory
+</div>
+<div class="grid_32 clear clear-height-spacing">
+</div>
+<div id="question_matching" class="multiple-choice-dashed-line grid_32">
+    <div class="grid_32">
+        <div class="grid_18 header-text">
+            Question <span class="mandatory-field">*</span>:</div>
+        <div class="grid_17">@Html.TextArea("QuestionText", strquestionText, new { rows = 5, @class = "standard-text multiple-choice-textarea" })</div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="linkedCompetency" class="grid_32">
+        @Html.Partial("../../Views/Builder/Authoring/_LinkedCompetency")
+    </div>
+</div>
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_32">
+    <div class="grid_11 header-text">
+        Item <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_11 header-text">
+        Correct Match <span class="mandatory-field">*</span>:
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="match_div_1">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                1
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_1", answerText1, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                A
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_1", answerMatch_1, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE1')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_1"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId1" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId1_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId1_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId1')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div>
+    <div id="match_div_2">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                2
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_2", answerText2, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                B
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_2", answerMatch_2, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE2')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_2"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId2" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId2_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId2_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId2')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div>
+    <div id="match_div_3">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                3
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_3", answerText3, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                C
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_3", answerMatch_3, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE3')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_3"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId3" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId3_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId3_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId3')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div>
+    <div id="match_div_4">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                4
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_4", answerText4, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                D
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_4", answerMatch_4, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE4')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_4"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId4" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId4_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId4_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId4')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div>
+    <div id="match_div_5">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                5
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_5", answerText5, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                E
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_5", answerMatch_5, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE5')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_5"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId5" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId5_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId5_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId5')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div> 
+    <div id="match_div_6">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                6
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_6", answerText6, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                F
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_6", answerMatch_6, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE6')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_6"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId6" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId6_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId6_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId6')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div> 
+    <div id="match_div_7">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                7
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_7", answerText7, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                G
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_7", answerMatch_7, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE7')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_7"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId7" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId7_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId7_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId7')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div>
+    <div id="match_div_8">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                8
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_8", answerText8, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                H
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_8", answerMatch_8, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE8')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_8"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId8" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId8_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId8_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId8')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div>
+    <div id="match_div_9">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                9
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_9", answerText9, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                I
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_9", answerMatch_9, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE9')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_9"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId9" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId9_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId9_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId9')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div>
+    <div id="match_div_10">
+        <div class="grid_11 multiple-choice-right-border-dashed align-div-inline">
+            <div class="grid_32 header-text">
+                10
+            </div>
+            <div class="grid_31">
+                @Html.TextArea("AnswerOption_10", answerText10, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="grid_18">
+            <div class="grid_32 header-text">
+                J
+            </div>
+        </div>
+        <div class="grid_11 align-div-inline">
+            <div class="grid_31">
+                @Html.TextArea("AnswerMatch_10", answerMatch_10, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+            </div>
+        </div>
+        <div class="grid_10 remove-div-space" style="width: 33%">
+            <div class="grid_32">
+                <label class="grid_7">And/Or</label>
+                <a class="grid_10" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE10')">Upload</a>&nbsp;
+            </div>
+            <div class="clear clear-min-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class="grid_13 align-div-inline prefix_7">
+                    <div id="answer_image_10"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId10" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId10_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_12 hide-content text-icon-spacing" id="answerRefId10_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                           value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId10')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+            </div> 
+        </div>
+        <div class="clear">
+        </div> 
+    </div> 
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#uploadImageLink").click(function() {
+            showImageUpload("QNIMAGE");
+        });
+        questionBank.commonFunctions.enableValidRaioButtons();
+        if(@isEditMode.ToString().ToLower()) {
+            questionBank.commonFunctions.loadPageInEditMode("@imgGuid", @Html.Raw(Json.Encode(strRationaleText)), "@strCompetencyText", "@strCorrectAnswerValue", "@questionUrl", @isEditMode.ToString().ToLower(), "@linkedCompetencyGuid", "@questionTypeLoadedFlag");
+            questionBank.commonFunctions.loadAnswerImages("@answerImage1", 1);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage2", 2);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage3", 3);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage4", 4);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage5", 5);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage6", 6);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage7", 7);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage8", 8);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage9", 9);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage10", 10);
+
+
+        }
+    });
+</script>

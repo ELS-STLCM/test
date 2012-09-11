@@ -1,0 +1,51 @@
+﻿<div class="grid_24">
+    <div class="form-page-header grid_32">
+        Notice of Privacy Practice
+    </div>
+    <div class="grid_32 alpha  guidance-message ">
+        <div class="grid_32 guidance-text-spacing">
+        </div>
+        <div class="grid_32 ">
+            Please perform a patient search to find a specific patient.
+        </div>
+        <div class="grid_32 guidance-text-spacing">
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="notice_form_main_content" class="grid_32">
+    @*Do not change the class name of the iframe. Class names are used for selectors*@
+        <iframe class="forms-pdf-content" scrolling="no"  id="NoticePdfId" src="@Url.Action("GetPdfAttachment", "Forms", new { strFormName = @ViewBag.NoticeFormPdfid, nocache = '1' })">
+        </iframe>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        disableAButtonForForms("savePatientRecord-1");
+    });
+    $("#savePatientRecord-1").click(function () {
+        forms.NoticeOfPrivacyPractice.Save('@ViewBag.FormValue');
+    });
+    $("#printButton").hide();
+    $("#formActionButtons").removeClass('prefix_12').addClass('prefix_14');
+    $("#searchPatientButton").click(function () {        
+        // load patient search popup 
+        forms.PatientSearch.LoadPatientSearch('@ViewBag.FormValue');
+    });
+    $("#BtnCancel").click(function () {
+        var status = "Are you sure you want to cancel? Your changes will not be saved.";
+        if (GetBrowserType() == BROWSER_IE) {
+            startBackgound_Blur();
+        } 
+        forms.PatientSearch.HideOrShowIFrameBeforeDialog();
+        jConfirm(status, 'Cancel', function (isCancel) {
+            if (isCancel) {
+                disableAButtonForForms("savePatientRecord-1");
+            }
+            forms.PatientSearch.HideOrShowIFrameBeforeDialog();
+            if (GetBrowserType() == BROWSER_IE) {
+                closeBackgound_Blur();
+            }
+        });
+    });
+</script>

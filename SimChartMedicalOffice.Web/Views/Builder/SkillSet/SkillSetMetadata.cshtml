@@ -1,0 +1,233 @@
+﻿@using SimChartMedicalOffice.Core.ProxyObjects
+@using SimChartMedicalOffice.Core.QuestionBanks
+@{
+    Layout = null;
+}
+<script type="text/javascript">
+    $("input[type=checkbox][name='SkillSetSources']").live('click', function () {
+        skillSet.SkillSetMetadata.RefreshCompetencyCheckbox();
+    });
+    $("#buttonSearchCompetency").live('click', function () {
+        isSearchPage = true;
+        competencySearchText_Filter = $.trim($("#CompetencySearchFilter").val());
+        skillSet.SkillSetMetadata.RefreshCompetencySearch();
+    });
+    var unselectedCompetenciesList = @Html.Raw(Json.Encode(ViewBag.UnselectedCompetencies));
+    
+    var selectedCompetenciesList = @Html.Raw(Json.Encode(ViewBag.SavedCompetencies));
+
+    var focusList = @Html.Raw(Json.Encode(ViewBag.Focus));
+    // watermark implementation
+    function waterMarkTextForSearch() {
+        $('#CompetencySearchFilter').val('');
+        $("#CompetencySearchFilter").watermark("Search by name or number", { className: 'watermark-text' });
+    }
+
+    $(document).ready(function () {
+       skillSet.commonFunctions.setSkillSetUniqueIdentifier('@ViewBag.SkillSetUrl');
+       skillSet.commonFunctions.loadImageForAStep("1");
+       if(!isNullOrEmpty('@ViewBag.SkillSetUrl')){
+         isSkillSetEditMode=true;
+       }
+        waterMarkTextForSearch();
+        // load unselected competencies in the left panel
+        skillSet.SkillSetMetadata.LoadUnselectedCompetencies(unselectedCompetenciesList);
+        // load selected competencies in the right panel
+        skillSet.SkillSetMetadata.LoadSelectedCompetencies(selectedCompetenciesList);
+        // load selected module checkbox
+        if (focusList != null && focusList.length > 0) {
+        $("input[type='checkbox'][name=SkillSetFocus]").each(function () {
+            if ($.inArray($(this).val(), focusList) >= 0) {
+            $(this).attr('checked', true);
+            }
+        });
+        }   
+        $("#btnProceedSkillSet").live('click', function () {
+            skillSet.SkillSetMetadata.SaveSkillSet();
+        });
+        $("#btnSaveSkillSet").live('click', function () {
+            skillSet.SkillSetMetadata.SaveOnlySkillSet();
+        });
+    });
+</script>
+<div class="page-title">
+    Step 1 of 4: Skill Set Metadata
+</div>
+<div class="grid_32 mandatory-field-note">
+    Fields with " <span class="mandatory-field">*</span> " are mandatory
+</div>
+<div class="grid_32 div-with-border standard-text skillset-builder-panel-step1 vertical-content-scroll"
+    style="width: 775px" id="skillSet-Metadata-Main-Content">
+    <div id="validationSummary" class="error-message grid_32">
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_5">
+            Skill Set Title <span class="mandatory-field">*</span>:
+        </div>
+        <div class="grid_25">
+            @Html.TextBox("SkillSetTitle", null, new { @id = "SkillSetTitle", @class = "grid_10" })
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="dual-list-align" style="width: 45%">
+            <div class="grid_32 header-text">
+                List of Competencies
+            </div>
+            <div id="competencyFilterAndSearch" class="grid_32 div-without-bottom-border list-left-search-panel list-search-background standard-text">
+                <div class="clear-height-spacing clear"></div>
+                <div class="grid_32">
+                    <div class="grid_9 prefix_1 align-div-inline" style="padding-top:3px">
+                        Filter by Source :
+                    </div>
+                    <div class="grid_7 align-div-inline dual-list-align">
+                        @Html.CheckBox("SkillSetSources", new { @id = "SkillSetSources_ABHES", @value = "ABHES" })
+                        <label for="SkillSetSources_ABHES">
+                            ABHES</label>
+                    </div>
+                    <div class="grid_8 align-div-inline dual-list-align">
+                        @Html.CheckBox("SkillSetSources", new { @id = "SkillSetSources_CAAHEP", @value = "CAAHEP" })
+                        <label for="SkillSetSources_CAAHEP">
+                            CAAHEP</label>
+                    </div>
+                    <div class="grid_7 align-div-inline dual-list-align">
+                        @Html.CheckBox("SkillSetSources", new { @id = "SkillSetSources_MAERB", @value = "MAERB" })
+                        <label for="SkillSetSources_MAERB">
+                            MAERB</label>
+                    </div>
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="grid_12 prefix_14 header-text">
+                    And/Or</div>
+                <div class="clear-height-spacing clear">
+                </div>
+               <div class="grid_32">
+                <div class="grid_8 prefix_1 align-div-inline" style="padding-top:3px">
+                    Competency :
+                </div>
+                <div class="grid_23 dual-list-align">
+                    @Html.TextBox("CompetencySearchFilter", null, new { @id = "CompetencySearchFilter", @class = "grid_27" })
+                    <img id="buttonSearchCompetency" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+                </div>
+               </div>
+            </div>
+            <div id="competencyUnselectedList" class="grid_32 div-without-top-border list-left-panel vertical-content-scroll">
+                <div class="clear-height-spacing clear">
+                </div>
+                </div>
+        </div>
+        <div class="dual-list-align" style="width: 11%">
+            <div class="list-middle-buffer clear">
+            </div>
+            <div class="align-div-inline">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                         style="height: 22px;" /></div>
+                <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                    style="width: 65px;" id="competencyAdd_Btn" value="Add>>" title="Add" onclick="skillSet.SkillSetMetadata.AddCompetencies();" />
+                <div class="align-div-inline">
+                    <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                         style="height: 22px;" /></div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="align-div-inline">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                         class="standard-height-for-buttons" /></div>
+                <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                    style="width: 65px;" id="competencyRemove_Btn" value="<<Remove" title="Remove" onclick="skillSet.SkillSetMetadata.RemoveCompetencies();" />
+                <div class="align-div-inline">
+                    <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                         class="standard-height-for-buttons" /></div>
+            </div>
+        </div>
+        <div class="dual-list-align" style="width: 42.8%">
+            <div class="grid_32 header-text">
+                Selected Competencies<span class="mandatory-field">*</span>
+            </div>
+            <div id="competencySelectedList" class="grid_32 div-with-border list-right-panel vertical-content-scroll">
+            </div>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32" id="SkillSetFocusContent">
+        <div class="grid_3" style="padding-top: 4px;">
+            Module:
+        </div>
+        <div class="grid_3 align-div-inline">
+            @Html.CheckBox("SkillSetFocus", new { @id = "SkillSetFocus_All", @value = "All" })
+            <label for="SkillSetFocus_All">
+                All</label>
+        </div>
+        <div class="grid_4 align-div-inline">
+            @Html.CheckBox("SkillSetFocus", new { @id = "SkillSetFocus_Billing", @value = "Billing" })
+            <label for="SkillSetFocus_Billing">
+                Billing</label>
+        </div>
+        <div class="grid_4 align-div-inline">
+            @Html.CheckBox("SkillSetFocus", new { @id = "SkillSetFocus_Clinic", @value = "Clinic" })
+            <label for="SkillSetFocus_Clinic">
+                Clinic</label>
+        </div>
+        <div class="grid_4 align-div-inline">
+            @Html.CheckBox("SkillSetFocus", new { @id = "SkillSetFocus_Coding", @value = "Coding" })
+            <label for="SkillSetFocus_Coding">
+                Coding</label>
+        </div>
+        <div class="grid_5 align-div-inline">
+            @Html.CheckBox("SkillSetFocus", new { @id = "SkillSetFocus_FrontOffice", @value = "Front Office" })
+            <label for="SkillSetFocus_FrontOffice">
+                Front Office</label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+</div>
+<div class="clear-height-spacing clear">
+</div>
+<div>
+    @Html.Partial("../../Views/Builder/SkillSet/_SkillSetsActions")
+</div>
+
+
+<div id="competency_skillSet_load_view" style="display: none;">
+    <div id="competency_skillSet_load_view_content_view" style="height:420px; overflow: hidden;">
+        <div id="competency_skillSet_load_view_content" class="grid_32"></div>
+         <div class="container_32 grid_32">
+                <div class="prefix_4">
+                    <div class="align-div-inline">
+                        <div class="align-div-inline">
+                            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                            style="height: 22px;" />
+                        </div>
+                            <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                            style="width: 65px;" id="remove_competency_ok" value="OK" title="OK" onclick="skillSet.SkillSetMetadata.removeAndCloseCompetencyDialog()" />
+                        <div class="align-div-inline">
+                            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                            style="height: 22px;" />
+                        </div>
+                    </div>
+                </div>
+                <div class="grid_4">
+                    <div class="align-div-inline">
+                        <div class="align-div-inline">
+                            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                            class="standard-height-for-buttons" />
+                        </div>
+                            <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                            style="width: 65px;" id="remove_competency_cancel" value="Cancel" title="Cancel" onclick="closeDialogWithoutDestroy('competency_skillSet_load_view_content_view')" />
+                        <div class="align-div-inline">
+                            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                            class="standard-height-for-buttons" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>

@@ -1,0 +1,72 @@
+﻿<div id="patientBuilder_search_grid_display" style="overflow-x: hidden;
+    overflow-y: hidden;width:100%;" class="grid_32">
+    <table id="patientBuildersearchGrid" class="standard-text table-scroll-border">
+        <thead style="text-align: center;">
+            <tr class="dataTables_scrollHeadInner">
+                <th title="First Name" class="datatable-tooltip datatable-background" style="width: 15%">
+                    First Name
+                </th>
+                <th title="Last Name" class="datatable-tooltip datatable-background" style="width: 15%">
+                    Last Name
+                </th>
+                <th title="Gender" class="datatable-tooltip datatable-background" style="width: 13%">
+                    Gender
+                </th>
+                <th title="Date Of Birth" class="datatable-tooltip datatable-background" style="width: 14%">
+                    DOB
+                </th>
+                <th title="Age" class="datatable-tooltip datatable-background" style="width: 13%">
+                    Age
+                </th>
+                <th title="Created On" class="datatable-tooltip datatable-background" style="width: 14%">
+                    Created On
+                </th>
+                <th title="Status" class="datatable-tooltip datatable-background" style="width: 14%">
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    patientBuilderSearchDataTable = $('#patientBuilder_search_grid_display #patientBuildersearchGrid').dataTable({
+        "bProcessing": false,
+        "bServerSide": true,
+        "sAjaxSource": '@Url.Action("GetPatientSearchList", "Patient", new {strSearchText= ViewBag.SearchText})',
+        "bRetrieve": true,      
+        "aoColumns": [
+            { "bSortable": true, "sName": "FirstName" },
+            { "bSortable": true, "sName": "LastName" },
+            { "bSortable": true, "sName": "Gender" },
+            { "bSortable": true, "sName": "DOB" },
+            { "bSortable": true, "sName": "Age" },
+            { "bSortable": true, "sName": "CreatedOn" },
+            { "bSortable": true, "sName": "Status" }
+        ],
+        "aaSorting": [[1, 'asc']],
+        "oLanguage": { "sZeroRecords": "No search result" },
+        "bAutoWidth": false,
+        "bFilter": false,
+        "bLengthChange": false,
+        "iDisplayLength": 15,
+        "bPaginate": true,
+        "sPaginationType": "full_numbers",
+        "bSort": true,
+        "sScrollY": "270px",
+        "sScrollX": "100%",
+        "bScrollCollapse": true,
+        "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
+        "fnDrawCallback": function () {
+            setScrollableTableHeight(this);
+
+        }
+    });
+
+    $("#patientBuilder_search_grid_Paging").ready(function () {
+        $("#patientBuildersearchGrid_info").appendTo($("#patientBuilder_search_grid_Paging"));
+        $("#patientBuildersearchGrid_paginate").appendTo($("#patientBuilder_search_grid_Paging"));
+    }); 
+</script>
+

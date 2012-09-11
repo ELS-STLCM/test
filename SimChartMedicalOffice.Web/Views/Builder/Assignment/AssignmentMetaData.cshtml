@@ -1,0 +1,445 @@
+﻿@{
+    ViewBag.Title = "AssignmentMetaData";
+    Layout = null;
+}
+<script type="text/javascript">
+    var unselectedSkillsets = @Html.Raw(Json.Encode(ViewBag.ListOfSelectedSkillsets));
+    var savedSkillSets = @Html.Raw(Json.Encode(ViewBag.ListOfSavedSkillsets));
+    ListofPublishedSkillsets = @Html.Raw(Json.Encode(ViewBag.ListOfSelectedSkillsets));
+    var assignmentToEdit= @Html.Raw(Json.Encode(ViewBag.AssignmentToEdit));
+    var resourceCount = 1;
+    var selectSkillsetList = [];
+    var CompetencyListTemp = { };
+    var savedPatientValue = "";
+    var ready = $(document).ready(function () {
+        getAllCompetencyFlexBox("!!");
+        assignBuilder.commonFunctions.LoadUnselectedSkillsets(unselectedSkillsets);
+        if (savedSkillSets!=null && savedSkillSets.length>0) {
+            assignBuilder.commonFunctions.LoadSavedSkillSets(savedSkillSets);
+        }
+    });
+    $("#uploadImageLinkPatient").click(function () {
+        showImageUploadForPatient("patientImage","imageLoadAssignmentPatientContent");
+    });
+      $("#skillsetUpArrowSwap").bind('click', function () {
+          assignBuilder.commonFunctions.SwapSkillsets("upArrow");
+        });
+        $("#skillsetDownArrowSwap").bind('click', function () {
+            assignBuilder.commonFunctions.SwapSkillsets("downArrow");
+        });
+    
+    $('#CompetencyList_input').live('keyup', function () {
+        if ($('#CompetencyList_input').val() == "" && $('#CompetencyList_hidden').val()!="") {
+            $('#CompetencyList_input').text = WATER_MARK_COMPETENCY;
+            $('#CompetencyList_input').addClass('watermark watermark-text');
+            
+            startAjaxLoader();
+            competencyFiltertext = $('#CompetencyList_input').val();
+            assignBuilder.commonFunctions.FilterSkillSetsOnSelectedCompetency();
+            closeAjaxLoader();
+        }
+    });
+
+    function getAllCompetencyFlexBox(strFilterText) {
+        var urlForString = "../QuestionBank/GetCompetenciesForDropDown?strFilterText=" + strFilterText;
+        doAjaxCall("POST", "", urlForString, successCompetencyFetch);
+    }
+    function successCompetencyFetch(result) {
+        if (result.competencyStringListTemp != null) {
+            competencyArray = result.competencyArray;
+            CompetencyListTemp.results = eval('(' + result.competencyStringListTemp + ')');
+            CompetencyListTemp.total = CompetencyListTemp.results.length;
+            assignBuilder.commonFunctions.initializeFlexBoxForCompetencyList('CompetencyList',CompetencyListTemp);
+        }
+        else
+            return null;
+    }
+
+    function CancelAndReloadStep1() {
+        var status = "Are you sure you want to cancel? Your changes will not be saved.";
+        jConfirm(status, 'Cancel', function (isCancel) {
+            if (isCancel) {
+                //reset this step
+                assignBuilder.commonFunctions.ResetStep1();
+
+                assignBuilder.redirectionFunctions.loadStep1OfAssignmentBuilder();
+            }
+        });
+    }
+    var patientTypeList = {};
+    $(document).ready(function () {
+    $("#stepwiseImage").empty();
+    $("#stepwiseImage").append("<img alt='' src='../../Content/Images/Buttons/step1AssignmentBuilder.PNG'/>");
+        //if assignmentToEdit not null load all elements excepts savedSkillset
+        if (assignmentToEdit!=null && assignmentToEdit!=undefined) {
+            assignBuilder.commonFunctions.LoadAssignmentInEditMode(assignmentToEdit);
+        }
+
+        $("#medicalRecordNumber").val('@ViewBag.MRNnumber');
+        $("#dayOfBirth").datepicker("hide");
+        $("#patientCalendarImage").click(function () {
+            $("#dayOfBirth").datepicker({ changeYear: true,yearRange: "-112:+1",minDate: new Date(1900, 1 - 1, 1)});
+            $("#dayOfBirth").datepicker("show");
+        });
+        $("#dayOfBirth").click(function () {
+            $("#dayOfBirth").datepicker("hide");
+        });
+    });
+
+    $('input:radio[name=PatientOption]').click(function () {
+        assignment.commonFunctions.patientRadioSelection();
+    });
+
+
+    $('input:checkbox[name=addResource]').click(function () {
+        resourceCount = 1;
+        if ($('input:checkbox[name=addResource]:checked').val() == "add") {
+            
+            addResource();
+            $("#addButton").show();
+        }
+        else {
+            $("#resourceContent").empty();
+            $("#addButton").hide();
+        }
+    });
+
+    function addResource(){
+        $("<div id='removeResource_"+ resourceCount+"' class='header-text grid_32'><div class='grid_28'>Resource</div><div class='grid_4' id='" + resourceCount.toString() + "_remove'><div class='align-div-inline'><img alt='left' src='../Content/Images/Buttons/Button_left_curve_grey.jpg' class='standard-height-for-buttons' /></div><input type='button' class='remove-button align-div-inline standard-height-for-buttons'value='Remove' onclick='removeResource(this.parentNode.id)' /><div class='align-div-inline'><img alt='right' src='../Content/Images/Buttons/Button_right_curve_grey.jpg' class='standard-height-for-buttons' /></div></div></div><div id='resourceDetail_"+ resourceCount +"' class='standard-text grid_32'><div class='grid_7'>Author <span class='mandatory-field'>*</span>:</div><div class='grid_25'><input type='text' id='"+ resourceCount +"_authorName' class='grid_15' maxlength='250' /></div><div class='clear-height-spacing clear'></div><div class='grid_7'>Title <span class='mandatory-field'>*</span>:</div><div class='grid_25'><input type='text' id='"+ resourceCount +"_resourceTitle' class='grid_15' maxlength='250' /></div><div class='clear-height-spacing clear'></div><div class='grid_7'>Edition <span class='mandatory-field'>*</span>:</div><div class='grid_25'><input type='text' id='"+ resourceCount +"_resourceEdition' class='grid_15' maxlength='250' /></div><div class='clear-height-spacing clear'></div><div class='grid_7'>Chapters <span class='mandatory-field'>*</span>:</div><div class='grid_25'><input type='text' id='"+ resourceCount +"_resourceChapter' class='grid_15' maxlength='250' /></div><div class='clear-height-spacing clear'></div><div class='grid_7'>Page Range <span class='mandatory-field'>*</span>:</div><div class='grid_25'><input type='text' id='"+ resourceCount +"_resourcePageRange' class='grid_15' maxlength='250' /></div><div class='clear-height-spacing clear'></div></div><div class='clear-height-spacing clear'></div>").appendTo("#resourceContent");
+        if(resourceCount > 1){
+            var borderCount = resourceCount - 1;
+            $("#resourceDetail_"+ borderCount).addClass("multiple-choice-dashed-line");        
+        }
+        resourceCount++;
+
+    }
+
+    function removeResource(removeid){    
+        var position = removeid.lastIndexOf("_");
+        var removeIdTemp = removeid.slice(0,position);
+        $("#removeResource_"+removeIdTemp).remove();
+        $("#resourceDetail_"+removeIdTemp).remove();
+        
+        if ($("div[id^='resourceDetail_']").length<1){
+            $('input:checkbox[name=addResource]').attr('checked', false);
+            $("#resourceContent").empty();
+            $("#addButton").hide();
+        }
+        //resourceCount--;
+    }
+
+    function removeResourceDiv(removeid){    
+        $("#removeResource_"+removeid).remove();
+        $("#resourceDetail_"+removeid).remove();   
+        //resourceCount--;
+    }
+
+
+    function redirectToOrientation()
+    {
+        assignBuilder.commonFunctions.SaveAssignment(true);
+    }
+
+</script>
+<div>
+<div class="page-title">
+    Step 1 of 5: Assignment Metadata
+</div>
+<div id="AssignmentData">
+    <div class="grid_32 mandatory-field-note">
+        Fields with " <span class="mandatory-field">*</span> " are mandatory
+    </div>
+</div>
+</div>
+<div class="grid_32 div-with-border standard-text assignment-builder-panel vertical-content-scroll"
+     style="width: 770px;height: 297px" id="assignment-Metadata-Main-Content">
+    <div id="validationSummary" class="error-message grid_32 align-inline">
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32 header-text">
+        Assignment Details
+    </div>
+    <div class="grid_32">
+        <hr/>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_5">
+            Assignment Title <span class="mandatory-field">*</span>:
+        </div>
+        <div class="grid_27">
+          @*@Html.TextBox("AssignmentTitle", null, new { @id = "AssignmentTitle", @class = "grid_10" })*@
+           <input type="text" id="AssignmentTitle" class="grid_10" maxlength="250" onkeypress="return isAlphaNumeric(event)"
+           name="" value="" />
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32" style="width:748px;overflow-x:hidden;">
+        <div class="grid_14">
+            <div class="grid_32 header-text" style="height: 23px;top:6px">
+                List of Skill Sets <span class="mandatory-field">*</span>
+            </div>
+            <div class="grid_32 div-without-bottom-border list-search-background standard-text">
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="grid_9">
+                    Competency:
+                </div>
+                <div class="grid_23" id="CompetencyList">
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+            </div>
+            <div id="SkillSetUnselectedList" class="grid_32 div-without-top-border list-left-panel vertical-content-scroll"
+                 style="height: 200px">
+                <div class="clear-height-spacing clear">
+                </div>
+            </div>
+        </div>
+        <div class="grid_5" style="padding-left: 3px; width: 90px;">
+            <div class="list-middle-buffer clear">
+            </div>
+            <div class="align-div-inline">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                         style="height: 22px;" /></div>
+                <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                       style="width: 75px;" id="competencyAdd_Btn" value="Add>>" onclick="assignBuilder.commonFunctions.AddCompetencies();" />
+                <div class="align-div-inline">
+                    <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                         style="height: 22px;" /></div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="align-div-inline">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                         class="standard-height-for-buttons" /></div>
+                <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                       style="width: 75px;" id="competencyRemove_Btn" value="<<Remove" onclick="assignBuilder.commonFunctions.RemoveCompetencies();" />
+                <div class="align-div-inline">
+                    <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                         class="standard-height-for-buttons" /></div>
+            </div>
+        </div>
+        <div class="grid_13" style="width: 314px">
+            <div class="align-div-inline grid_32">
+                <div class="header-text align-div-inline grid_25" style="top:6px">
+                    Selected Skill Sets
+                </div>
+                <div class="align-div-inline align-content-right grid_7" style="left:15px">
+                    <img src="@Url.Content("~/Content/Images/SwapUpArrow.png")" alt="swap-up"  class="select-hand" id="skillsetUpArrowSwap" />
+                    <img src="@Url.Content("~/Content/Images/SwapDownArrow.png")" alt="swap-down"  class="select-hand" id="skillsetDownArrowSwap"/>
+                </div>
+            </div>
+            <div class="grid_32 div-with-border vertical-content-scroll">
+                <select id="SkillSetSelectedList" size="8" style="width: 308px; height: 240px; overflow: hidden;">
+                </select>
+            </div>
+        </div>
+    </div>
+        <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32 header-text">
+        Patient 
+    </div>
+    <div class="grid_32">
+        <hr />
+    </div>
+    <div class="grid_32">
+        @Html.RadioButton("PatientOption", "selectPatient", false, new { @id = "selectPatient" })
+        <label for="selectPatient">
+            Select Patient</label>
+        @Html.RadioButton("PatientOption", "createNewPatient", false, new { @id = "createNewPatient" })
+        <label for="createNewPatient">
+            Create New Patient</label>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div id="create-new-patient" style="display: none">
+        @Html.Partial("../../Views/Builder/Patient/_CreateNewPatient")
+    </div>
+    <div id="select-patient">
+        <div class="grid_22 align-div-inline" id="filterByPatientName">
+        </div>
+    </div>
+    <div class="grid_32">
+        <hr />
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32" id="ModuleContent">
+        <div class="grid_5">
+            Module <span class="mandatory-field">*</span>:
+        </div>
+        <div class="grid_27">
+        <div class="grid_3 align-div-inline">
+            @Html.CheckBox("Module", new { @id = "Module_All", @value = "All" })
+            <label for="Module_All">
+                All</label>
+        </div>
+        <div class="grid_4 align-div-inline">
+            @Html.CheckBox("Module", new { @id = "Module_Billing", @value = "Billing" })
+            <label for="Module_Billing">
+                Billing</label>
+        </div>
+        <div class="grid_4 align-div-inline">
+            @Html.CheckBox("Module", new { @id = "Module_Clinic", @value = "Clinic" })
+            <label for="Module_Clinic">
+                Clinic</label>
+        </div>
+        <div class="grid_4 align-div-inline">
+            @Html.CheckBox("Module", new { @id = "Module_Coding", @value = "Coding" })
+            <label for="Module_Coding">
+                Coding</label>
+        </div>
+            <div class="grid_5 align-div-inline">
+                @Html.CheckBox("Module", new { @id = "Module_FrontOffice", @value = "Front Office" })
+                <label for="Module_FrontOffice">
+                    Front Office</label>
+            </div>
+            </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_5">
+            Keyword:
+        </div>
+        <div class="grid_27">
+            @Html.TextBox("AssignmentKeywords", null, new { @id = "AssignmentKeywords", @class = "grid_10" })
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_5 ">
+            Duration:
+        </div>
+        <div class="grid_27" >
+                <div class="grid_5 standard-text align-div-inline">
+                    @Html.DropDownList("AssignmentDurationHrs", null, new { id = "AssignmentDurationHrs", @class = "grid_15", @style = "width : 80px;" })
+                </div>
+                <div class="grid_5 prefix_1 standard-text align-div-inline" style="padding-left: 9px;">
+                    @Html.DropDownList("AssignmentDurationMns", null, new { id = "AssignmentDurationMns", @class = "grid_15", @style = "width : 84px;" })
+                </div>
+       </div>
+    </div>
+    <div class="grid_32">
+    <div class="grid_5 ">
+            &nbsp;
+        </div>
+        <div class="grid_27">
+                <div class="grid_5 standard-text align-div-inline">
+                  Hrs.
+                </div>
+                <div class="grid_5 prefix_1 standard-text align-div-inline" style="padding-left: 9px;">
+                   Mins.
+                </div>
+       </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    @*<div class="grid_32">
+        <div class="standard-text grid_6" align="right">
+            Hrs.
+        </div>
+        <div class="standard-text grid_6" align="right">
+            Mns.
+        </div>
+    </div>*@
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32 header-text div-with-bottom-border">
+        Assignment Resources
+    </div>
+    <div class="grid_32">
+        @Html.CheckBox("addResource", new { @id = "addResource", @value = "add" })
+        <label for="addResource">
+            Add resources to this assignment</label>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div id="resourceContent">
+    </div>
+    <div id="addButton" style="display: none" class="grid_5">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+               style="width: 65px;" value="Add More" onclick="addResource()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+    </div>
+</div>
+<div style="display: none" id="LoadCompetencyContent">
+    <div id="competenciesLoaded">
+    </div>
+</div>
+<div class="clear-height-spacing clear">
+</div>
+<div class="grid_32">
+    <div class="prefix_10 grid_4">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 50px;" value="Save" onclick="assignBuilder.commonFunctions.SaveAssignment()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+    </div>
+    @*<div class="grid_1 button-seperator">
+        &nbsp;</div>*@
+    <div class="grid_6">
+        <div class="align-div-inline">
+            <img alt="left" id="btnProceedSkillSetLeftCurve" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 100px;" value="Save & Proceed" onclick="redirectToOrientation()"
+            id="btnProceedSkillSet" />
+        <div class="align-div-inline">
+            <img alt="right" id="btnProceedSkillSetRightCurve" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+    </div>
+    @*<div class="grid_1 button-seperator">
+        &nbsp;</div>*@
+    <div class="grid_5">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" id="" value="Cancel" onclick="CancelAndReloadStep1();" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+    <div id="imageLoadPatient" style="display: none">
+        <div id="imageLoadAssignmentPatientContent">
+        </div>
+    </div>
+    <div id="image_view_load" style="display: none">
+        <div id="image_view_load_inner_content" style="height: 420px;">
+            <img id="image_view" src="" alt="x" class="image-view-larger" />
+        </div>
+    </div>
+</div>
+@*<div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="standard-text grid_8 ">
+            Duration : <span class="mandatory-field">*</span>
+        </div>
+        <div class="grid_22 standard-text">
+            Html.DropDownList("durationHrs", null, new { id = "durationHrs", @class = "grid_15" , @style = "width : 50px;" })
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+*@ @*<div>
+        @Html.Partial("../../Views/Builder/SkillSet/_SkillSetsActions")
+</div>*@ 

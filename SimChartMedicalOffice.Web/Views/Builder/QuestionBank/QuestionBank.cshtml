@@ -1,0 +1,105 @@
+﻿@using SimChartMedicalOffice.Common
+@{
+    Layout = null;
+}
+<div class="grid_32 standard-text" id="questionHolder">
+    <div class="clear clear-min-height-spacing">
+    </div>
+    <div class="grid_32 form-page-header div-with-bottom-border" style="width: 920px">
+        &nbsp;Question Bank
+        <div class="clear clear-min-height-spacing">
+        </div>
+    </div>
+    <div class="grid_8">
+        @Html.Partial("../../Views/Builder/QuestionBank/ReturnToQuestionBank")
+    </div>
+    <div class="grid_24 remove-div-space" style="float: left">
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32 div-with-border standard-text question-bank-panel" style="overflow-y: auto;
+            width: 700px" id="qn-type-holder-all-questions">
+            <div class="question-bank-select-list" id="qn_select_template">
+                <div class="multiple-choice-index-spacing">
+                    <div class="clear clear-height-spacing">
+                    </div>
+                    <div class="question-bank-note-text">
+                        Select the question type template to create new question
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                    <div>
+                        <label>
+                            Select Template:
+                        </label>
+                        @Html.DropDownList("QuestionBankList", null, null, new { @class = "standard-text", style = "width:150px" })
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+            </div>
+            <div id="noTempleteSelected" style="overflow: hidden;">
+                <img src="../../../Content/Images/QuestionBank_NoTempleteselected.png" alt="" />
+            </div>
+            <div id="content_questions">
+                <div id="questionTypesLoading" class="hide-content">
+                    @Html.Partial("../../Views/Shared/_ProgressLoader")
+                </div>
+                <div id="questionLoaded" class="hide-content">
+                    @*                    <div id="validationSummary" class="errormessage grid_32">
+                        @Html.ValidationSummary()</div>*@
+                    <div id="questionTypes">
+                        <div class="competency-suggest">
+                            &nbsp;</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_4 prefix_12">
+            <div class="align-div-inline">
+                <img alt="left" id="btnSaveQuestionLeftCurve" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+            <input type="submit" class="disabled-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 60px;" value="Save" id="btnSaveQuestion" />
+            <div class="align-div-inline">
+                <img alt="right" id="btnSaveQuestionRightCurve" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        </div>
+        <div class="grid_6">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+            <input type="submit" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                onclick="questionBank.commonFunctions.cancel();" style="width: 60px;" value="Cancel" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="imageLoad" style="display: none">
+        <div id="imageLoadContent">
+        </div>
+    </div>
+    <div id="image_view_load" style="display: none">
+        <div id="image_view_load_inner_content" style="height: 420px;">
+            <img id="image_view" src="" alt="x" class="image-view-larger" />
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        disableAButton("btnSaveQuestion");
+        $("#rationaleLinkedCompetency").hide();
+        $("#validationSummary").hide();
+        getListOfItemsForCompetencyFlexBox("!!");
+    });
+    $(function () {
+        $("#QuestionBankList").change(function () {
+            questionBank.commonFunctions.dropDownChange(this);
+            $("#validationSummary").hide();
+        });
+    });
+</script>

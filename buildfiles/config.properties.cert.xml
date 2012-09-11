@@ -1,0 +1,12 @@
+<project name="config.properties" default="config" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+
+  <!-- Environment Specific variables - CERT -->
+	<property name="web.config" value="web.config.cert" />
+	<property name="config.env" value="CERTIFICATION" />
+
+  <!-- web.config properties -->
+    
+  
+</project>

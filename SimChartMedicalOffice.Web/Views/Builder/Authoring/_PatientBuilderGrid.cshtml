@@ -1,0 +1,96 @@
+﻿<div id="patientBuilder_grid_Pagination"></div>
+<div id="patientBuilder_grid_display" style="overflow-x: hidden;
+    overflow-y: hidden;width:102%;height:310px">
+    <table id="patientBuilderGrid" class="standard-text table-scroll-border">
+        <thead style="text-align: center;">
+          <tr class="dataTables_scrollHeadInner">
+                <th title="" class="datatable-background" style="width: 1%">
+                    
+                </th>
+                <th title="First Name" class="datatable-tooltip datatable-background" style="width: 15%">
+                    First Name
+                </th>
+                <th title="Last Name" class="datatable-tooltip datatable-background" style="width: 15%">
+                    Last Name
+                </th>
+                <th title="Gender" class="datatable-tooltip datatable-background" style="width: 13%">
+                    Gender
+                </th>
+                <th title="Date Of Birth" class="datatable-tooltip datatable-background" style="width: 14%">
+                    DOB
+                </th>
+                <th title="Age" class="datatable-tooltip datatable-background" style="width: 13%">
+                    Age
+                </th>
+                <th title="Created On" class="datatable-tooltip datatable-background" style="width: 14%">
+                    Created On
+                </th>
+                <th title="Status" class="datatable-tooltip datatable-background" style="width: 14%">
+                    Status
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    patientBuilderDataTable = $('#patientBuilder_grid_display #patientBuilderGrid').dataTable({
+        "bProcessing": false,
+        "bServerSide": true,
+        "oTableTools": {
+            "aButtons": [],
+            "sRowSelect": "single"
+        },
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            aoData.push({ "name": "parentFolderIdentifier", "value": getDivData("practiceTab", "currentFolderIdentifier") });
+            aoData.push({ "name": "folderType", "value": 2 });
+            aoData.push({ "name": "filterByAge", "value": ($("#filterByAge").val() != "Filter by Age") ? $("#filterByAge").val() : "" });
+            aoData.push({ "name": "filterBySearch", "value": ($("#searchText").val() != "Search by text") ? $("#searchText").val() : "" });
+            aoData.push({ "name": "selectedPatientList", "value": (strListOfSelectedPatientItems != null && strListOfSelectedPatientItems != undefined) ? strListOfSelectedPatientItems : "" });
+            aoData.push({ "name": "folderUrl", "value": getDivData("practiceTab", "currentFolder") });
+            $.getJSON(sSource, aoData, function (json) {
+                fnCallback(json);
+                if ($('#patientBuilder_grid_display .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                    setScrollableTableBorder(true, 'patientBuilder_grid_display');
+
+                }
+                else {
+                    setScrollableTableBorder(false, 'patientBuilder_grid_display');
+                }
+                closeAjaxLoader();
+            });
+        },
+        "sAjaxSource": '@Url.Action("GetPatientList", "Patient")',
+        "bRetrieve": true,
+        "aoColumns": [
+            { "bSortable": false, "sName": "Select" },
+            { "bSortable": true, "sName": "FirstName" },
+            { "bSortable": true, "sName": "LastName" },
+            { "bSortable": true, "sName": "Gender" },
+            { "bSortable": true, "sName": "DOB" },
+            { "bSortable": false, "sName": "Age" },
+            { "bSortable": true, "sName": "CreatedOn" },
+            { "bSortable": true, "sName": "Status" }
+        ],
+        "aaSorting": [[2, 'asc']],
+        "oLanguage": { "sZeroRecords": "No content in this folder" },
+        "bAutoWidth": false,
+        "bFilter": false,
+        "bLengthChange": false,
+        "iDisplayLength": 15,
+        "bPaginate": true,
+        "sPaginationType": "full_numbers",
+        "bSort": true,
+        "sScrollY": "270px",
+        "sScrollX": "100%",
+        "bScrollCollapse": true,
+        "fnDrawCallback": function () {
+            setScrollableTableHeight(this);
+        }
+    });
+        $("#patientBuilder_grid_Pagination").ready(function () {
+        $("#patientBuilderGrid_info").appendTo($("#patientBuilder_grid_Pagination"));
+        $("#patientBuilderGrid_paginate").appendTo($("#patientBuilder_grid_Pagination")); 
+    });
+</script>

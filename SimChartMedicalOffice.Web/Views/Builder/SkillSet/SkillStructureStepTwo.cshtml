@@ -1,0 +1,307 @@
+﻿@{
+    Layout = null;    
+}
+<script type="text/javascript">
+    var savedQuestionOrderList = [];
+    savedQuestionOrderList = @Html.Raw(Json.Encode(ViewBag.selectedQuestionOrderList));
+    IsSkillStructureEditMode = @Html.Raw(Json.Encode(ViewBag.IsSkillStructureEditMode));
+
+    $(document).ready(function () {
+        //loadCompetencyForSkillSetFlexBox();
+        //loadQuestionTemplate();
+        //questionBankClick();
+        //loadFlexBoxForFilterByType();
+        //$("#questionTemplateDiv").trigger()
+        startAjaxLoader();
+        skillSet.commonFunctions.loadImageForAStep("2");
+        questionBankClick();
+        loadQuestionTemplate();        
+        skillSet.stepTwoSkillStructure.getQuestionTemplate();
+        if(IsSkillStructureEditMode)
+        {
+            selectQuestionOrderList = savedQuestionOrderList;
+            //skillSet.stepTwoSkillStructure.LoadQuestionOrderList();
+            skillSet.stepTwoSkillStructure.SortQuestionOrderList();
+        }
+        skillSet.stepTwoSkillStructure.getQuestionBank();
+        skillSet.stepTwoSkillStructure.getFlexBoxForFilterByQuestionType();
+        skillSet.stepTwoSkillStructure.getListOfCompetencyForSkillSetFlexBox(); 
+    });
+
+
+    $(function () {
+
+        //       $("#CompetencyQuestionSearchFilter").live('keyup', function () {
+        //        competencyQuestionSearchFiltertext = $.trim($("#CompetencyQuestionSearchFilter").val());
+        //        skillSet.stepTwoSkillStructure.RefreshCompetencyQuestionSearch();
+        //        });
+        $("#questionBankDiv").click(function () {
+            //startAjaxLoader();
+            questionBankClick();
+            //closeAjaxLoader();
+        });
+        $("#questionTemplateDiv").click(function () {
+            loadQuestionTemplate();
+        });
+
+
+        $("#questionUpArrowSwap").bind('click', function () {
+            //skillSet.stepTwoSkillStructure.swapQuestions("upArrow");
+        });
+        $("#questionDownArrowSwap").bind('click', function () {
+            //skillSet.commonFunctions.swapQuestions("downArrow");
+        });
+        $("#backToStep1Btn").click(function () {
+            skillSet.commonFunctions.loadStep1(skillSet.commonFunctions.getSkillSetUniqueIdentifier());
+        });
+        $("#skillStructureUpArrowSwap").bind('click', function () {
+            skillSet.stepTwoSkillStructure.skillStructureSwapQuestions("upArrow");
+        });
+        $("#skillStructureDownArrowSwap").bind('click', function () {
+            skillSet.stepTwoSkillStructure.skillStructureSwapQuestions("downArrow");
+        });
+
+
+        $("#SkillSetBuilderSkillStructureDiv :input").change(function (event) {
+            isSkillStructureContentChange = true;
+        });
+
+    });
+
+    function addSkillStructure() {
+        skillSet.stepTwoSkillStructure.addQuestion();
+    }
+
+    function removeSkillStructure() {
+        skillSet.stepTwoSkillStructure.RemoveQuestionOrderList();
+    }
+
+    function loadQuestionTemplate() {
+        //startAjaxLoader();
+        //skillSet.stepTwoSkillStructure.getQuestionTemplate();
+        $("#loadQuestionTemplateDiv").removeClass('hide-content').addClass('show-content');
+        $("#loadCompetecnyQuestionDiv").removeClass('show-content').addClass('hide-content');
+        $("#questionTemplateDiv").addClass('list-search-background header-text');
+        $("#loadQuestionTemplate").addClass('list-search-background');
+        $("#questionBankDiv").removeClass('list-search-background header-text');
+        //closeAjaxLoader();
+    }
+
+    function questionBankClick() {
+
+        $("#loadCompetecnyQuestionDiv").removeClass('hide-content').addClass('show-content');
+        $("#questionTemplateDiv").removeClass('list-search-background header-text');
+        $("#questionBankDiv").addClass('list-search-background header-text');
+        $("#loadQuestionTemplateDiv").removeClass('show-content').addClass('hide-content').removeClass('list-search-background');
+        //skillSet.stepTwoSkillStructure.getQuestionBank();
+ 
+    }
+    $("#viewSelectedCompetencies").click(function () {
+          loadCompetencies();
+    });
+
+    function loadCompetencyForSkillSetFlexBox() {
+        skillSet.stepTwoSkillStructure.getListOfCompetencyForSkillSetFlexBox("!!");
+    }
+    function loadFlexBoxForFilterByType() {
+        alert("loadFlexBoxForFilterByType");
+        skillSet.stepTwoSkillStructure.getFlexBoxForFilterByQuestionType("!!");
+        //initializeFlexBoxForFilterByType("FilterByQuestionType", filterByTypeList);
+    }
+    function loadCompetencies() { 
+          startAjaxLoader();
+        $("#ViewCompetencyDialog").load("../SkillSet/ViewSeletedCompetencies?skillSetUrl=" + skillSet.commonFunctions.getSkillSetUniqueIdentifier(), function () {
+            $("#ViewCompetency").dialog({
+                height: 250,
+                width: 450,
+                modal: true,
+                position: 'center',
+                resizable: false,
+                autoOpen: true,
+                closeOnEscape: false,
+                title: 'Selected Competencies',
+                open: function (event, ui) {
+                    applyClassForDialogHeader();
+                    closeAjaxLoader();
+                },
+                close: function (event, ui) {
+                    $(this).dialog('destroy').remove();
+                },
+                overlay: { opacity: 0.5, background: 'black' }
+            });
+        });
+    }
+
+</script>
+    <div class="page-title grid_25">
+        Step 2 of 4: Skill Structure
+    </div>
+    <div class="grid_7">
+        <a href="#" id="viewSelectedCompetencies" style="position:absolute; top:5px; right:0px" class="link align-content-right">View Selected
+            Competencies</a>
+    </div>
+    <div class="grid_32 mandatory-field-note">
+    Fields with " <span class="mandatory-field">*</span> " are mandatory
+</div>
+<div class="grid_32 div-with-border vertical-content-scroll skillset-step-two" id="SkillSetBuilderSkillStructureDiv" >
+<div id="validationSummary" class="error-message grid_32">
+    </div>    
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32" style="overflow-x: Auto; overflow-y: hidden;padding-left: 7px;">
+        <div class="grid_14" id="selectQuestion">
+                <div id="questionTemplateDiv" class="grid_15 standard-text select-hand list-search-background div-with-border"
+                    style="height: 20px; text-align:center; border-bottom: 0px;position:relative">
+                    <label style="top: 5px; position: absolute; left: 15px;">Question Templates</label>
+                </div>
+                <div class="grid_1">
+                    <div class="clear-height-spacing clear">
+                    </div>
+                </div>
+                <div id="questionBankDiv" class="grid_16 standard-text select-hand  div-with-border"
+                    style="height: 20px;">
+                    <label style="top: 5px; position: absolute; left: 30px;">Question Bank</label>
+                </div>
+            <div class="grid_32 hide-content" id="loadQuestionTemplateDiv">
+                <select id="loadQuestionTemplate" size="8" multiple="multiple" style="width: 301px;
+                    height: 250px; overflow: hidden;" class="list-search-background">
+                </select></div>
+            <div class="grid_32 hide-content" id="loadCompetecnyQuestionDiv" style="width: 303px;
+                height: 250px">
+                <div class="grid_32 div-without-bottom-border list-left-search-panel list-search-background standard-text">
+                <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="grid_32">
+                        <div class="grid_9 standard-text" style="padding-top: 3px">
+                            Filter by Type:</div>
+                        <div class="grid_23 align-div-inline" id="FilterByQuestionType">
+                        </div>
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="grid_20 header-text" style="text-align:right">
+                        And /Or</div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="grid_32">
+                        <div class="grid_9 standard-text" style="padding-top: 3px">
+                            Competency :</div>
+                        @* <div class="grid_22">
+                            @Html.TextBox("CompetencyQuestionSearchFilter", null, new { @id = "CompetencyQuestionSearchFilter", @class = "grid_32" })
+                        </div>*@
+                        <div class="grid_23">
+                            <div id="linked_Competency" class="grid_32">
+                                <div id="LinkedCompetencyQuestion">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                </div>
+                <div id="loadQuestionBankCheckBoxDiv" style="height:163px" class="grid_32 div-without-top-border list-left-panel vertical-content-scroll">
+                    <div class="clear-height-spacing clear">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_4" style="">
+            <div class="list-middle-buffer clear">
+            </div>
+            <div id="addSkillStructure" class="grid_32">
+                <div class="align-div-inline">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                        style="width: 60px;" value="Add>>" title="Add" onclick="addSkillStructure()" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+            </div>
+            <div id="removeSkillStructure" class="grid_32 header-text">
+                <div class="align-div-inline">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                        style="width: 60px; padding-left: 2px;" value="<<Remove" title="Remove" onclick="removeSkillStructure()" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+                </div>
+                <div class="grid_1 button-seperator">
+                    &nbsp;</div>
+            </div>
+        </div>
+        <div class="grid_14 list-search-background div-with-border">
+            <div class="grid_32 list-search-background">
+                <div class="grid_25 remove-div-space header-text" style="left: 5px; top: 5px;">
+                    <label>Question Order</label><span class="mandatory-field">*</span></div>
+                <div class="grid_7" style="left:26px">
+                    <img src="@Url.Content("~/Content/Images/SwapUpArrow.png")" alt="swap-up"  class="select-hand" id="skillStructureUpArrowSwap" />
+                    <img src="@Url.Content("~/Content/Images/SwapDownArrow.png")" alt="swap-down"  class="select-hand" id="skillStructureDownArrowSwap"/>
+                </div>
+            </div>
+            <div>
+                <select id="loadQuestionOrderList" size="24" multiple="multiple" style="width: 310px;
+                    height: 250px; overflow: hidden">
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clear-height-spacing clear">
+</div>
+<div class="grid_32">
+    <div class="grid_8">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     style="height: 22px;" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 50px;" id="backToStep1Btn" value="Back" title="Back"/>
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="grid_4 prefix_2">
+        <div class="align-div-inline">
+            <img alt="left" id="btnSaveSkillSetLeftCurve" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" value="Save" id="btnSaveSkillSetStructure" title="Save" onclick="skillSet.stepTwoSkillStructure.SaveSkillStructure(1)" />
+        <div class="align-div-inline">
+            <img alt="right" id="btnSaveSkillSetRightCurve" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="grid_6">
+        <div class="align-div-inline">
+            <img alt="left" id="btnProceedSkillSetLeftCurve" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 100px;" value="Save & Proceed" id="btnProceedSkillSetStructure" title="Save & Proceed"
+            onclick="skillSet.stepTwoSkillStructure.SaveSkillStructure(2)" />
+        <div class="align-div-inline">
+            <img alt="right" id="btnProceedSkillSetRightCurve" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="grid_5">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" id="" value="Cancel" title="Cancel" onclick="skillSet.stepTwoSkillStructure.cancelForskillsetStructure()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+    </div>
+</div>
+<div id="ViewCompetencyDialog" class="grid_32 container-grid-height" style="display: none">
+</div>

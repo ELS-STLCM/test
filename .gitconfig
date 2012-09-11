@@ -1,0 +1,5 @@
+[user]
+	name = Shan
+	email = sh.sundaram@elsevier.com
+[core]
+	autocrlf = false

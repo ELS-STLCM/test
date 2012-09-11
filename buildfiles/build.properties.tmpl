@@ -1,0 +1,32 @@
+<project name="build.properties" default="display" basedir="." >
+	<description>.NET Build Framework - Reusable NAnt build</description>
+	<!--/ 
+	this file is generated during the build process with build specific data needed for the promotion process 
+	/-->
+	<!-- Jenkins environment variables -->
+	<property name="BUILD.NUMBER" 		value="@BUILD.NUMBER@" />
+	<property name="BUILD.ID" 			value="@BUILD.ID@" /> 
+	<property name="BUILD.URL" 			value="@BUILD.URL@" /> 
+	<property name="BUILD.JOB" 			value="@BUILD.JOB@" />
+	<property name="BUILD.TAG"			value="@BUILD.TAG@" />
+	<property name="MASTER.URL" 		value="@MASTER.URL@" />
+	<property name="PKG.REPO" 			value="@PKG.REPO@" />
+   
+	<!-- build properties set during build --> 
+	<property name="BUILD.ZIP" 			value="@BUILD.ZIP@" />
+	<property name="BUILD.DATE" 		value="@BUILD.DATE@" />
+   
+	<target name="display variables" >
+		
+		<echo message="BUILD.NUMBER....: ${BUILD.NUMBER}
+		BUILD.ID........: ${BUILD.ID}
+		BUILD.URL.......: ${BUILD.URL}
+		BUILD.JOB.......: ${BUILD.JOB}
+		BUILD.TAG.......: ${BUILD.TAG}
+		MASTER.URL......: ${MASTER.URL}
+		BUILD.ZIP.......: ${BUILD.ZIP}
+		BUILD.DATE......: ${BUILD.DATE} " />
+	
+	</target>
+	
+</project>

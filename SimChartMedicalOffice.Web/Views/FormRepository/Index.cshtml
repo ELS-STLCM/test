@@ -1,0 +1,50 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <script type="text/javascript" language="javascript">
+        var isValidDate;
+        $(document).ready(function () {
+        });
+
+        $(function () {
+
+            $("#btnSave").click(function() {
+                $.ajax({
+                    url: '@Url.Action("ExportCompetencyToXmlDocument", "Competency")',
+                    async: false,
+                    success: function() {
+                    },
+                    error: function() {
+                    }
+                });
+                return false;
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="grid_10 prefix_1">
+        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
+        Ipsum has been the industry's standard dummy text ever since the 1500s, when an
+        unknown printer took a galley of type and scrambled it to make a type specimen book.
+    </div>
+    <div>
+        <input id="btnSave" type="button" value="Export to XML" />
+        <div class="grid_4 prefix_12">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+            <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 60px;" value="Export to XML" onclick="location.href='@Url.Action("ExportCompetencyToXmlDocument", "Competency")'"/>
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        </div>
+        <a id="lnkSaveFullReport" href="@Url.Action("ExportCompetencyToXmlDocument", "Competency")" target="_blank" class="link-button" > Export to XML </a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,321 @@
+﻿@{
+    Layout = null;
+}
+<div id="dvToolTip">
+</div>
+<div id="assignmentUniqueIdentifierPath"></div>
+<div class="grid_8">
+    <div class="grid_32  div-with-border">
+        <div class="select-hand calendarView calendar-panel-header calendar-panel-content"
+            id="calendarView">
+            <div class="grid_32  header-text"  style="padding-top:2px;">
+                <div class="grid_3 align-div-inline">
+                    <img id="accordion-img-calendarView" src="@Url.Content("~/Content/Images/arrow-down-white.png")"
+                        alt="x" class="assignment-accordion-open"  style="height:8px"/></div>
+                <div class="grid_27 align-div-inline">
+                    Calendar View</div>
+            </div>
+        </div>
+        <div class="calendar-accordion-body" id="accordion-body-calendarView">
+                        <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+                        <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+        <div class="prefix_7" align="center">
+                    <div class="align-div-inline">
+                        <img alt="left"  src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")" style="height: 22px;" /></div>
+                    <input  type="button" id="btnSmoAddAppointment" class="navigation-button align-div-inline standard-text standard-height-for-buttons" style="width: 112px;" value="Add Appointment"/>
+                    <div class="align-div-inline">
+                        <img alt="right"  src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")" style="height: 22px;" /></div>
+                </div>
+                                <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+                                    <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+            <div class="grid_32" align="center">               
+                <div id="dvDate">
+                </div>
+                <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+            </div> 
+            <div>
+                <div class="grid_32 calendar-pane header-text" style="width: 100%;">
+                <div class="div-with-top-bottom-border alpha" style="padding-bottom:3px;padding-top:3px; padding-left:6px;width: 100%;">
+                    Search</div>
+                </div>
+                <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+                <div class="grid_32">
+                      <div class="grid_27 watermark-text" id="searchByPatientCalendar" style="height:18px"></div>
+                      <img class="select-hand" onclick="smoCalendar.appointmentSearchPatients()" id="buttonCalendarSearchPatient" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")"/>
+                </div>
+                <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+            </div>
+            <div>
+                <div class="grid_32 calendar-pane header-text"  style="width: 100%;">
+                <div class="div-with-top-bottom-border alpha" style="padding-bottom:3px;padding-top:3px; padding-left:6px; width: 100%;"">
+                    Filter By</div>
+                </div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="grid_32 header-text">
+                <div class="grid_20" style="padding-top:6px; padding-left:6px">
+                    Appointment Type</div>
+                </div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="grid_32">
+                <div class="grid_5 calender-appointment-type-disabled appointment" style="padding-top:6px; padding-left:6px" id="appointment-link_All--4">
+                    All</div>
+                </div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="grid_32">
+                    <div class="grid_15 calender-appointment-type  appointment" style="padding-top:6px; padding-left:6px" id="appointment-link_patientVisit--1">
+                        Patient Visit</div>
+                    <div class="grid_10">
+                    <img src="@Url.Content("~/Content/Images/color_patientvisit_type.png")" class="calender-color-icon" alt="Patient Visit"/>
+                </div>
+                </div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="grid_32">
+                <div class="grid_15 calender-appointment-type appointment" style="padding-top:6px; padding-left:6px" id="appointment-link_Blocked--2">
+                    Blocked</div>
+                <div class="grid_10">
+                    <img src="@Url.Content("~/Content/Images/color_blocked_type.png")" class="calender-color-icon" alt="Blocked"/>
+                    </div>
+                </div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="grid_32">
+                <div class="grid_15 calender-appointment-type appointment" style="padding-top:6px; padding-left:6px" id="appointment-link_Other--3">
+                    Others</div>
+                    <div class="grid_10">
+                    <img src="@Url.Content("~/Content/Images/color_others_type.png")" class="calender-color-icon" alt="Others"/>
+                </div>
+                </div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="grid_20 header-text" style="padding-top:6px; padding-left:6px">
+                    Provider :</div>
+                <div class="grid_30" style="padding-left:6px"> 
+                    @Html.DropDownList("ProviderCalendar", null, new { id = "ProviderCalendar", @class = "grid_30" })
+                </div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="grid_20 header-text" style="padding-top:6px; padding-left:6px">
+                    Exam Room :</div>
+                <div class="grid_30"  style="padding-left:6px">
+                    @Html.DropDownList("ExamRoomCalendar", null, new { id = "ExamRoomCalendar", @class = "grid_30" })
+                </div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+                <div class="clear clear-min-height-spacing">&nbsp;</div>
+           </div>
+        </div>
+    </div>
+    <div class="grid_32  div-with-border">
+        <div class="select-hand examView calendar-panel-header calendar-panel-content" id="examView">
+            <div class="grid_32 header-text" style="padding-top:2px;">
+                <div class="grid_3 align-div-inline">
+                    <img id="accordion-img-examView" src="@Url.Content("~/Content/Images/arrow-normal-white.png")"
+                        alt="x" class="assignment-accordion-close" style="height:8px"/></div>
+                <div class="grid_27 align-div-inline" id='examRoomholder'>
+                    Exam Room View</div>
+            </div>
+        </div>
+        <div class="hide-content calendar-accordion-body" id="accordion-body-examView">
+            <div class="grid_32" align="center">
+                <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+                                    <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+                <div id="dvDateExam">
+                </div>
+                <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+                <div class="grid_32 header-text" style="width: 100%;">
+                    <div class="div-with-top-bottom-border alpha" style="padding-bottom:3px;padding-top:3px; padding-left:6px;width: 100%;">
+                    <div class="clear clear-min-height-spacing">
+                    &nbsp;</div>
+                    <div class="grid_15 calender-appointment-type appointment" id="office-floor-plan">
+                     Office Floor Plan</div>
+                    <div class="clear clear-min-height-spacing">
+                    &nbsp;</div> 
+                    </div>
+                </div>
+             
+            </div>
+            <div class="header-text" style="padding-left:10px;" >
+                   <div class="clear clear-min-height-spacing">&nbsp;</div>  
+                    <div class="grid_16">Exam Room 1 - </div>
+                    <div class="grid_16">Procedures and testing</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>    
+                                        <div class="grid_16">Exam Room 2 - </div>
+                    <div class="grid_16">Children</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>   
+                                        <div class="grid_16">Exam Room 3 - </div>
+                    <div class="grid_16">Children</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>   
+                                        <div class="grid_16">Exam Room 4 - </div>
+                    <div class="grid_16">Children</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>   
+                                        <div class="grid_16">Exam Room 5 - </div>
+                    <div class="grid_16">Children</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>   
+                                        <div class="grid_16">Exam Room 6 - </div>
+                    <div class="grid_16">Children</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>   
+                                        <div class="grid_16">Exam Room 7 - </div>
+                    <div class="grid_16">Children</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>   
+                                        <div class="grid_16">Exam Room 8 - </div>
+                    <div class="grid_16">Children</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>   
+                                        <div class="grid_16">Exam Room 9 - </div>
+                    <div class="grid_16">Women's health</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div>   
+                                        <div class="grid_16">Exam Room 10 - </div>
+                    <div class="grid_16">Women's health</div> 
+                    <div class="clear clear-min-height-spacing">&nbsp;</div> 
+                    </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="office-floor-image" style="display: none">
+        <div id="office-floor-image_inner_content" class="office-floor-plan-content">
+            <img id="office-floor-image_view" src="@Url.Content("~/Content/Images/ExamRoomPlan.jpg")" alt="x" class="office-floor-plan"/>
+        </div>
+    </div>
+<script language="javascript" type="text/javascript">
+    $(document).ready(function () {
+        appointment.commonFunction.setAssignmentUniqueIdentifier('@ViewBag.AssignmentUniquePath');
+        waterMarkTextForCalendarSearchPatient();
+        $(".calendarView").click(function () {
+            startAjaxLoader();
+            $("#accordion-body-examView").slideUp("slow"); 
+            $("#accordion-body-calendarView").slideDown("slow",function(){ 
+                $("#calendar-view-content").removeClass("hide-content").addClass("show-content");
+                $("#calendarExamRoom").removeClass("show-content").addClass("hide-content");
+                $("#accordion-img-calendarView").attr("src", '@Url.Content("~/Content/Images/arrow-down-white.png")');
+                $("#accordion-img-examView").attr("src", '@Url.Content("~/Content/Images/arrow-normal-white.png")');
+            });
+            closeAjaxLoader();
+        });
+        $("#buttonCalendarSearchPatient").click(function () {
+            resetFilterByAppointmentType();
+            resetExamRoomFilter();
+            resetProviderFilter();
+        });
+        $("#ProviderCalendar").change(function () {
+            startAjaxLoader();
+            if($("#ProviderCalendar option[value="+this.value+"]").text()!=DROPDOWN_SELECT){
+                  calendarfilterType = 2;
+            }else{
+                calendarfilterType = 4;
+            }
+            resetFilterByAppointmentType();
+            resetExamRoomFilter();
+            resetSearchByPatient();
+            $("#calendar").show();
+            $("#searchPatientForAppointment").hide(); 
+            smoCalendar.setCalendarFilterCriteria();
+        });
+        $("#ExamRoomCalendar").change(function () {
+            startAjaxLoader();
+            resetFilterByAppointmentType();
+            resetProviderFilter();
+            resetSearchByPatient();
+            $("#calendar").show();
+            $("#searchPatientForAppointment").hide();
+            if($("#ExamRoomCalendar option[value='"+this.value+"']").text()!=DROPDOWN_SELECT){
+                  calendarfilterType = 1;
+            }else{
+                calendarfilterType = 4;
+            }
+            smoCalendar.setCalendarFilterCriteria();
+        });
+        $("#btnSmoAddAppointment").click(function () {
+            smoCalendar.showAppointmentsOfADay();
+        });
+        $("#office-floor-plan").click(function () {
+            smoCalendar.showOfficeFloorPlan();
+        });
+        $(".examView").click(function () {
+            startAjaxLoader();
+            $("#accordion-img-examView").attr("src", '@Url.Content("~/Content/Images/arrow-down-white.png")');
+            $("#accordion-img-calendarView").attr("src",'@Url.Content("~/Content/Images/arrow-normal-white.png")');
+             $("#accordion-body-examView").slideDown("slow");
+            $("#accordion-body-calendarView").slideUp("slow",function(){
+                $("#calendar-view-content").removeClass("show-content").addClass("hide-content");
+                $("#calendarExamRoom").removeClass("hide-content").addClass("show-content");
+                initializeExamRoomView();
+            }); 
+            closeAjaxLoader();
+        });
+        $("div[id^=appointment-link]").click(function () {
+            startAjaxLoader();
+            resetExamRoomFilter();
+            resetProviderFilter();
+            resetSearchByPatient();
+            $("#calendar").show();
+            $("#searchPatientForAppointment").hide();
+            $("div[id^=appointment-link]").addClass("calender-appointment-type").removeClass("calender-appointment-type-disabled");
+            $("#" + this.id).removeClass("calender-appointment-type").addClass("calender-appointment-type-disabled");
+            var typeOfAppointment = this.id.split('--')[1];
+            calendarAppointmentType = typeOfAppointment;
+            if (typeOfAppointment != "4") {
+                smoCalendarFilter.AppointmentType = typeOfAppointment;
+                calendarfilterType = 3;
+            }
+            else {
+                calendarfilterType = 4;
+                smoCalendarFilter.AppointmentType = 4;
+            }
+            smoCalendar.setCalendarFilterCriteria();
+            return false;
+        });
+    });
+
+    function resetFilterByAppointmentType() {
+        $("div[id^=appointment-link]").addClass("calender-appointment-type").removeClass("calender-appointment-type-disabled");
+        $("div[id=appointment-link_All--4]").addClass("calender-appointment-type-disabled").removeClass("calender-appointment-type");
+    }
+
+    function resetExamRoomFilter() {
+        $("#ExamRoomCalendar option:first").attr('selected', 'selected'); 
+    }
+    function resetProviderFilter() {
+        $("#ProviderCalendar option:first").attr('selected', 'selected'); 
+    } 
+    function resetSearchByPatient(){
+       $("#searchByPatientCalendar_input").val('');
+       $("#searchByPatientCalendar_hidden").val('');
+       $("#searchByPatientCalendar_input").watermark(PATIENT_SEARCH_WATERMARK, { className: 'water-mark watermark-text' }); 
+       $('#searchByPatientCalendar_input').addClass('watermark watermark-text'); 
+    }
+    function waterMarkTextForCalendarSearchPatient() {    
+        var lstPatient = @Html.Raw(Json.Encode(ViewBag.AppointmentPatientList));
+        var lstPatientTemp=[];
+        lstPatientTemp = lstPatient;
+        lstPatient.results=lstPatientTemp;
+        lstPatient.total=lstPatient.results.length; 
+        $("#searchByPatientCalendar").flexbox(lstPatient, {
+        resultTemplate: '{name}',
+        width: 154, 
+        showArrow: false,
+        noResultsText: '',
+        noResultsClass: '',
+        matchClass: '',
+        matchAny: true
+    });
+    $("#searchByPatientCalendar_input").watermark(PATIENT_SEARCH_WATERMARK, { className: 'water-mark watermark-text' });
+    $('#searchByPatientCalendar_input').live('blur', function () {
+        if ($('#searchByPatientCalendar_input').val() == "") {
+            $('#searchByPatientCalendar_input').text = PATIENT_SEARCH_WATERMARK;
+            $('#searchByPatientCalendar_input').addClass('watermark watermark-text');
+        } else {
+            $('#searchByPatientCalendar_input').removeClass('watermark watermark-text');
+        }
+    });
+    }
+</script>

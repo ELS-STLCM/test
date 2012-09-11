@@ -1,0 +1,325 @@
+﻿@{
+    Layout = null;
+}
+@{
+    string strquestionText = (ViewBag.QuestionText != null) ? ViewBag.QuestionText : String.Empty;
+    string strRationaleText = (ViewBag.CorrectAnswerRationale != null) ? ViewBag.CorrectAnswerRationale : String.Empty;
+    string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
+    string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
+    string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty; ;
+    string strQuestionguid = string.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty; ;
+    string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
+    bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
+    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
+    string answerText1 = (ViewData["AnswerOption_1"] != null) ? ViewData["AnswerOption_1"].ToString() : String.Empty;
+    string answerText2 = (ViewData["AnswerOption_2"] != null) ? ViewData["AnswerOption_2"].ToString() : String.Empty;
+    string answerText3 = (ViewData["AnswerOption_3"] != null) ? ViewData["AnswerOption_3"].ToString() : String.Empty;
+    string answerText4 = (ViewData["AnswerOption_4"] != null) ? ViewData["AnswerOption_4"].ToString() : String.Empty;
+    string answerText5 = (ViewData["AnswerOption_5"] != null) ? ViewData["AnswerOption_5"].ToString() : String.Empty;
+    string answerImage1 = (ViewData["AnsImage_1"] != null) ? ViewData["AnsImage_1"].ToString() : String.Empty;
+    string answerImage2 = (ViewData["AnsImage_2"] != null) ? ViewData["AnsImage_2"].ToString() : String.Empty;
+    string answerImage3 = (ViewData["AnsImage_3"] != null) ? ViewData["AnsImage_3"].ToString() : String.Empty;
+    string answerImage4 = (ViewData["AnsImage_4"] != null) ? ViewData["AnsImage_4"].ToString() : String.Empty;
+    string answerImage5 = (ViewData["AnsImage_5"] != null) ? ViewData["AnsImage_5"].ToString() : String.Empty; 
+    strquestionText = String.IsNullOrEmpty(strCompetencyText) ? String.Empty : strquestionText;
+}
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_24">
+    <div id="validationSummary" class="errormessage grid_32">
+        @Html.ValidationSummary()</div>
+    <div class="clear clear-height-spacing">
+    </div>  
+    <span class="header-text">Multiple Choice:</span></div>
+<div class="grid_32 clear clear-height-spacing">
+</div>
+<div class="grid_32 mandatory-field-note">
+    Fields with " <span class="mandatory-field">*</span> " are mandatory
+</div>
+<div class="grid_32 clear clear-height-spacing">
+</div>
+<div id="question_multiple_choice" class="multiple-choice-dashed-line grid_32">
+    <div class="grid_32">
+        <div class="grid_18 header-text">
+            Question <span class="mandatory-field">*</span>:</div>
+        <div class="grid_17">@Html.TextArea("QuestionText", strquestionText, new { rows = 5, @class = "standard-text multiple-choice-textarea" })</div>
+        <div class="grid_15">
+            <div class="grid_7">
+                <a href="#" id="uploadImageLink" class="link">Upload</a>&nbsp;</div>
+            <div class="grid_21 alpha">
+                <div id="question_image" class="image-holder-div grid_14">
+                    <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="qnImageRefId" class="image-holder" />
+                </div>
+                <div class="grid_17 prefix_1 hide-content" id="qnImageRefId_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                        value="Remove" onclick="questionBank.commonFunctions.removeAttachment('qnImageRefId')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                </div>
+                <div class="grid_32">
+                    <div class="disabled-text" id="qnImageRefId_view">
+                        <u>View Large</u></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="linkedCompetency" class="grid_32">
+        @Html.Partial("../../Views/Builder/Authoring/_LinkedCompetency")
+    </div>
+</div>
+<div class="clear clear-height-spacing">
+</div>
+<div>
+    <div class="grid_26 multiple-choice-right-border-dashed align-div-inline">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div id="first_answer_multiple_choice">
+            <div class="grid_32 header-text">
+                Answer 1:</div>
+            <div class="grid_16">@Html.TextArea("AnswerOption_1", answerText1, new { rows = 5, @class = "standard-text multiple-choice-textarea", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })</div>
+            <div class="grid_16">
+                <div class="grid_11">
+                    <label class="grid_16">And/Or</label><a class="grid_13" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE1')">Upload</a>&nbsp;</div>
+                <div class="grid_11 align-div-inline">
+                    <div id="answer_image_1"  class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId1" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId1_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_10 hide-content" id="answerRefId1_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                        value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId1')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_6">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        @Html.RadioButton("CorrectAnswer", "AnswerOption_1", new { @id = "Answer1", @value = "AnswerOption_1", @class="grid_5", disabled = true })<label
+            for="Answer1">Correct Answer</label>
+    </div>
+    <div class="grid_26 multiple-choice-right-border-dashed align-div-inline">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div id="second_answer_multiple_choice">
+            <div class="grid_32 header-text">
+                Answer 2:</div>
+            <div class="grid_16">@Html.TextArea("AnswerOption_2", answerText2, new { rows = 5, @class = "standard-text multiple-choice-textarea", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })</div>
+            <div class="grid_16">
+                <div class="grid_11">
+                   <label class="grid_16">And/Or</label><a class="grid_13" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE2')">Upload</a>&nbsp;</div>
+                <div class="grid_11 align-div-inline">
+                    <div id="answer_image_1" class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId2" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId2_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="hide-content grid_10" id="answerRefId2_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                        value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId2')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_6">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        @Html.RadioButton("CorrectAnswer", "AnswerOption_2", new { @id = "Answer2", @value = "AnswerOption_2", @class = "grid_5", disabled = true })<label
+            for="Answer2">Correct Answer</label>
+    </div>
+    <div class="grid_26 multiple-choice-right-border-dashed align-div-inline">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div id="Third_answer_multiple_choice">
+            <div class="grid_32 header-text">
+                Answer 3:</div>
+            <div class="grid_16">@Html.TextArea("AnswerOption_3", answerText3, new { rows = 5, @class = "standard-text multiple-choice-textarea", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })</div>
+            <div class="grid_16">
+                <div class="grid_11">
+                    <label class="grid_16">And/Or</label><a class="grid_13" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE3')">Upload</a>&nbsp;</div>
+                <div class="grid_11 align-div-inline">
+                    <div id="answer_image_1" class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId3" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId3_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_10 hide-content" id="answerRefId3_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                        value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId3')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_6">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        @Html.RadioButton("CorrectAnswer", "AnswerOption_3", new { @id = "Answer3", @value = "AnswerOption_3", @class = "grid_5", disabled = true })<label
+            for="Answer3">Correct Answer</label>
+    </div>
+    <div class="grid_26 multiple-choice-right-border-dashed align-div-inline">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div id="fourth_answer_multiple_choice">
+            <div class="grid_32 header-text">
+                <label>
+                    Answer 4:</label></div>
+            <div class="grid_16">@Html.TextArea("AnswerOption_4", answerText4, new { rows = 5, @class = "standard-text multiple-choice-textarea", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })</div>
+            <div class="grid_16">
+                <div class="grid_11">
+                    <label class="grid_16">And/Or</label><a class="grid_13" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE4')">Upload</a>&nbsp;</div>
+                <div class="grid_11 align-div-inline">
+                    <div id="answer_image_1" class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId4" class="image-holder"/>
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId4_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_10 hide-content" id="answerRefId4_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                        value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId4')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_6">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        @Html.RadioButton("CorrectAnswer", "AnswerOption_4", new { @id = "Answer4", @value = "AnswerOption_4", @class = "grid_5", disabled = true })<label
+            for="Answer4">Correct Answer</label>
+    </div>
+    <div class="grid_26 multiple-choice-right-border-dashed align-div-inline">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div id="fifth_answer_multiple_choice">
+            <div class="grid_32 header-text">
+                <label>
+                    Answer 5:</label></div>
+            <div class="grid_16">@Html.TextArea("AnswerOption_5", answerText5, new { rows = 5, @class = "standard-text multiple-choice-textarea", onkeyup = "questionBank.commonFunctions.enableRadioOnTextChange(this)" })</div>
+            <div class="grid_16">
+                <div class="grid_11">
+                    <label class="grid_16">And/Or</label><a class="grid_13" style="padding-left:3px" href="#" onclick="showImageUpload('ANSIMAGE5')">Upload</a>&nbsp;</div>
+                <div class="grid_11 align-div-inline">
+                    <div id="answer_image_1" class="image-holder-div grid_28">
+                        <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="answerRefId5" class="image-holder" />
+                    </div>
+                    <div class="grid_32">
+                        <div class="disabled-text" id="answerRefId5_view">
+                            <u>View Large</u></div>
+                    </div>
+                </div>
+                <div class="grid_10 hide-content" id="answerRefId5_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                        value="Remove" onclick="questionBank.commonFunctions.removeAttachment('answerRefId5')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="grid_6">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        @Html.RadioButton("CorrectAnswer", "AnswerOption_5", new { @id = "Answer5", @value = "AnswerOption_5", @class = "grid_5", disabled = true })<label
+            for="Answer5">Correct Answer</label>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+</div>
+<div id="rationaleLinkedCompetency" class="grid_32">
+    @Html.Partial("../../Views/Builder/Authoring/_RationaleAndLinkedCompetency")
+</div>
+<script type="text/javascript">
+
+    $(document).ready(function() {
+        $("#uploadImageLink").click(function() {
+            showImageUpload("QNIMAGE");
+        });
+        questionBank.commonFunctions.enableValidRaioButtons();
+        if(@isEditMode.ToString().ToLower()) {
+            questionBank.commonFunctions.loadPageInEditMode("@imgGuid", @Html.Raw(Json.Encode(strRationaleText)), "@strCompetencyText", "@strCorrectAnswerValue", "@questionUrl", @isEditMode.ToString().ToLower(), "@linkedCompetencyGuid", "@questionTypeLoadedFlag");
+            questionBank.commonFunctions.loadAnswerImages("@answerImage1", 1);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage2", 2);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage3", 3);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage4", 4);
+            questionBank.commonFunctions.loadAnswerImages("@answerImage5", 5);
+        }
+    });
+</script>

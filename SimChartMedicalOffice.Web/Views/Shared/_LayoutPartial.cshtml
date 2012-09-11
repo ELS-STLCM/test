@@ -1,0 +1,46 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <link  rel="stylesheet" type="text/css" href="@Url.Content("~/Content/Site.css?08262012")"/>
+    <link  rel="stylesheet" type="text/css" href="@Url.Content("~/Content/SMO/grid.css?08262012")"/>
+     <link  rel="stylesheet" type="text/css" href="@Url.Content("~/Content/SMO/print.css?08262012")"/>
+    <link href="@Url.Content("~/Content/Alert/jquery.alerts.css?08262012")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/themes/base/jquery.ui.all.css?08262012")" rel="stylesheet" type="text/css" />     
+    <link href="@Url.Content("~/Content/SMO/simOfficeOverride.css?08262012")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Content/JS/json2.js?08262012")" type="text/javascript"></script> 
+    <script src="@Url.Content("~/Scripts/jquery-1.7.2.js?08262012")" type="text/javascript"></script>
+     <script src="@Url.Content("~/Scripts/jquery.blockUI.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.form.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery.alerts.js?08262012")" type="text/javascript"></script>
+    <script type="text/javascript" src="@Url.Content("~/Scripts/tinyMCE/tiny_mce.js?08262012")"></script>
+    <script src="@Url.Content("~/Scripts/SMO/numericValidator.js?08262012")" type="text/javascript"></script>    
+    <script src="@Url.Content("~/Scripts/modernizr-1.7.min.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery-ui-1.8.20/jquery-ui-1.8.20.custom.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/SMO/textAreaMaxlengthLimiter.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/SMO/simOfficeCommon.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/SMO/frontOffice.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/SMO/questionBank.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/SMO/patient.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/SMO/folder.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/SMO/assignment.js?08262012")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/FullCalendar/_loader.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/FullCalendar/jquery.qtip-1.0.0-rc3.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/SMO/simOfficeCalendar.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/date.format.js")" type="text/javascript"></script>  
+        <script src="@Url.Content("~/Scripts/jquery-ui-1.8.20/jquery.ui.draggable.js")" type="text/javascript"></script>
+    <script src="@Url.Content("~/Scripts/jquery-ui-1.8.20/jquery.ui.resizable.js")" type="text/javascript"></script>         
+</head>
+    <body class="print-content">
+        <div class="container_32">
+            <div class="grid_32">
+                  @RenderBody()
+                               <div class="clear-height-spacing"> &nbsp;</div>
+            <div class="grid_32 copy-right-text standard-text-print" >
+                Copyright © 2013  Elsevier Inc.  All Rights Reserved.
+            </div>
+            </div> 
+        </div>
+    </body>
+</html>

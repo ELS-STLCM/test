@@ -1,0 +1,188 @@
+﻿@{
+    Layout = null;
+}
+@{
+    string strPatientName = (ViewBag.PatientName != null) ? ViewBag.PatientName : String.Empty;
+    string strVisitType=""; 
+    string strProvider = (ViewBag.Provider != null) ? ViewBag.Provider : "";
+    string strExamRoom = (ViewBag.EditExamRoom != null) ? ViewBag.EditExamRoom : String.Empty;
+    string strAppointmentDate = (ViewBag.AppointmentDate != null) ? ViewBag.AppointmentDate : String.Empty;
+    string strStartTime = (ViewBag.EditStartTime != null) ? ViewBag.EditStartTime : String.Empty;
+    string strEndTime = (ViewBag.EditEndTime != null) ? ViewBag.EditEndTime : String.Empty;
+    string strDescription = (ViewBag.EditDescription != null) ? ViewBag.EditDescription : String.Empty;
+    string strAppointmentType = (ViewBag.AppointmentType != null) ? ViewBag.AppointmentType : String.Empty;
+    string strBlockType = (ViewBag.EditBlockType != null) ? ViewBag.EditBlockType : String.Empty;
+    int iFor = (ViewBag.For != null) ? ViewBag.For : 0;
+    string strlocation = (ViewBag.Location != null) ? ViewBag.Location : String.Empty;
+    string strOtherText = (ViewBag.OtherText != null) ? ViewBag.OtherText : String.Empty;
+    string strRecurrenceGroup = "";
+    int iNoOfOccurences = 0;
+    string strEndBy = "";
+    string strRecurrencePattern = "";
+    int iappointmentStatus = 1;
+    if (ViewBag.AppointmentObject != null)
+    {
+        iappointmentStatus = (ViewBag.AppointmentObject.Status != null) ? ViewBag.AppointmentObject.Status : 0;
+        strVisitType = (ViewBag.AppointmentObject.Type != null) ? ViewBag.AppointmentObject.Type : String.Empty;
+    }
+    if (ViewBag.AppointmentObject != null && ViewBag.AppointmentObject.RecurrenceGroup != null && ViewBag.AppointmentObject.Recurrence != null)
+    {
+        strRecurrenceGroup = (ViewBag.AppointmentObject.RecurrenceGroup != null) ? ViewBag.AppointmentObject.RecurrenceGroup : String.Empty;
+        iNoOfOccurences = (ViewBag.AppointmentObject.Recurrence.NumberOfOccurences != null) ? ViewBag.AppointmentObject.Recurrence.NumberOfOccurences : 0;
+        strEndBy = (ViewBag.AppointmentObject.Recurrence.EndBy != null) ? ViewBag.AppointmentObject.Recurrence.EndBy : String.Empty;
+        strRecurrencePattern = (string)((ViewBag.AppointmentObject.Recurrence.Pattern.ToString() != null) ? ViewBag.AppointmentObject.Recurrence.Pattern.ToString() : "");
+    }
+}
+<script type="text/javascript">
+    appointmentEditModeJson = @Html.Raw(Json.Encode(ViewBag.AppointmentObject));
+    appointmentEditURL = @Html.Raw(Json.Encode(ViewBag.AppointmentURL));
+    $(document).ready(function () {
+        $("#View-appointment-type").html("@strAppointmentType");
+        $("#View-visit-type").html("@strVisitType");
+        $("#View-patient-name").html("@strPatientName");
+        $("#View-provider").html("@strProvider");
+        $("#View-examroom").html("@strExamRoom");
+        $("#View-date").html("@strAppointmentDate");
+        $("#View-starttime").html("@strStartTime");
+        $("#View-endtime").html("@strEndTime");
+        $("#View-description").html("@strDescription");
+        $("#View-Status").html("Checked out");
+        if("@strRecurrenceGroup" != null && "@strRecurrenceGroup" != "") {
+            $("#View-recurrencepattern").html("@strRecurrencePattern");
+            if (@iNoOfOccurences > 0) {
+                $("#View-recurrenceduration").html("End After " + "@iNoOfOccurences.ToString()" + " Occurences");
+            }
+            if ("@strEndBy" != "") {
+                $("#View-recurrenceduration").html("End By " + "@strEndBy");
+            }
+        }
+    });
+</script>
+<div id="appointment_load_view">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Appointment Type :
+        </div>
+        <div class="grid_22">
+            <label id="View-appointment-type"></label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Visit Type :
+        </div>
+        <div class="grid_22">
+            <label id="View-visit-type"></label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Patient :
+        </div>
+        <div class="grid_22">
+            <label id="View-patient-name"></label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Provider :
+        </div>
+        <div class="grid_22">
+            <label id="View-provider"></label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Exam Room :
+        </div>
+        <div class="grid_22">
+            <label id="View-examroom"></label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="multiple-choice-dashed-line grid_32">
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Date :
+        </div>
+        <div class="grid_22">
+            <label id="View-date"></label>
+        </div>
+    </div>
+     <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Start Time :
+        </div>
+        <div class="grid_22 align-div-inline">
+                <div class="align-div-inline grid_11">
+                    <label id="View-starttime"></label>
+                </div>
+                <div class="header-text align-div-inline grid_7">
+                    EndTime :
+                </div>
+                <div class="align-div-inline grid_7">
+                    <label id="View-endtime"></label>
+                </div>
+            </div>
+    </div>
+     <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Recurrence Pattern :
+        </div>
+        <div class="grid_22">
+            <label id="View-recurrencepattern"></label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Recurrence Duration :
+        </div>
+        <div class="grid_22">
+            <label id="View-recurrenceduration"></label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="multiple-choice-dashed-line grid_32">
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Description :
+        </div>
+        <div class="grid_22">
+            <label id="View-description"></label>
+        </div>
+    </div>
+      <div class="clear-height-spacing clear">
+    </div>
+      <div class="grid_32">
+        <div class="grid_10 header-text">
+            Status :
+        </div>
+        <div class="grid_22">
+            <label id="View-Status"></label>
+        </div>
+    </div>
+</div>

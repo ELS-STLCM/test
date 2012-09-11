@@ -1,0 +1,209 @@
+﻿@using SimChartMedicalOffice.Core.QuestionBanks
+@{
+    Layout = null;
+}
+@{
+    string strquestionText = (ViewBag.QuestionText != null) ? ViewBag.QuestionText : String.Empty;
+    string strRationaleText = (ViewBag.CorrectAnswerRationale != null) ? ViewBag.CorrectAnswerRationale : String.Empty;
+    string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
+    string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty; ;
+    string strQuestionguid = string.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty; ;
+    string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
+    bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
+    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
+    string strAnswer1 = (ViewData["AnswerOption_1"] != null) ? ViewData["AnswerOption_1"].ToString() : String.Empty;
+    string strAnswer2 = (ViewData["AnswerOption_2"] != null) ? ViewData["AnswerOption_2"].ToString() : String.Empty;
+    string strAnswer3 = (ViewData["AnswerOption_3"] != null) ? ViewData["AnswerOption_3"].ToString() : String.Empty;
+    string strAnswer4 = (ViewData["AnswerOption_4"] != null) ? ViewData["AnswerOption_4"].ToString() : String.Empty;
+    string strAnswer5 = (ViewData["AnswerOption_5"] != null) ? ViewData["AnswerOption_5"].ToString() : String.Empty;
+    string strAnswer6 = (ViewData["AnswerOption_6"] != null) ? ViewData["AnswerOption_6"].ToString() : String.Empty;
+    string strAnswer7 = (ViewData["AnswerOption_7"] != null) ? ViewData["AnswerOption_7"].ToString() : String.Empty;
+    string strAnswer8 = (ViewData["AnswerOption_8"] != null) ? ViewData["AnswerOption_8"].ToString() : String.Empty;
+    string strAnswer9 = (ViewData["AnswerOption_9"] != null) ? ViewData["AnswerOption_9"].ToString() : String.Empty;
+    string strAnswer10 = (ViewData["AnswerOption_10"] != null) ? ViewData["AnswerOption_10"].ToString() : String.Empty;
+    strquestionText = String.IsNullOrEmpty(strCompetencyText) ? String.Empty : strquestionText;
+}
+<div class="multiple-choice-dashed-line grid_32">
+    <div id="validationSummary" class="errormessage grid_32">
+        @Html.ValidationSummary()</div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32 header-text">
+        Correct Order:</div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div class="grid_32 mandatory-field-note">
+        Fields with " <span class="mandatory-field">*</span> " are mandatory
+    </div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div class="grid_32 header-text">
+        Question <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_17">
+        @Html.TextArea("QuestionText", strquestionText, new { rows = 5, @class = "grid_32 standard-text" })
+    </div>
+    <div class="grid_15">
+        <div class="grid_6">
+            <a href="#" id="uploadImageLink" class="link">Upload</a>&nbsp;</div>
+        <div class="grid_25 alpha">
+            <div id="question_image" class="grid_13 image-holder-div">
+                <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="Image" id="qnImageRefId" class="image-holder" />
+            </div>
+            <div class="grid_17 prefix_1 hide-content" id="qnImageRefId_remove">
+                <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div> 
+                                 <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                 value="Remove" onclick="questionBank.commonFunctions.removeAttachment('qnImageRefId')" />
+                <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+            </div>
+            <div class="grid_32">
+                <div class="disabled-text" id="qnImageRefId_view">
+                    <u>View Large</u></div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="linkedCompetency" class="grid_32">
+        @Html.Partial("../../Views/Builder/Authoring/_LinkedCompetency")
+    </div>
+</div>
+<div class="grid_32">
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32 header-text">
+        Enter the answers consecutively in the correct order. System will automatically shuffle answers to display on the Student view.
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_1">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 1:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_1", strAnswer1, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_2">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 2:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_2", strAnswer2, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_3">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 3:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_3", strAnswer3, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_4">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 4:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_4", strAnswer4, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_5">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 5:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_5", strAnswer5, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_6">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 6:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_6", strAnswer6, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_7">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 7:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_7", strAnswer7, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_8">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 8:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_8", strAnswer8, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_9">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 9:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_9", strAnswer9, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="answer_correct_order_10">
+        <div class="grid_32">
+            <div class="grid_32 header-text">
+                Answer 10:</div>
+            <div class="grid_16 alpha">
+                <div>@Html.TextArea("AnswerOption_10", strAnswer10, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="rationaleLinkedCompetency" class="grid_32">
+    @Html.Partial("../../Views/Builder/Authoring/_RationaleAndLinkedCompetency")
+</div>
+<script type="text/javascript">
+    $.ajaxSetup({
+        cache: false,
+        asynch: false,
+        type: "POST"
+    });
+    $(document).ready(function () {
+        $("#uploadImageLink").click(function () {
+            showImageUpload("QNIMAGE");
+        });
+         questionBank.commonFunctions.loadPageInEditMode("@imgGuid", @Html.Raw(Json.Encode(strRationaleText)), "@strCompetencyText", "", "@questionUrl", @isEditMode.ToString().ToLower(),"@linkedCompetencyGuid","@questionTypeLoadedFlag");
+    });
+</script>

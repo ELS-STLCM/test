@@ -1,0 +1,33 @@
+﻿@{
+    Layout = null;
+}
+@{
+    bool IsQuestionBank=(ViewBag.IsQuestionBank!=null)?ViewBag.IsQuestionBank:true;
+    bool isAssignmentQuestion = (ViewBag.IsAssignmentQuestion != null) ? ViewBag.IsAssignmentQuestion : false;
+}
+<div id="linked_Competency" class="grid_32">
+    <div class="header-text">
+        Linked Competency <span class="mandatory-field">*</span>:</div>
+    <div id="LinkedCompetency">
+    </div>
+</div>
+<div class="competency-suggest" id="competencySuggest">
+</div>
+<div class="clear clear-height-spacing">
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var isFromQuestionBank = @IsQuestionBank.ToString().ToLower();
+        var isAssignmentQuestion = @isAssignmentQuestion.ToString().ToLower();
+        if(isAssignmentQuestion) {
+            assignBuilder.commonFunctions.getListOfCompetencyForAssignmentFlexbox();
+        }
+        else {
+            if (isFromQuestionBank) {
+                getListOfItemsForCompetencyFlexBox("!!");
+            } else {
+                skillSet.commonFunctions.getListOfCompetencyForSkillSetFlexBoxInQnBank();
+            }
+        }
+    });
+</script>

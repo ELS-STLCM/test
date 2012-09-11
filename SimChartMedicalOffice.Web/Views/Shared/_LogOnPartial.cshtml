@@ -1,0 +1,42 @@
+﻿@using SimChartMedicalOffice.Core.DropBox
+@using SimChartMedicalOffice.Common.Utility
+@using SimChartMedicalOffice.Common
+
+<div class="grid_32">
+<div id="logoImage" class="grid_12"><img alt="" id='logoimg' src="@Url.Content("~/Content/Images/SimOfficeLogo/logo.png")"/></div>            
+<div id="logindisplay" class="header-font" style="font-size: 11px;">
+@if(Request.IsAuthenticated) {
+    var userName=" LN"+User.Identity.Name+", FN"+User.Identity.Name;
+    DropBoxLink dropBoxLinkObj = new DropBoxLink();
+    string dropboxLinkJson = (Request.Cookies["DROPBOXLINK"]!=null)?HttpUtility.UrlDecode(Request.Cookies["DROPBOXLINK"].Value):string.Empty;
+    if (!String.IsNullOrEmpty(dropboxLinkJson))
+    {
+    Dictionary<string, DropBoxLink> dropBoxDictionary =JsonSerializer.DeserializeObject<Dictionary<string, DropBoxLink>>(dropboxLinkJson);
+        foreach (var item in dropBoxDictionary)
+        {
+             dropBoxLinkObj = (DropBoxLink)item.Value;
+        }
+    }
+    var role = String.IsNullOrEmpty(dropBoxLinkObj.UserRole) ? String.Empty : (", " + dropBoxLinkObj.UserRole + ":");
+    var welcomeMsg = "Welcome" + role+ userName;
+    <text>
+     @welcomeMsg
+     @Html.ActionLink("Logout","Logoff","Account",null, new { onClick = "return logOut()" }) </text>
+}
+else {
+    @*@:[ @Html.ActionLink("Log On", "LogOn", "Account") ]*@
+}
+</div>
+<script type="text/javascript">  
+    var dropBoxlink = '@AppCommon.GetCookieValue("DROPBOXLINK")';
+    function logOut() {                
+        if (dropBoxlink != null || dropBoxlink != undefined && dropBoxlink.UserRole == STUDENT_ROLE) {
+            showLogOutConfirmDialogOverPdf();
+            return false;
+        }  
+
+        showLogOutConfirmDialog();                    
+        return false;
+    }
+</script>
+</div>

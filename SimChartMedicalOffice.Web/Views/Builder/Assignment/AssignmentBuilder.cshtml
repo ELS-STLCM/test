@@ -1,0 +1,19 @@
+﻿@using SimChartMedicalOffice.Common
+@{
+    Layout = null;
+}
+<div class="grid_32 standard-text" id="AssignmentHolder">
+    <div class="clear clear-min-height-spacing">
+    </div>
+    <div class="grid_32 form-page-header div-with-bottom-border" style="width: 920px">
+        <div class="grid_6">Assignment Builder</div>
+        <div id="stepwiseImage" class="grid_24"></div>
+    </div>
+    <div class="grid_5">
+        @Html.Partial("../../Views/Builder/Assignment/ReturnToAssignmentBuilder")
+    </div>
+    <div class="grid_27 remove-div-space" style="float: left; width: 780px">
+        <div id="divToLoadSteps">
+        </div>
+    </div>
+</div>

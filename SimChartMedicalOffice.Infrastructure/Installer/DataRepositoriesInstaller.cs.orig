@@ -1,0 +1,65 @@
+﻿using Castle.MicroKernel.Registration;
+using Castle.Windsor;
+using Castle.MicroKernel.SubSystems.Configuration;
+using SimChartMedicalOffice.Core.DataInterfaces.TempObject;
+using SimChartMedicalOffice.Data.TempObject;
+using SimChartMedicalOffice.Core.DataInterfaces;
+using SimChartMedicalOffice.Data;
+using SimChartMedicalOffice.Core.DataInterfaces.Patient;
+using SimChartMedicalOffice.Core.DataInterfaces.Forms;
+using SimChartMedicalOffice.Core.DataInterfaces.AssignmentBuilder;
+using SimChartMedicalOffice.Core.DataInterfaces.Authoring;
+using SimChartMedicalOffice.Core.DataInterfaces.Competency;
+using SimChartMedicalOffice.Core.DataInterfaces.QuestionBanks;
+using SimChartMedicalOffice.Core.DataInterfaces.SkillSetBuilder;
+using SimChartMedicalOffice.Data.SkillSet;
+using SimChartMedicalOffice.Core.DataInterfaces.FrontOffice;
+namespace SimChartMedicalOffice.Infrastructure.Installer
+{
+    public class DataRepositoriesInstaller : IWindsorInstaller
+    {
+        public void Install(IWindsorContainer container, IConfigurationStore store)
+        {
+            container.Register(
+                Component.For<ISimAppDocument>().ImplementedBy<SimChartMedicalOffice.Data.SimAppDocument>(),
+                Component.For<IPriorAuthorizationRequestFormDocument>().ImplementedBy
+                    <SimChartMedicalOffice.Data.Forms.PriorAuthorizationRequestFormDocument>(),
+                Component.For<IPatientDocument>().ImplementedBy<SimChartMedicalOffice.Data.Forms.PatientDocument>(),
+                 Component.For<IPatientRecordsAccessFormDocument>().ImplementedBy<SimChartMedicalOffice.Data.Forms.PatientRecordsAccessFormDocument>(),
+                 Component.For<IReferralFormDocument>().ImplementedBy<SimChartMedicalOffice.Data.Forms.ReferralFormDocument>(),
+                Component.For<IRegistrationDocument>().ImplementedBy<RegistrationDocument>(),
+                Component.For<IAppointmentDocument>().ImplementedBy<AppointmentDocument>(),
+                Component.For<IAttachmentDocument>().ImplementedBy<AttachmentDocument>(),
+                Component.For<IAuthoringDocument>().ImplementedBy<AuthoringDocument>(),                
+                Component.For<ICompetencyDocument>().ImplementedBy<CompetencyDocument>(),
+                Component.For<IAnswerOptionDocument>().ImplementedBy<AnswerOptionDocument>(),
+                Component.For<IQuestionDocument>().ImplementedBy<QuestionDocument>(),
+                Component.For<ISkillSetDocument>().ImplementedBy<SkillSetDocument>(),
+                Component.For<IFolderDocument>().ImplementedBy<FolderDocument>(),
+                Component.For<IQuestionBankDocument>().ImplementedBy<QuestionBankDocument>(),
+                Component.For<IAssignmentDocument>().ImplementedBy<SimChartMedicalOffice.Data.AssignmentBuilder.AssignmentDocument>(),
+                Component.For<IAssignmentRepositoryDocument>().ImplementedBy<SimChartMedicalOffice.Data.AssignmentBuilder.AssignmentReposistoryDocument>(),
+                Component.For<ISkillSetRepositoryDocument>().ImplementedBy<SimChartMedicalOffice.Data.SkillSet.SkillSetReposistoryDocument>(),
+                Component.For<ITestDocument>().ImplementedBy<TestDocument>(),
+                Component.For<IBillOfRightsDocument>().ImplementedBy
+                <SimChartMedicalOffice.Data.Forms.BillOfRightsDocument>(),
+                Component.For<IApplicationModuleDocument>().ImplementedBy
+                <SimChartMedicalOffice.Data.Competency.ApplicationModuleDocument>(),
+                Component.For<ICompetencySourceDocument>().ImplementedBy
+                <SimChartMedicalOffice.Data.Competency.CompetencySourceDocument>(),
+                Component.For<INoticeOfPrivacyPracticeDocument>().ImplementedBy
+                <SimChartMedicalOffice.Data.Forms.NoticeOfPrivacyPracticeDocument>(),
+
+                Component.For<IPatientVisitAppointmentDocument>().ImplementedBy<SimChartMedicalOffice.Data.FrontOffice.PatientVisitAppointmentDocument>(),
+                Component.For<IOtherAppointmentDocument>().ImplementedBy<SimChartMedicalOffice.Data.FrontOffice.OtherAppointmentDocument>(),
+                Component.For<IBlockAppointmentDocument>().ImplementedBy<SimChartMedicalOffice.Data.FrontOffice.BlockAppointmentDocument>(),
+                Component.For<IRecurrenceGroupDocument>().ImplementedBy<SimChartMedicalOffice.Data.FrontOffice.RecurrenceGroupDocument>(),
+                Component.For<IMasterDocument>().ImplementedBy<MasterDocument>());
+
+
+            //container.Register(AllTypes.FromAssemblyNamed("SimChartMedicalOffice.Data.TempObject")
+            //   .Where(type => type.Name.EndsWith("Document"))
+            //   .LifestyleSingleton());
+        }
+    }
+}

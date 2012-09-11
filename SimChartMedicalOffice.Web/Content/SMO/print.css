@@ -1,0 +1,74 @@
+﻿.print-main-content {
+    border-color: black;
+    border-top: 1px;
+    border-left: 1px;
+    border-right: 1px;
+    border-bottom: 1px;
+    border-style: solid;
+}
+.print-content {
+    background-color: white;
+}
+.copy-right-text {
+    text-align: center;
+}
+.print-header {
+    height: 100px;
+}
+.student-signature {
+    text-align: right;
+}
+.student-signature-print {
+    text-align: left;
+}
+.form-page-header-print
+{
+    font-size: 14pt;
+    font-family: Arial;
+     font-weight: bold;
+}
+.standard-text-print
+{
+    font-size: 10pt;
+    font-family: Times New Roman;
+}
+.standard-label-print
+{
+    font-size: 10pt;
+    font-family: Times New Roman;
+    font-weight: bold;
+}
+.text-line-print
+{
+    border-bottom: 1px;
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-color: black;
+    border-bottom-style: solid;
+    padding-top: 12px;
+}
+.text-line-print-edit
+{
+    border-top: 0px;
+    border-left: 0px;
+    border-right: 0px;
+    border-color: black;
+}
+.text-in-box-print
+{
+    border: 1px;
+    border-color: black;
+    border-style: solid;
+    height: 75px;
+}
+.print-page-width 
+{
+    width: 800px;   
+}
+
+.print-container_32 {
+	width: 800px;
+	margin-left: auto;
+	margin-right: auto;
+}

@@ -1,0 +1,142 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+               style="width: 60px;" value="Save" onclick="saveSkillSetQuestion()" title="Save"/>
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+               style="width: 60px;" value="Delete" id="btnDeleteQuestions" onclick="deleteQuestion()" title="Delete"/>
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img id="btnRevertToOriginalLeftCurve" alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+               style="width: 110px;" id="btnRevertToOriginal" value="Revert to Original" onclick=""title="Revert to Original"/>
+        <div class="align-div-inline">
+            <img alt="right" id="btnRevertToOriginalRightCurve" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+               style="width: 60px;" id="btnMoveQuestions" value="Cancel" onclick="cancelSkillSetQuestion()" title="Cancel"/>
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+</div>
+<script>
+    $('#btnRevertToOriginal').click(function () {
+        assignBuilder.step3Actions.revertToOriginal();
+    });
+
+    function deleteQuestion() {
+        var urlAction = "../AssignmentBuilder/DeleteQuestionFromAssignment?questionUrl=" + UrlOfSelectedQuestion;
+        doAjaxCall("POST", "", urlAction, OnSuccessDeleteQuestion);
+    }
+
+    function OnSuccessDeleteQuestion(result) {
+        jAlert("Deleted", "Alert", function (isOk) {
+            if (isOk) {
+                startAjaxLoader();
+                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val());
+                closeAjaxLoader();
+            }
+        });
+    }
+
+    function saveSkillSetQuestion() {
+        var isNewQuestionChecked = false;
+        var isNewQuestion = false;
+        var isExistingQuestion = false;
+        questionBank.commonFunctions.setmaxLenghtOfAnswers(questionType);
+        if (($('input[name=AddQuestionToQuestionBank]').is(':checked'))) {
+            isNewQuestionChecked = true;
+        }
+        if (questionBank.commonFunctions.checkIfCorrectAnswer("QuestionToQuestionBankNew") && isNewQuestionChecked) {
+            isNewQuestion = true;
+        }
+        if (questionBank.commonFunctions.checkIfCorrectAnswer("QuestionToQuestionBankExisting") && isNewQuestionChecked) {
+            isExistingQuestion = true;
+            isNewQuestionRequired = false;
+        }
+        if (questionBank.commonFunctions.validateQuestionBankFields(questionType, isNewQuestion)) {
+            var questionJson = questionBank.commonFunctions.formJsonForQuestion();
+            skillSet.commonFunctions.getNewQuestionTextForSkillSetToQB(questionType, isNewQuestion);
+            var urlToSaveQn = "../QuestionBank/SaveQuestion?questionUrlReference=" + UrlOfSelectedQuestion + "&folderIdentifier=" + "" + "&isEditMode=" + true + "&isNewQuestion=" + isNewQuestion + "&isExistingQuestion=" + isExistingQuestion + "&questionGuid=" + selectedReferenceQuestionGuid + "&authoringType=" + 2 + "&authoringUrl=" + "" + "&questionNewTextToSave=" + questionNewTextToSave;
+            if (questionJson != null) {
+                startAjaxLoader();
+                doAjaxCall("POST", questionJson, urlToSaveQn, saveSkillSetQuestionSuccess);
+                closeAjaxLoader();
+            }
+        }
+    }
+    function saveSkillSetQuestionSuccess(result) {
+        if (result.isQuestionNameAlreadyExists) {
+            jAlert(QUESTION_NAME_EXISTS, "Alert", function (isOk) {
+                return false;
+            });
+        }
+        else {
+            jAlert(SAVED_MESSAGE, "Alert", function(isOk) {
+                if (isOk) {
+                    if (result.questionResult != null) {
+                        startAjaxLoader();
+                        isContentChanged = false;
+                        $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function() {
+                            closeAjaxLoader();
+                        });
+                        questionCount = {
+                            id: strQuestionGuid
+                        };
+                        if (savedQuestionsCount.length == 0) {
+                            savedQuestionsCount.push(questionCount);
+                        } else {
+                            for (indexGuid = 0; indexGuid < savedQuestionsCount.length; indexGuid++) {
+                                if (strQuestionGuid != savedQuestionsCount[indexGuid].id) {
+                                    savedQuestionsCount.push(questionCount);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    }
+    function cancelSkillSetQuestion() {
+        var status = "Are you sure you want to cancel? Your changes will not be saved.";
+        jConfirm(status, 'Cancel', function (isCancel) {
+            if (isCancel) {
+                startAjaxLoader();
+                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function () {
+                    closeAjaxLoader();
+                });
+            }
+        });
+    }
+</script>

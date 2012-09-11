@@ -1,0 +1,37 @@
+﻿@{
+    Layout = null;
+}
+@Html.Partial("../../Views/Forms/_FormsTools")
+<div class="container_32">
+    <div class="grid_31 section-seperator-normal"></div>
+    @Html.Partial("../../Views/Forms/_FormsNav")
+    @if (ViewBag.FormValue != null && (int)ViewBag.FormValue == (int)SimChartMedicalOffice.Common.AppEnum.FormsRepository.PriorAuthorizationRequestForm)
+    {
+        @Html.Partial("../../Views/Forms/PriorAuthorizationRequestForm")
+    }
+    @if (ViewBag.FormValue != null && (int)ViewBag.FormValue == (int)SimChartMedicalOffice.Common.AppEnum.FormsRepository.HipaaForm)
+    {
+        @Html.Partial("../../Views/Forms/HIPAANoticeForm") 
+    }
+    @if (ViewBag.FormValue != null && (int)ViewBag.FormValue == (int)SimChartMedicalOffice.Common.AppEnum.FormsRepository.PatientRecordAccess)
+    {
+        @Html.Partial("../../Views/Forms/PatientRecordsAccessForm")
+    }
+    @if (ViewBag.FormValue != null && (int)ViewBag.FormValue == (int)SimChartMedicalOffice.Common.AppEnum.FormsRepository.BillOfRights)
+    {
+        @Html.Partial("../../Views/Forms/PatientBillofRights")
+    }
+    @if (ViewBag.FormValue != null && (int)ViewBag.FormValue == (int)SimChartMedicalOffice.Common.AppEnum.FormsRepository.ReferrelForm)
+    {
+        @Html.Partial("../../Views/Forms/Referral") 
+    }
+    @if (ViewBag.FormValue != null && (int)ViewBag.FormValue == (int)SimChartMedicalOffice.Common.AppEnum.FormsRepository.Confirmation)
+    {
+        @Html.Partial("../../Views/Forms/Confirmation") 
+    }
+</div>
+<div id="PatientSearchGrid" class="grid_32 container-grid-height" style="display: none">
+</div>
+<div id="form-button">
+    @Html.Partial("../../Views/Forms/UCFormActions")</div>
+

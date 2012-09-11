@@ -1,0 +1,324 @@
+﻿ @using SimChartMedicalOffice.Core.Forms
+ @using SimChartMedicalOffice.Common
+ @{
+     Layout = "~/Views/Shared/_LayoutPartialForPrint.cshtml";
+ }
+ @{
+     PatientRecordsAccessForm patientRecordsFormObject = null;
+     bool blankform = false;
+     if (ViewBag.patientRecordsAccess == null)
+     {
+         patientRecordsFormObject = new PatientRecordsAccessForm();
+         blankform = true;
+     }
+     else
+     {
+         patientRecordsFormObject = (PatientRecordsAccessForm) ViewBag.patientRecordsAccess;
+     }
+ }
+<script type="text/javascript">
+    function printpage() {
+        $("#PrintButtonSection").hide();
+        window.print();
+        $("#PrintButtonSection").show();
+    }
+
+    $(document).ready(function() {
+        var isBlankForm = '@blankform';
+        if (isBlankForm.toLowerCase() != 'true') {
+            $('.text-line-print').addClass('text-line-print-edit  standard-text-print').removeClass('text-line-print');
+            $('.text-in-box-print').addClass('text-line-print-edit  standard-text-print').removeClass('text-in-box-print');
+        }
+    });
+</script>
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_4 prefix_29" id="PrintButtonSection">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input type="submit" class="navigation-button align-div-inline standard-height-for-buttons" style="width:60px;"
+               value="Print" onclick="printpage()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+</div>
+<div class="clear clear-height-spacing">
+</div>
+ <div class="grid_32 print-main-content standard-text-print">
+      <div class="clear clear-height-spacing">
+      </div>
+      <div class="">
+          <div class="grid_16">
+              <img alt="X"src="../../Content/Images/print_header.png"  class="print-header"/>
+          </div>
+        <div class="grid_16 standard-label-print text-signature">
+               Student: @ViewBag.Signature</div>
+      </div>
+      <div class="clear clear-height-spacing">
+      </div>
+      <div class="grid_32">
+          <div class="clear clear-height-spacing">
+          </div>
+          <div class="grid_32 form-page-header-print">
+              Patient Records Access Request
+          </div>
+          <hr />
+          <div class="clear clear-height-spacing">
+          </div>
+          <div>
+              <div class="grid_32">
+                  <div class="grid_32 standard-label-print">
+                      I hereby request a copy of my medical record as detailed below:
+                  </div>
+              </div>
+            @if (blankform)
+            {
+                <div class="grid_12 standard-label-print">
+                    <div class="grid_32">
+                        @Html.CheckBox("MedicalRecordTypePrint",false,new { disabled="disabled"})
+                        <label for="MedicalRecordTypePrint_Progress">
+                            Progress</label>
+                    </div>
+                    <div class="grid_32">
+                        @Html.CheckBox("MedicalRecordTypePrint", false, new { disabled = "disabled" })
+                        <label for="MedicalRecordTypePrint_Notes">
+                            Notes</label>
+                    </div>
+                    <div class="grid_32">
+                        @Html.CheckBox("MedicalRecordTypePrint", false, new { disabled = "disabled" })
+                        <label for="MedicalRecordTypePrint_Immunizations">
+                            Immunizations</label>
+                    </div>
+                    <div class="grid_32">
+                        @Html.CheckBox("MedicalRecordTypePrint", false, new { disabled = "disabled" })
+                        <label for="MedicalRecordTypePrint_Correspondence">
+                            Correspondence</label>
+                    </div>
+                </div>
+                <div class="grid_20 standard-label-print">
+                   
+                    <div class="grid_32">
+                        @Html.CheckBox("MedicalRecordTypePrint", false, new { disabled = "disabled" })
+                        <label for="MedicalRecordTypePrint_Radiology">
+                            Radiology</label>
+                    </div>
+                    <div class="grid_32">
+                        @Html.CheckBox("MedicalRecordTypePrint", false, new { disabled = "disabled" })
+                        <label for="MedicalRecordTypePrint_Laboratory">
+                            Laboratory</label>
+                    </div>
+                    <div class="grid_32">
+                        @Html.CheckBox("MedicalRecordTypePrint", false, new { disabled = "disabled" })
+                        <label for="MedicalRecordTypePrint_Hospitalizations">
+                            Hospitalizations</label>
+                    </div>
+                    <div class="grid_32">
+                        <div class="grid_6 alpha">
+                            @Html.CheckBox("MedicalRecordTypePrint", false, new { disabled = "disabled" })
+                            <label for="MedicalRecordTypePrint_Other">
+                                Other</label>
+                        </div>
+                        <div class="grid_26 text-line-print align-inline">
+                        </div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="grid_32">
+                    @if (patientRecordsFormObject.PatientMedicalRecordRequest != null)
+                    {
+                        foreach (PatientMedicalRecordRequest medicalRequest in patientRecordsFormObject.PatientMedicalRecordRequest)
+                        {
+                            <div class="grid_32 align-inline ">
+                                @medicalRequest.Value
+                            </div>
+                        }
+                    }
+                </div>
+                 
+            }
+              <div class="clear section-seperator-spacing">
+              </div>
+              <div class="grid_9 align-inline standard-label-print" >
+                  Medical record for the period of
+              </div>
+              <div class="grid_7 alpha align-inline text-line-print">
+                 @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.MedicalRecordPeriodFrom, blankform)
+              </div>
+              <div class="grid_3 alpha align-inline standard-label-print" >
+                  through
+              </div>
+              <div class="grid_13 align-inline text-line-print" >
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.MedicalRecordPeriodTo, blankform)
+              </div>
+              <div class="grid_31 section-seperator">
+              </div>
+              <div class="clear section-seperator-spacing">
+              </div>
+              <div class="grid_7 standard-label-print">
+                  Reason for Disclosure:
+              </div>
+              <div class="grid_25 text-in-box-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.ReasonforDisclosure, blankform)
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_7 standard-label-print">
+                  Releasing to:
+              </div>
+              <div class="grid_10 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.ReleasingTo, blankform)
+              </div>
+              <div class="grid_2 standard-label-print" style="width: 40px">
+                  Phone:
+              </div>
+              <div class="grid_13 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.Phone, blankform)
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_7 standard-label-print">
+                  Address:
+              </div>
+              <div class="grid_25  text-in-box-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.Address, blankform)
+              </div>
+              <div class="grid_31 section-seperator">
+              </div>
+              <div class="clear section-seperator-spacing">
+              </div>
+              <div class="grid_32 standard-label-print">
+                  I understand that this request will be processed within 7-14 days except in the
+                  case of an emergency.
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_5 standard-label-print">
+                  Patient Name:
+              </div>
+              <div class="grid_12 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.EmergencyPatientName, blankform)
+              </div>
+              <div class="grid_5 standard-label-print" style="width: 80px">
+                  Date of Birth:
+              </div>
+              <div class="grid_11 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.EmergencyPatientDob, blankform)
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_5 standard-label-print">
+                  Mailing Address:
+              </div>
+              <div class="grid_27 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.EmergencyPatientAddress, blankform)
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_5 standard-label-print">
+                  City:
+              </div>
+              <div class="grid_7 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.EmergencyPatientCity, blankform)
+              </div>
+              <div class="grid_2 standard-label-print">
+                  State:
+              </div>
+              <div class="grid_8 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.EmergencyPatientState, blankform)
+              </div>
+              <div class="grid_4 standard-label-print" style="width: 59px">
+                  Zip Code:
+              </div>
+              <div class="grid_8 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.EmergencyPatientZipCode, blankform)
+              </div>
+              <div class="grid_31 section-seperator">
+              </div>
+              <div class="clear section-seperator-spacing">
+              </div>
+              <div class="grid_8 standard-label-print">
+                  This request will expire:
+              </div>
+              <div class="grid_24 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.RequestExpiryDate, blankform)
+              </div>
+              <div class="clear section-seperator-spacing">
+              </div>
+              <div class="grid_31 section-seperator">
+              </div>
+              <div class="clear section-seperator-spacing">
+              </div>
+              <div class="grid_32 standard-label-print">
+                  I acknowledge that I have received copies of my medical records as requested above.
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_5 standard-label-print">
+                  Signature:
+              </div>
+              <div class="grid_12 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.Signature, blankform)
+              </div>
+              <div class="grid_2 standard-label-print">
+                  Date:
+              </div>
+              <div class="grid_13 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.SignatureDate, blankform)
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_6 standard-label-print">
+                  Witness Signature:
+              </div>
+              <div class="grid_12 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.WitnessSignature, blankform)
+              </div>
+              <div class="grid_2 standard-label-print standard-label-print">
+                  Date:
+              </div>
+              <div class="grid_12 text-line-print">
+                  @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.WitnessSignatureDate, blankform)
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_32 div-with-border office-use ">
+                  <div class="clear clear-height-spacing">
+                  </div>
+                  <div class="grid_32 header-text standard-label-print">
+                      Administrative Use Only</div>
+                  <div class="clear clear-height-spacing">
+                  </div>
+                  <div class="grid_5 standard-label-print">
+                      Date completed:
+                  </div>
+                  <div class="grid_10 text-line-print">
+                      @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.DateCompleted, blankform)
+                  </div>
+                  <div class="grid_2 standard-label-print">
+                      By:
+                  </div>
+                  <div class="grid_10 text-line-print">
+                      @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.CompletedBy, blankform)
+                  </div>
+                  <div class="clear clear-height-spacing">
+                  </div>
+                  <div class="grid_5 standard-label-print">
+                      Charge: $
+                  </div>
+                  <div class="grid_10 text-line-print">
+                      @AppCommon.GetObjectPropertyVal(patientRecordsFormObject.Charge, blankform)
+                  </div>
+                  <div class="clear clear-height-spacing">
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="clear clear-height-spacing">   
+          &nbsp;
+      </div> 
+</div>

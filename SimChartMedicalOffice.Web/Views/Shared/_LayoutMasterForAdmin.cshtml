@@ -1,0 +1,54 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+@using SimChartMedicalOffice.Common
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Master for Admin </title>
+    <link href="@Url.Content("~/Content/SMO/simOfficeOverrideForAdmin.css")" rel="stylesheet" type="text/css" />
+</head>
+<body> 
+    <div id="smoMainContentForAdmin" class="main-content-holder standard-text" style="height: 495px">
+        @*don't remove this hidden div - stores the breadcrumb links*@
+        <div id="smoMainContent_BreabCrumb" style="display: none"></div>
+        <ul id="ul_admin">
+            <li style="width:130px;"><a href="../Authoring/Practice" title="#smoAuthoring"><span class="tab-header">Authoring</span></a></li>
+            <li style="width:130px;"><a href="#smoGrading"><span class="tab-header">Grading</span></a></li>
+            <li style="width:130px;"><a href="../Competency/LoadMaster?iReferenceOfMasterToLoad=1" title="#smoAdmin"><span class="tab-header">Admin</span></a></li>
+        </ul>
+        <div id="smoGrading">
+                        @Html.Partial("../../Views/Shared/_ProgressLoader")
+        <div class="grid_32 form-page-header loader">
+            To Do
+        </div>
+        </div>
+        <div id="smoAdmin">
+        </div>
+        <div id="smoAuthoring">
+        </div>
+    </div> 
+        @RenderBody()
+    <script type="text/javascript">
+        $(function () {
+            getTabForContent("smoMainContentForAdmin");
+
+            var admin_links = $('div[id=smoMainContentForAdmin] a');
+            // On mouse hover
+            admin_links.hover(
+                // In: Store and remove title
+                function () {
+                    old_title = $(this).attr('title');
+                    $(this).attr('title', '');
+                },
+                // Out: Replace title
+                function () {
+                    $(this).attr('title', old_title);
+                }
+            );
+        });
+    </script>
+</body>
+</html>

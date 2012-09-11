@@ -1,0 +1,101 @@
+﻿
+<div id="questionBank_grid_display" style="overflow-x: auto;
+    overflow-y: hidden;width:98%" class="grid_32">
+    <table id="questionBankGrid" class="standard-text table-scroll-border">
+        <thead style="text-align: center;">
+            <tr class="dataTables_scrollHeadInner">
+                <th title="" class="datatable-background" style="width: 1%">                    
+                </th>
+                <th title="Question Name" class="datatable-tooltip datatable-background" style="width: 25%">
+                    Question Name
+                </th>
+                <th title="Linked Competency" class="datatable-tooltip datatable-background" style="width: 35%">
+                    Linked Competency
+                </th>
+                <th title="Question Type" class="datatable-tooltip datatable-background" style="width: 25%">
+                    Question Type
+                </th>
+                <th title="Created On" class="datatable-tooltip datatable-background" style="width: 20%">
+                    Created On
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    questionBankDataTable = $('#questionBank_grid_display #questionBankGrid').dataTable({
+        "bProcessing": false,
+        "bServerSide": true,
+        "fnInitComplete": function (oSettings, json) {
+            //startAjaxLoader();
+        },
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            aoData.push({ "name": "parentFolderIdentifier", "value": getDivData("questionBankTab", "currentFolderIdentifier") });
+            aoData.push({ "name": "folderType", "value": 1 });
+            aoData.push({ "name": "filterByType", "value": ($("#FilterByQuestionType_input").val() == undefined) ? "" : $("#FilterByQuestionType_input").val() });
+            aoData.push({ "name": "selectedQuestionList", "value": (strListOfSelectedQuestionItems != null && strListOfSelectedQuestionItems != undefined) ? strListOfSelectedQuestionItems : "" });
+            aoData.push({ "name": "folderUrl", "value": getDivData("questionBankTab", "currentFolder") });
+            $.getJSON(sSource, aoData, function (json) {
+                fnCallback(json);                
+                if ($('#questionBank_grid_display .dataTables_scrollBody').css('height').replace('px', '') > 270) {                    
+                    setScrollableTableBorder(true, 'questionBank_grid_display');
+                }
+                else {
+                    setScrollableTableBorder(false, 'questionBank_grid_display');
+                }
+                //                if (json.iTotalRecords == 0) {
+                //                    //$("#questionBankGrid_wrapper").removeAttr('style').addClass('height-add');
+                //                    //$('.dataTables_scrollBody').removeAttr('style').addClass('height-empty');
+                //                    questionBankDataTable.fnSettings().oScroll.sY = "25px";
+                //                } 
+                //                else {
+                //                    questionBankDataTable.fnSettings().oScroll.sY = "270px";
+                //                }
+                //questionBankDataTable.fnAdjustColumnSizing();
+                //questionBankDataTable.fnSettings().oScroll.sY = "25px";
+                closeAjaxLoader();
+            });
+        },
+        "sAjaxSource": '@Url.Action("GetQuestionBankList", "QuestionBank")',
+        "bRetrieve": true,
+        "aoColumns": [
+            { "bSortable": false, "sName": "Select" },
+            { "bSortable": true, "sName": "QuestionName" },
+            { "bSortable": true, "sName": "LinkedCompetency" },
+            { "bSortable": true, "sName": "QuestionType" },
+            { "bSortable": true, "sName": "CreatedOn" }
+        ],
+        "aaSorting": [[4, 'desc']],
+        "oLanguage": { "sZeroRecords": "No content in this folder" },
+        "bAutoWidth": false,
+        "bFilter": false,
+        "bLengthChange": false,
+        "iDisplayLength": 15,
+        "bPaginate": true,
+        "sPaginationType": "full_numbers",
+        "bSort": true,
+        "sScrollY": "270px",
+        "sScrollX": "100%",
+        "bScrollCollapse": true,
+        "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
+        "fnDrawCallback": function () {            
+            setScrollableTableHeight(this);
+        }
+        //        "fnPreDrawCallback":function () { $("questionBank_grid_display").attr("width", "98%"); }
+    });
+
+//    if (questionBankDataTable.length > 0) {
+//        questionBankDataTable.fnAdjustColumnSizing();
+    //    }
+//    debugger;
+//    $(document).ready(function() {
+//        if (questionBankDataTable[0].rows.length == 0) {
+//            debugger;
+//            $(".dataTables_scrollBody").addClass('height-add');
+//            questionBankDataTable.fnDraw();
+//        }
+//    });
+    
+</script>

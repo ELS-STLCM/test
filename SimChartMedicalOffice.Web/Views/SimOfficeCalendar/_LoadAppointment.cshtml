@@ -1,0 +1,613 @@
+﻿@{
+    Layout = null;
+}
+@{
+    string strPatientName = (ViewBag.PatientName != null) ? ViewBag.PatientName : String.Empty;
+    string strVisitType = (ViewBag.EditVisitType != null) ? ViewBag.EditVisitType : String.Empty;
+    int iProvider = (ViewBag.Provider != null) ? ViewBag.Provider : 0;
+    string strExamRoom = (ViewBag.EditExamRoom != null) ? ViewBag.EditExamRoom : String.Empty;
+    string strAppointmentDate = (ViewBag.AppointmentDate != null) ? ViewBag.AppointmentDate : String.Empty;
+    string strStartTime = (ViewBag.EditStartTime != null) ? ViewBag.EditStartTime : String.Empty;
+    string strEndTime = (ViewBag.EditEndTime != null) ? ViewBag.EditEndTime : String.Empty;
+    string strDescription = (ViewBag.EditDescription != null) ? ViewBag.EditDescription : String.Empty;
+    string strAppointmentType = (ViewBag.AppointmentType != null) ? ViewBag.AppointmentType : String.Empty;
+    string strBlockType = (ViewBag.EditBlockType != null) ? ViewBag.EditBlockType : String.Empty;
+    int iFor = (ViewBag.For != null) ? ViewBag.For : 0;
+    string strlocation = (ViewBag.Location != null) ? ViewBag.Location : String.Empty;
+    string strOtherText = (ViewBag.OtherText != null) ? ViewBag.OtherText : String.Empty;
+    string strRecurrenceGroup="";
+        int iNoOfOccurences=0;
+    string strEndBy="";
+    int iRecurrencePattern = 0;
+    int iappointmentStatus = 1;
+    string strReasonforcancellation = "";
+    if (ViewBag.AppointmentObject != null)
+    {
+        iappointmentStatus = (ViewBag.AppointmentObject.Status != null) ? ViewBag.AppointmentObject.Status : 0;
+        //strReasonforcancellation = (ViewBag.AppointmentObject.ReasonForCancellation != null) ? ViewBag.AppointmentObject.ReasonForCancellation : "";
+    }
+    if (ViewBag.AppointmentObject != null && ViewBag.AppointmentObject.RecurrenceGroup != null && ViewBag.AppointmentObject.Recurrence != null)
+    {
+        strRecurrenceGroup = (ViewBag.AppointmentObject.RecurrenceGroup != null) ? ViewBag.AppointmentObject.RecurrenceGroup : String.Empty;
+        iNoOfOccurences = (ViewBag.AppointmentObject.Recurrence.NumberOfOccurences != null) ? ViewBag.AppointmentObject.Recurrence.NumberOfOccurences : 0;
+        strEndBy = (ViewBag.AppointmentObject.Recurrence.EndBy != null) ? ViewBag.AppointmentObject.Recurrence.EndBy : String.Empty;
+        iRecurrencePattern = (int)((ViewBag.AppointmentObject.Recurrence.Pattern != null) ? ViewBag.AppointmentObject.Recurrence.Pattern : 0);
+    }
+}
+<script type="text/javascript">
+    appointmentEditModeJson = @Html.Raw(Json.Encode(ViewBag.AppointmentObject));
+    appointmentEditURL = @Html.Raw(Json.Encode(ViewBag.AppointmentURL));
+    $(document).ready(function () {
+        $("#PatientVisit").attr('checked', true);
+        $("#date").datepicker("hide");
+        $("#DateCalendarImage").click(function () {
+            $("#date").datepicker({ changeYear: true, yearRange: "-112:+1", minDate: 0 });
+            $("#date").datepicker("show");
+        });
+        $("#EndByCalendarImage").click(function () {
+            $("#EndBy").datepicker({ changeYear: true, yearRange: "-112:+1", minDate: 0 });
+            $("#EndBy").datepicker("show");
+        });
+        $("#EndBy").click(function () {
+            $("#EndBy").datepicker("hide");
+        });
+        $("#date").click(function () {
+            $("#date").datepicker("hide");
+        });
+        appointment.AppointmentTypeSelection();
+        $("#dvPatient").hide();
+        $("#dvDateLoad").hide();
+        $("#dvEmptyDiv").show();
+        $("#dvRemove").hide();
+        $("#dvVerifyPatient").hide();
+        $("#dvReasonforCancellation").hide();
+        $("#dvDelete").hide();
+        $("#dvStatusLocation").hide();
+        appointment.isRecurrence();
+        $('input:radio[name=AppointmentType]').click(function () {
+            appointment.AppointmentTypeSelection();
+        });
+        $('input:radio[name=ReoccurenceDuration]').click(function () {
+            if ($('input:radio[name=ReoccurenceDuration]:checked').val() == "EndAfter") {
+                $("#EndBy").val("");
+            }
+            if ($('input:radio[name=ReoccurenceDuration]:checked').val() == "EndBy") {
+                $("#txtOccurences").val("");
+            }
+        });
+        $('input:checkbox[name=chkRecurrence]').click(function () {
+            appointment.isRecurrence();
+        });
+
+        $('input:checkbox[id=1004]').click(function () {
+        if ($('input:checkbox[id=1004]:checked').val() == "All Staff") {
+            $('input:checkbox[id=1003]').prop("checked", false);
+            $('input:checkbox[id=1002]').prop("checked", false);
+            $('input:checkbox[id=1001]').prop("checked", false); 
+            $("input:checkbox[id=1003]").prop("disabled", true);        
+            $("input:checkbox[id=1002]").prop("disabled", true);
+            $("input:checkbox[id=1001]").prop("disabled", true);   
+            }
+            else{
+            $("input:checkbox[id=1003]").prop("disabled", false);        
+            $("input:checkbox[id=1002]").prop("disabled", false);
+            $("input:checkbox[id=1001]").prop("disabled", false); 
+            }
+        });
+        if (isAppointmentEdit) {
+            $("#dvDateLoad").show();
+            $("#dvEmptyDiv").hide();
+//          $("#dvAppointmentStatus").removeClass('hide-content').addClass('show-content');
+            $("#dvEditAppointmentType").removeClass('hide-content').addClass('show-content');
+            $("#SelectAppointmentType").removeClass('show-content').addClass('hide-content');
+            $("#dvPatientSelection").removeClass('show-content').addClass('hide-content');
+            $("#dvPatient").removeClass('show-content').addClass('hide-content');
+            $("#dvRemove").removeClass('show-content').addClass('hide-content');
+            $("#dvVerifyPatient").removeClass('show-content').addClass('hide-content');
+            //$("#CreateNewDashedLine").removeClass('show-content').addClass('hide-content');
+            $("#Selected-patient-name").html("@strPatientName");
+            $("#Selected-appointment-type").html("@strAppointmentType");
+            $("#date").val("@strAppointmentDate");
+            $("#StartTime").val("@strStartTime");
+            $("#EndTime").val("@strEndTime");
+            $("#Description").val("@strDescription");
+            $("#AppointmentStatus").val("@iappointmentStatus");
+           //$("#txtReason").val("@strReasonforcancellation");
+            if ($("#AppointmentStatus").val() == 1)
+            {
+              $("#dvDelete").show();  
+              $("#dvDelete")[0].disabled = false;
+            }
+          if("@strRecurrenceGroup" != null && "@strRecurrenceGroup" != "")  {
+                 $('input:checkbox[id=chkRecurrence]').prop("checked", true);
+                 $("#dvRecurrence").show();
+                 $('input:radio[name=ReoccurencePattern]')["@iRecurrencePattern"-1].checked = true;
+              if ("@strEndBy" != "") {
+                  $('input:radio[id=rbtnEndBy]').prop("checked", true);
+                  $("#EndBy").val("@strEndBy");
+              }
+              if ("@iNoOfOccurences" != 0) {
+                  $('input:radio[id=rbtnDuration]').prop("checked", true);
+                  $("#txtOccurences").val("@iNoOfOccurences");
+              }
+          }
+          }
+             if ("@strAppointmentType" == PATIENTVISIT){
+                $("#dvblock").hide();
+                $("#dvVisitType").show();
+                $("#dvPatient").show();
+                //$("#dvPatientSelection").show();
+                $("#VisitType").val("@strVisitType");
+                $("#ExamRoom").val("@strExamRoom");
+                $("#ProviderList").val("@iProvider");
+               $("#dvAppointmentStatus").removeClass('hide-content').addClass('show-content');
+            }
+            else if ("@strAppointmentType" == BLOCK) {
+                 $("#dvAppointmentStatus").removeClass('show-content').addClass('hide-content');
+                  $("#dvblock").show();
+                  $("#dvVisitType").hide();
+                  $("#dvPatient").hide();
+                  $("#dvPatientSelection").hide();
+                  $("#BlockType").val("@strBlockType");
+                  $("#BlockFor").val("@iFor");
+                  $("#BlockLocation").val("@strlocation");
+                  $("#otherText").val("@strOtherText");
+                  $("#dvDelete").hide();
+            } 
+         else {
+                $("#dvAppointmentStatus").removeClass('show-content').addClass('hide-content');
+                $("#dvEditAppointmentType").removeClass('show-content').addClass('hide-content');
+                $("#SelectAppointmentType").removeClass('hide-content').addClass('show-content');
+                $("#dvPatientSelection").removeClass('hide-content').addClass('show-content');
+                $("#dvRemove").removeClass('hide-content').addClass('show-content');
+                $("#dvVerifyPatient").removeClass('hide-content').addClass('show-content');
+                $("#CreateNewDashedLine").removeClass('hide-content').addClass('show-content');
+                $("#otherText").addClass('disabled-text-background');
+        }
+        $("#BlockType").change(function () {
+            if ($("#BlockType").val() == "Other") {
+                $("#otherText")[0].disabled = false;
+                $("#otherText").removeClass('disabled-text-background');
+            } else {
+                $("#otherText")[0].disabled = true;
+                $("#otherText").val("");
+                $("#otherText").addClass('disabled-text-background');
+            }
+        });
+        $("#OtherType").change(function () {
+            if ($("#OtherType").val() == "Other") {
+                $("#otherTextBlock")[0].disabled = false;
+            } else {
+                $("#otherTextBlock").val("");
+                $("#otherTextBlock")[0].disabled = true;
+            }
+        });
+        $("#AppointmentStatus").change(function () {
+            if ($("#AppointmentStatus").val() == 4) {
+            $("#dvReasonforCancellation").show();
+                $("#dvDelete")[0].disabled = true;
+            }
+            else if ($("#AppointmentStatus").val() == 1)
+            {
+              $("#dvDelete").show();  
+              $("#dvDelete")[0].disabled = false;
+            }
+            else {
+                $("#dvReasonforCancellation").hide();
+                $("#dvDelete")[0].disabled = true;
+            }
+            if (($("#AppointmentStatus").val() == 2) ||($("#AppointmentStatus").val() == 3)) {
+              $("#dvStatusLocation").show();
+            } else {
+                $("#dvStatusLocation").hide();
+            }
+        });
+    });
+</script>
+<div id="appointment_load_view">
+    <div class="grid_32 mandatory-field-note">
+        Fields with " <span class="mandatory-field">*</span> " are mandatory
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div id="validationSummary" class="error-message grid_32 align-inline">
+    </div>
+    <div class="grid_32" id="SelectAppointmentType">
+        <div class="grid_9 header-text" style="top:3px;">
+            Appointment Type <span class="mandatory-field">*</span>:
+        </div>
+        <div class="grid_23">
+            @Html.RadioButton("AppointmentType", "PatientVisit", false, new { @id = "PatientVisit"})
+            <label for="PatientVisit">
+                Patient Visit</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            @Html.RadioButton("AppointmentType", "Block", false, new { @id = "Block"})
+            <label for="Block">
+                Block</label>&nbsp;&nbsp;&nbsp;&nbsp;
+            @Html.RadioButton("AppointmentType", "Other", false, new { @id = "Other"})
+            <label for="Other">
+                Other</label>
+        </div>
+    </div>
+    <div class="grid_32" id="dvEditAppointmentType">
+        <div class="grid_9 header-text">
+            Appointment Type :
+        </div>
+        <div class="grid_23">
+            <label id="Selected-appointment-type"></label>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32" id="dvVisitType">
+        <div class="grid_9 header-text" style="top:3px;">
+            Visit Type <span class="mandatory-field">*</span>:
+        </div>
+        <div class="grid_23">
+            @Html.DropDownList("VisitType", null, new { id = "VisitType", @class = "grid_23", @style = "width : 160px;" })
+        </div>
+    </div>
+    <div id="dvblock" class="grid_32"> 
+        <div class="grid_32" id="dvblockType">
+            <div class="grid_9 header-text" style="top:3px;">
+                Block Type <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_10">
+                @Html.DropDownList("BlockType", null, new { id = "BlockType", @style = "width : 142px;" })
+            </div>
+            <div class="standard-text grid_5" style="left: 18px;top:3px">
+                Other <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_8">
+                <input type="text" id="otherText" name="" value="" disabled="disabled" />
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32" id="dvblockFor">
+            <div class="grid_9 header-text" style="top:3px;">
+                For <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_23">
+                @Html.DropDownList("BlockFor", (SelectList)ViewData["BlockFor"], new { id = "BlockFor", @class = "grid_23", @style = "width : 142px;" })
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32" id="dvblockLocation">
+            <div class="grid_9 header-text" style="top:3px;">
+                Location :
+            </div>
+            <div class="grid_23">
+                @Html.DropDownList("BlockLocation", null, new { id = "BlockLocation", @class = "grid_23", @style = "width : 142px;" })
+            </div>
+        </div>
+    </div>
+    <div id="dvOther" class="grid_32" style="display:none"> 
+        <div class="grid_32" id="dvOtherType">
+            <div class="grid_9 header-text" style="top:3px;">
+                Other Type <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_10">
+                @Html.DropDownList("OtherType", null, new { id = "OtherType", @style = "width : 142px;" })
+            </div>
+            <div class="standard-text grid_5" style="left: 18px;top:3px">
+                Other <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_8">
+                <input type="text" id="otherTextBlock" name="" value="" disabled="disabled" />
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32" id="dvOtherLocation">
+            <div class="grid_9 header-text" style="top:3px;">
+                Location:
+            </div>
+            <div class="grid_23">
+                @Html.DropDownList("LocationOther", (SelectList)ViewData["LocationOther"], new { id = "LocationOther", @class = "grid_23", @style = "width : 142px;" })
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32"  id="dvOtherAttendees">
+            <div class="grid_9 header-text" style="top:3px;">
+                Attendees <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_23">
+            <div class="grid_16">
+                @Html.CheckBox("allStaff", new { @id = "1004", @value = "All Staff" })
+        <label for="1004">
+            All Staff</label></div>
+            <div class="grid_16">
+             @Html.CheckBox("James", new { @id = "1003", @value = "Dr. James A. Martin, MD", @name = "attendeesChk" })
+        <label for="1003">
+            Dr. James A. Martin, MD</label></div>
+            <div class="grid_16">
+             @Html.CheckBox("Julie", new { @id = "1002", @value = "Dr. Julie Walden, MD", @name = "attendeesChk" })
+        <label for="1002">
+            Dr. Julie Walden, MD</label></div>
+            <div class="grid_16">
+             @Html.CheckBox("Jean", new { @id = "1001", @value = "Jean Burke, NP", @name = "attendeesChk" })
+        <label for="1001">
+            Jean Burke, NP</label></div>
+            </div>
+        </div>
+    </div>
+    <div id="CreateNewDashedLine">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="multiple-choice-dashed-line grid_32">
+    </div>
+    @*<div class="clear-height-spacing clear">
+    </div>  *@
+    </div>
+    
+    <div class="grid_32" id="dvPatientSelection">
+        <div class="clear-height-spacing clear">
+    </div>
+        @Html.RadioButton("PatientOption", "searchPatient", false, new { @id = "searchPatient" })
+        <label for="searchPatient">
+            Search Existing Patients</label>
+        @Html.RadioButton("PatientOption", "createNewPatient", false, new { @id = "createNewPatient" })
+        <label for="createNewPatient">
+            Create New Patient</label>
+        <div class="clear-height-spacing clear">
+        </div>
+    </div>
+    @*<div class="clear-height-spacing clear">
+    </div>*@
+    <div class="grid_32" id="dvPatient">
+          <div class="clear-height-spacing clear">
+    </div>
+        <div class="grid_32">
+            <div class="grid_9 header-text" style="top:3px;">
+                Patient <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_18">
+                &nbsp;<label id="Selected-patient-name"></label>
+            </div>
+            <div class="grid_5" style="bottom:12px" id="dvRemove">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons"/>
+                </div>
+                <input type="button" class="remove-button align-div-inline standard-height-for-buttons" value="Remove" onclick="appointment.RemovePatient()" />
+                <div class="align-div-inline"><img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" />
+                </div>
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32">
+            <div class="grid_9 header-text" style="top:3px;">
+                Provider <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_23">
+                @Html.DropDownList("ProviderList", (SelectList)ViewData["ProviderList"], new { id = "ProviderList", @class = "grid_23", @style = "width : 130px;" })
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32">
+            <div class="grid_9 header-text" style="top:3px;">
+                Exam Room:
+            </div>
+            <div class="grid_23">
+                @Html.DropDownList("ExamRoom", null, new { id = "ExamRoom", @class = "grid_23", @style = "width : 110px;" })
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32" id="dvVerifyPatient" style="display:none">
+            @Html.CheckBox("verifyPatient", new { @id = "verifyPatient", @value = "add" })
+            <label for="verifyPatient">
+                Verified all information current</label>
+            <div class="clear-height-spacing clear">
+            </div>
+        </div>
+        <div class="multiple-choice-dashed-line grid_32">
+        </div>
+    </div>
+    <div id="dvDateLoad">
+        <div class="grid_32">
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_9">
+                Date <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_8">
+                <input type="readonly" id="date" style="width:100px" readonly="true"/>
+            </div>
+            <div class="grid_1">
+                <img id="DateCalendarImage" alt="" src="@Url.Content("~/Content/Images/Buttons/smo_calendar.png")"/>
+                <div id="DateCalendar">
+                </div>
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32">
+            <div class="grid_9 header-text" style="top:3px;">
+                StartTime <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_23 align-div-inline">
+                <div class="align-div-inline grid_11">
+                    @Html.DropDownList("StartTime", null, new { id = "StartTime" })
+                </div>
+                <div class="header-text align-div-inline grid_8">
+                    EndTime <span class="mandatory-field">*</span>:
+                </div>
+                <div class="align-div-inline grid_7">
+                    @Html.DropDownList("EndTime", null, new { id = "EndTime"})
+                </div>
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div>
+            @Html.CheckBox("chkRecurrence", new { @id = "chkRecurrence", @value = "IsChecked" })
+            <label for="chkRecurrence">
+                Recurrence</label>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32" id ="dvRecurrence">
+            <div class="grid_32">
+                <div class="grid_11 header-text" style="top:3px;">
+                    Reoccurence Pattern <span class="mandatory-field">*</span>:
+                </div>
+                <div class="grid_21">
+                    @Html.RadioButton("ReoccurencePattern", "1", false, new { @id = "Daily" })
+                    <label for="Daily">
+                        Daily</label>
+                    @Html.RadioButton("ReoccurencePattern", "2", false, new { @id = "Weekly" })
+                    <label for="Weekly">
+                        Weekly</label>
+                    @Html.RadioButton("ReoccurencePattern", "3", false, new { @id = "Monthly" })
+                    <label for="Monthly">
+                        Monthly</label>
+                </div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32">
+                <div class="grid_11 header-text" style="top:3px;">
+                    Reoccurence Duration <span class="mandatory-field">*</span>:
+                </div>
+                <div class="grid_21">
+                    <div class="grid_10">
+                        @Html.RadioButton("ReoccurenceDuration", "EndAfter", false, new { @id = "rbtnDuration" })
+                        <label for="rbtnDuration">
+                            End After :</label>
+                    </div>
+                    <div class="align-div-inline grid_8">
+                        <input type="text" id="txtOccurences" style="width:40px;" onkeypress="return isNumeric(event)" />
+                    </div>
+                    <div class="align-div-inline grid_3">
+                        Occurences
+                    </div>
+                </div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32">
+                <div class="grid_11">
+                    &nbsp;
+                </div>
+                <div class="grid_21">
+                    <div class="grid_10 align-div-inline">
+                        @Html.RadioButton("ReoccurenceDuration", "EndBy", false, new { @id = "rbtnEndBy" })
+                        <label for="rbtnEndBy">
+                            End By:</label>
+                    </div>
+                    <div class="align-div-inline">
+                        <input type="text" id="EndBy" style="width:80px;" readonly="true" />
+                    </div>
+                    <div class="grid_1" style="left:3px">
+                        <img id="EndByCalendarImage" alt="" src="@Url.Content("~/Content/Images/Buttons/smo_calendar.png")"/>
+                        <div id="EndByCalendar">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+        </div>
+        <div class="multiple-choice-dashed-line grid_32">
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32">
+            <div class="grid_9 header-text">
+                Description:
+            </div>
+            <div class="grid_23">
+                @Html.TextArea("Description", null, new { rows = 5, cols = 55, @class = "standard-text" })
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32" id="dvAppointmentStatus">
+            <div class="grid_9 header-text" style="top:3px;">
+                Status :
+            </div>
+            <div class="grid_23" >
+                @Html.DropDownList("AppointmentStatus", null, new { id = "AppointmentStatus", @class = "grid_23", @style = "width : 160px;" })
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32" id="dvStatusLocation">
+            <div class="grid_9 header-text" style="top:3px;">
+                Location :
+            </div>
+            <div class="grid_23" >
+                @Html.DropDownList("StatusLocationList", null, new { id = "StatusLocationList", @class = "grid_23", @style = "width : 160px;" })
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+        </div>
+        <div id="dvReasonforCancellation" class="grid_32">
+            <div class="grid_9 header-text">
+                Reason for Cancellation :
+            </div>
+            <div class="grid_23">
+                @Html.TextArea("txtReason", null, new { rows = 5, cols = 55, @class = "standard-text" })
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+        </div>
+    </div>
+    <div id="dvEmptyDiv" style="height:300px">
+        &nbsp;
+    </div>
+    <div class="grid_21 prefix_11">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input type="button" class="navigation-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" value="Save" title="Create New" id="btnSave" onclick="appointment.fnSaveAppointment();" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" value="Cancel" id="btnCancel" onclick="appointment.CloseAppointment();" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+    </div>
+        <div class="grid_1 button-seperator">
+            &nbsp;</div>
+        @*Deletebutton*@  
+        <div class="align-div-inline" id="dvDelete">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                     style="height: 22px;" /></div>
+            <input type="button" class="navigation-button align-div-inline standard-text standard-height-for-buttons"
+                   style="width: 60px;" value="Delete" title="Create New" id="btnDelete" onclick="a" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                     style="height: 22px;" /></div>
+        </div>
+        <div class="clear-height-spacing clear">
+       </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+    $('input:radio[name=PatientOption]').click(function () {
+        appointment.patientFunctions.patientSelect();
+    });
+    
+</script>
+        
+    

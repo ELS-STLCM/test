@@ -1,0 +1,415 @@
+﻿ @using SimChartMedicalOffice.Core.Forms
+ @using SimChartMedicalOffice.Common
+ @{
+     Layout = "~/Views/Shared/_LayoutPartialForPrint.cshtml";
+ }
+ @{
+     PriorAuthorizationRequestForm priorAuthorityRequestObj = null;
+     bool blankform = false;
+     if (ViewBag.PriorAuthorityRequestObj == null)
+     {
+         priorAuthorityRequestObj = new PriorAuthorizationRequestForm();
+         blankform = true;
+     }
+     else
+     {
+         priorAuthorityRequestObj = (PriorAuthorizationRequestForm)ViewBag.PriorAuthorityRequestObj;
+     }
+ }
+<script type="text/javascript">
+     function printpage() {
+         $("#PrintButtonSection").hide();
+         window.print();
+         $("#PrintButtonSection").show();
+     }
+
+     $(document).ready(function () {
+         var isBlankForm = '@blankform';
+         if (isBlankForm.toLowerCase() != 'true') {
+             $('.text-line-print').addClass('text-line-print-edit').removeClass('text-line-print');
+             $('.text-in-box-print').addClass('text-line-print-edit').removeClass('text-in-box-print');
+         }
+     });
+ </script>
+ 
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_4 prefix_29" id="PrintButtonSection">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input type="submit" class="navigation-button align-div-inline standard-height-for-buttons" style="width:60px;"
+               value="Print" onclick="printpage()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+</div>
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_32 print-main-content standard-text-print">
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="">
+        <div class="grid_16">
+            <img alt="X"src="../../Content/Images/print_header.png"  class="print-header"/>
+        </div>
+                 <div class="grid_16 standard-label-print text-signature">
+               Student: @ViewBag.Signature</div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32">
+         <div class="clear clear-height-spacing">
+          </div>
+          <div class="grid_32 form-page-header-print">
+              Prior Authorization Request
+          </div>
+          <div class="clear clear-height-spacing">
+          </div>
+          <hr />
+          <div class="clear clear-height-spacing">
+          </div>
+        <div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32 section-seperator">
+                <div class="grid_16">
+                    <div class="standard-label-print grid_14 ">
+                        Member Name:
+                    </div>
+                    <div class="grid_18  text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.MemberName, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Member ID Number:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.MemberId, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Date of Birth:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.DateOfBirth, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Ordering Physician:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.OrderingPhysician, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Physician’s Address:
+                    </div>
+                    <div class="grid_18 text-in-box-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.PhysicianAddress, blankform)
+                    </div>
+                </div>
+                <div class="grid_16">
+                    <div class="standard-label-print grid_14 ">
+                        Provider:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.Provider, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Provider Fax:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ProviderFax, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Provider Phone:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ProviderPhone, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Provider Contact Name:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ProviderContactNumber, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Place of Service / Treatment and Address:
+                    </div>
+                    <div class="grid_18 text-in-box-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ProviderPlaceOfService, blankform)
+                    </div>
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32 section-seperator">
+                <div class="grid_32">
+                    <div class="standard-label-print grid_7 ">
+                        Service Requested:
+                    </div>
+                    <div class="grid_25 text-in-box-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ServiceRequested, blankform)
+                    </div>
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="grid_16">
+                    <div class="standard-label-print grid_14 ">
+                        Starting Service Date:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.StartingServiceDate, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Service Frequency:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ServiceFrequency, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Procedure/CPT-4 Code(s):
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ProcedureCPT4Codes, blankform)
+                    </div>
+                </div>
+                <div class="grid_16">
+                    <div class="standard-label-print grid_14 ">
+                        Ending Service Date:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.EndingServiceDate, blankform)
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Diagnosis/ICD-9 Code:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.DiagonsisOrICD9Code8, blankform)
+                    </div>
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32 section-seperator">
+                <div class="grid_16">
+                    <div class="standard-label-print grid_14 ">
+                        Injury related?
+                    </div>
+                    @if (blankform)
+                    {
+                        <div class="grid_18 standard-text">
+                            @Html.CheckBox("injuryRelated", false, new {disabled = "disabled"})
+                            <label for="injuryRelatedYes">
+                                Yes</label>
+                            @Html.CheckBox("injuryRelated", false, new {disabled = "disabled"})
+                            <label for="injuryRelatedNo">
+                                No</label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="grid_18 standard-text">
+                            @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.InjuryRelated, blankform)
+                        </div>
+                    }
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Date of Injury:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.DateOfInjury, blankform)
+                    </div>
+                </div>  
+                <div class="grid_16">
+                    <div class="standard-label-print grid_14 ">
+                        Worker's Compensation related?
+                    </div>
+                    @if (blankform)
+                    {
+                        <div class="grid_18 standard-text">
+                            @Html.CheckBox("workersCompensationRelated", false, new { disabled = "disabled" })
+                            <label for="workersCompensationRelatedYes">
+                                Yes</label>
+                            @Html.CheckBox("workersCompensationRelated", false, new { disabled = "disabled" })
+                            <label for="workersCompensationRelatedNo">
+                                No</label>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="grid_18 standard-text">
+                            @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.WorkerCompentationRelated, blankform)
+                        </div>
+                    }
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="standard-label-print grid_14 ">
+                        Date of Injury:
+                    </div>
+                    <div class="grid_18 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.WorkerCompDateOfInjury, blankform)
+                    </div>
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32 section-seperator">
+                <div class="grid_14">
+                    <div class="standard-label-print grid_16 ">
+                        Authorization Number:
+                    </div>
+                    <div class=" text-line-print grid_16">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.AuthorizationNumber, blankform)
+                    </div>
+                </div>
+                @*<div class="clear-height-spacing clear">
+                </div>*@
+                <div class="grid_9">
+                    <div class="standard-label-print grid_16">
+                        Effective Date:
+                    </div>
+                    <div class="grid_16 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.EffectiveDate, blankform)
+                    </div>
+                </div>
+                <div class="grid_9">
+                    <div class="standard-label-print grid_16">
+                        Expiration Date:
+                    </div>
+                    <div class="grid_16 text-line-print">
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ExpiryDate, blankform)
+                    </div>
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+            </div>
+            <div class="grid_32 standard-text-print">
+            <p>
+                We will complete the review in 7 days or less if all necessary documentation is
+                received. This timeframe may be extended if the requested information is incomplete
+                or additional information is needed.</p>
+            <p class="para-ol-pading">
+                Expedited/urgent pre-authorizations will be completed within 72 hours or less once
+                all necessary information is received. According to ERISA, urgent is defined as
+                “any claim for medical care or treatment with respect to which the application of
+                the time periods for making non-urgent care determinations:</p>
+            <ol class="ol-padding">
+                <li>Could seriously jeopardize the life or health of the claimant or the ability of
+                    the claimant to regain maximum function or;
+                </li>
+                <li>In the opinion of the physician with knowledge of the claimant’s medical condition,
+                would subject the claimant to severe pain that cannot be adequately managed without
+                the care or treatment that is the subject of the claim.”
+                </li>
+            </ol>
+            <p>
+                Note: A release of information form included in the application insurance was signed
+                by our member.</p>
+            <p>
+                Please note that the preauthorization of any procedure does not guarantee benefits
+                or payment. Approval is not based on medical necessity as defined in the patient’s
+                benefit plan or certificate. All benefits are subject to the terms, conditions,
+                and exclusions of the benefit plan or certificate. This may include policy language
+                regarding pre-existing conditions or signed affidavits stating that the insurance
+                bears no responsibility, as signed by the insured. Policy exclusions for certain
+                types of services may also apply.</p>
+            <div class="grid_32 standard-label-print alpha">
+                Information to Include When Requesting Pre-authorization:
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32 standard-text-print alpha">
+                <div class="standard-label-print">
+                    Medical/Surgical
+                </div>
+                <ol class="ol-padding">
+                    <li>Clinical notes related to diagnosis or procedure including any conservative medical
+                        management.</li>
+                    <li>Any imaging reports to support the need for treatment.</li>
+                </ol>
+                <div class="standard-label-print">
+                    DME Exceeding $500
+                </div>
+                <ol class="ol-padding">
+                    <li>DME HCPCS code(s) and fees (rental versus purchase).</li>
+                    <li>Supporting medical notes and related test results.</li>
+                    <li>Name and Tax ID # of DME provider.</li>
+                    <li>Signed MD prescription for DME.</li>
+                </ol>
+                <div class="standard-label-print">
+                    Therapies
+                </div>
+                <ol class="ol-padding">
+                    <li>Most recent evaluation and treatment plan (3 months previous therapy notes if
+                        applicable).</li>
+                    <li>Type of modalities.</li>
+                    <li>Signed MD prescription for service.</li>
+                    <li>Name and Tax ID of Therapist.</li>
+                </ol>
+                <div class="standard-label-print">
+                    Drugs</div>
+                <ol class="ol-padding">
+                    <li>Related clinical notes.</li>
+                    <li>Specific medical diagnosis/ICD-9 code(s).</li>
+                </ol>
+                <div class="standard-label-print">
+                    Medical/Dental</div>
+                <ol class="ol-padding">
+                    <li>ADA codes and fees.</li>
+                    <li>X-rays.</li>
+                    <li>Date of service for procedure</li>
+                    <li>Clinical notes related to diagnosis or procedure including any conservative medical
+                        management.</li>
+                    <li>If this is a dental injury, include the date of injury to tooth or mouth and
+                        also a description of how the injury occurred. </li>
+                </ol>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>

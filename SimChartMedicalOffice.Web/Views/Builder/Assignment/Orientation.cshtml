@@ -1,0 +1,321 @@
+﻿@{
+    Layout = null;
+}
+<html>
+<head>
+    <title>Orientation </title>
+    <script type="text/javascript">
+        // tinyMCE initiation method
+        tinyMCE.init({
+            theme: "advanced",
+            mode: "exact",
+            elements: "OrientationEditor",
+            theme_advanced_default_foreground_color: "#FF0000",
+            theme_advanced_default_background_color: "#FFFF00",
+            height: "200",
+            // adding our css files to tinyMCE. to add more simply separate each with comma
+            content_css: "/Content/SMO/simOffice.css?08262012",
+            //        plugins : "spellchecker",
+            // Theme options
+            theme_advanced_buttons1: "bold,italic,underline,|,bullist,numlist,|,forecolor,backcolor",
+            theme_advanced_buttons2: "",
+            theme_advanced_buttons3: "",
+            theme_advanced_toolbar_location: "top",
+            theme_advanced_toolbar_align: "left",
+            theme_advanced_resizing: false,
+            theme_advanced_path: false,
+            force_p_newlines: false,
+            forced_root_block: 'div',
+            theme_advanced_more_colors: false
+        });
+    </script>
+</head>
+<body>
+    <div class="remove-div-space" style="overflow-y: auto;">
+        <div class="grid_32 form-page-header standard-text">
+            Step 2 of 5: Orientation
+        </div>
+        <div class="grid_32 mandatory-field-note">
+            Fields with " <span class="mandatory-field">*</span> " are mandatory
+        </div>
+        <div id="OrientationData" class="grid_32 div-with-border standard-text" style="height: 297px;
+            overflow-y: auto; overflow-x: hidden;">
+            <div id="validationSummary" class="errormessage grid_32">
+                @Html.ValidationSummary()</div>
+            <div class="grid_32">
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="standard-text grid_5">
+                    Orientation <span class="mandatory-field">*</span>:
+                </div>
+                <div class="grid_27">
+                    @Html.TextArea("OrientationEditor", "", new { rows = 5, @class = "standard-text", @style = "width:100%" })
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="standard-text grid_5 ">
+                    Image:
+                </div>
+                <div class="grid_27">
+                    <div class='link select-hand' onclick='imageUpload()' id='uploadImageLink'>
+                        <u>Add Images</u></div>
+                    <div class='disabled-text' id='disabledUploadImageLink'>
+                        <u>Add Images</u></div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="grid_32 alpha">
+                        Maximum of 6 images can be uploaded.</div>
+                    <div class="grid_32" id="patient-image-content">
+                    </div>
+                </div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32">
+                <div class="standard-text grid_5">
+                    Multimedia:
+                </div>
+                <div class="grid_27">
+                    <div class="standard-text">
+                        Please refer to the upload instructions. <a href="#" onclick="showVideoPopup()">Click
+                            here</a> to view.</div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <input class="grid_22" type="text" id="Multimedia" />
+                    <div class="grid_6" id="addVideo">
+                        <div class="align-div-inline">
+                            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                        <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                            style="width: 35px; text-align: center" value="Add" onclick="addMoreVideo()" />
+                        <div class="align-div-inline">
+                            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                    </div>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div id="video-content">
+                    </div>
+                </div>
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+        </div>
+        <div id="imageLoadAssignment" style="display: none">
+            <div id="imageLoadAssignmentContent">
+                @Html.Partial("../../Views/Builder/QuestionBank/SimOfficeImageUpload")
+            </div>
+        </div>
+        <div id="image_view_load" style="display: none">
+            <div id="image_view_load_inner_content" style="height: 420px;">
+                <img id="image_view" src="" alt="x" class="image-view-larger" />
+            </div>
+        </div>
+        <div class="standard-text container_32" style="display: none" id="videoAudioUpload">
+            <b>Instructions</b>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    1.</div>
+                <div class="grid_31">
+                   &nbsp;Go to www.youtube.com.</div>
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    2.</div>
+                <div class="grid_31">
+                   &nbsp;Click "Create Account".</div>
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    3.</div>
+                <div class="grid_31">
+                    &nbsp;Log in to your account.</div>
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    4.</div>
+                <div class="grid_31">
+                    &nbsp;Click "Upload" at the top of the homepage</div>
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    5.</div>
+                <div class="grid_31">
+                    &nbsp;Click "Browse" to choose a video file from your computer. YouTube accepts these
+                    <br />&nbsp;video formats:
+                    <br />&nbsp;
+                    · .AVI (Audio Video Interleaved)<br />
+                   &nbsp; · .3GP (cell phones)<br />
+                    &nbsp;· .MOV (Mac)<br />
+                    &nbsp;· .MPEG or .MPG (Motion Picture Experts Group)<br />
+                    &nbsp;· .FLV (Adobe Flash)<br />
+                   &nbsp; · .SWF (Shockwave Flash)<br />
+                    &nbsp;· .M4V (h.264)<br />
+                    &nbsp;· .WMV (Windows Media Video) · .WEBM (HTML5)</div>
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    6.</div>
+                <div class="grid_31">
+                    &nbsp;Click "Upload Video".</div>
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    7.</div>
+                <div class="grid_31">
+                    &nbsp;Enter the details of the video. Required information includes the video title,
+                    <br />&nbsp;description,category, and tags. You can also enter broadcast, date and map, and
+                    <br />&nbsp;sharing options.Privacy setting should be "Unlisted".</div>
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    8.</div>
+                <div class="grid_31">
+                    &nbsp;Click "Save".</div>
+            </div>
+            <div class="grid_32">
+                <div class="grid_1">
+                    9.</div>
+                <div class="grid_31">
+                    &nbsp;Copy saved video link and paste into Multimedia textbox in Step 2 of Assignment
+                    <br />&nbsp;Builder</div>
+            </div>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+            <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 50px;" value="Back" onclick="backToStep1()" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+        </div>
+        <div class="grid_1 button-seperator">
+            &nbsp;</div>
+        <div class="grid_4">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+            <input type="button" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 50px;" value="Save" onclick="saveStep2()" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                 style="height: 22px;" /></div>
+        </div>
+        <div class="grid_6">
+            <div class="align-div-inline">
+                <img alt="left" id="btnProceedSkillSetLeftCurve" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+            <input type="submit" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 100px;" onclick="redirectToStep3()" value="Save & Proceed" id="btnProceedSkillSet" />
+            <div class="align-div-inline">
+                <img alt="right" id="btnProceedSkillSetRightCurve" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        </div>
+        <div class="grid_5">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+            <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 60px;" id="" value="Cancel" onclick="cancelOrientation()" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                 class="standard-height-for-buttons" /></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $.ajaxSetup({
+            cache: false,
+            asynch: false,
+            type: "POST"
+        });
+        var videoList = new Array();
+        var videoCount = 0;
+        $(document).ready(function () {
+            $("#stepwiseImage").empty();
+            $("#stepwiseImage").append("<img alt='' src='../../Content/Images/Buttons/step2AssignmentBuilder.PNG'/>");
+            $("#disabledUploadImageLink").hide();
+            $("#uploadImageLink").show();
+        });
+
+        function imageUpload() {
+            assignment.commonFunctions.assignmentImageUpload();
+        }
+        function removeImage(patientImage) {
+            var position = patientImage.lastIndexOf("_");
+            var imageId = patientImage.slice(0, position);
+            assignment.commonFunctions.removeAttachment(imageId)
+        }
+
+        function showVideoPopup() {
+            assignment.commonFunctions.initializePopup();
+        }
+
+        function addMoreVideo() {
+            if ($("#Multimedia").val() != "") {
+                srcVideo = $("#Multimedia").val();
+                setVideo(srcVideo, videoCount);
+                $("#Multimedia").val("");
+            }
+        }
+
+        function setVideo(srcVideo, videoCount) {
+            if (GetBrowserType() == BROWSER_IE && $.browser.version == "9.0") {
+                $("<object id='video-frame_" + videoCount + "' type='application/x-shockwave-flash' data='" + srcVideo + "' width='425' height='344'></object><div class='grid_10' id='video-frame_" + videoCount + "_remove'><div class='align-div-inline'><img alt='left' src='../Content/Images/Buttons/Button_left_curve_grey.jpg' class='standard-height-for-buttons' /></div><input type='submit' class='remove-button align-div-inline standard-height-for-buttons' value='Remove' onclick='removeVideo(this.parentNode.id)' /><div class='align-div-inline'><img alt='right' src='../Content/Images/Buttons/Button_right_curve_grey.jpg'class='standard-height-for-buttons' /></div></div><div class='clear-height-spacing clear'></div>").appendTo("#video-content");
+            }
+            else {
+                $("<iframe class='grid_20' id='video-frame_" + videoCount + "' src='" + srcVideo + "?wmode=transparent' style='width: 60%; width='425' height='344' height: 100%' scrolling='yes'></iframe><div class='grid_10' id='video-frame_" + videoCount + "_remove'><div class='align-div-inline'><img alt='left' src='../Content/Images/Buttons/Button_left_curve_grey.jpg' class='standard-height-for-buttons' /></div><input type='submit' class='remove-button align-div-inline standard-height-for-buttons' value='Remove' onclick='removeVideo(this.parentNode.id)' /><div class='align-div-inline'><img alt='right' src='../Content/Images/Buttons/Button_right_curve_grey.jpg'class='standard-height-for-buttons' /></div></div><div class='clear-height-spacing clear'></div>").appendTo("#video-content");
+            }
+            videoList.splice(videoCount, 0, srcVideo);
+            setDivData(getDivObject("video-frame_" + videoCount), "videoUrl", srcVideo)
+            videoCount++;
+        }
+
+
+        function removeVideo(videoId) {
+            var position = videoId.lastIndexOf("_");
+            var video = videoId.slice(0, position);
+            for (var videoListCount = 0; videoListCount <= videoCount; videoListCount++) {
+                if (videoList[videoListCount] == getDivData(video, "videoUrl")) {
+                    videoList.splice(videoListCount, 1);
+                }
+            }
+            $("#" + video).remove();
+            $("#" + video + "_remove").remove();
+        }
+
+        function saveStep2() {
+            assignment.commonFunctions.saveStep2(false);
+        }
+
+        function redirectToStep3() {
+            var isValidAssignment = true;
+            assignment.commonFunctions.saveStep2(true);
+            //            if (isValidAssignment) {
+            //                assignBuilder.redirectionFunctions.loadStep3OfAssignmentBuilder();
+            //            }
+
+        }
+
+        function backToStep1() {
+            assignBuilder.redirectionFunctions.loadStep1OfAssignmentBuilder();
+        }
+
+        function cancelOrientation() {
+            assignment.commonFunctions.cancel();
+        }
+
+    </script>
+</body>
+</html>

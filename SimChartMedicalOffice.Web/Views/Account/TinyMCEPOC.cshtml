@@ -1,0 +1,95 @@
+﻿<script type="text/javascript" src="@Url.Content("~/Scripts/tinyMCE/tiny_mce.js")"></script>
+<script type="text/javascript">
+    
+    // tinyMCE initiation method
+    tinyMCE.init({
+        theme: "advanced",
+        mode: "none",
+        theme_advanced_default_foreground_color: "#FF0000",
+        theme_advanced_default_background_color: "#FFFF00",
+        //plugins: "autolink,lists,spellchecker,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
+        height: "500",
+
+        // including our custom css file
+        content_css: "@Url.Content("~/Content/SMO/simOffice.css")",
+
+        // Theme options
+        theme_advanced_buttons1: "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect",
+        theme_advanced_buttons2: "cut,copy,paste,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,|,forecolor,backcolor",
+        theme_advanced_buttons3:"",
+        //theme_advanced_buttons3: "tablecontrols,|,hr,removeformat,visualaid,|,sub,sup,|,charmap,emotions,iespell,media,advhr",
+        //theme_advanced_buttons4: "insertlayer,moveforward,movebackward,absolute,|,styleprops,spellchecker,|,cite,abbr,acronym,del,ins,attribs,|,visualchars,nonbreaking,template,blockquote,pagebreak,|,insertfile,insertimage",
+
+        theme_advanced_toolbar_location: "top",
+        theme_advanced_toolbar_align: "center"
+    });
+
+    // function to toggle tinyMCE wrapping
+    function toggleMCE() {
+        tinyMCE.execCommand('mceToggleEditor', false, 'wrapped_class');
+    }
+    
+</script>
+<div class="grid_32">
+    <div class="grid_32">
+        <a id="toggleTinyMCE" href="#" onclick="toggleMCE()">Toggle TinyMCE</a>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="wrapped_class" class="grid_32 div-with-border standard-text" style="overflow-y: auto;
+     overflow-x: hidden;">
+        <div class="multiple-choice-dashed-line grid_32">
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_26">
+                <div class="grid_32 header-text">
+                    Correct Order:</div></div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div id="question_correct_order">
+                <div class="grid_32">
+                    <div class="grid_32 header-text">
+                        Question</div>
+                    <div class="grid_16 alpha">
+                        <div>@Html.TextArea("QuestionCorrectOrder", null, new { rows = 5, cols = 55, @class = "standard-text" })</div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="multiple-choice-dashed-line grid_32">
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_26">
+                <div class="grid_32 header-text">
+                    Enter the answers in the correct order.  System will automatically shuffle answers to display on the Student view.
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div id="answer_correct_order_1">
+                <div class="grid_32">
+                    <div class="grid_32 header-text">
+                        Answer 1</div>
+                    <div class="grid_16 alpha">
+                        <div>@Html.TextArea("AnswerCorrectOrder_1", null, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div id="answer_correct_order_2">
+                <div class="grid_32">
+                    <div class="grid_32 header-text">
+                        Answer 2</div>
+                    <div class="grid_16 alpha">
+                        <div>@Html.TextArea("AnswerCorrectOrder_2", null, new { rows = 5, cols = 75, @class = "standard-text" })</div>
+                    </div>
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+    </div>
+</div>

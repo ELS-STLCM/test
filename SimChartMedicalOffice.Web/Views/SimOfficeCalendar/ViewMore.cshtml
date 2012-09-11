@@ -1,0 +1,26 @@
+﻿@{
+    Layout = null;
+}
+@using SimChartMedicalOffice.Core.FrontOffice
+@using SimChartMedicalOffice.Core.ProxyObjects
+@using SimChartMedicalOffice.Common
+<div style="height: 200px; overflow: auto;">
+    @{
+        IList<CalendarEventProxy> calendarEvents = ViewBag.calendarEvents != null ? ViewBag.calendarEvents : new List<CalendarEventProxy>();
+        calendarEvents=calendarEvents.OrderBy(f=>Convert.ToDateTime(f.start)).ToList();
+        foreach (var item in calendarEvents)
+        {
+        <div class="@item.className" onclick="appointment.LoadNewAppointment('@String.Format("{0:mm/dd/yyyy}",Convert.ToDateTime(item.start))','@item.Url','@item.AppointmentType','@item.PatientName')"> 
+            @String.Format("{0:h:mm tt}",Convert.ToDateTime(item.start)) - @String.Format("{0:h:mm tt}", Convert.ToDateTime(item.end))
+            <br />
+            @Html.Raw(Html.Encode(item.title).Replace("\n", "<br />"))
+            <br />
+        </div>   
+        <div class="grid_31 section-seperator-normal">
+        </div>
+        <div class="grid_31 section-seperator-normal">
+        </div>
+        }
+
+    }
+</div>

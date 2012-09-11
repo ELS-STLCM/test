@@ -1,0 +1,75 @@
+﻿@{
+    Layout = null;
+}
+<div class="standard-text div-with-border container-folder-height">
+    <div class="folder-panel-header">
+        <label class="header-text">
+            Folders
+        </label>
+    </div>
+    <div class="folder-tools div-with-border">
+        <div class="grid_4 folder-icons">
+            <img id="@("addFolder_"+@ViewData["currentFolderPanel"])" onclick="addFolder()" alt="Add a folder" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder-add_normal.png")" title="New folder" 
+            />
+        </div>
+        <div class="grid_2">
+            <img alt="" src="@Url.Content("~/Content/Images/FolderIcons/lcm_tool-bar_seperator.png")"/>
+        </div>
+        <div class="grid_4 folder-icons">
+            <img id="@("renameFolder_"+@ViewData["currentFolderPanel"])" alt="Rename a folder" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder-rename_disable.png")" title="Rename folder"/>
+        </div>
+        <div class="grid_2">
+            <img alt="" src="@Url.Content("~/Content/Images/FolderIcons/lcm_tool-bar_seperator.png")"/>
+        </div>
+        <div class="grid_4 folder-icons">
+            <img id="@("deleteFolder_"+@ViewData["currentFolderPanel"])" alt="Delete folder" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder-delete_disable.png")" title="Delete folder" />
+        </div>
+        <div class="grid_2">
+            <img alt="" src="@Url.Content("~/Content/Images/FolderIcons/lcm_tool-bar_seperator.png")"/>
+        </div>
+        <div class="grid_4 folder-icons">
+            <img id="@("rearrangeFolders_"+@ViewData["currentFolderPanel"])" onclick="swapFolder()" alt="Rearrange folder" src="@Url.Content("~/Content/Images/FolderIcons/icon_folder-swap_normal.png")" title="Rearrange folders" />
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="folderListContent">
+        @Html.Partial("../../Views/Builder/QuestionBank/FolderList")
+    </div>
+    <div id="swapFolder" class="grid_32 container-grid-height hide-content"></div>
+</div>
+<script type="text/javascript" language="javascript">
+    $.ajaxSetup({
+        asynch: false,
+        cache: false
+    });
+    function addFolder() {
+        createFolder('@ViewData["currentFolderPanel"]');
+    }
+    function swapFolder() {
+        rearrangeFolders('@ViewData["currentFolderPanel"]');
+    }
+    /*To deselect text selected in double click event in page*/
+    function clearEmptySelection() {
+        if (document.selection && document.selection.empty) {
+            document.selection.empty();
+        } else if (window.getSelection) {
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+        }
+    }
+
+    function renameFolder() {
+        renameSelectedFolder(getDivData('@ViewData["currentFolderPanel"]', "currentFolderIdentifier"), getDivData('@ViewData["currentFolderPanel"]', "currentFolder"), getDivData('@ViewData["currentFolderPanel"]', "selectedFolderName"), '@ViewData["currentFolderPanel"]');
+    }
+    function deleteFolder() {
+        deleteSelectedFolder(getDivData('@ViewData["currentFolderPanel"]',  "selectedFolder"), getDivData('@ViewData["currentFolderPanel"]', "currentFolder"), '@ViewData["currentFolderPanel"]');
+    }
+    $(document).ready(function () {
+        
+        // set bread crumb with folderGUID, currentTab, current Folder URL and folder name as ""
+        @*SetBreadCrumb(getDivData('@ViewData["currentFolderPanel"]', "currentFolderIdentifier"), '@ViewData["currentFolderPanel"]', getDivData('@ViewData["currentFolderPanel"]', "currentFolder"), getDivData('@ViewData["currentFolderPanel"]', "selectedFolderName"));*@
+        renderFolders(getDivData('@ViewData["currentFolderPanel"]', "currentFolderIdentifier"), '@ViewData["currentFolderPanel"]', getDivData('@ViewData["currentFolderPanel"]', "currentFolder"));
+        getDataGridPopulated(getDivData('@ViewData["currentFolderPanel"]', "currentFolder"));
+    });
+</script>

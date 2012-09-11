@@ -1,0 +1,219 @@
+﻿var strListOfSelectedSkillSets = [];
+var questionType = "";
+var strQuestionGuid = "";
+var savedQuestionsCount = [];
+var isContentChanged = false;
+var skillSet = {
+    /*Common functions used in skillSet module*/
+    commonFunctions: {
+
+        gridOperations: 
+            {
+                skillSetItemChanged: function (obj)
+                {
+                    var idOfSkillSetItem = obj.id;
+                    strListOfSelectedSkillSets = check_AddOrRemoveIfItemExistsInString(strListOfSelectedSkillSets, idOfSkillSetItem, 'Ø', obj.checked);
+                }
+            }
+<<<<<<< Updated upstream
+        
+    },
+    previewPublish: {
+       publish: function () {
+           jConfirm(PUBLISH_MESSAGE, ALERT_TITLE, function (isOk) {
+               if (isOk) {
+                   //to-Do
+               }
+           });
+       },
+       backToStep3: function () {
+           $("#Step3SkillSet").load("../SkillSet/LoadQuestionsForSkillSet?skillSetUrl=SimApp/Courses/ELSEVIER_CID/Admin/SkillSetRepository/SkillSets/6eae0920-faa6-46e1-ab2d-cde9b91e722d/Questions");
+       },
+       preview: function () { }
+=======
+        loadQuestionInEditModeForSkillSet: function (strUrlOfQuestion, iQuestionType, questionGuid) {
+            questionType = iQuestionType;
+            strQuestionGuid = questionGuid
+            questionBank.commonFunctions.hideOrShowQuestionBankContent(false);
+            $("#questionTypes").load("../QuestionBank/RenderQuestionInEditMode?questionQuid=" + strUrlOfQuestion + "&iQuestionType=" + iQuestionType, function () {
+                questionBank.commonFunctions.hideOrShowQuestionBankContent(true);
+                if (iQuestionType == 2 || iQuestionType == 5) {
+                    $("#rationaleLinkedCompetency").hide();
+                }
+                else {
+                    $("#rationaleLinkedCompetency").show();
+                }
+                if (iQuestionType == 4) {
+                    $("#rationale_correct_ans").hide();
+                }
+                else {
+                    $("#rationale_correct_ans").show();
+                }
+                isContentChanged = false;
+                skillSet.commonFunctions.loadQuestionForNewQuestion();
+                $('#LinkedCompetency_ctr').attr("style", "left: 0px;top: 22px;width: 368px;");
+                $('#LinkedCompetency_input').attr("style", "width: 368px;");
+            });
+        },
+        saveSkillSetQuestion: function () {
+            var isNewQuestionChecked = false;
+            var isNewQuestion = false;
+            var isExistingQuestion = false;
+            questionBank.commonFunctions.setmaxLenghtOfAnswers(questionType);
+            if (questionBank.commonFunctions.checkIfCorrectAnswer("AddQuestionToQuestionBank")) {
+                isNewQuestionChecked = true;
+            }
+            if (questionBank.commonFunctions.checkIfCorrectAnswer("QuestionToQuestionBankNew") && isNewQuestionChecked) {
+                isNewQuestion = true;
+            }
+            if (questionBank.commonFunctions.checkIfCorrectAnswer("QuestionToQuestionBankExisting") && isNewQuestionChecked) {
+                isExistingQuestion = true;
+            }
+            if (questionBank.commonFunctions.validateQuestionBankFields(questionType, isNewQuestion)) {
+                var questionJson = questionBank.commonFunctions.formJsonForQuestion();
+                var urlToSaveQn = "../QuestionBank/SaveQuestion?questionUrlReference=" + questionBank.commonFunctions.getUrlReferenceForQuestionSave() + "&folderIdentifier=" + "" + "&isEditMode=" + isEditMode + "&isNewQuestion=" + isNewQuestion + "&isExistingQuestion=" + isExistingQuestion + "&questionGuid=" + strQuestionGuid;
+                if (questionJson != null) {
+                    startAjaxLoader();
+                    doAjaxCall("POST", questionJson, urlToSaveQn, skillSet.commonFunctions.saveSkillSetQuestionSuccess);
+                    questionCount = {
+                        id: strQuestionGuid
+                    };
+
+                    savedQuestionsCount.push(questionCount);
+                }
+            }
+        },
+        saveSkillSetQuestionSuccess: function () {
+            jAlert(SAVED_MESSAGE, "Alert", function (isOk) {
+                if (isOk) {
+                    //$("#authoringQuestionBank").load("../QuestionBank/QuestionBank");
+                    if (savedQuestionsCount.length == QuestionList.length) {
+                        skillSet.commonFunctions.enableProceedButton();
+                    }
+                }
+            });
+            closeAjaxLoader();
+        },
+        cancel: function () {
+            var status = "Are you sure you want to cancel? Your changes will not be saved.";
+            jConfirm(status, 'Cancel', function (isCancel) {
+                if (isCancel) {
+                    startAjaxLoader();
+                    $("#Step3SkillSet").load("../SkillSet/LoadQuestionsForSkillSet?skillSetUrl=sSimApp/Courses/ELSEVIER_CID/Admin/SkillSetRepository/SubFolders/6fa79058-8c6f-4f0b-b3bd-ee3dd3c265cd/SkillSets/1c0d7b77-cfdb-42cb-9c4c-ee2f8cca2821/Questions");
+                    closeAjaxLoader();
+                }
+            });
+        },
+
+
+        loadStep3SkillSet: function () {
+            $("#QuestionTemplateSlide").addClass('question-slide-out-skillset');
+            $("#rationaleLinkedCompetency").hide();
+            $("#QuestionBankSlideButton").hide();
+            $("#questiontosave").hide();
+            $("#content_skillset_changed :input").live('change', function () {
+                isContentChanged = true;
+            });
+            $('#QuestionToQuestionBankNew').click(function () {
+                $("#newQuestionDiv").show();
+                skillSet.commonFunctions.loadQuestionForNewQuestion();
+            });
+            $('#QuestionToQuestionBankExisting').click(function () {
+                $("#newQuestionDiv").hide();
+            });
+            for (var indexSource = 0; indexSource < QuestionList.length; indexSource++) {
+                var questionList = '<div style="height:7px;">&nbsp;</div>' + '<div id="' + QuestionList[indexSource].UniqueIdentifier + '" class="grid_32 clear-background standard-text header-text select-hand" onclick=skillSet.commonFunctions.contentChanged("' + QuestionList[indexSource].UniqueIdentifier + '","' + QuestionList[indexSource].QuestionType + '","' + QuestionList[indexSource].Url + '","' + QuestionList[indexSource].CompetencyReferenceGUID + '")>' + QuestionList[indexSource].QuestionText + '</div>' + '<br />';
+                $("#QuestionList").append(questionList);
+            }
+            skillSet.commonFunctions.contentChanged(QuestionList[0].UniqueIdentifier, QuestionList[0].QuestionType, QuestionList[0].Url, QuestionList[0].CompetencyReferenceGUID);
+        },
+        contentChanged: function (divID, questionType, questionUrl, competencyGuid) {
+            if (!isContentChanged) {
+                skillSet.commonFunctions.loadQuestions(divID, questionType, questionUrl, competencyGuid);
+            }
+            else {
+                var status = "Are you sure you want to proceed? Your changes will not be saved.";
+                jConfirm(status, 'Proceed', function (isCancel) {
+                    if (isCancel) {
+                        skillSet.commonFunctions.loadQuestions(divID, questionType, questionUrl, competencyGuid);
+                    }
+                });
+            }
+        },
+
+        loadQuestions: function (divID, questionType, questionUrl, competencyGuid) {
+            $(".clear-background").css("background", "none");
+            $("#" + divID).css("background", "#0070C0");
+            skillSet.commonFunctions.loadQuestionInEditModeForSkillSet(questionUrl, questionType, divID);
+            if (isNullOrEmpty(competencyGuid)) {
+                $("#AddQuestionToQuestionBank_lbl").html("Add the question to the Question Bank");
+                $("#existingQuestion").hide();
+            }
+            else {
+                $("#AddQuestionToQuestionBank_lbl").html("Add the Existing question to the Question Bank");
+                $("#existingQuestion").show();
+            }
+        },
+        enableProceedButton: function () {
+            enableAButton("btnProceedSkillSet", BLUE_BUTTON, "transaction-button", skillSet.commonFunctions.proceedToStep4);
+        },
+        proceedToStep4: function () {
+
+        },
+
+        loadQuestionForNewQuestion: function () {
+            switch (questionType) {
+                case "8":
+                case "7":
+                case "6":
+                case "3":
+                    {
+                        $("#newQuestionTextDivLabeling").hide();
+                        $("#newQuestionTextDivMultiple").show();
+                        break;
+                    }
+                case "4":
+                    {
+
+                    }
+                case "9":
+                    {
+                        $("#newQuestionTextDivMultiple").hide();
+                        $("#newQuestionTextDivLabeling").show();
+                        break;
+                    }
+            }
+        },
+
+        cancelForskillset: function () {
+
+            var status = "Are you sure you want to cancel? Your changes will not be saved.";
+            jConfirm(status, 'Cancel', function (isCancel) {
+                if (isCancel) {
+                    startAjaxLoader();
+                    $("#Step3SkillSet").load("../SkillSet/LoadQuestionsForSkillSet?skillSetUrl=sSimApp/Courses/ELSEVIER_CID/Admin/SkillSetRepository/SubFolders/6fa79058-8c6f-4f0b-b3bd-ee3dd3c265cd/SkillSets/1c0d7b77-cfdb-42cb-9c4c-ee2f8cca2821/Questions");
+                    closeAjaxLoader();
+                }
+            });
+        },
+        backForskillset: function () {
+
+            if (!isContentChanged) {
+               // skillSet.commonFunctions.loadQuestions(divID, questionType, questionUrl, competencyGuid);
+            }
+            else {
+                var status = "Are you sure you want to proceed? Your changes will not be saved.";
+                jConfirm(status, 'Proceed', function (isCancel) {
+                    if (isCancel) {
+                      //  skillSet.commonFunctions.loadQuestions(divID, questionType, questionUrl, competencyGuid);
+                    }
+                });
+            }
+        }
+
+>>>>>>> Stashed changes
+    }
+     
+};
+
+

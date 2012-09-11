@@ -1,0 +1,63 @@
+<project name="custom.properties" default="build_custom" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+
+  <!-- Project Specific custom propertie -->
+	<property name="ProjName" 		value="[Project Name]" />
+	<property name="ProjDir" 		value="." />
+	<property name="PublishDir"		value="[Directory to publish]" />
+	<property name="ProjBuildDir" 	value="" /> <!-- do not modify -->
+	<property name="SolutionFile" 	value="[Solution file name]" />
+	<property name="uri_webmap" 	value="" />
+	<property name="uri_path" 		value="" />
+	<property name="Marimba.JobName" value="[Marimba's Job Name]" />
+	<property name="Stage.dir"		value="\\lngdaydatp001\staging\HESI\[Staging Directory name]" />
+	<property name="PKG.REPO"		value="D:\builds" />
+	
+  <!-- project SVN settings -->
+	<property name="SVNRepo" 		value="https://github.com/elsevier-ptg-simulations/SimOffice.git"/>
+	<property name="SVNTagsDir" 	value="${SVNRepo}/tags" />
+	<property name="SVNTrunkDir" 	value="${SVNRepo}/trunk" />
+	<property name="SVNBranches" 	value="${SVNRepo}/branches" />
+	<property name="SVN.REV" 		value="" /> <!-- do not modify -->
+	<property name="SVN.Branch" 	value="" /> <!-- do not modify -->
+
+  <!-- project build settings --> 	
+	<property name="nant.settings.currentframework" value="net-4.0" /> <!-- valid values: net-1.1, net-2.0, net-3.5, net-4.0-->
+	<property name="debug.type" 	value="Release" /> <!-- can be debug, but not for release builds -->
+	<property name="build.type" 	value="MSBuild" /> <!-- can be VisualStudio, MSBuild, or NAnt. -->
+	<property name="build.type.vs"  value="VS2010" /> <!--valid values: VS2003, VS2005, VS2008, VS2010. Correlates with installed versions of Visual studio -->
+	<property name="build.exe" 		value="" /> <!-- do not modify -->
+	<property name="build.name" 	value="" /> <!-- do not modify -->
+	<property name="ProjRepo" 		value="" /> <!-- do not modify -->
+	<property name="CFG.ENV" 		value="dev" /> <!-- do not modify -->
+	
+  <!-- custom build switches -->
+	<property name="precompile.task"	value="no" /> <!-- do I need to execute a prebuild task? -->
+	<property name="postcompile.task"	value="no" /> <!-- do I need to execute a postbuild task? -->
+	<property name="runtests.task"		value="no" /> <!-- do I need to execute a testing task? -->
+	<property name="prepackage.task"	value="yes" /> <!-- do I need to execute a prepackaging task? -->
+	<property name="postpackage.task"	value="no" /> <!-- do I need to execute a postpackaging task? -->
+	<property name="predeploy.task"		value="no" /> <!-- do I need to execute a prepackaging task? -->
+	<property name="postdeploy.task"	value="no" /> <!-- do I need to execute a postpackaging task? -->
+	
+  <!-- Jenkins environment variables -->
+<!--	<property name="BuildBaseDir"	value="${environment::get-variable('WORKSPACE')}" />
+	<property name="BUILD.NUMBER" 	value="${environment::get-variable('BUILD_NUMBER')}" />
+	<property name="BUILD.ID" 		value="${environment::get-variable('BUILD_ID')}" /> 
+	<property name="BUILD.URL" 		value="${environment::get-variable('BUILD_URL')}" /> 
+	<property name="BUILD.JOB" 		value="${environment::get-variable('JOB_NAME')}" />
+	<property name="BUILD.TAG"		value="${environment::get-variable('BUILD_TAG')}" />
+	<property name="MASTER.URL" 	value="${environment::get-variable('JENKINS_URL')}" />
+-->	
+	<!--// This block is for testing purposes and building outside of jenkins-->
+	<property name="BuildBaseDir"	value="D:/workspace" />
+	<property name="BUILD.NUMBER" 	value="01" />
+	<property name="BUILD.ID" 		value="${ProjName}.ID" /> 
+	<property name="BUILD.URL" 		value="${ProjName}.TEST.BUILD.URL" /> 
+	<property name="BUILD.JOB" 		value="${ProjName}.TEST.JOB" />
+	<property name="BUILD.TAG"		value="${ProjName}.TEST.BUILD.TAG" />
+	<property name="MASTER.URL" 	value="${ProjName}.TEST.MASTER.URL" />
+	
+  
+</project>

@@ -1,0 +1,192 @@
+﻿<project name="create_release" default="Package" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+  <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
+
+  <target name="Package" verbose ="true">
+	
+	<mkdir dir="${ProjBuildDir}" if="${not directory::exists(ProjBuildDir)}" />
+	
+	<call target="Record Build Information"/>
+	
+	<!-- Execute any pre-packaging custom tasks -->
+	<if test="${string::contains(prepackage.task,'yes')}">
+		<call target="Pre-Package custom tasks" />
+	</if>
+	
+	<call target="Tag Release" />
+	<call target="Create Release" />
+	
+	<!-- Execute any post-packaging custom tasks -->
+	<if test="${string::contains(postpackage.task,'yes')}">
+		<call target="Post-Package custom tasks"/>
+	</if>
+	
+	<call target="Create build properties file" />
+
+  </target>
+  
+  <target name="Tag Release" verbose="true">
+  
+	<property name="TAG" value="${build.name}" />
+	<property name="tag.comment" value="Tagged build version with tag: ${TAG}" />
+	
+	<echo message="Tagging the current build with version: ${TAG}" />
+	<exec program="svn.exe"
+          commandline='copy -r "${SVN.REV}" "${ProjRepo}" "${SVNTagsDir}/${TAG}" -m "${tag.comment}" --username "${SVN_USER}" --password "${SVN_PASS}"'
+          failonerror="false"/>
+	
+	<property name="DirToCheck" value="${environment::get-variable('WORKSPACE')}/libraries"/>
+
+	<!--Checks to see if there are any libraries-->
+	<if test="${directory::exists(DirToCheck)}">
+
+		<!--Cycles through each library in the libraries folder making tags for them. -->
+		<foreach item="Folder" property="foldername" in="${DirToCheck}">
+
+			<do>
+				<echo message="${foldername}" />
+				<regex pattern=".*?(?'LastFolder'[\-\w\.]+)$" input="${foldername}" />
+				<property name="ProjectBaseDir" value="${foldername}"/>
+				
+				<call target="find-svnrevision" />
+
+				<regex pattern=".*?(?'BranchName'[\-\w\.]+)$" input="${SVN.Branch}" />
+				<echo message="Library branch name is: ${BranchName}" />
+						
+				<property name="ProjLibRepoDir" value="http://svn.science.regn.net/svn-hesi/Libraries/${LastFolder}"/>
+
+				<property name="ProjLibRepoCopyFrom" value="${ProjLibRepoDir}/branches/${BranchName}"/>
+				
+				<if test="${string::contains(BranchName,'trunk')}">
+					<property name="ProjLibRepoCopyFrom" value="${ProjLibRepoDir}/trunk"/>
+				</if>			
+				
+				<exec program="svn.exe"
+				commandline='copy -r "${SVN.REV}" "${ProjLibRepoCopyFrom}" "${ProjLibRepoDir}/tags/${TAG}" -m "${tag.comment}" --username "${SVN_USER}" --password "${SVN_PASS}"'
+				failonerror="false"/>
+
+			</do>
+		</foreach> 
+	</if> 
+  </target>
+
+  <target name="Create Release" >
+    <copy todir="${ProjBuildDir}" verbose="true" >
+		<fileset basedir="${PublishDir}" >
+			<include name="**/*.*" />
+			<exclude name="**/web.config" />
+			<exclude name="**/web.config.tmpl" />
+			<exclude name="**/*.cs"/>
+			<exclude name="**/*.resx" />
+			<exclude name="**/*.pdb" />
+			<exclude name="**/*.build"/>
+			<exclude name="**/*.sln"/>
+			<exclude name="**/*.suo"/>
+			<exclude name="**/*.csproj"/>
+			<exclude name="**/*.user"/>
+			<exclude name="**\obj\**" />
+			<exclude name="**\Debug\**" />
+			<exclude name="**\Release\**"/>
+			<exclude name="**\buildfiles\**"/>
+		</fileset>
+    </copy>
+	
+	<exec program="perl.exe" verbose="true">
+		<arg line="${BuildFiles.Directory}/update_bom.pl ${ProjBuildDir}"/>
+	</exec>
+	
+	<property name = "BuildZip" value = "${BuildBaseDir}/${build.name}.zip" />
+	<if test = "${file::exists(BuildZip)}" >
+		<delete file = "${BuildZip}" />
+	</if>
+	
+	<zip zipfile="${BuildZip}">
+		<fileset basedir="${BuildBaseDir}">
+			<include name="${build.name}/**.*" />
+		</fileset>
+	</zip>
+	
+	<if test ="${not file::exists(BuildZip)}" >
+		<echo message="Release has been created: ${ProjBuildDir}" />
+	</if>
+	
+	<if test = "${file::exists(BuildZip)}" >
+		<echo message="Release has been created: ${BuildZip}" />
+		<property name="REPO.ZIP" value="${PKG.REPO}/${build.name}.zip" />
+		<copy file="${BuildZip}" tofile="${REPO.ZIP}" overwrite="true" />
+		
+		<!-- cleanup the workspace -->
+		<delete file="${BuildZip}" if="${file::exists(REPO.ZIP)}" />
+		<delete dir="${ProjBuildDir}" />
+		
+	</if>
+
+  </target>
+
+  <target name="Record Build Information" description="Creates file with build specifics in project root directory">
+  
+		<if test="${not environment::variable-exists('USERNAME')}">
+			<property name="USERNAME" value="Jenkins (STLBLD2.mdconsult.com:8105)" />
+		</if>
+		<if test="${environment::variable-exists('USERNAME')}">
+			<property name="USERNAME" value="${environment::get-variable('USERNAME')}" />
+		</if>
+		
+		<copy todir="${ProjBuildDir}" verbose="true" overwrite="true">
+		  <fileset basedir="${BuildFiles.Directory}" >
+			<include name="build_info.tmpl"/>
+		  </fileset>
+		  <filterchain>
+			<replacetokens>
+			  <token key="ProjName" 		value="${BUILD.JOB}" />
+			  <token key="BLDNUM"			value="${BUILD.NUMBER}" />
+			  <token key="ReleaseVersion" 	value="${ReleaseVersion}"/>
+			  <token key="CurDate" 			value="${CurDate}"/>
+			  <token key="DebugType" 		value="${debug.type}" />
+			  <token key="BuildServer" 		value="${environment::get-variable('COMPUTERNAME')}" />
+			  <token key="Logname" 			value="${USERNAME}" />
+			  <token key="OS" 				value="${operating-system::to-string(environment::get-operating-system())}"/>
+			  <token key="Arch" 			value="${environment::get-variable('PROCESSOR_ARCHITECTURE')}" />
+			  <token key="SVN.REV" 			value="${SVN.REV}" />
+			  <token key="BLDPKG"			value="${build.name}.zip" />
+			  <token key="BLDXML" 			value="${build.name}.xml" />
+			  <token key="PKG.REPO"			value="${PKG.REPO}" />
+			</replacetokens>
+		  </filterchain>
+		</copy>
+
+    <move file="${ProjBuildDir}\build_info.tmpl" tofile="${ProjBuildDir}\build_info.html" overwrite="true" />
+
+  </target>
+  
+  <target name="Create build properties file" >
+	<!-- create build properties file to be used in the promotion process -->
+	
+	<copy todir="${BuildBaseDir}" verbose="true" >
+		<fileset basedir="${BuildFiles.Directory}" >
+			<include name="build.properties.tmpl" />
+		</fileset>
+		<filterchain>
+			<replacetokens>
+				<token key="BUILD.NUMBER" 	value="${BUILD.NUMBER}" />
+				<token key="BUILD.ID" 		value="${BUILD.ID}" /> 
+				<token key="BUILD.URL" 		value="${BUILD.URL}" /> 
+				<token key="BUILD.JOB" 		value="${BUILD.JOB}" />
+				<token key="BUILD.TAG"		value="${BUILD.TAG}" />
+				<token key="MASTER.URL" 	value="${MASTER.URL}" />
+				<token key="BUILD.DATE" 	value="${MyDate}" />
+				<token key="BUILD.ZIP" 		value="${build.name}.zip" />
+				<token key="STAGING.DIR"	value="${Stage.dir}" />
+				<token key="PKG.REPO"		value="${PKG.REPO}" />
+			</replacetokens>
+		</filterchain>
+    </copy>
+	<property name="build.properties.xml" value="${BUILD.JOB}.${BUILD.NUMBER}.xml" />
+	<property name="REPO.XML" value="${PKG.REPO}\${build.properties.xml}" />
+	<move file="${BuildBaseDir}\build.properties.tmpl" tofile="${BuildBaseDir}\${build.properties.xml}" overwrite="true" />
+	<copy file="${BuildBaseDir}\${build.properties.xml}" tofile="${REPO.XML}" overwrite="true" />
+	<delete file="${BuildBaseDir}\${build.properties.xml}" if="${file::exists(REPO.XML)}" />
+ 
+  </target>
+  
+</project>

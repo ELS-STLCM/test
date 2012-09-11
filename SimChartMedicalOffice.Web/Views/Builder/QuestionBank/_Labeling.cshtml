@@ -1,0 +1,152 @@
+﻿@using SimChartMedicalOffice.Core.QuestionBanks
+@{
+    Layout = null;
+}
+@{
+    string strquestionText = (ViewBag.QuestionText != null) ? ViewBag.QuestionText : String.Empty;
+    string strRationaleText = (ViewBag.CorrectAnswerRationale != null) ? ViewBag.CorrectAnswerRationale : String.Empty;
+    string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
+    string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
+    string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty;
+    string strQuestionguid = string.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty;
+    string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
+    bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
+    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
+    string noOfLabels = (ViewBag.NoOfLabelsToLoad != "" || ViewBag.NoOfLabelsToLoad != null) ? ViewBag.NoOfLabelsToLoad : "";
+    List<string> answerItemsToLoad = (ViewBag.AnswerListToLoad);
+    strquestionText = String.IsNullOrEmpty(strCompetencyText) ? String.Empty : strquestionText;
+    }
+<div class="grid_32">
+    <div id="validationSummary" class="errormessage grid_32">
+        @Html.ValidationSummary()</div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32 header-text">
+        Labeling:
+    </div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div class="grid_32 mandatory-field-note">
+        Fields with " <span class="mandatory-field">*</span> " are mandatory
+    </div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div class="grid_32 header-text">
+        Question&nbsp;<span class="mandatory-field">*</span>:
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div>
+        <div class="grid_10">
+            @Html.TextBox("QuestionText", strquestionText, new { id = "QuestionText", @class = "grid_32 standard-text" })
+        </div>
+        <div class="grid_2">
+            And
+        </div>
+        <div class="grid_13">
+            <div class="grid_8">
+                <a href="#" id="uploadImageLink" class="link">Upload</a><span class="mandatory-field">*</span></div>
+            <div class="grid_21">
+                <div id="question_image" class="grid_17 image-holder-div">
+                    <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="Image" id="qnImageRefId" class="image-holder" />
+                </div>
+                <div class="grid_15 hide-content" id="qnImageRefId_remove">
+                    <div class="align-div-inline">
+                        <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                    <input class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                            value="Remove" onclick="questionBank.commonFunctions.removeAttachment('qnImageRefId')" />
+                    <div class="align-div-inline">
+                        <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                </div>
+                <div class="grid_32">
+                    <div class="disabled-text" id="qnImageRefId_view">
+                        <u>View Large</u></div>
+                </div>
+            </div>
+        </div>
+        <div class="grid_7" style="right:3px">
+            <div class="grid_24">
+                <label class="header-text">
+                    No. Of Labels&nbsp;<span class="mandatory-field">*</span>:
+                </label>
+            </div>
+            <div class="grid_8" style="left:0px"> 
+                @Html.DropDownList("NoOfLabels", null, null, new { @class = "standard-text", style = "width:65px" })
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="linkedCompetency" class="grid_32">
+        @Html.Partial("../../Views/Builder/Authoring/_LinkedCompetency")
+    </div>
+    <div class="grid_32 multiple-choice-index-spacing multiple-choice-dashed-line">
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32">
+        <div class="grid_10 header-text">
+            Label Bank:
+        </div>
+        <div class="grid_5">&nbsp;</div>
+        <div class="grid_17 header-text">
+                Answer&nbsp;<span class="mandatory-field">*</span>:
+        </div>
+        <div class="grid_10">
+            @Html.TextBox("labelBlank", "", new { id = "labelBlank", @class = "grid_14", style = "width:140px" })
+        </div>
+        <div class="grid_5">
+            <div class="align-div-inline">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
+                             class="standard-height-for-buttons" /></div>
+                <input id="btnAdd" class="transaction-button align-div-inline standard-text standard-height-for-buttons"
+                    style="width: 50px;" value="Add >>" type="button" onclick="questionBank.commonFunctions.labellingQuestion.appendDataInSelectList()"/>
+                <div class="align-div-inline">
+                    <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
+                             class="standard-height-for-buttons" /></div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="align-div-inline">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+                <input id="btnRemove" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                    onclick="questionBank.commonFunctions.labellingQuestion.removeDataInSelectList()" style="width: 50px;" value="Remove" type="button" />
+                <div class="align-div-inline">
+                    <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+            </div>
+        </div>
+        <div class="grid_17">
+            <select id="AnswerOptions" size="8" multiple="multiple" style="width: 300px;overflow-x: auto">
+            </select>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+    </div>
+</div>
+<div id="rationaleLinkedCompetency" class="grid_32">
+    @Html.Partial("../../Views/Builder/Authoring/_RationaleAndLinkedCompetency")
+</div>
+<script type="text/javascript">
+    $.ajaxSetup({
+        cache: false,
+        asynch: false,
+        type: "POST"
+    });
+    $(document).ready(function () {
+        $("#uploadImageLink").click(function () {
+            showImageUpload("QNIMAGE");
+        });
+        if(@isEditMode.ToString().ToLower()) {
+            $("#NoOfLabels").val("@noOfLabels");
+            questionBank.commonFunctions.loadPageInEditMode("@imgGuid", @Html.Raw(Json.Encode(strRationaleText)), "@strCompetencyText", "@strCorrectAnswerValue", "@questionUrl", @isEditMode.ToString().ToLower(), "@linkedCompetencyGuid", "@questionTypeLoadedFlag");
+            questionBank.commonFunctions.labellingQuestion.loadAnswerListInEditMode(@Html.Raw(Json.Encode(answerItemsToLoad)));
+        }
+    });
+   
+</script>

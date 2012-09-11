@@ -1,0 +1,74 @@
+﻿<div id="questionBank_search" style="overflow-x: hidden;
+    overflow-y: hidden;width:102%;height:auto" class="grid_32">
+    <table id="questionSearchGrid" class="standard-text table-scroll-border">
+        <thead style="text-align: center;">
+               <tr class="dataTables_scrollHeadInner">
+                <th title="Question Name" class="datatable-tooltip datatable-background" style="width: 30%">
+                    Question Name
+                </th>
+                <th title="Linked Competency" class="datatable-tooltip datatable-background" style="width: 25%">
+                    Linked Competency
+                </th>
+                <th title="Folder Name" class="datatable-tooltip datatable-background" style="width: 20%">
+                    Folder Name
+                </th>
+                <th title="Question Type" class="datatable-tooltip datatable-background" style="width: 10%">
+                    Question Type
+                </th>
+                <th title="Created On" class="datatable-tooltip datatable-background" style="width: 15%">
+                    Created On
+                </th> 
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    questionBankSearchDataTable = $('#questionBank_search #questionSearchGrid').dataTable({
+        "bProcessing": false,
+        "bServerSide": true,
+        "sAjaxSource": "../QuestionBank/GetQuestionBankSearchList?strSearchText="+ "@ViewBag.SearchText" +"&strQuestionType="+ "@ViewBag.SearchQuestionType",
+        "fnInitComplete": function (oSettings, json) {
+            //startAjaxLoader();
+        },
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            //startAjaxLoader();
+            $.getJSON(sSource, aoData, function (json) {
+                /* Do whatever additional processing you want on the callback, then tell DataTables */
+                fnCallback(json);
+                if ($('#questionBank_search .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                    setScrollableTableBorder(true, 'questionBank_search');
+                }
+                else {
+                    setScrollableTableBorder(false, 'questionBank_search');
+                }
+                closeAjaxLoader();
+            });
+        },
+        "aoColumns": [
+            { "bSortable": true, "sName": "QuestionName" },
+            { "bSortable": true, "sName": "LinkedCompetency" },
+            { "bSortable": true, "sName": "FolderName" },
+            { "bSortable": true, "sName": "QuestionType" },
+            { "bSortable": true, "sName": "CreatedOn" }
+        ],        
+        "aaSorting": [[4, 'desc']],
+        "oLanguage": { "sZeroRecords": "No search result" },
+        "bAutoWidth": false,
+        "bFilter": false,
+        "bLengthChange": false,
+        "iDisplayLength": 15,
+        "bPaginate": true,
+        "sPaginationType": "full_numbers",
+        "bSort": true,
+        "sScrollX": "100%",
+        "sScrollY": "270px",
+        "bScrollCollapse": true,
+        "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
+        "fnDrawCallback": function () {
+            setScrollableTableHeight(this);
+        }
+    });
+</script>
+

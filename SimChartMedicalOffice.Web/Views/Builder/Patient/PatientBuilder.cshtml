@@ -1,0 +1,73 @@
+﻿@{
+    Layout = null;
+}
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_24 form-page-header" style="padding-top: 0px">
+        Patient Builder
+    </div>
+    <div class="grid_6"></div>
+@*    <div class="grid_6">
+        @Html.DropDownList("filterByAge", null, new { id = "filterByAge", @class = "grid_31" })
+    </div>
+    <div class="grid_2 standard-text">
+        &nbsp;&nbsp;&nbsp;&nbsp;And/Or
+    </div>*@
+    <div class="grid_8  remove-div-space" style="float:right">
+        @Html.TextBox("searchText", "", new { id = "searchText", @class = "grid_26" })
+        <input type="image" id="buttonSearch" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing div-with-bottom-border">
+    </div>
+<div class="grid_32">
+            <div class="clear-min-height-spacing clear">
+            </div>
+            <div id="BreadCrumbEntry">
+                @Html.Partial("../../Views/Builder/Authoring/_BreadCrumb")               
+            </div>
+            <div class="clear-min-height-spacing clear">
+            </div>
+        </div>
+<div class="grid_32">
+    <div id="PatientFolderPanel" class="grid_8 remove-div-space container-folder-height">
+        @Html.Partial("../../Views/Builder/QuestionBank/Folder", new ViewDataDictionary { new KeyValuePair<string, object>("currentFolderPanel", "practiceTab") })
+    </div>
+    <div class="grid_24 remove-div-space">
+        <div class="grid_32 container-folder-height" >
+            <div class="grid_32 container-grid-height">
+                @Html.Partial("../../Views/Builder/Authoring/_PatientBuilderGrid")
+            </div>
+            <div class="grid_32">
+                @Html.Partial("../../Views/Builder/Authoring/PatientActions")
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        startAjaxLoader();
+        waterMarkTextForSearch();
+        setMaxLenthSearchText("searchText");
+        $("#filterByAge").change(function () {
+            patientBuilderDataTable.fnDraw();
+        });
+    });
+    function waterMarkTextForSearch() {
+        $('#searchText').val('');
+        $("#searchText").watermark("Search by text", { className: 'watermark-text' });
+    }
+     
+
+    $(function () {
+
+        $("#buttonSearch").click(function () {
+            patient.commonFunctions.searchByText();
+        });
+        $("#searchText").keyup(function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                patient.commonFunctions.searchByText();
+            }
+        });
+    });
+</script>

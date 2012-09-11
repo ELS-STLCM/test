@@ -1,0 +1,90 @@
+﻿@inherits System.Web.Mvc.WebViewPage
+@using SimChartMedicalOffice.Common
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Master1</title>
+    <script src="@Url.Content("~/Scripts/PopUp.js")" type="text/javascript"></script>
+</head>
+<body> 
+    <div id="smoMainContent" class="main-content-holder standard-text" style="height: 495px;">
+        <ul>
+            <li><a href="#smoHome"><span class="tab-header">Home</span></a></li>
+            <li><a href="../Forms/FormsRepository?iReferenceOfFormToLoad=5&formName=&patientName=" title="#smoFrontOffice"><span class="tab-header">Front Office</span></a></li>
+            <li><a href="#smoClinicalCare"><span class="tab-header">Clinical Care</span></a></li>
+            <li><a href="#smoCoding"><span class="tab-header">Coding</span></a></li>
+            <li><a href="#smoBilling"><span class="tab-header">Billing</span></a></li>
+        </ul>
+        <div id="smoHome">
+        @Html.Partial("../../Views/Shared/_ProgressLoader")
+        <div class="grid_32 form-page-header loader">
+            To Do
+        </div>
+        </div>
+        <div id="smoFrontOffice">
+        </div>
+        <div id="smoClinicalCare">
+                @Html.Partial("../../Views/Shared/_ProgressLoader")
+        <div class="grid_32 form-page-header loader">
+            To Do
+        </div>
+        </div>
+        <div id="smoCoding">
+                @Html.Partial("../../Views/Shared/_ProgressLoader")
+        <div class="grid_32 form-page-header loader">
+            To Do
+        </div>
+        </div>
+        <div id="smoBilling">
+                    @Html.Partial("../../Views/Shared/_ProgressLoader")
+            <div class="grid_32 form-page-header loader">
+                To Do
+            </div>
+        </div>
+    </div> 
+        @RenderBody()
+    <script type="text/javascript">
+        $(function () {
+            getTabForContent("smoMainContent");
+            startAjaxLoader();
+            $('#smoMainContent').tabs({ selected: 1 });
+            closeAjaxLoader();
+        });
+        function refreshFrontOfficeTab(iIndexOfFormToLoad, formValue, patientNameSaved) {
+            startAjaxLoader();
+            var strUrlOfTabToRefresh = "../Forms/FormsRepository?iReferenceOfFormToLoad=" + iIndexOfFormToLoad + "&formName=" + encodeURIComponent(formValue) + "&patientName=" + encodeURIComponent(patientNameSaved);
+            $("#smoFrontOffice").load(strUrlOfTabToRefresh, function () {
+                if (iIndexOfFormToLoad != 7) {
+                    highlightInfoPanelForSelection(iIndexOfFormToLoad);
+                }
+                // if confirmation page, highlight the saved form
+                else {
+                    highlightInfoPanelForSelection(formValue);
+                }
+            });
+            closeAjaxLoader();
+        }
+        $(document).ready(function () {
+            refreshFrontOfficeTab(5, "", "");
+            $("#frontOfficeInfoPanel a").live('click', function () {
+                var iIndexOfFormToLoad = this.id;
+                refreshFrontOfficeTab(iIndexOfFormToLoad, "", "");
+            });
+        });     
+
+        function highlightInfoPanelForSelection(iIndexOfFormToLoad) {
+            $("#frontOfficeInfoPanel li").removeClass('info-panel-open').addClass('info-panel-content');
+            $("#panel-" + iIndexOfFormToLoad).removeClass('info-panel-content').addClass('info-panel-open');
+            $("#panel-" + iIndexOfFormToLoad + " a").css('color', '#fff');
+            //$('#frontOfficeInfoPanel li .ui-widget-content a').css('color', '#fff');
+        }
+        function printpage() {
+            window.open("../Forms/PatientRecordsAccessFormPrint", "_blank");
+        }
+    </script>
+</body>
+</html>

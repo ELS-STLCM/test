@@ -1,0 +1,11 @@
+﻿@{
+    Layout = "~/Views/Shared/_LogInScreen.cshtml";
+}
+@{
+    ViewBag.Title = "Welcome";
+}
+
+<h2>@ViewBag.Message</h2>
+
+ <div>Student :&nbsp;<a href="@Url.Content("~/Home/Index")">Link to Student Landing page </a></div>
+     <div>Instructor Or Admin: &nbsp;<a href="@Url.Content("~/Home/AdminLandingPage")">Link to Admin landing page</a></div>

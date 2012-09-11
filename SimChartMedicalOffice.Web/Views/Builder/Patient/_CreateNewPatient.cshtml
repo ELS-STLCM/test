@@ -1,0 +1,121 @@
+﻿<div class="grid_32">
+    <div class="standard-text grid_8">
+        First Name <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_22">
+        <input type="text" id="firstName" class="grid_15" maxlength="250" onkeypress="return isAlphaNumeric(event)"
+            name="" value="" />
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="standard-text grid_8 ">
+        Last Name <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_22">
+        <input type="text" id="lastName" class="grid_15" maxlength="250" onkeypress="return isAlphaNumeric(event)"
+            name="" value="" />
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="standard-text grid_8 ">
+        Middle Initial <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_22">
+        <input type="text" id="middleInitial" class="grid_4" maxlength="1" onkeypress="return isAlphaNumeric(event)"
+            name="" value="" />
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="standard-text grid_8 ">
+        Sex <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_22 standard-text">
+        @Html.RadioButton("sex", "Male", false, new { @id = "MaleSex" })
+        <label for="maleSex">
+            Male</label>
+        @Html.RadioButton("sex", "Female", false, new { @id = "FemaleSex" })
+        <label for="femaleSex">
+            Female</label>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="standard-text grid_8">
+        Age <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_4">
+        <input type="text" id="ageInYears" onkeypress="return isNumeric(event)" class="grid_24"
+            name="" value="" maxlength="3" />
+        <label class="grid_24 disabled-text age-years-months-days">
+            Years</label>
+    </div>
+    <div class="grid_4">
+        <input type="text" id="ageInMonths" onkeypress="return isNumeric(event)" class="grid_24"
+            name="" value="" maxlength="3" />
+        <label class="grid_24 disabled-text age-years-months-days">
+            Months</label>
+    </div>
+    <div class="grid_4">
+        <input type="text" id="ageInDays" onkeypress="return isNumeric(event)" class="grid_24"
+            name="" value="" maxlength="3" />
+        <label class="grid_24 disabled-text age-years-months-days">
+            Days</label>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="standard-text grid_8">
+        Date of Birth <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_11">
+        <input type="readonly" id="dayOfBirth" class="grid_31" name="" value="" readonly="true" />
+    </div>
+    <div class="grid_1">
+        <img id="patientCalendarImage" alt="" src="@Url.Content("~/Content/Images/Buttons/smo_calendar.png")"/>
+        <div id="patientCalendar">
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="standard-text grid_8">
+        Image Upload <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_22">
+        <div class="grid_4">
+            <a href="#" class="upload-image-button" id="uploadImageLinkPatient">Upload</a>&nbsp;</div>
+        <div class="grid_26">
+            <div id="patient_image" class="grid_7 image-holder-div">
+                <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="Image" id="patientImage" class="image-holder" />
+            </div>
+            <div class="grid_32">
+                <div class="disabled-text" id="patientImage_view">
+                    <u>View Large</u></div>
+            </div>
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+    </div>
+    <div class="standard-text grid_8 ">
+        Medical Record Number:
+    </div>
+    <div class="grid_22">
+        <input type="text" id="medicalRecordNumber" readonly="readonly" disabled="disabled"
+            class="grid_15" name="" value="" />
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="standard-text grid_8 ">
+        Office Type <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_22 standard-text">
+        @Html.DropDownList("officeType", null, new { id = "officeType", @class = "grid_15" })
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="standard-text grid_8 ">
+        Provider <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_22 standard-text">
+        @Html.DropDownList("provider", null, new { id = "provider", @class = "grid_15" })
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+</div>

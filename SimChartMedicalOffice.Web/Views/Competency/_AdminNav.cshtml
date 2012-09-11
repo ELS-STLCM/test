@@ -1,0 +1,12 @@
+﻿@{
+    Layout = null;
+}
+@using SimChartMedicalOffice.Common;
+<div class="info-panel-competency grid_32" id="adminInfoPanel">
+    <ul class="menu">
+        <li id="adminInfoPanelHeader" class="info-panel-header">INFO PANEL </li>
+        <li class="info-panel-Sub-Content" id="adminPanel-@Convert.ToInt32(AppEnum.Master.Competency)">
+            <a class="select-hand" id="adminPanelLink-@Convert.ToInt32(AppEnum.Master.Competency)">
+                <span style="color: white">Competency Maintenance</span></a></li>
+    </ul>
+</div>

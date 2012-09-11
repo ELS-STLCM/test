@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{E26A8C4C-473F-4D47-BD2A-97CAF8ECA544}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SimChartMedicalOffice.Infrastructure</RootNamespace>
+    <AssemblyName>SimChartMedicalOffice.Infrastructure</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Castle.Core">
+      <HintPath>..\packages\Castle.Core.3.0.0.4001\lib\net40-client\Castle.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Castle.Windsor">
+      <HintPath>..\packages\Castle.Windsor.3.0.0.4001\lib\net40\Castle.Windsor.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Mvc, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Aspects\ControllerInterceptor.cs" />
+    <Compile Include="Aspects\ServiceInterceptor.cs" />
+    <Compile Include="BootStrapContainer.cs" />
+    <Compile Include="Installer\ControllersInstaller.cs" />
+    <Compile Include="Installer\DataRepositoriesInstaller.cs" />
+    <Compile Include="Installer\ServicesInstaller.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WindsorControllerFactory.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SimChartMedicalOffice.ApplicationServices\SimChartMedicalOffice.ApplicationServices.csproj">
+      <Project>{4CAE9960-80EB-4944-8CE2-C2E02567FD46}</Project>
+      <Name>SimChartMedicalOffice.ApplicationServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimChartMedicalOffice.Common\SimChartMedicalOffice.Common.csproj">
+      <Project>{BCFE0C76-F073-4662-A05E-D2E170412608}</Project>
+      <Name>SimChartMedicalOffice.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimChartMedicalOffice.Controller\SimChartMedicalOffice.Web.Controllers.csproj">
+      <Project>{4F02CE2F-1592-456C-B943-5F989CE101B4}</Project>
+      <Name>SimChartMedicalOffice.Web.Controllers</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimChartMedicalOffice.Core\SimChartMedicalOffice.Core.csproj">
+      <Project>{F762F00A-A3D1-4400-938C-512E72467604}</Project>
+      <Name>SimChartMedicalOffice.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimChartMedicalOffice.Data\SimChartMedicalOffice.Data.csproj">
+      <Project>{34EA4DD9-A7CE-4C49-ABA2-DF6B738CEC92}</Project>
+      <Name>SimChartMedicalOffice.Data</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

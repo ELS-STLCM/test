@@ -1,0 +1,32 @@
+﻿using System.Collections.Generic;
+using System.Linq;
+using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Utility;
+using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Core.DataInterfaces.Patient;
+using SimChartMedicalOffice.Core.Patient;
+
+namespace SimChartMedicalOffice.Data.Forms
+{
+    public class PatientDocument : KeyValueRepository<SimChartMedicalOffice.Core.Patient.Patient>, IPatientDocument
+    {
+        public override string Url
+        {
+            get { return "SimApp/Courses/ALL_swhitcomb5_0001/Student/UID1/Assignments/ScenarioId1/Patients/{0}"; }
+                return "SimApp/Authoring/{0}/{1}/{2}";
+            }
+        }
+        public IList<Patient> GetPatientItems(string parentFolderIdentifier, int folderType)
+        {
+            string jsonString = GetJsonDocument(((parentFolderIdentifier == "") ? string.Format(Url, AppCommon.GetFolderType(folderType), "PatientItems", "") : (parentFolderIdentifier + "/PatientItems")));
+            Dictionary<string, Patient> patientsList;
+            patientsList = JsonSerializer.DeserializeObject<Dictionary<string, Patient>>(jsonString);
+            return ConvertDictionarytoObject(patientsList);
+        }
+
+        private IList<Patient> ConvertDictionarytoObject(Dictionary<string, Patient> patientsListItems)
+        {
+            return ((patientsListItems != null) ? (patientsListItems.Select(patientsListItem => patientsListItem.Value).ToList()) : new List<Patient>());
+        }
+    }
+}

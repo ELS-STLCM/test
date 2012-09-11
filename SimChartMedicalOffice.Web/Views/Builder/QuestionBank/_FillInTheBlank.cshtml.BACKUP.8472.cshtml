@@ -1,0 +1,153 @@
+﻿@{
+    Layout = null;
+}
+<div class="grid_32">
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_26">
+        <label class="header-text">
+            Correct Order:</label></div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_26">
+        <label class="header-text">
+            Blank Orientation:</label>
+        <div id="blank_orientation">
+            @Html.DropDownList("BlankOrientation", null, new { @class = "standard-text"})
+        </div>
+    </div>
+    <div class="grid_26">
+        <label class="header-text">
+            Question</label>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="dynamicRenderDiv"></div>
+    <div class="multiple-choice-dashed-line grid_32">
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_26 header-text multiple-choice-right-border-dashed">
+        <label class="header-text">
+            Answer 1</label>
+        <div class="clear"></div>
+        @Html.TextBox("AnswerText_1", "", new { id = "AnswerText_1", @class = "grid_26 alpha standard-text" })
+        <div class="clear"></div>
+        <label class="question-bank-note-text">
+            For multiple entry seperate by ","</label>
+        <div class="clear clear-height-spacing">
+        </div>
+        <label class="header-text">
+            Answer 2</label>
+        <div class="clear"></div>
+        @Html.TextBox("AnswerText_2", "", new { id = "AnswerText_2", @class = "grid_26 alpha standard-text" })
+        <div class="clear"></div>
+        <label class="question-bank-note-text">
+            For multiple entry seperate by ","</label>
+        <div class="clear clear-height-spacing">
+        </div>
+        <label class="header-text">
+            Answer 3</label>
+        <div class="clear"></div>
+        @Html.TextBox("AnswerText_3", "", new { id = "AnswerText_3", @class = "grid_26 alpha standard-text" })
+        <div class="clear"></div>
+        <label class="question-bank-note-text">
+            For multiple entry seperate by ","</label>
+        <div class="clear clear-height-spacing">
+        </div>
+        <label class="header-text">
+            Answer 4</label>
+        <div class="clear"></div>
+        @Html.TextBox("AnswerText_4", "", new { id = "AnswerText_4", @class = "grid_26 alpha standard-text" })
+        <div class="clear"></div>
+        <label class="question-bank-note-text">
+            For multiple entry seperate by ","</label>
+        <div class="clear clear-height-spacing">
+        </div>
+    </div>
+    <div class="grid_6">
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("FillInTheBlankOption", "1", false, new { @id = "FirstAnswer", @value = "1" })
+            <label for="FirstAnswer">
+                Correct Answer</label></div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("FillInTheBlankOption", "2", false, new { @id = "SecondAnswer", @value = "2" })
+            <label for="SecondAnswer">
+                Correct Answer</label>
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("FillInTheBlankOption", "3", false, new { @id = "ThirdAnswer", @value = "3" })
+            <label for="ThirdAnswer">
+                Correct Answer</label>
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 header-text">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("FillInTheBlankOption", "4", false, new { @id = "FourthAnswer", @value = "4" })
+            <label for="FourthAnswer">
+                Correct Answer</label>
+        </div>
+    </div>
+</div>
+<script>
+    $("#BlankOrientation").change(function () {
+        questionBank.fillInTheBlank.renderDynamicControls(this[this.selectedIndex].text);
+    });
+
+<<<<<<< Updated upstream
+    $(document).ready(function() {
+=======
+//    $(document).ready(function() {
+//        debugger;
+>>>>>>> Stashed changes
+//        var questionObjectToLoad = @Html.Raw(Json.Encode(@ViewBag.QuestionObject));
+//        $("#BlankOrientation").val(questionObjectToLoad.BlankOrientation);
+//        questionBank.fillInTheBlank.renderDynamicControls(questionObjectToLoad.BlankOrientation);
+//        var blankOrientation = questionObjectToLoad.BlankOrientation.split(" ");
+//        var questions = questionObjectToLoad.QuestionText.split("$");
+//        var textCount = 0;
+//        for (i = 0; i < blankOrientation.length; i++) {
+//            if (blankOrientation[i] == "(Text)") {
+//                $("#text" + textCount).val(questions[textCount]);
+//                textCount = textCount + 1;
+//            }
+//        }
+//        var answerObjectToLoad = @Html.Raw(Json.Encode(@ViewBag.AnswerList)); 
+//        for(var answerCount = 0; answerCount < answerObjectToLoad.length; answerCount++) {
+//                $("#AnswerText_1").val(answerObjectToLoad[0]);
+//                $("#AnswerText_2").val(answerObjectToLoad[1]);
+//                $("#AnswerText_3").val(answerObjectToLoad[2]);
+//                $("#AnswerText_4").val(answerObjectToLoad[3]);
+//        }
+//        $("input[type=radio][name=FillInTheBlankOption]")[2].checked = true;
+<<<<<<< Updated upstream
+    });
+=======
+//    });
+>>>>>>> Stashed changes
+</script>

@@ -1,0 +1,27 @@
+﻿<div class="grid_8  tool-bar-header" id="frontOfficeTitle">
+    Form Repository</div>
+<div class="grid_14 tool-bar">
+    <a class="grid_7 action-icons select-hand" id="calendarForFrontOffice">
+        <img alt="x" src="@Url.Content("~/Content/Images/Buttons/smo_calendar.png")" />
+        <span class="text-icon-spacing">Calendar</span> </a><a class="grid_8 action-icons select-hand">
+            <img alt="x" src="@Url.Content("~/Content/Images/Buttons/smo_add_patient.png")" /><span
+                class="text-icon-spacing">Add Patient</span> </a><a class="grid_8 action-icons select-hand">
+                    <img alt="x" src="@Url.Content("~/Content/Images/Buttons/smo_find_patient.png")" /><span
+                        class="text-icon-spacing">Find Patient</span></a> <a class="grid_9 action-icons  select-hand" onclick="refreshFrontOfficeTab(5)">
+                            <img alt="x" src="@Url.Content("~/Content/Images/Buttons/smo_forms_repository.png")" /><span
+                                class="text-icon-spacing">Form Repository</span></a>
+</div>
+<div class="grid_32 clear-height-spacing">
+    &nbsp;
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#calendarForFrontOffice").click(function () {
+            startAjaxLoader();
+            var urlToRefreshCalendar = "../Appointment/FrontOfficeCalendar";
+            $("#smoFrontOffice").load(urlToRefreshCalendar, function () {
+            });
+        })
+    });
+     
+    </script>

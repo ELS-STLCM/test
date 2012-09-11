@@ -1,0 +1,35 @@
+﻿/*Override classes for Jquery Tabs*/
+.ui-widget-content /* to remove the main content outline border*/
+{
+    border: 0px;
+    padding: 0px;
+} 
+.ui-corner-all /* to remove the main content outline border*/
+{
+    border-radius: 0px;
+}
+
+.ui-tabs .ui-tabs-panel /* to remove padding for content*/
+{
+    padding-left: 0px;
+}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button /* to set the font style according to medical office*/
+{
+    font-size: 11px;
+    font-family: Helvetica, Arial, 'Liberation Sans' , FreeSans, sans-serif;
+}
+.ui-widget /* to set the font style according to medical office*/
+{
+    font-size: 11px;
+    font-family: Helvetica, Arial, 'Liberation Sans' , FreeSans, sans-serif;
+}
+ 
+.ui-widget-content a
+{
+     color:blue;
+}
+.ui-dialog
+{
+    border-color:Black;
+    border:1px solid;
+}

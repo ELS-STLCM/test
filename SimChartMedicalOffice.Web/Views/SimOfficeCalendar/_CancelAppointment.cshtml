@@ -1,0 +1,62 @@
+﻿@{
+    Layout = null;
+}
+@{
+    string strCancelName = (ViewData["CancelValue"] != null) ? ViewData["CancelValue"].ToString() : String.Empty;
+}
+<script type="text/javascript">
+</script>
+<div id="appointment_cancel_view">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div>
+        Would you like to @strCancelName this appointment only or all appointments in the
+        series?
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        @Html.RadioButton("CancelAppointment", "Current", true, new { @id = "rbtnCurrentOccurence" })
+        <label for="Current">
+            Only this appointment</label>
+        <div class="clear-height-spacing clear">
+        </div>
+        @Html.RadioButton("CancelAppointment", "All", false, new { @id = "rbtnEntireOccurence" })
+        <label for="All">
+            All appointments in this series</label>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="align-div-inline">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+            <input type="button" class="cancel-button align-div-inline standard-height-for-buttons"
+                style="width: 32px;" value="OK" title="OK" id="btnOk" onclick="appointment.SubmitCancelledAppointment;" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+        </div>
+        <div class="grid_1 button-seperator">
+            &nbsp;</div>
+        <div class="align-div-inline" id="dvDelete">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     style="height: 22px;" /></div>
+            <input type="button" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+                style="width: 60px;" value="Cancel" title="Cancel" id="btnCancel" onclick="appointment.CloseCancelAppointment()" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     style="height: 22px;" /></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+    });
+   
+</script>

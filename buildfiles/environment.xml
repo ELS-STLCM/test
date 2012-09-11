@@ -1,0 +1,70 @@
+<project name="DotNet_Build_Framework" default="build" basedir="." >
+  <description>.NET Build Framework - Reusable NAnt build</description>
+		
+	<target name="Display Build Environment">
+		<echo message="Environment variables:" />
+		
+  <!-- system settings -->
+		<echo message="Machine name.....: ${environment::get-machine-name()}" />
+		<echo message="Operating System.: ${operating-system::to-string(environment::get-operating-system())}" />
+		<echo message="OS Architecture..: ${OS.ARCH}" />
+  
+  <!-- Jenkins variables -->
+		<if test="${environment::variable-exists('BUILD_NUMBER')}" >
+			<echo message="BUILD_NUMBER.....: ${environment::get-variable('BUILD_NUMBER')}" />
+			<echo message="BUILD_ID.........: ${environment::get-variable('BUILD_ID')}" />
+			<echo message="JOB_NAME.........: ${environment::get-variable('JOB_NAME')}" />
+			<echo message="BUILD_TAG........: ${environment::get-variable('BUILD_TAG')}" />
+			<echo message="EXECUTOR_NUMBER..: ${environment::get-variable('EXECUTOR_NUMBER')}" />
+			<echo message="NODE_NAME........: ${environment::get-variable('NODE_NAME')}" />
+			<echo message="WORKSPACE........: ${environment::get-variable('WORKSPACE')}" />
+			<echo message="JENKINS_URL......: ${environment::get-variable('JENKINS_URL')}" />
+			<echo message="BUILD_URL........: ${environment::get-variable('BUILD_URL')}" />
+			<echo message="JOB_URL..........: ${environment::get-variable('JOB_URL')}" />
+		</if>
+		
+		<echo message="ProjName.........: ${ProjName}"/>
+		<echo message="ProjDir..........: ${ProjDir}"/>
+		<echo message="PublishDir.......: ${PublishDir}"/>
+		<echo message="BuildBaseDir.....: ${BuildBaseDir}"	/>
+		<echo message="ProjBuildDir.....: ${ProjBuildDir}" 	/> 
+		<echo message="SolutionFile.....: ${SolutionFile}" 	/>
+		<echo message="uri_webmap.......: ${uri_webmap}" 	/>
+		<echo message="uri_path.........: ${uri_path}" 	/>
+	
+  <!-- Marimba directory setttings -->
+		<echo message="Stage.dir........: ${Stage.dir}"/>
+	
+  <!-- project SVN settings -->
+		<echo message="SVNRepo..........: ${SVNRepo}"/>
+		<echo message="SVNTagsDir.......: ${SVNTagsDir}"/>
+		<echo message="SVNTrunkDir......: ${SVNTrunkDir}"/>
+		<echo message="SVNBranches......: ${SVNBranches}" />
+		<echo message="SVN.REV..........: ${SVN.REV}" /> 
+		<echo message="SVN.Branch.......: ${SVN.Branch}" />
+
+  <!-- project build settings --> 	
+		<echo message="framework version: ${nant.settings.currentframework}" /> 
+		<echo message="debug.type.......: ${debug.type}" /> 
+		<echo message="build.type.......: ${build.type}"  /> 
+		<echo message="build.type.vs....: ${build.type.vs}"/> 
+		<echo message="build.exe........: ${build.exe}" /> 
+		<echo message="build.name.......: ${build.name}"  /> 
+		<echo message="ProjRepo.........: ${ProjRepo}"  /> 
+		<echo message="CFG.ENV..........: ${CFG.ENV}" /> 
+	
+  <!-- custom build switches -->
+		<echo message="precompile.task..: ${precompile.task}"	/>
+		<echo message="postcompile.task.: ${postcompile.task}" /> 
+		<echo message="runtests.task....: ${runtests.task}"/> 
+		<echo message="prepackage.task..: ${prepackage.task}"	/> 
+		<echo message="postpackage.task.: ${postpackage.task}" />
+		<echo message="predeploy.task...: ${predeploy.task}"	 />
+		<echo message="postdeploy.task..: ${postdeploy.task}"/>
+		
+
+		
+	</target>
+	
+
+</project>

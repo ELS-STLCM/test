@@ -1,0 +1,125 @@
+﻿@using SimChartMedicalOffice.Core.QuestionBanks
+@using SimChartMedicalOffice.Common.Utility
+@{
+    Layout = null;
+}
+@{
+   
+    string strquestionText = (ViewBag.QuestionText != null) ? ViewBag.QuestionText : String.Empty;
+    string strRationaleText = (ViewBag.CorrectAnswerRationale != null) ? ViewBag.CorrectAnswerRationale : String.Empty;
+    string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
+    string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
+    string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty; ;
+    string strQuestionguid = string.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty; ;
+    string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
+    bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
+    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
+    strquestionText = String.IsNullOrEmpty(strCompetencyText) ? String.Empty : strquestionText;
+}
+<div class="grid_32">
+    <div id="validationSummary" class="errormessage grid_32">
+        @Html.ValidationSummary()</div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32 header-text">
+        True/False
+    </div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div class="grid_32 mandatory-field-note">
+        Fields with " <span class="mandatory-field">*</span> " are mandatory
+    </div>
+    <div class="grid_32 clear clear-height-spacing">
+    </div>
+    <div class="grid_32 header-text">
+        Question <span class="mandatory-field">*</span>:
+    </div>
+    <div class="grid_17">
+        @Html.TextArea("QuestionText", strquestionText, new { rows = 5, @class = "grid_32 standard-text" })
+    </div>
+    <div class="grid_15">
+        <div class="grid_6">
+            <a href="#" id="uploadImageLink" class="link">Upload</a></div>
+        <div class="grid_21 alpha">
+            <div id="question_image" class="grid_14 image-holder-div">
+                <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="Image" id="qnImageRefId" class="image-holder" />
+            </div>
+            <div class="grid_17 prefix_1 hide-content" id="qnImageRefId_remove">
+                <div class="align-div-inline">
+                    <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+                <input type="submit" class="remove-button align-div-inline standard-text standard-height-for-buttons"
+                    value="Remove" onclick="questionBank.commonFunctions.removeAttachment('qnImageRefId')" />
+                <div class="align-div-inline">
+                    <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
+                     class="standard-height-for-buttons" /></div>
+            </div>
+            <div class="grid_32">
+                <div class="disabled-text" id="qnImageRefId_view">
+                    <u>View Large</u></div>
+            </div>
+        </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="linkedCompetency" class="grid_32">
+        @Html.Partial("../../Views/Builder/Authoring/_LinkedCompetency")
+    </div>
+    <div class="multiple-choice-index-spacing multiple-choice-dashed-line grid_32">
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_25  multiple-choice-right-border-dashed">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 header-text">
+            Answer <span class="mandatory-field">*</span>:
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32">
+            <input type="hidden" id="AnswerOption_1" value="True" />True</div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32">
+            <input type="hidden" id="AnswerOption_2" value="False" />False
+        </div>
+    </div>
+    <div class="grid_7">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32">
+            &nbsp;
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("CorrectAnswer", "True", new { @id = "Answer1", @value = "True" })
+            <label for="Answer1">
+                Correct Answer</label></div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32">
+            @Html.RadioButton("CorrectAnswer", "False", new { @id = "Answer2", @value = "False" })
+            <label for="Answer2">
+                Correct Answer</label>
+        </div>
+    </div>
+</div>
+<div id="rationaleLinkedCompetency">
+    @Html.Partial("../../Views/Builder/Authoring/_RationaleAndLinkedCompetency")
+</div>
+<script type="text/javascript">
+    $.ajaxSetup({
+        cache: false,
+        asynch: false,
+        type: "POST"
+    });
+    $(document).ready(function () {
+        $("#uploadImageLink").click(function () {
+            showImageUpload("QNIMAGE");
+        });
+         questionBank.commonFunctions.loadPageInEditMode("@imgGuid", @Html.Raw(Json.Encode(strRationaleText)), "@strCompetencyText", "@strCorrectAnswerValue", "@questionUrl", @isEditMode.ToString().ToLower(),"@linkedCompetencyGuid","@questionTypeLoadedFlag");
+    });
+   
+</script>

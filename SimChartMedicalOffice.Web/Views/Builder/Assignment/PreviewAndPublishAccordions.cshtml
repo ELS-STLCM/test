@@ -1,0 +1,168 @@
+﻿@using SimChartMedicalOffice.Core.QuestionBanks
+@using SimChartMedicalOffice.Core.AssignmentBuilder
+@{
+    Layout = null;
+}
+@{
+    IList<DocumentProxy> documentProxyList = ViewBag.assignmentInfos != null ? (IList<DocumentProxy>)ViewBag.assignmentInfos : new List<DocumentProxy>();
+    IList<Resource> assignmentResources = ViewBag.assignmentInfos != null ? (IList<Resource>)ViewBag.assignmentResources : new List<Resource>();
+    string assignmentOrientation = ViewBag.assignmentOrientation != null ? Convert.ToString(ViewBag.assignmentOrientation) : String.Empty;
+}
+<div class="clear clear-min-height-spacing">
+    &nbsp;</div>
+@{
+    int accordionIndex = 0;
+    int accordionIndexVal = 0;
+    foreach (var item in documentProxyList)
+    {
+        string skillSetVal = String.IsNullOrEmpty(item.Text) ? "No title" : item.Text;
+        int indexVal = accordionIndex++;
+    <div class="grid_32  div-with-border">
+        <div class="assignment-accordion assignment-accordion-header select-hand" id="@indexVal">
+            <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+            <div class="grid_31 assignment-step5-header header-text">@skillSetVal</div>
+            <div class="align-div-inline">
+                <img id="accordion-img-@indexVal" src="../../../Content/Images/arrow_black_section_right_normal.png" alt="x" class="assignment-accordion-close"/></div>
+            <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+        </div>
+        <div class="hide-content assignment-accordion-body" id="accordion-body-@indexVal">
+                    <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+            @{
+                                                                          foreach (var items in item.ListOfItems)
+                                                                          {
+                                                                              int indexInnerAccordionVal = accordionIndexVal++;
+                <div class="grid_32  div-with-border">
+                    <div class="assignment-accordion assignment-accordion-inner-header select-hand" id="-@indexInnerAccordionVal">
+                        <div class="clear clear-min-height-spacing">
+                            &nbsp;</div>
+                        <div class="grid_31 assignment-step4-header header-text">@items.Name</div>
+                        <div class="align-div-inline">
+                            <img id="accordion-img--@indexInnerAccordionVal" src="../../../Content/Images/arrow_black_section_right_normal.png" alt="x" class="assignment-accordion-close"/></div>
+                        <div class="clear clear-min-height-spacing">
+                            &nbsp;</div>
+                    </div>
+                    <div class="hide-content assignment-accordion-body" id="accordion-body--@indexInnerAccordionVal">
+                        <ul class="assignment-questions">
+                            @foreach (var itemVal in items.Items)
+                            {
+                                <li>@itemVal</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                            <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+                                                                          }
+            }
+        </div>
+    </div>
+    <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+   
+    }
+
+
+    if (assignmentResources != null && assignmentResources.Count > 0)
+    {
+            <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+    <div class="grid_32 header-text assignment-step5-header">
+        Assignment Resources
+    </div>
+    <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+    
+        <div class="grid_32  div-with-border">
+        <div class="assignment-accordion assignment-accordion-header select-hand" id="resources">
+            <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+            <div class="grid_31 assignment-step5-header header-text">List of Resources</div>
+            <div class="align-div-inline">
+                <img id="accordion-img-resources" src="../../../Content/Images/arrow_black_section_right_normal.png" alt="x" class="assignment-accordion-close"/></div>
+            <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+        </div>
+        <div class="hide-content assignment-accordion-body" id="accordion-body-resources">
+                    <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+                        @{ bool isSeperator = false;
+                           int countOfResources = 0;
+                           foreach (Resource itemResource in assignmentResources)
+                           {
+                               countOfResources++;
+		                    <div class="grid_5 header-text">Author:</div>
+                            <div class="grid_27">@itemResource.Author</div>
+                              <div class="clear clear-min-height-spacing">
+                               &nbsp;</div>
+                             <div class="grid_5 header-text">Title:</div>
+                            <div class="grid_27">@itemResource.Title</div>
+                                                          <div class="clear clear-min-height-spacing">
+                               &nbsp;</div>
+                            <div class="grid_5 header-text">Edition:</div>
+                            <div class="grid_27">@itemResource.Edition</div>
+                                                          <div class="clear clear-min-height-spacing">
+                               &nbsp;</div>
+                             <div class="grid_5 header-text">Chapter:</div>
+                            <div class="grid_27">@itemResource.Chapter</div>
+                                                          <div class="clear clear-min-height-spacing">
+                               &nbsp;</div>
+                             <div class="grid_5 header-text">Page Range:</div>
+                            <div class="grid_27">@itemResource.PageRange</div>
+                                                                                        <div class="clear clear-min-height-spacing">
+                                  &nbsp;</div>
+                                            if (!(countOfResources == assignmentResources.Count))
+                                            {
+
+                                   <div class="grid_32 section-seperator"/>
+                                                            <div class="clear clear-min-height-spacing">
+                                  &nbsp;</div>
+                                            }
+                           }
+                  }
+                </div>
+                </div>
+    }
+          <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+    <div class="grid_32 header-text assignment-step5-header">
+        Orientation
+    </div>
+    <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+    
+    <div class="grid_32  div-with-border">
+        <div class="assignment-accordion assignment-accordion-header select-hand" id="orientation">
+            <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+            <div class="grid_31 assignment-step5-header header-text">Orientation Description</div>
+            <div class="align-div-inline">
+                <img id="accordion-img-orientation" src="../../../Content/Images/arrow_black_section_right_normal.png" alt="x" class="assignment-accordion-close"/></div>
+            <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+        </div>
+        <div class="hide-content assignment-accordion-body" id="accordion-body-orientation">
+                    <div class="clear clear-min-height-spacing">
+                &nbsp;</div>
+                <div class="grid_32">@Html.Raw(assignmentOrientation)</div>
+                  <div class="clear clear-min-height-spacing">
+                &nbsp;</div>   
+                </div>
+                </div>
+    
+        <div class="clear clear-min-height-spacing">
+        &nbsp;</div>
+    }
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".assignment-accordion-header").click(function () {
+            expandOrCollapseAnAccordion(this);
+        });
+
+        $(".assignment-accordion-inner-header").click(function () {
+            expandOrCollapseAnAccordion(this);
+        });
+    });
+</script>

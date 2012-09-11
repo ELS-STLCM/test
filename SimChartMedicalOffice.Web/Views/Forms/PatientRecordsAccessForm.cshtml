@@ -1,0 +1,311 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+
+        $.ajaxSetup({
+            cache: false
+        });
+        forms.PatientRecordsAccessForm.OnPageLoad('@ViewBag.FormValue');
+    });
+    //For adding the SavePriorAuthorizationForm row to the DB.
+    $("#savePatientRecord-5").click(function () {
+        forms.PatientRecordsAccessForm.funPatientMedicalRecordRequest();
+        forms.PatientRecordsAccessForm.Save('@ViewBag.FormValue');
+    });
+    //For loading the form for Student
+    $("#searchPatientButton").click(function () {
+        // load patient search popup 
+        forms.PatientSearch.LoadPatientSearch('@ViewBag.FormValue');
+    });
+
+    //dateOfBirth datepicker events
+    $("#DOB").live('click', function () {
+        if ($('#ui-datepicker-div').is(':visible')) {
+            $("#DOB").datepicker("hide");
+        }
+        else {
+            $("#DOB").datepicker();
+            $("#DOB").datepicker("show");
+        }
+        $("#DOB").die();
+    });
+    
+    function printpage() {
+        
+        forms.PatientRecordsAccessForm.Print();
+    }
+
+    $("#BtnCancel").click(function() {
+        var status = "Are you sure you want to cancel? Your changes will not be saved.";
+        jConfirm(status, 'Cancel', function(isCancel) {
+            if (isCancel) {
+                forms.PatientRecordsAccessForm.ResetPage();
+                forms.PatientSearch.DisableSelectBtn("savePatientRecord-5");
+            }
+        });
+    });
+</script>
+<div class="grid_24 standard-text">
+    <div class="form-page-header">
+        Patient Records Access Request
+    </div>
+    <div class="grid_32 alpha  guidance-message ">
+    <div class="grid_32 guidance-text-spacing">
+    </div>
+        <div class="grid_32 ">Fields with " <span class="mandatory-field">*</span> " are mandatory</div> 
+        <div class="grid_32 ">
+            Please perform a patient search to find a specific patient.
+        </div> 
+        <div class="grid_32 guidance-text-spacing">
+    </div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div id="patient_records_access_main_content" class="div-with-border grid_32 form-patient-records-content vertical-content-scroll">
+        <div id="validationSummary" class="error-message grid_32">
+        </div>
+        <div class="grid_32">
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32">
+                I hereby request a copy of my medical record as detailed below:
+            </div>
+        </div>
+        <div class="grid_16">
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32">
+                @Html.CheckBox("MedicalRecordType", new { @id = "MedicalRecordType_Progress", @value = "Progress" })
+                <label for="MedicalRecordType_Progress">
+                    Progress</label>
+            </div>
+            <div class="grid_32">
+                @Html.CheckBox("MedicalRecordType", new { @id = "MedicalRecordType_Notes", @value = "Notes" })
+                <label for="MedicalRecordType_Notes">
+                    Notes</label>
+            </div>
+            <div class="grid_32">
+                @Html.CheckBox("MedicalRecordType", new { @id = "MedicalRecordType_Immunizations", @value = "Immunizations" })
+                <label for="MedicalRecordType_Immunizations">
+                    Immunizations</label>
+            </div>
+            <div class="grid_32">
+                @Html.CheckBox("MedicalRecordType", new { @id = "MedicalRecordType_Correspondence", @value = "Correspondence" })
+                <label for="MedicalRecordType_Correspondence">
+                    Correspondence</label>
+            </div>
+        </div>
+        <div class="grid_15">
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32">
+                @Html.CheckBox("MedicalRecordType", new { @id = "MedicalRecordType_Radiology", @value = "Radiology" })
+                <label for="MedicalRecordType_Radiology">
+                    Radiology</label>
+            </div>
+            <div class="grid_32">
+                @Html.CheckBox("MedicalRecordType", new { @id = "MedicalRecordType_Laboratory", @value = "Laboratory" })
+                <label for="MedicalRecordType_Laboratory">
+                    Laboratory</label>
+            </div>
+            <div class="grid_32">
+                @Html.CheckBox("MedicalRecordType", new { @id = "MedicalRecordType_Hospitalizations", @value = "Hospitalizations" })
+                <label for="MedicalRecordType_Hospitalizations">
+                    Hospitalizations</label>
+            </div>
+            <div class="grid_32">
+                <div class="grid_7 alpha">
+                    @Html.CheckBox("MedicalRecordType", new { @id = "MedicalRecordType_Other", @value = "Other" })
+                    <label for="MedicalRecordType_Other">
+                        Other</label>
+                </div>
+                <div class="grid_25">
+                    @Html.TextBox("MedicalRecordTypeOther", null, new { @class = "grid_31" })
+                </div>
+            </div>
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="align-inline" style="padding-left: 3px;">
+            Medical record for the period of:
+        </div>
+        <div class="align-inline " style="padding-right: 0.5px; padding-left: 0.5px;">
+            @Html.TextBox("MedicalRecordFrom", null, new {  style = "width:210px;" })
+        </div>
+        <div class="alpha align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+            through
+        </div>
+        <div class="align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+            @Html.TextBox("MedicalRecordTo", null, new {  style = "width:225px;" })
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="grid_32 section-seperator">
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="grid_9">
+            Reason for Disclosure:
+        </div>
+        <div class="grid_23">
+            @Html.TextArea("ReasonForDisclosure", "", new { id = "ReasonForDisclosure", @class = "grid_32", rows = 4 })
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_9">
+            Releasing to:
+        </div>
+        <div class="grid_10">
+            @Html.TextBox("ReleasingTo", null, new { @class = "grid_30" })
+        </div>
+        <div class="grid_4">
+            Phone:
+        </div>
+        <div class="grid_10">
+            @Html.TextBox("Phone", null, new { @class = "grid_30" })
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_9">
+            Address:
+        </div>
+        <div class="grid_23">
+            @Html.TextArea("Address", "", new { id = "Address", @class = "grid_32", rows = 4 })
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="grid_32 section-seperator">
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="grid_32">
+            I understand that this request will be processed within 7-14 days except in the
+            case of an emergency.
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_9">
+            Patient Name:
+        </div>
+        <div class="grid_10">
+            @Html.TextBox("PatientName", null, new { @class = "grid_30" })
+        </div>
+        <div class="grid_4">
+            Date of Birth:
+        </div>
+        <div class="grid_10">
+            @*@Html.TextBox("DOB", null, new { @class = "grid_30" })*@
+            <input type="text" id="DOB" class="grid_30 standard-text" name="" value="" readonly="readonly"/>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_9">
+            Mailing Address:
+        </div>
+        <div class="grid_23">
+            @Html.TextBox("MailingAddress", null, new { @class = "grid_32" })
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_9 ">
+            City:
+        </div>
+        <div class="grid_6">
+            @Html.TextBox("City", null, new { @class = "grid_32" })
+        </div>
+        <div class="grid_3">
+            &nbsp;&nbsp;State:
+        </div>
+        <div class="grid_6">
+            @Html.TextBox("State", null, new { @class = "grid_32" })
+        </div>
+        <div class="grid_3">
+            Zip Code:
+        </div>
+        <div class="grid_6">
+            @Html.TextBox("ZipCode", null, new { @class = "grid_32" })
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="grid_32 section-seperator">
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="grid_9">
+            This request will expire:
+        </div>
+        <div class="grid_23">
+            @Html.TextBox("RequestExpire", null, new { @class = "grid_32" })
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="grid_32 section-seperator">
+        </div>
+        <div class="clear section-seperator-spacing">
+        </div>
+        <div class="grid_32">
+            I acknowledge that I have received copies of my medical records as requested above.
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_9">
+            Signature:
+        </div>
+        <div class="grid_10">
+            @Html.TextBox("Signature", null, new { @class = "grid_30" })
+        </div>
+        <div class="grid_4">
+            Date:
+        </div>
+        <div class="grid_10">
+            @Html.TextBox("SignatureDate", null, new { @class = "grid_30" })
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_9">
+            Witness Signature:
+        </div>
+        <div class="grid_10">
+            @Html.TextBox("WitnessSignature", null, new { @class = "grid_30" })
+        </div>
+        <div class="grid_4">
+            Date:
+        </div>
+        <div class="grid_10">
+            @Html.TextBox("WitnessSignatureDate", null, new { @class = "grid_30" })
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 div-with-border office-use ">
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32 header-text">
+                Administrative Use Only</div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_9">
+                Date completed <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_10">
+                @Html.TextBox("DateCompleted", null, new {  style = "width:175px;" })
+            </div>
+            <div class="grid_4">
+                By <span class="mandatory-field">*</span>:
+            </div>
+            <div class="grid_10">
+                @Html.TextBox("CompletedBy", null, new {  style = "width:175px;" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_9">
+                Charge <span class="mandatory-field">*</span>: $
+            </div>
+            <div class="grid_10">
+                @Html.TextBox("Charge", null, new {  style = "width:175px;" })
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+    </div>
+</div>

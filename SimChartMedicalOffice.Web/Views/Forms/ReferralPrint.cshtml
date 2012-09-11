@@ -1,0 +1,413 @@
+﻿ @using SimChartMedicalOffice.Core.Forms
+ @using SimChartMedicalOffice.Common
+ @{
+     Layout = "~/Views/Shared/_LayoutPartialForPrint.cshtml";
+ }
+ @{
+     ReferralForm referralFormObject = null;
+     bool blankform = false;
+     if (ViewBag.ReferralFormObj == null)
+     {
+         referralFormObject = new ReferralForm();
+         blankform = true;
+     }
+     else
+     {
+         referralFormObject = (ReferralForm)ViewBag.ReferralFormObj;
+     }
+ }
+
+<script type="text/javascript">
+    function printpage() {
+        $("#PrintButtonSection").hide();
+        window.print();
+        $("#PrintButtonSection").show();
+    }
+
+    $(document).ready(function () {
+        var isBlankForm = '@blankform';
+        if (isBlankForm.toLowerCase() != 'true') {
+            $('.text-line-print').addClass('text-line-print-edit  standard-text-print').removeClass('text-line-print');
+            $('.text-in-box-print').addClass('text-line-print-edit  standard-text-print').removeClass('text-in-box-print');
+        }
+    });
+</script>
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_4 prefix_29" id="PrintButtonSection">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input type="submit" class="navigation-button align-div-inline standard-height-for-buttons" style="width:60px;"
+               value="Print" onclick="printpage()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+</div>
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_32 print-main-content standard-label-print">
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="">
+        <div class="grid_16">
+            <img alt="X"src="../../Content/Images/print_header.png"  class="print-header"/>
+        </div>
+                 <div class="grid_16 standard-label-print text-signature">
+               Student: @ViewBag.Signature</div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 form-page-header-print">
+            Referral
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <hr />
+        <div class="clear clear-height-spacing">
+        </div>
+        <div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_16">
+                <div class="standard-label-print grid_14 ">
+                    Diagnosis/Code:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.DiagnosisOrCode, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Surgical Procedure/ Date:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.SurgicalProcedureDate, blankform)
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Significant Clinical Information/Symptoms:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.SurgicalClinicalInformation, blankform)
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Previous Clinical Treatments:
+                </div>
+                <div class="grid_18 text-in-box-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.PreviousClinicalTreatments, blankform)
+                </div>
+            </div>
+            <div class="grid_16">
+                <div class="standard-label-print grid_14 ">
+                    Patient Name:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.PatientName, blankform)
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Address:
+                </div>
+                <div class="grid_18 text-in-box-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.Address, blankform)
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Patient Phone:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.PatientPhone, blankform)
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Alternate Contact:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.AlternateContact, blankform)
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Date of Birth:
+                </div>
+                <div class="grid_6 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.DateOfBirth, blankform)
+                </div>
+                <div class="standard-label-print grid_6">
+                    Health ID:
+                </div>
+                <div class="grid_7 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.HealthId, blankform)
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32 section-seperator">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_16">
+                <div class="standard-label-print grid_14 ">
+                    Allergies:
+                </div>
+                <div class="grid_18 text-in-box-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.Allergies, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Medications:
+                </div>
+                <div class="grid_18 text-in-box-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.Medications, blankform) 
+                </div>
+            </div>
+            <div class="grid_16">
+                <div class="standard-label-print grid_14 ">
+                    Diabetic:
+                </div>
+                @if (blankform)
+                {
+                    <div class="grid_18 standard-text-print">
+                        @Html.CheckBox("diabetic", false, new {id = "diabeticYes", disabled = "disabled"})
+                        <label for="diabeticYes">
+                            Yes</label>
+                        @Html.CheckBox("diabetic", false, new {id = "diabeticNo", disabled = "disabled"})
+                        <label for="diabeticNo">
+                            No</label>
+                    </div>
+                }
+                else
+                {
+                    <div class="grid_18 standard-text-print">
+                        @AppCommon.GetObjectPropertyVal(referralFormObject.IsDiabetic,blankform)    
+                    </div>
+                }
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32 section-seperator">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_16">
+                <div class="standard-label-print grid_14 ">
+                    Place of Service:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.PlaceOfService, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="clear clear-height-spacing">
+            </div>
+                <div class="standard-label-print grid_14 ">
+                    Number of Visits:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.NumberOfVisits, blankform) 
+                </div>
+            </div>
+            <div class="grid_16">
+                <div class="standard-label-print grid_14 ">
+                    Address:
+                </div>
+                <div class="grid_18 text-in-box-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.AddressOfService, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14 ">
+                    Length of Stay:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.LengthOfStay, blankform) 
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32 section-seperator">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_16">
+                <div class="standard-label-print grid_14">
+                    Referring Provider:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.ReferringProvider, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14">
+                    Name (print):
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.NameToPrint, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14">
+                    Signature:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.Signature, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14">
+                    Family Physician Name (print):
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.FamilyPhysicianName, blankform) 
+                </div>
+            </div>
+            <div class="grid_16">
+                <div class="standard-label-print grid_14">
+                    Phone:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.Phone, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14">
+                    NPI Number:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.NpiNumber, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                <div class="standard-label-print grid_14">
+                    Date:
+                </div>
+                <div class="grid_18 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.Date, blankform) 
+                </div>
+                <div class="clear clear-height-spacing">
+                </div>
+                @if (blankform)
+                {
+                    <div class="standard-label-print grid_32">
+                        @Html.CheckBox("sameAsReferringPhysician", false, new {id = "sameAsReferringPhysician", disabled = "disabled"})
+                        <label for="sameAsReferringPhysician">
+                            Same as Referring Physician</label>
+                    </div>
+                }
+                else
+                {
+                    <div class="standard-label-print grid_14">
+                        Same as Referring Physician:
+                    </div>
+                    <div class="standard-text-print grid_18">
+                        @AppCommon.GetObjectPropertyVal(referralFormObject.IsSameReferringPhysician, blankform)
+                    </div>
+                }
+                    </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32 section-seperator">
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class=" grid_13 standard-label-print">
+                    Form initiated by (if other than Referring Provider):
+                </div>
+                <div class="grid_19 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.FormInitiatedBy, blankform) 
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32 ">
+                <div class=" grid_6 standard-label-print">
+                    Authorization Number:
+                </div>
+                <div class="grid_6 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.AuthorizationNumber, blankform) 
+                </div>
+                <div class=" grid_5 standard-label-print">
+                    Effective Date:
+                </div>
+                <div class="grid_5 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.EffectiveDate, blankform) 
+                </div>
+                <div class=" grid_5 standard-label-print">
+                    Expiration Date:
+                </div>
+                <div class="grid_5 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.ExpirationDate, blankform) 
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class=" grid_6 standard-label-print">
+                    Name (print), Position:
+                </div>
+                <div class="grid_14 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.NameAndPosition, blankform) 
+                </div>
+                <div class=" grid_3 standard-label-print">
+                    Phone:
+                </div>
+                <div class="grid_9 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.PhoneOfInitiatedPerson, blankform)  
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32">
+                <div class=" grid_6 standard-label-print">
+                    Signature:
+                </div>
+                <div class="grid_14 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.SignatureOfInitiatedPerson, blankform) 
+                </div>
+                <div class=" grid_3 standard-label-print">
+                    Date:
+                </div>
+                <div class="grid_9 text-line-print">
+                    @AppCommon.GetObjectPropertyVal(referralFormObject.DateInitiated, blankform) 
+                </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+        </div> 
+        
+    </div>
+</div>

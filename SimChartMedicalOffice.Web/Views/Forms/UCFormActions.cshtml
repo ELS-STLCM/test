@@ -1,0 +1,52 @@
+﻿@{
+    Layout = null;
+}
+<div id="formActionButtons" class="prefix_12 grid_20" style="padding-top: 5px;">
+    <div class="grid_7 align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input id="searchPatientButton" type="submit" class="navigation-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 90px;" value="Patient Search" onclick="" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+    <div id="printButton" class="grid_5">
+        <div class="grid_1 button-seperator">
+            &nbsp;</div>
+        <div class="align-div-inline">
+            <div class="align-div-inline">
+                <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+            <input type="submit" class="navigation-button align-div-inline standard-height-for-buttons"
+                style="width: 60px;" value="Print" onclick="printpage()" />
+            <div class="align-div-inline">
+                <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        </div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline grid_9">
+        <div class="align-div-inline">
+            <img id="savePatientRecord-@ViewBag.FormValue-LeftCurve" alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                   class="standard-height-for-buttons" /></div>
+        <input type="button" class="navigation-button align-div-inline standard-height-for-buttons" style="width: 135px;"
+               value="Save to Patient Record" id='savePatientRecord-@ViewBag.FormValue'/>
+        <div class="align-div-inline">
+            <img id="savePatientRecord-@ViewBag.FormValue-RightCurve" alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 class="standard-height-for-buttons" />
+        </div>
+    </div>
+    <div class="grid_1 button-seperator">
+        &nbsp;</div>
+    <div class="align-div-inline grid_5">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+        <input type="submit" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
+            style="width: 60px;" value="Cancel" id="BtnCancel" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+    </div>
+</div>
