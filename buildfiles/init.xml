@@ -17,7 +17,8 @@
   
   <!-- begin framework targets -->
 	<target name="init">
-		
+		<echo message="Start of init" />
+		<echo message="ProjectBaseDir is: ${project::get-base-directory()}" />
 		<property name="ProjectBaseDir" value="${project::get-base-directory()}" />
 		
 		<call target="find-svnrevision" />
