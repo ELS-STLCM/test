@@ -11,8 +11,8 @@
 	<property name="uri_webmap" 	value="" />
 	<property name="uri_path" 		value="" />
 	<property name="Marimba.JobName" value="SimOffice" />
-	<property name="Stage.dir"		value="\\lngdaydatp001\staging\HESI\[Staging Directory name]" />
-	<property name="PKG.REPO"		value="D:\builds" />
+	<property name="Stage.dir"		value="C:\builds" />
+	<property name="PKG.REPO"		value="C:\builds" />
 	
   <!-- project SVN settings -->
 	<property name="SVNRepo" 		value="https://github.com/ELS-STLCM/test.git"/>
