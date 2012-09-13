@@ -23,7 +23,9 @@
 		
 		<echo message="Find SVN Revision, I need to change this badly" />
 		
-		<call target="find-svnrevision" />
+		<call target="find-gitbranch" />
+		
+<!--		<call target="find-svnrevision" />	-->
 		<call target="Validate Project" />
 		
 		<!-- <property name="build.name" value="${ProjName}.${ReleaseVersion}.${SVN.REV}" /> -->

@@ -11,7 +11,7 @@
 	<include buildfile="${BuildFiles.Directory}\package.xml"/>
 	<include buildfile="${BuildFiles.Directory}\deploy.xml"/>
 	<include buildfile="${BuildFiles.Directory}\environment.xml" />
-	<include buildfile="D:\jenkins\svn_variables.xml" />
+<!--	<include buildfile="D:\jenkins\svn_variables.xml" />	-->
 
   <!-- End Includes   -->
 
