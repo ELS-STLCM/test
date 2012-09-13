@@ -133,12 +133,12 @@
 			<property name="ReleaseVersion" value="trunk" />
 			<property name="ProjRepo" value="${SVNTrunkDir}" />
 		</if>
-		
-		<if test="${not string::contains(SVN.Branch, ProjRepo)}" >
+<!-- Removing this check since we are currently not grabbing the branch from git file -->		
+<!--		<if test="${not string::contains(SVN.Branch, ProjRepo)}" >
 			<fail message="SVN URL Path mismatch:
 			Provided URL: ${ProjRepo}
 			Current URL : ${SVN.Branch}" />
-		</if>
+		</if>	-->
 		<echo message="Project verified. Proceeding to build."/>
 	</target>
 	
