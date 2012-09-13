@@ -42,11 +42,10 @@
 
 		<echo message="Retrieving file contents"/>
 		<property name="file.contents" value="0" />
-		<echo message="${ProjectBaseDir}/.git/config"/>
 		<loadfile file="${ProjectBaseDir}/.git/config" property="file.contents" />
-		<echo message="2"/>
 		<property name="file.contents" value="${string::trim(file.contents)}" />
 		<echo message="contents of file is  ${file.contents}"/>
+		<echo message="end contents"/>
 		<!-- I do not like using the any character instead of a quotation mark for this, but not sure how to it otherwise  -->
 		<regex pattern=".*?\[branch .(?'svn.url'[\-\w\.]+)$" input="${file.contents}" />
 		<echo message="Branch is: ${svn.url}"/>
