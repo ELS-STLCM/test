@@ -21,6 +21,8 @@
 		<echo message="ProjectBaseDir is: ${project::get-base-directory()}" />
 		<property name="ProjectBaseDir" value="${project::get-base-directory()}" />
 		
+		<echo message="Find SVN Revision, I need to change this badly" />
+		
 		<call target="find-svnrevision" />
 		<call target="Validate Project" />
 		
@@ -30,6 +32,24 @@
 		<property name="ProjBuildDir" value="${BuildBaseDir}/${build.name}"/>
 		<delete dir="${ProjBuildDir}" if="${directory::exists('ProjBuildDir')}" />
 		
+	</target>
+	
+	<target name="find-gitbranch">
+	
+	<!--Get the information from .git/config -->
+
+		<echo message="Retrieving file contents"/>
+		<property name="file.contents" value="0" />
+		<loadfile file="file.txt" property="file.contents" />
+		<property name="file.contents" value="${string::trim(file.contents)}" />
+		<echo message="contents of file is  ${file.contents}"/>
+		<!-- I do not like using the any character instead of a quotation mark for this, but not sure how to it otherwise  -->
+		<regex pattern=".*?\[branch .(?'svn.url'[\-\w\.]+)$" input="${file.contents}" />
+		<echo message="Branch is: ${svn.url}"/>
+		
+		<property name="SVN.Branch" value="${svn.url}" />
+		
+
 	</target>
 	
 	<target name="find-svnrevision">
