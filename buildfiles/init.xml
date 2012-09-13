@@ -47,7 +47,7 @@
 	
 		<!-- yields output of "no branch" -->
 		<exec program="C:/Program Files (x86)/Git/bin/git.exe"
-			  commandline='branch'
+			  commandline='status | grep branch | gawk "{ print $4}"'
 			  output="${ProjectBaseDir}/branchTxt.txt"
 			  workingdir='${ProjectBaseDir}'
 			  failonerror="false"/>	
