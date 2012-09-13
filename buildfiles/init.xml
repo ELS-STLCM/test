@@ -38,10 +38,18 @@
 	<target name="find-gitbranch2">
 		<exec program="C:/Program Files (x86)/Git/bin/git.exe"
 			  commandline='branch |gawk "/^\*/ {print $2}"'
-			  resultproperty="gitBranch"
+			  output="${ProjectBaseDir}/branchTxt.txt"
 			  workingdir='${ProjectBaseDir}'
 			  failonerror="false"/>	
-		<echo message="Branch is: ${gitBranch}"/>
+
+		<echo message="Retrieving file contents"/>
+		<property name="file.contents" value="0" />
+		<loadfile file="${ProjectBaseDir}/branchTxt.txt" property="file.contents" />
+		<property name="file.contents" value="${string::trim(file.contents)}" />
+		<echo message="contents of file is  ${file.contents}"/>
+		<echo message="end contents"/>
+
+			  <echo message="Branch is: ${gitBranch}"/>
 		
 		<property name="SVN.Branch" value="${gitBranch}" />			  
 			  
