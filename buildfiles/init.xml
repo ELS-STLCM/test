@@ -42,8 +42,8 @@
 
 		<echo message="Retrieving file contents"/>
 		<property name="file.contents" value="0" />
-		<echo message="1"/>
-		<loadfile file="ProjectBaseDir/.git/config" property="file.contents" />
+		<echo message="${ProjectBaseDir}/.git/config"/>
+		<loadfile file="${ProjectBaseDir}/.git/config" property="file.contents" />
 		<echo message="2"/>
 		<property name="file.contents" value="${string::trim(file.contents)}" />
 		<echo message="contents of file is  ${file.contents}"/>
