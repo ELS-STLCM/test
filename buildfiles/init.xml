@@ -39,7 +39,6 @@
 		<exec program="C:/Program Files (x86)/Git/bin/git.exe"
 			  commandline='branch |gawk "/^\*/ {print $2}"'
 			  resultproperty="gitBranch"
-			  
 			  workingdir='${ProjectBaseDir}'
 			  failonerror="false"/>	
 		<echo message="Branch is: ${gitBranch}"/>
