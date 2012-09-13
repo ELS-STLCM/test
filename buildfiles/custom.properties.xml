@@ -3,14 +3,14 @@
   <!-- This script can / should only be called from project.build to ensure appropriate variable definition -->
 
   <!-- Project Specific custom propertie -->
-	<property name="ProjName" 		value="[Project Name]" />
+	<property name="ProjName" 		value="SimOffice" />
 	<property name="ProjDir" 		value="." />
-	<property name="PublishDir"		value="[Directory to publish]" />
+	<property name="PublishDir"		value="SimChartMedicalOffice.Web" />
 	<property name="ProjBuildDir" 	value="" /> <!-- do not modify -->
-	<property name="SolutionFile" 	value="[Solution file name]" />
+	<property name="SolutionFile" 	value="SimChartMedicalOffice.sln" />
 	<property name="uri_webmap" 	value="" />
 	<property name="uri_path" 		value="" />
-	<property name="Marimba.JobName" value="[Marimba's Job Name]" />
+	<property name="Marimba.JobName" value="SimOffice" />
 	<property name="Stage.dir"		value="\\lngdaydatp001\staging\HESI\[Staging Directory name]" />
 	<property name="PKG.REPO"		value="D:\builds" />
 	
