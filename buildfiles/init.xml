@@ -23,7 +23,7 @@
 		
 		<echo message="Find SVN Revision, I need to change this badly" />
 		
-		<call target="find-gitbranch2" />
+		<call target="find-gitbranch" />
 		
 <!--		<call target="find-svnrevision" />	-->
 		<call target="Validate Project" />
