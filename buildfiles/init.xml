@@ -23,7 +23,7 @@
 		
 		<echo message="Find SVN Revision, I need to change this badly" />
 		
-	<call target="find-gitbranch" />  
+	<call target="find-gitbranch2" />  
 		
 <!--		<call target="find-svnrevision" />	-->
 		<call target="Validate Project" />
@@ -36,7 +36,7 @@
 		
 	</target>
 	<target name="find-gitbranch2">
-		<exec program="git"
+		<exec program="C:/Program Files (x86)/Git/bin/git.exe"
 			  commandline='branch'
 			  output="gitBranch"
 			  workingdir='${ProjectBaseDir}'
