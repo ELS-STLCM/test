@@ -37,7 +37,7 @@
 	</target>
 	<target name="find-gitbranch2">
 		<exec program="C:/Program Files (x86)/Git/bin/git.exe"
-			  commandline='branch'
+			  commandline='branch |awk "/^\*/ {print $2}"'
 			  output="gitBranch"
 			  workingdir='${ProjectBaseDir}'
 			  failonerror="false"/>	
