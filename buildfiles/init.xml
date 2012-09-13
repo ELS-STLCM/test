@@ -23,7 +23,7 @@
 		
 		<echo message="Find SVN Revision, I need to change this badly" />
 		
-		<call target="find-gitbranch" />
+		<call target="find-gitbranch2" />
 		
 <!--		<call target="find-svnrevision" />	-->
 		<call target="Validate Project" />
@@ -35,7 +35,16 @@
 		<delete dir="${ProjBuildDir}" if="${directory::exists('ProjBuildDir')}" />
 		
 	</target>
-	
+	<target name="find-gitbranch2">
+		<exec program="git"
+			  commandline='branch'
+			  output="gitBranch"
+			  failonerror="false"/>	
+		<echo message="Branch is: ${gitBranch}"/>
+		
+		<property name="SVN.Branch" value="${gitBranch}" />			  
+			  
+	</target>
 	<target name="find-gitbranch">
 	
 	<!--Get the information from .git/config -->
@@ -47,8 +56,8 @@
 		<echo message="contents of file is  ${file.contents}"/>
 		<echo message="end contents"/>
 		<!-- I do not like using the any character instead of a quotation mark for this, but not sure how to it otherwise  -->
-		<regex pattern=".*?\[branch .(?'gitBranch'[\-\w\.]+)$" input="${file.contents}" />
-		<echo message="Branch is: ${svn.url}"/>
+		<regex pattern=".*?\[branch .(?'gitBranch'[\-\w\.]+).\]$" input="${file.contents}" />
+		<echo message="Branch is: ${gitBranch}"/>
 		
 		<property name="SVN.Branch" value="${gitBranch}" />
 		
