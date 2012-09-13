@@ -15,7 +15,7 @@
 	<property name="PKG.REPO"		value="D:\builds" />
 	
   <!-- project SVN settings -->
-	<property name="SVNRepo" 		value="https://github.com/elsevier-ptg-simulations/SimOffice.git"/>
+	<property name="SVNRepo" 		value="https://github.com/ELS-STLCM/test.git"/>
 	<property name="SVNTagsDir" 	value="${SVNRepo}/tags" />
 	<property name="SVNTrunkDir" 	value="${SVNRepo}/trunk" />
 	<property name="SVNBranches" 	value="${SVNRepo}/branches" />
