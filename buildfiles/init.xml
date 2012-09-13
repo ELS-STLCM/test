@@ -35,9 +35,11 @@
 		<delete dir="${ProjBuildDir}" if="${directory::exists('ProjBuildDir')}" />
 		
 	</target>
+	
+	<!-- commandline='branch |gawk "/^\*/ {print $2}"' -->
 	<target name="find-gitbranch2">
 		<exec program="C:/Program Files (x86)/Git/bin/git.exe"
-			  commandline='branch |gawk "/^\*/ {print $2}"'
+			  commandline='branch'
 			  output="${ProjectBaseDir}/branchTxt.txt"
 			  workingdir='${ProjectBaseDir}'
 			  failonerror="false"/>	
@@ -49,9 +51,9 @@
 		<echo message="contents of file is  ${file.contents}"/>
 		<echo message="end contents"/>
 
-			  <echo message="Branch is: ${gitBranch}"/>
+			  <echo message="Branch is: ${file.contents}"/>
 		
-		<property name="SVN.Branch" value="${gitBranch}" />			  
+		<property name="SVN.Branch" value="${file.contents}" />			  
 			  
 	</target>
 	<target name="find-gitbranch">
