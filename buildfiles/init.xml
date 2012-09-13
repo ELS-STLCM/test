@@ -57,7 +57,7 @@
 		<echo message="contents of file is  ${file.contents}"/>
 		<echo message="end contents"/>
 		<!-- I do not like using the any character instead of a quotation mark for this, but not sure how to it otherwise  -->
-		<regex pattern=".*c(?'gitBranch'[\-\w\.]+)e.*$" input="${file.contents}" />
+		<regex pattern=".*?c(?'gitBranch'[\-\w\.]+)e.*?$" input="${file.contents}" />
 		<echo message="Branch is: ${gitBranch}"/>
 		
 		<property name="SVN.Branch" value="${gitBranch}" />	
