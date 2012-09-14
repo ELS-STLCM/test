@@ -18,13 +18,15 @@
   <!-- main targets -->
 	<target name="build" depends="init" >
 		<!-- compile tasks -->
+		
+		<echo message="Running Compile"/>
 		<call target="Compile" />	
 
 		<!-- testing tasks -->
 		<if test="${string::contains(runtests.task,'yes')}">
 			<call target="Run Unit Tests" />
 		</if>
-		
+		<echo message="Running Package"/>
 		<!-- packaging tasks --> 
 		<call target="Package" />
 
