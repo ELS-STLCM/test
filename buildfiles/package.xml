@@ -13,7 +13,7 @@
 		<call target="Pre-Package custom tasks" />
 	</if>
 	
-	<call target="Tag Release" />
+	<call target="Tag Release2" />
 	<call target="Create Release" />
 	
 	<!-- Execute any post-packaging custom tasks -->
@@ -23,6 +23,22 @@
 	
 	<call target="Create build properties file" />
 
+  </target>
+  
+  <target name="Tag Release2" verbose="true">
+  
+ 	<property name="TAG" value="${build.name}" />
+	<property name="tag.comment" value="Tagged build version with tag: ${TAG}" />
+	
+	<echo message="Tagging the current build with version: ${TAG}" /> 
+ 
+ 
+	<exec program="C:/Program Files (x86)/Git/bin/git.exe"
+		  workingdir='${ProjectBaseDir}'
+          commandline='tag -a ${TAG} -m "Tagged version of ${TAG}"'
+          failonerror="false"/>
+
+ 
   </target>
   
   <target name="Tag Release" verbose="true">
