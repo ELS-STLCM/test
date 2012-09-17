@@ -13,7 +13,7 @@
 		<call target="Pre-Package custom tasks" />
 	</if>
 	<echo message="Package 3" /> 
-<!--	<call target="Tag Release2" />  -->
+	<call target="Tag Release2" />  
 	<call target="Create Release" />
 	
 	<!-- Execute any post-packaging custom tasks -->
