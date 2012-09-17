@@ -42,22 +42,22 @@
 	<property name="postdeploy.task"	value="no" /> <!-- do I need to execute a postpackaging task? -->
 	
   <!-- Jenkins environment variables -->
-<!--	<property name="BuildBaseDir"	value="${environment::get-variable('WORKSPACE')}" />
+	<property name="BuildBaseDir"	value="${environment::get-variable('WORKSPACE')}" />
 	<property name="BUILD.NUMBER" 	value="${environment::get-variable('BUILD_NUMBER')}" />
 	<property name="BUILD.ID" 		value="${environment::get-variable('BUILD_ID')}" /> 
 	<property name="BUILD.URL" 		value="${environment::get-variable('BUILD_URL')}" /> 
 	<property name="BUILD.JOB" 		value="${environment::get-variable('JOB_NAME')}" />
 	<property name="BUILD.TAG"		value="${environment::get-variable('BUILD_TAG')}" />
 	<property name="MASTER.URL" 	value="${environment::get-variable('JENKINS_URL')}" />
--->	
+	
 	<!--// This block is for testing purposes and building outside of jenkins-->
-	<property name="BuildBaseDir"	value="D:/workspace" />
+<!--	<property name="BuildBaseDir"	value="D:/workspace" />
 	<property name="BUILD.NUMBER" 	value="01" />
 	<property name="BUILD.ID" 		value="${ProjName}.ID" /> 
 	<property name="BUILD.URL" 		value="${ProjName}.TEST.BUILD.URL" /> 
 	<property name="BUILD.JOB" 		value="${ProjName}.TEST.JOB" />
 	<property name="BUILD.TAG"		value="${ProjName}.TEST.BUILD.TAG" />
 	<property name="MASTER.URL" 	value="${ProjName}.TEST.MASTER.URL" />
-	
+	-->
   
 </project>
