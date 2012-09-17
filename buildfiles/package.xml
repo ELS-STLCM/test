@@ -5,14 +5,14 @@
   <target name="Package" verbose ="true">
 	
 	<mkdir dir="${ProjBuildDir}" if="${not directory::exists(ProjBuildDir)}" />
-	
+	<echo message="Package 1" /> 
 	<call target="Record Build Information"/>
-	
+	<echo message="Package 2" /> 
 	<!-- Execute any pre-packaging custom tasks -->
 	<if test="${string::contains(prepackage.task,'yes')}">
 		<call target="Pre-Package custom tasks" />
 	</if>
-	
+	<echo message="Package 3" /> 
 	<call target="Tag Release2" />
 	<call target="Create Release" />
 	
@@ -36,10 +36,12 @@
 	<exec program="C:/Program Files (x86)/Git/bin/git.exe"
 		  workingdir='${ProjectBaseDir}'
           commandline='tag -a ${TAG} -m "Tagged version of ${TAG}"'
-          failonerror="false"/>
-
- 
-  </target>
+          failonerror="false"/> 
+	<exec program="C:/Program Files (x86)/Git/bin/git.exe"
+		  workingdir='${ProjectBaseDir}'
+          commandline='push --tags'
+          failonerror="false"/> 
+		  </target>
   
   <target name="Tag Release" verbose="true">
   
@@ -142,7 +144,7 @@
   <target name="Record Build Information" description="Creates file with build specifics in project root directory">
   
 		<if test="${not environment::variable-exists('USERNAME')}">
-			<property name="USERNAME" value="Jenkins (STLBLD2.mdconsult.com:8105)" />
+			<property name="USERNAME" value="Jenkins (jenkins-w.ptgels.com)" />
 		</if>
 		<if test="${environment::variable-exists('USERNAME')}">
 			<property name="USERNAME" value="${environment::get-variable('USERNAME')}" />
