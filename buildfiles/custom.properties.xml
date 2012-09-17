@@ -36,7 +36,7 @@
 	<property name="precompile.task"	value="no" /> <!-- do I need to execute a prebuild task? -->
 	<property name="postcompile.task"	value="no" /> <!-- do I need to execute a postbuild task? -->
 	<property name="runtests.task"		value="no" /> <!-- do I need to execute a testing task? -->
-	<property name="prepackage.task"	value="yes" /> <!-- do I need to execute a prepackaging task? -->
+	<property name="prepackage.task"	value="no" /> <!-- do I need to execute a prepackaging task? -->  <!--Yes-->
 	<property name="postpackage.task"	value="no" /> <!-- do I need to execute a postpackaging task? -->
 	<property name="predeploy.task"		value="no" /> <!-- do I need to execute a prepackaging task? -->
 	<property name="postdeploy.task"	value="no" /> <!-- do I need to execute a postpackaging task? -->
