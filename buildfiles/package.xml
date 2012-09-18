@@ -37,6 +37,9 @@
 		  workingdir='${ProjectBaseDir}'
           commandline='tag -a ${TAG} -m "Tagged version of ${TAG}"'
           failonerror="false"/> 
+		  
+	<echo message="Tag made, now pushing tag" /> 
+	
 	<exec program="C:/Program Files (x86)/Git/bin/git.exe"
 		  workingdir='${ProjectBaseDir}'
           commandline='push --tags'
