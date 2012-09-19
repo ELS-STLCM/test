@@ -13,7 +13,8 @@
 		<call target="Pre-Package custom tasks" />
 	</if>
 	<echo message="Package 3" /> 
-	<call target="Tag Release2" />  
+	<call target="Tag Release Git" />
+<!--	<call target="Tag Release2" /> -->  
 	<call target="Create Release" />
 	
 	<!-- Execute any post-packaging custom tasks -->
@@ -25,7 +26,7 @@
 
   </target>
   
-  <target name="Tag Release2" verbose="true">
+  <target name="Tag Release Git" verbose="true">
   
  	<property name="TAG" value="${build.name}" />
 	<property name="tag.comment" value="Tagged build version with tag: ${TAG}" />

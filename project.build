@@ -20,7 +20,7 @@
 		<!-- compile tasks -->
 		
 		<echo message="Running Compile"/>
-<!--		<call target="Compile" />	-->
+		<call target="Compile" />	
 
 		<!-- testing tasks -->
 		<if test="${string::contains(runtests.task,'yes')}">
