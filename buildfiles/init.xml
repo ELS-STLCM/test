@@ -17,14 +17,11 @@
   
   <!-- begin framework targets -->
 	<target name="init">
-		<echo message="Start of init" />
+	
 		<echo message="ProjectBaseDir is: ${project::get-base-directory()}" />
 		<property name="ProjectBaseDir" value="${project::get-base-directory()}" />
 		
-		<echo message="Find SVN Revision, I need to change this badly" />
-		
-		<call target="find-gitbranch2" /> 
-		
+		<call target="find-gitbranch" /> 		
 <!--		<call target="find-svnrevision" />	-->
 		<call target="Validate Project" />
 		
@@ -36,16 +33,8 @@
 		
 	</target>
 	
+	<target name="find-gitbranch">
 	
-	
-	
-	
-	
-	
-	<!-- commandline='branch |gawk "/^\*/ {print $2}"' -->
-	<target name="find-gitbranch2">
-	
-		<!-- yields output of "no branch" -->
 		<exec program="C:/Program Files (x86)/Git/bin/git.exe"
 			  commandline='status | grep branch | gawk "{ print $4}"'
 			  output="${ProjectBaseDir}/branchTxt.txt"
@@ -63,39 +52,6 @@
 		
 		<property name="SVN.Branch" value="${file.contents}" />			  
 			  
-	</target>
-	<target name="find-gitbranch">
-	
-	<!--Get the information from .git/config -->
-
-		<echo message="Retrieving file contents"/>
-		<property name="file.contents" value="0" />
-		<loadfile file="${ProjectBaseDir}/.git/config" property="file.contents" />
-		<property name="file.contents" value="${string::trim(file.contents)}" />
-		<echo message="contents of file is  ${file.contents}"/>
-		<echo message="end contents"/>
-		<!-- I do not like using the any character instead of a quotation mark for this, but not sure how to it otherwise  -->
-		<regex pattern="(?'gitBranch'\w+)$" input="${file.contents}" />
-		<echo message="Branch is: ${gitBranch}"/>
-		
-		<property name="SVN.Branch" value="${gitBranch}" />	
-
-		<regex pattern=".*?c(?'gitBranch'[\-\w\.]+)e.*?$" input="${file.contents}" />
-		<echo message="Branch is: ${gitBranch}"/>
-		
-		<property name="SVN.Branch" value="${gitBranch}" />	
-
-		<regex pattern=".*?\[c(?'gitBranch'[\-\w\.]+)e\]$" input="${file.contents}" />
-		<echo message="Branch is: ${gitBranch}"/>
-		
-		<property name="SVN.Branch" value="${gitBranch}" />		
-		
-		<regex pattern=".*?\[branch .(?'gitBranch'[\-\w\.]+).\]$" input="${file.contents}" />
-		<echo message="Branch is: ${gitBranch}"/>
-		
-		<property name="SVN.Branch" value="${gitBranch}" />
-		
-
 	</target>
 	
 	<target name="find-svnrevision">
