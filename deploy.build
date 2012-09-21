@@ -166,6 +166,7 @@
 		tolist="${EMAILS.TO}" 
 		cclist="" 
 		bcclist="" 
+		verbose="true"
 		subject="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED" 
 		message="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED
 
