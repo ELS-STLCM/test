@@ -160,14 +160,14 @@
 	<target name="Fail Email">
 	<!-- This creates the failure email that gets sent out when the promotion fails in Nant -->
 	<!-- message can't follow normal indention convention because it will be indented in the email too.  -->
-	<echo message="Promote failed, emailing to: ${EMAILS.TO}" />
+	<echo message="Promote failed, emailing to: ${EMAILS.TO" />
 		<mail 
-		from="jenkins.ptgels.com" 
+		from="ELSSTLCM@Elsevier.com" 
 		tolist="${EMAILS.TO}" 
 		cclist="" 
 		bcclist="" 
 		subject="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED" 
-		mailhost="ELSSTL-APPSMTP.science.regn.net"
+		mailhost="localhost"
 		message="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED
 
 Please check Jenkins promtion log to see what happened."> 
