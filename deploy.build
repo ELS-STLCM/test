@@ -166,7 +166,7 @@
 		tolist="${EMAILS.TO}" 
 		cclist="" 
 		bcclist="" 
-		mailhost="jenkins.ptgels.com"
+		mailhost="jenkins-w.ptgels.com"
 		verbose="true"
 		subject="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED" 
 		message="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED
