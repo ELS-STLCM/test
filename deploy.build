@@ -167,7 +167,6 @@
 		cclist="" 
 		bcclist="" 
 		subject="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED" 
-		mailhost="jenkins.ptgels.com"
 		message="${JOB}.${BUILD.NUM} - Deploy to ${TO} FAILED
 
 Please check Jenkins promtion log to see what happened."> 
