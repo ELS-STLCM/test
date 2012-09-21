@@ -162,7 +162,7 @@
 	<!-- message can't follow normal indention convention because it will be indented in the email too.  -->
 	<echo message="Promote failed, emailing to: ${EMAILS.TO}" />
 		<mail 
-		from="localhost" 
+		from="jenkins.ptgels.com" 
 		tolist="${EMAILS.TO}" 
 		cclist="" 
 		bcclist="" 
