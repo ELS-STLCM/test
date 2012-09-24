@@ -1,16 +1,10 @@
 ﻿using System.Collections.Generic;
-using SimChartMedicalOffice.Core.Competency;
 using SimChartMedicalOffice.Core.QuestionBanks;
 
 namespace SimChartMedicalOffice.Core.Authoring
 {
     public class Authoring : DocumentEntity
     {
-        public Authoring()
-        {
-
-        }
-
         /// <summary>
         /// This property holds all the competencies applicable to Authoring module.
         /// </summary>

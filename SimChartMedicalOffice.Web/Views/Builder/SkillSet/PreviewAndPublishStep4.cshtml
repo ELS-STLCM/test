@@ -2,11 +2,11 @@
     Layout = null;
 }
 @{
-    bool isPublished = ViewBag.SkillSetStatus!=null?(bool)ViewBag.SkillSetStatus:false;
+    bool isPublished = ViewBag.SkillSetStatus!=null && (bool)ViewBag.SkillSetStatus;
 }
     <div class="clear clear-min-height-spacing">
         &nbsp;</div>
-<div id="skillSetPreviewContent" class="div-with-border grid_32 skill-set-preview-content vertical-content-scroll">
+<div id="skillSetPreviewContent" class="div-with-border grid_32 preview-publish-height vertical-content-scroll">
 <div class="grid_32 page-title">
     Step 4 of 4: Preview & Publish
 </div>
@@ -74,6 +74,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
+        setPreviewPublishHeight();
         var isPublished = @isPublished.ToString().ToLower();
         if (isPublished) {
             skillSet.commonFunctions.previewPublish.publishedSettings();

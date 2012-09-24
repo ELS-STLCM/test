@@ -1,48 +1,56 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.Core.AssignmentBuilder;
-using SimChartMedicalOffice.Data.Repository;
 using SimChartMedicalOffice.Core.DataInterfaces.AssignmentBuilder;
 using SimChartMedicalOffice.Core.DataInterfaces.Patient;
-using SimChartMedicalOffice.Core.Patient;
-using SimChartMedicalOffice.Core.DataInterfaces.SkillSetBuilder;
+using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Core.QuestionBanks;
+using SimChartMedicalOffice.Core;
+using SimChartMedicalOffice.Core.DropBox;
+using SimChartMedicalOffice.Common;
 
 namespace SimChartMedicalOffice.Data.AssignmentBuilder
 {
-    public class AssignmentDocument : KeyValueRepository<Core.AssignmentBuilder.Assignment>,IAssignmentDocument
-    {
-        public override string Url
-        {
-            get
-            {
-                return "SimApp/Courses/{0}/AssignmentRepository{1}/Assignments/{2}";
-            }
-        }
-
+    public class AssignmentDocument : KeyValueRepository<Assignment>,IAssignmentDocument
+    {       
         private readonly IPatientDocument _patientDocument;
-
+        /// <summary>
+        /// To get Assignment object
+        /// </summary>
+        /// <returns></returns>
+        public Folder GetAssignmentRepository()
+        {
+            string jsonString = GetJsonDocument(GetAssignmentUrl(DocumentPath.Module.Assignments));
+            Folder assignment = JsonSerializer.DeserializeObject<Folder>(jsonString);
+            return assignment;
+        }
         public AssignmentDocument(IPatientDocument patientDocument)
         {
-            this._patientDocument = patientDocument;
+            _patientDocument = patientDocument;
         }
 
-        public string FormAssignmentUrl(string courseId,string assignmentGuid)
+        public string FormAssignmentUrl(DropBoxLink dropBox,string assignmentGuid)
         {
-            return string.Format(Url, courseId,"", assignmentGuid);
+            if (dropBox == null)
+            {
+                dropBox = GetAdminDropBox();                
+            }
+            return string.Format(GetAssignmentUrl(dropBox, DocumentPath.Module.Assignments, AppConstants.Create), "", assignmentGuid);
         }
         
-        public IList<Assignment> GetAssignmentItems(string parentFolderIdentifier, int folderType, string courseId)
+        public IList<Assignment> GetAssignmentItems(string parentFolderIdentifier, int folderType, DropBoxLink dropBox)
         {
-            string jsonString = GetJsonDocument(((parentFolderIdentifier == "") ? string.Format(Url, courseId, "", "") : (parentFolderIdentifier + "/QuestionItems")));
-            Dictionary<string, Assignment> assignmentList;
-            assignmentList = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Assignment>>(jsonString) : new Dictionary<string, Assignment>();
+            if (dropBox == null)
+            {
+                dropBox = GetAdminDropBox();
+            }
+            string jsonString = GetJsonDocument(((parentFolderIdentifier == "") ? string.Format(GetAssignmentUrl(dropBox,DocumentPath.Module.Assignments,AppConstants.Create), "", "") : (parentFolderIdentifier + "/" + Respository.QuestionItems)));
+            Dictionary<string, Assignment> assignmentList = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Assignment>>(jsonString) : new Dictionary<string, Assignment>();
             foreach (var folderItem in assignmentList)
             {
-                folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
-                folderItem.Value.Url = string.Concat(string.Format(Url, courseId, "", ""), folderItem.Value.UniqueIdentifier);
+                folderItem.Value.UniqueIdentifier = folderItem.Key;
+                folderItem.Value.Url = string.Concat(string.Format(GetAssignmentUrl(dropBox,DocumentPath.Module.Assignments,AppConstants.Create), "", ""), folderItem.Value.UniqueIdentifier);
             }
             return ConvertDictionarytoObject(assignmentList);
         }
@@ -50,12 +58,11 @@ namespace SimChartMedicalOffice.Data.AssignmentBuilder
         public IList<Core.SkillSetBuilder.SkillSet> GetSkillSetsForAnAssignment(string assignmentUrl)
         {
             string jsonString = GetJsonDocument(assignmentUrl);
-            Dictionary<string, Core.SkillSetBuilder.SkillSet> skillSetList;
-            skillSetList = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Core.SkillSetBuilder.SkillSet>>(jsonString) : new Dictionary<string, Core.SkillSetBuilder.SkillSet>();
+            Dictionary<string, Core.SkillSetBuilder.SkillSet> skillSetList = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Core.SkillSetBuilder.SkillSet>>(jsonString) : new Dictionary<string, Core.SkillSetBuilder.SkillSet>();
             foreach (var folderItem in skillSetList)
             {
-                folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
-                folderItem.Value.Url = string.Concat(assignmentUrl, "/SkillSets/", folderItem.Value.UniqueIdentifier);
+                folderItem.Value.UniqueIdentifier = folderItem.Key;
+                folderItem.Value.Url = string.Concat(assignmentUrl, "/" + Respository.Skillsets +"/", folderItem.Value.UniqueIdentifier);
             }
             return ConvertDictionarytoObject(skillSetList);
         }

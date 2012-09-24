@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using SimChartMedicalOffice.MasterUpload.Forms;
 
@@ -17,7 +11,7 @@ namespace SimChartMedicalOffice.MasterUpload
             InitializeComponent();
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void MainFormLoad(object sender, EventArgs e)
         {
 
         }
@@ -25,9 +19,9 @@ namespace SimChartMedicalOffice.MasterUpload
         {
             simOfficeForm.ShowDialog();
         }
-        private void btnCompetency_Click(object sender, EventArgs e)
+        private void BtnCompetencyClick(object sender, EventArgs e)
         {
-            OpenDialogWindow((SimOfficeForm) new CompetencyForm());
+            OpenDialogWindow(new CompetencyForm());
         }
 
         

@@ -1,43 +1,41 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using SimChartMedicalOffice.Common;
 using SimChartMedicalOffice.Common.Utility;
-using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Core;
 using SimChartMedicalOffice.Core.DataInterfaces.Patient;
+using SimChartMedicalOffice.Core.DropBox;
 using SimChartMedicalOffice.Core.Patient;
-using System.Text;
-using System;
 using SimChartMedicalOffice.Core.QuestionBanks;
+using SimChartMedicalOffice.Data.Repository;
 
 namespace SimChartMedicalOffice.Data.Forms
 {
     public class PatientDocument : KeyValueRepository<Patient>, IPatientDocument
     {
-        public override string Url
-        {
-            get
-            {
-                return "SimApp/Courses/{0}/Patients/{1}";
-            }
-        }
+        
 
         public PatientDocument()
         {
-            this.LoadAllPatients();
+            LoadAllPatients();
         }
 
-        public static IList<Patient> allPatients = new List<Patient>();
+        public static IList<Patient> AllPatients = new List<Patient>();
 
-        public IList<Patient> 
-            GetPatientItems(string parentFolderIdentifier, int folderType, string courseId)
+        public IList<Patient>
+            GetPatientItems(string parentFolderIdentifier, int folderType, DropBoxLink dropBox)
         {
-            string jsonString = GetJsonDocument(((parentFolderIdentifier == "") ? string.Format(Url, courseId + "/PatientRepository", "", "") : (parentFolderIdentifier + "/Patients")));
-            Dictionary<string, Patient> patientsList;
-            patientsList = JsonSerializer.DeserializeObject<Dictionary<string, Patient>>(jsonString);
+            if (dropBox == null)
+            {
+                dropBox = GetAdminDropBox();
+            }
+            string jsonString = GetJsonDocument(((parentFolderIdentifier == "") ? string.Format(GetAssignmentUrl(dropBox, DocumentPath.Module.Patients, AppConstants.Create), "") : (parentFolderIdentifier + "/" + Respository.PatientsNode)));
+            Dictionary<string, Patient> patientsList = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Patient>>(jsonString) : new Dictionary<string, Patient>();
             foreach (var folderItem in patientsList)
             {
-                folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
-                folderItem.Value.Url = string.Concat(string.Format(Url, courseId + "/PatientRepository", ""), folderItem.Value.UniqueIdentifier);
+                folderItem.Value.UniqueIdentifier = folderItem.Key;
+                folderItem.Value.Url = string.Concat(string.Format(GetAssignmentUrl(dropBox, DocumentPath.Module.Patients, AppConstants.Create), ""), folderItem.Value.UniqueIdentifier);
             }
             return ConvertDictionarytoObject(patientsList);
         }
@@ -45,26 +43,27 @@ namespace SimChartMedicalOffice.Data.Forms
 
         //private static IList<Patient> patientRepositoryList = new List<Patient>();
 
-        public IList<Patient> GetPatientRepositoryList ()
+        public IList<Patient> GetPatientRepositoryList()
         {
-            return allPatients;
+            return AllPatients;
         }
- 
-        public IList<Patient> GetAllPatientForAssignment(string assignmentUniqueIdentifier)
+
+        public IList<Patient> GetAllPatientForAssignment(DropBoxLink assignmentCredentials)
         {
-            IList<Patient> patientListFromAssignmentRepo =GetAssignmentRepositoryPatients();
+            IList<Patient> patientListFromAssignmentRepo = GetAssignmentRepositoryPatients(assignmentCredentials);
             IList<Patient> patientListFromPatientRepo = GetPatientRepositoryList();
 
-            IList<Patient> totalPatientList = new List<Patient>();
+            IList<Patient> totalPatientList;
 
-            if (patientListFromAssignmentRepo != null && patientListFromAssignmentRepo.Count>0)
+            if (patientListFromAssignmentRepo != null && patientListFromAssignmentRepo.Count > 0)
             {
                 foreach (var patient in patientListFromAssignmentRepo)
                 {
-                    if (patient.ParentReferenceGuid != null && patient.ParentReferenceGuid != "")
+                    if (!string.IsNullOrEmpty(patient.ParentReferenceGuid))
                     {
+                        Patient patient1 = patient;
                         patientListFromPatientRepo =
-                            patientListFromPatientRepo.Where(x => (x.UniqueIdentifier != patient.ParentReferenceGuid.Split('/').Last())).ToList();
+                            patientListFromPatientRepo.Where(x => (x.UniqueIdentifier != patient1.ParentReferenceGuid.Split('/').Last())).ToList();
                     }
                 }
                 totalPatientList = patientListFromPatientRepo.Union(patientListFromAssignmentRepo).ToList();
@@ -74,15 +73,15 @@ namespace SimChartMedicalOffice.Data.Forms
                 totalPatientList = patientListFromPatientRepo;
             }
             return totalPatientList;
-        } 
+        }
 
-        public Patient GetPatientFromPatientRepository (string patientGUID)
+        public Patient GetPatientFromPatientRepository(string patientGuid)
         {
             Patient patientFromRepo = null;
             IList<Patient> patientRepoList = GetPatientRepositoryList();
             foreach (var patient in patientRepoList)
             {
-                if (patient.UniqueIdentifier == patientGUID)
+                if (patient.UniqueIdentifier == patientGuid)
                 {
                     patientFromRepo = patient;
                     break;
@@ -92,13 +91,13 @@ namespace SimChartMedicalOffice.Data.Forms
 
         }
 
-        public Patient GetPatientFromAssignmentRepository(string patientGUID)
+        public Patient GetPatientFromAssignmentRepository(string patientGuid, DropBoxLink assignmentCredentials)
         {
             Patient patientFromRepo = null;
-            IList<Patient> patientRepoList = GetAssignmentRepositoryPatients();
+            IList<Patient> patientRepoList = GetAssignmentRepositoryPatients(assignmentCredentials);
             foreach (var patient in patientRepoList)
             {
-                if (patient.UniqueIdentifier==patientGUID)
+                if (patient.UniqueIdentifier == patientGuid)
                 {
                     patientFromRepo = patient;
                     break;
@@ -108,11 +107,14 @@ namespace SimChartMedicalOffice.Data.Forms
 
         }
 
-        public string FormAndSetUrlForStudentPatient (string courseId, string userRole, string UID,string SID, string patientGuid)
+        public string FormAndSetUrlForStudentPatient(string courseId, string userRole, string uid, string sid, string patientGuid)
         {
-            if (userRole=="Student")
+            if (userRole.Equals(AppConstants.StudentRole))
             {
-                return string.Format(Url, courseId + "/" + userRole + "/" + UID + "/Assignments/" + SID, patientGuid);
+                DropBoxLink dropBox = new DropBoxLink {Cid = courseId, UserRole = userRole, Uid = uid, Sid = sid};
+                //return string.Format(Url, courseId + "/" + userRole + "/" + UID + "/Assignments/" + SID, patientGuid);
+                string url = GetAssignmentUrl(dropBox, DocumentPath.Module.Patients, AppConstants.Create);
+                return string.Format(url, patientGuid);
             }
             // if Admin or Instructor
             return "";
@@ -123,35 +125,23 @@ namespace SimChartMedicalOffice.Data.Forms
             return ((patientsListItems != null) ? (patientsListItems.Select(patientsListItem => patientsListItem.Value).ToList()) : new List<Patient>());
         }
 
-        public string FormAndSetUrlForPatient(string patientGuid, string courseId, string patientUrl, string folderIdentifier, bool isEditMode)
+        public string FormAndSetUrlForPatient(string patientGuid, DropBoxLink dropBox, string patientUrl, string folderIdentifier, bool isEditMode)
         {
-            try
+            if (dropBox == null)
             {
-                if (isEditMode)
-                {
-                    if (String.IsNullOrEmpty(patientUrl))
-                        return string.Format(Url, courseId + "/PatientRepository", patientGuid);
-                    else
-                    {
-                        return patientUrl;
-                    }
-                }
-                else
-                {
-                    if (String.IsNullOrEmpty(patientUrl))
-                        return string.Format(Url, courseId + "/PatientRepository", patientGuid);
-                    else
-                    {
-                        return string.Concat(patientUrl, '/', folderIdentifier, "/Patients/", patientGuid);
-                    }
-                }
-
+                dropBox = GetAdminDropBox();
             }
-            catch
+            if (isEditMode)
             {
-                //To-Do
+                if (String.IsNullOrEmpty(patientUrl))
+                    return string.Format(GetAssignmentUrl(dropBox, DocumentPath.Module.Patients, AppConstants.Create), patientGuid);
+                return patientUrl;
             }
-            return String.Empty;
+            if (String.IsNullOrEmpty(patientUrl))
+            {
+                return string.Format(GetAssignmentUrl(dropBox, DocumentPath.Module.Patients, AppConstants.Create), patientGuid);
+            }
+            return string.Concat(patientUrl, '/', folderIdentifier, "/" + Respository.PatientsNode + "/", patientGuid);
         }
 
         /// <summary>
@@ -159,8 +149,8 @@ namespace SimChartMedicalOffice.Data.Forms
         /// </summary>
         /// <returns></returns>
         public List<Patient> GetAllPatients(string course, string userRole)
-        {            
-            return allPatients.ToList();
+        {
+            return AllPatients.ToList();
         }
 
 
@@ -168,8 +158,8 @@ namespace SimChartMedicalOffice.Data.Forms
         public void LoadAllPatients()
         {
             ClearAllPatients();
-            Folder patientRepository = GetPatientRepository("", "");
-            allPatients = new List<Patient>();
+            Folder patientRepository = GetPatientRepository(AppConstants.AdminCourseId, AppConstants.AdminRole);
+            AllPatients = new List<Patient>();
             if (patientRepository != null)
             {
                 GetTotalPatientList(patientRepository);
@@ -179,13 +169,11 @@ namespace SimChartMedicalOffice.Data.Forms
         /// <summary>
         /// To clear the list of competencies 
         /// </summary>
-        /// <param name=""></param>
-        /// <returns></returns>
         private static void ClearAllPatients()
         {
-            if (allPatients != null && allPatients.Count > 0)
+            if (AllPatients != null && AllPatients.Count > 0)
             {
-                allPatients.Clear();
+                AllPatients.Clear();
             }
         }
 
@@ -196,8 +184,7 @@ namespace SimChartMedicalOffice.Data.Forms
         private void GetTotalPatientList(Folder parentFolder)
         {
             TraverseEachFolderForPatients(parentFolder.SubFolders);
-            CollectPatientsFromParentPatient(parentFolder.Patients, parentFolder);
-            return;
+            CollectPatientsFromParentPatient(parentFolder.Patients);
         }
 
         /// <summary>
@@ -209,15 +196,15 @@ namespace SimChartMedicalOffice.Data.Forms
             if (folderContent != null && folderContent.Count > 0)
             {
                 IList<Folder> folders = folderContent.Select(folder => folder.Value).ToList();
-                folders.ToList().ForEach(F => GetTotalPatientList(F));
+                folders.ToList().ForEach(f => GetTotalPatientList(f));
             }
         }
 
         /// <summary>
-        /// 
+        /// Get Patients
         /// </summary>
-        /// <param name="questions"></param>
-        private void CollectPatientsFromParentPatient(Dictionary<string, Patient> patients, Folder parentFolder)
+        /// <param name="patients"></param>
+        private void CollectPatientsFromParentPatient(Dictionary<string, Patient> patients)
         {
             if (patients != null && patients.Count > 0)
             {
@@ -228,7 +215,7 @@ namespace SimChartMedicalOffice.Data.Forms
                     patient.Value.UniqueIdentifier = patient.Key;
                     patientList.Add(patient.Value);
                 }
-                allPatients = allPatients.Concat(patientList).ToList();
+                AllPatients = AllPatients.Concat(patientList).ToList();
             }
         }
         /// <summary>
@@ -237,23 +224,25 @@ namespace SimChartMedicalOffice.Data.Forms
         /// <returns></returns>
         public Folder GetPatientRepository(string course, string userRole)
         {
-            string strUrlToGet = FormAndSetUrlForPatient("" , course +"/" + userRole,"","",false);
-            strUrlToGet = "SimApp/Courses/ELSEVIER_CID/Admin/PatientRepository"; // for Iteration 1 it will be hard coded.
+            // strUrlToGet = "SimApp/Courses/ELSEVIER_CID/Admin/PatientRepository"; // for Iteration 1 it will be hard coded.
+            DropBoxLink dropBoxObject = new DropBoxLink {Cid = course, UserRole = userRole};
+            string strUrlToGet = GetAssignmentUrl(dropBoxObject, DocumentPath.Module.Patients, AppConstants.Read);
             string jsonString = GetJsonDocument(strUrlToGet);
             Folder patientRepository = JsonSerializer.DeserializeObject<Folder>(jsonString);
             return patientRepository;
         }
-        
+
 
         /// <summary>
         /// To get all patient object from Assignment Repository
         /// to be used until Assignment Copy implemented
         /// </summary>
         /// <returns></returns>
-        public IList<Patient> GetAssignmentRepositoryPatients()
+        public IList<Patient> GetAssignmentRepositoryPatients(DropBoxLink dropBox)
         {
             IList<Patient> assigmentRepositoryPatientList = new List<Patient>();
-            string strUrlToGet = "SimApp/Courses/ELSEVIER_CID/Admin/AssignmentRepository/Assignments/143a6002-eef3-4ad8-adca-f5d272e164cc/Patients";// for Iteration 1 it will be hard coded.
+            DropBoxLink dropBoxObject = dropBox;
+            string strUrlToGet = GetAssignmentUrl(dropBoxObject, DocumentPath.Module.Patients, AppConstants.Read);
             string jsonString = GetJsonDocument(strUrlToGet);
             Dictionary<string, Patient> assignmentRepoPatientDict =
                 JsonSerializer.DeserializeObject<Dictionary<string, Patient>>(jsonString);

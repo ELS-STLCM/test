@@ -4,7 +4,7 @@
      Layout = "~/Views/Shared/_LayoutPartialForPrint.cshtml";
  }
  @{
-     ReferralForm referralFormObject = null;
+     ReferralForm referralFormObject;
      bool blankform = false;
      if (ViewBag.ReferralFormObj == null)
      {
@@ -202,7 +202,7 @@
                 else
                 {
                     <div class="grid_18 standard-text-print">
-                        @AppCommon.GetObjectPropertyVal(referralFormObject.IsDiabetic,blankform)    
+                        @AppCommon.GetObjectPropertyVal(referralFormObject.IsDiabetic,false)    
                     </div>
                 }
             </div>
@@ -333,7 +333,7 @@
                         Same as Referring Physician:
                     </div>
                     <div class="standard-text-print grid_18">
-                        @AppCommon.GetObjectPropertyVal(referralFormObject.IsSameReferringPhysician, blankform)
+                        @AppCommon.GetObjectPropertyVal(referralFormObject.IsSameReferringPhysician, false)
                     </div>
                 }
                     </div>

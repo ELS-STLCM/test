@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.Patient;
-using SimChartMedicalOffice.Core.FrontOffice.Appointments;
-
+﻿
 namespace SimChartMedicalOffice.Core.ProxyObjects
 {
     public class CalendarEventProxy : DocumentEntity
@@ -21,6 +16,9 @@ namespace SimChartMedicalOffice.Core.ProxyObjects
         public string tooltip { get; set; }
         public int Status { get; set; }
         public bool isRecurrence { get; set; }
-   
+        public string visittype { get; set; }
+        public string providername { get; set; }
+        public string timeinterval { get; set; }
+        public bool IsViewMode { get; set; } 
     }
 }

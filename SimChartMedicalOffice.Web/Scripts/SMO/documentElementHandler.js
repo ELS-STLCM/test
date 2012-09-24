@@ -94,7 +94,6 @@ function getControlValueByElementId(controlName, controlType) {
                 valueOfText = "";
             }
             return valueOfText;
-            break;
         case CHECKBOX_CONTROL:
             if ($("#" + controlName) != undefined && $("#" + controlName) != null) {
                 var checkList = [];

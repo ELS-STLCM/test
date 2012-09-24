@@ -14,7 +14,7 @@
         <div class="grid_5 align-div-inline" id="FilterByQuestionTypeForAdd" style="width: 160px">
         </div>
         <div class="grid_3">
-            And / Or
+            And/Or
         </div>
         <div class="grid_4">
             Competency:
@@ -79,7 +79,6 @@
 //            competencyStringListTemp.total = competencyStringListTemp.results.length;
             initializeFlexBoxForAdd('LinkedCompetencyForAdd', competencyListForAdd);
         }
-        else
             return null;
     }
 
@@ -226,7 +225,7 @@
                 questionList = result.questionList;
                 //renderSkillSetTree();
                 startAjaxLoader();
-                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function () {
+                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate_input").val(), function () {
                     closeAjaxLoader();
                 });
             }
@@ -239,7 +238,7 @@
             if (isCancel) {
                 closeDialog("AddQuestionBank");
                 startAjaxLoader();
-                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function () {
+                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate_input").val(), function () {
                     closeAjaxLoader();
                 });
             }

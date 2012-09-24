@@ -1,21 +1,19 @@
-﻿@using SimChartMedicalOffice.Common
-@{
+﻿@{
     Layout = null;
 }
-<div class="grid_32 standard-text" id="SkillsetHolder">
+<div class="grid_32 standard-text holder-height" id="SkillsetHolder">
     <div class="clear clear-min-height-spacing">
     </div>
-    <div class="grid_32 form-page-header div-with-bottom-border" style="width: 920px">
-       <div class="grid_5">Skill Set Builder</div>
+    <div id = "skillSetHeader" class="grid_32 form-page-header div-with-bottom-border" style="width: 920px">
+        <div class="grid_5">Skill Set Builder</div>
         <div class="grid_27"><img id="img_for_skillset" alt="x" src="" class="hide-content info-image"/></div>
     </div>
-    <div class="grid_5 align-div-inline">
+    <div class="grid_5 align-div-inline right-content-height">
         @Html.Partial("../../Views/Builder/SkillSet/ReturnToSkillSetBuilder")
     </div>
-    
-    <div class="align-div-inline remove-div-space" style="float: left; width: 770px">
-        <div id="skillSetContent">
-       </div> 
+    <div class="align-div-inline remove-div-space right-content-height" style="float: left; width: 770px">
+        <div class="right-content-height" id="skillSetContent">
+        </div> 
     </div>
 </div>
 <script type="text/javascript">
@@ -26,6 +24,8 @@
     });
     $(document).ready(function () {
         disableAButton("btnProceedSkillSet");
+        setContentHeightForAllBuilders();
+        setRightHolderHeight('skillSetHeader');
     });
     
 </script>

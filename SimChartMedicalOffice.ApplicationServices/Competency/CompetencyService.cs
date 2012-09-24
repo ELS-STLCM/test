@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
-using SimChartMedicalOffice.Core.DataInterfaces.Competency;
 using SimChartMedicalOffice.Core.Competency;
+using SimChartMedicalOffice.Core.DataInterfaces.Competency;
 using SimChartMedicalOffice.Core.ProxyObjects;
 using SimChartMedicalOffice.Core.QuestionBanks;
 using SimChartMedicalOffice.Core.SkillSetBuilder;
+using SimChartMedicalOffice.Core;
+using SimChartMedicalOffice.Common;
 
 
 namespace SimChartMedicalOffice.ApplicationServices.Competency
@@ -18,20 +19,19 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
 
         private readonly ICompetencySourceDocument _competecnySourceDocument;
         private readonly IApplicationModuleDocument _applicationModuleDocument;
-        public static Dictionary<string, string> competencyStringList { get; set; }
+        public static Dictionary<string, string> CompetencyStringList { get; set; }
 
         public CompetencyService(ICompetencyDocument competencyDocumentInstance, ICompetencySourceDocument competecnySourceDocument, IApplicationModuleDocument applicationModuleDocument)
         {
-            this._competencyDocument = competencyDocumentInstance;
-            this._applicationModuleDocument = applicationModuleDocument;
-            this._competecnySourceDocument = competecnySourceDocument;
+            _competencyDocument = competencyDocumentInstance;
+            _applicationModuleDocument = applicationModuleDocument;
+            _competecnySourceDocument = competecnySourceDocument;
         }
 
         /// <summary>
         /// To get list of dropdown values for Categories Dropdown.
         /// </summary>
-        /// <param ></param>
-        /// <returns>IList<string></returns>
+        /// <returns></returns>
         public IList<string> GetAllCategories()
         {
             return _competencyDocument.GetAllCategories();
@@ -42,45 +42,34 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         /// </summary>
         /// <param name="competencyDictionar">to save the competecny</param>
         /// <returns></returns>
-        public void SaveCompetencyList(Dictionary<string, Dictionary<string, SimChartMedicalOffice.Core.Competency.Competency>> competencyDictionar)
+        public void SaveCompetencyList(Dictionary<string, Dictionary<string, Core.Competency.Competency>> competencyDictionar)
         {
-            _competencyDocument.SaveOrUpdate(string.Format(_competencyDocument.Url, "",""), competencyDictionar);
+            _competencyDocument.SaveOrUpdate(string.Format(_competencyDocument.GetAssignmentUrl(DocumentPath.Module.Masters,AppConstants.Competencies), "",""), competencyDictionar);
         }
 
         /// <summary>
         /// To get list of Competency with category value as property.
         /// </summary>
-        /// <param name=""></param>
-        /// <returns>IList<Competency></returns>
+        /// <returns></returns>
         public IList<Core.Competency.Competency> GetAllCompetencies()
         {
-            IList<Core.Competency.Competency> competencyList = _competencyDocument.GetAllCompetencies();
-            if (competencyList != null && competencyList.Count > 0)
-            {
-                return competencyList;
-            }
-            else
-            {
-                return competencyList;
-                return competencyList.ToList();
-            }
+            //return competencyList;
+            return _competencyDocument.GetAllCompetencies();
         }
 
         /// <summary>
         /// To get list of dropdown values for Competeny Dropdown.
         /// </summary>
-        /// <param name="competencyList"></param>
         /// <returns></returns>
         public List<AutoCompleteProxy> GetAllCompetencyListForDropDown()
         {
-            List<AutoCompleteProxy> competencyStringList = new List<AutoCompleteProxy>();
             IList<Core.Competency.Competency> competencyList = GetAllCompetencies();
             if (competencyList != null)
             {
-                competencyList = (from competencyListTemp in competencyList where competencyListTemp.IsActive == true select competencyListTemp).ToList();
+                competencyList = (from competencyListTemp in competencyList where competencyListTemp.IsActive select competencyListTemp).ToList();
             }
-            competencyStringList = GetCompetenciesStringListInFormat(competencyList);
-            return competencyStringList;
+            List<AutoCompleteProxy> competencyListForDropDown = GetCompetenciesStringListInFormat(competencyList);
+            return competencyListForDropDown;
         }
 
         /// <summary>
@@ -91,18 +80,17 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         public List<AutoCompleteProxy> GetCompetenciesStringListInFormat(IList<Core.Competency.Competency> competencyList)
         {
             List<AutoCompleteProxy> competencyStringListTemp = new List<AutoCompleteProxy>();
-            string sourceListString = string.Empty;
-            string competencyListString = string.Empty;
             //Order by source Name in alphabetical order
             if (competencyList != null)
             {
                 foreach (Core.Competency.Competency competencyItem in competencyList)
                 {
                     AutoCompleteProxy autoComplete = new AutoCompleteProxy();
+                    string competencyListString;
                     if (competencyItem.Sources != null && competencyItem.Sources.Count > 0)
                     {
                         competencyItem.Sources = (from lstSource in competencyItem.Sources orderby lstSource.Name select lstSource).ToList();
-                        sourceListString = String.Join(", ", competencyItem.Sources.Select(s => s.Name + " " + s.Number));
+                        string sourceListString = String.Join(", ", competencyItem.Sources.Select(s => s.Name + " " + s.Number));
                         competencyListString = competencyItem.Name + ", " + sourceListString;
                     autoComplete.Sources = competencyItem.Sources.Select(s => s.Name).ToList();
                     }
@@ -115,7 +103,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
                     competencyStringListTemp.Add(autoComplete);
                 }
             }
-            competencyStringListTemp = competencyStringListTemp.OrderBy(F => F.name).ToList();
+            competencyStringListTemp = competencyStringListTemp.OrderBy(f => f.name).ToList();
             return competencyStringListTemp;
         }
 
@@ -127,21 +115,19 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         public List<AutoCompleteProxy> GetFilteredCompetenciesBasedOnString(string strFilterText)
         {
             List<Core.Competency.Competency> comList = new List<Core.Competency.Competency>();//assign the static list of competency
-            List<AutoCompleteProxy> competencyStringListTemp = new List<AutoCompleteProxy>();
             List<Core.Competency.Competency> lstTempCom = (from lst in comList
                                                            where lst.Name.Contains(strFilterText)
                                                            && (lst.Sources == null || (lst.Sources != null && (lst.Sources.Exists(s => s.Name.Contains(strFilterText))
                                                            || lst.Sources.Exists(s => s.Number.Contains(strFilterText)))))
                                                            select lst).ToList();
-            competencyStringListTemp = GetCompetenciesStringListInFormat(lstTempCom);
+            List<AutoCompleteProxy> competencyStringListTemp = GetCompetenciesStringListInFormat(lstTempCom);
             return competencyStringListTemp;
         }
 
         /// <summary>
         /// To get list of All Competecny Sources
         /// </summary>
-        /// <param name=></param>
-        /// <returns>IList<CompetencySources></returns>
+        /// <returns></returns>
         public IList<CompetencySources> GetAllCompetecnySources()
         {
             return _competecnySourceDocument.GetAllCompetecnySources();
@@ -150,8 +136,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         /// <summary>
         /// To get list of Application Modules
         /// </summary>
-        /// <param name=></param>
-        /// <returns>IList<ApplicationModules></returns>
+        /// <returns></returns>
         public IList<ApplicationModules> GetAllApplicationModules()
         {
             return _applicationModuleDocument.GetAllApplicationModules();
@@ -159,14 +144,13 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         /// <summary>
         /// To save Competency.
         /// </summary>
-        /// <param name="">to save the competecny</param>
-        /// <param name="competencyUIObject"></param>
+        /// <param name="competencyUiObject"></param>
         /// <param name="competencyUrl"></param>
         /// <param name="isEditMode"></param>
-        /// <returns>bool</returns>
-        public bool SaveCompetency(Core.Competency.Competency competencyUIObject, string competencyUrl, bool isEditMode)
+        /// <returns></returns>
+        public bool SaveCompetency(Core.Competency.Competency competencyUiObject, string competencyUrl, bool isEditMode)
         {
-            _competencyDocument.SaveOrUpdate(_competencyDocument.FormCompetencyUrl(competencyUrl, isEditMode, competencyUIObject), competencyUIObject);
+            _competencyDocument.SaveOrUpdate(_competencyDocument.FormCompetencyUrl(competencyUrl, isEditMode, competencyUiObject), competencyUiObject);
             _competencyDocument.LoadCompetencies();
             return true;
         }
@@ -174,14 +158,13 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         /// <summary>
         /// To save Competency Source.
         /// </summary>
-        /// <param name="">to save the competency Sources</param>
-        /// <param name="competencySourcesUIObject"></param>
+        /// <param name="competencySourcesUiObject"></param>
         /// <param name="competencySourcesUrl"></param>
         /// <param name="isEditMode"></param>
-        /// <returns>bool</returns>
-        public bool SaveCompetencySource(CompetencySources competencySourcesUIObject, string competencySourcesUrl, bool isEditMode)
+        /// <returns></returns>
+        public bool SaveCompetencySource(CompetencySources competencySourcesUiObject, string competencySourcesUrl, bool isEditMode)
         {
-            _competecnySourceDocument.SaveOrUpdate(_competecnySourceDocument.FormCompetencySourceUrl(competencySourcesUrl, isEditMode, competencySourcesUIObject), competencySourcesUIObject);
+            _competecnySourceDocument.SaveOrUpdate(_competecnySourceDocument.FormCompetencySourceUrl(competencySourcesUrl, isEditMode, competencySourcesUiObject), competencySourcesUiObject);
             _competecnySourceDocument.LoadCompetecnySource();            
             return true;
         }
@@ -189,33 +172,33 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         /// <summary>
         /// To save ApplicationModules.
         /// </summary>
-        /// <param name="">to save the ApplicationModules</param>
-        /// <param name="applicationModuleUIObject"></param>
+        /// <param name="applicationModuleUiObject"></param>
         /// <param name="applicationModuleUrl"></param>
         /// <param name="isEditMode"></param>
-        /// <returns>bool</returns>
-        public bool SaveApplicationModule(ApplicationModules applicationModuleUIObject, string applicationModuleUrl, bool isEditMode)
+        /// <returns></returns>
+        public bool SaveApplicationModule(ApplicationModules applicationModuleUiObject, string applicationModuleUrl, bool isEditMode)
         {
-            _applicationModuleDocument.SaveOrUpdate(_applicationModuleDocument.FormApplicationModulesUrl(applicationModuleUrl, isEditMode, applicationModuleUIObject), applicationModuleUIObject);
+            _applicationModuleDocument.SaveOrUpdate(_applicationModuleDocument.FormApplicationModulesUrl(applicationModuleUrl, isEditMode, applicationModuleUiObject), applicationModuleUiObject);
             return true;
         }
 
         /// <summary>
         /// To delete competency.
         /// </summary>
-        /// <param name="">To delete competency</param>
-        /// <param name="Competency"></param>
-        /// <returns>bool</returns>
+        /// <param name="deleteCompetency"></param>
+        /// <returns></returns>
         public bool DeleteCompetency(Core.Competency.Competency deleteCompetency)
         {
             string competencyUrl = (deleteCompetency.Url != "") ? deleteCompetency.Url : "";
             _competencyDocument.SaveOrUpdate(_competencyDocument.FormCompetencyUrl(competencyUrl, true, deleteCompetency), deleteCompetency);
             return true;
         }
+
         /// <summary>
         /// Get LinkedCompetency Text for a competency guid
         /// </summary>
         /// <param name="guidOfLinkedCompetency"></param>
+        /// <param name="documentProxy"> </param>
         /// <returns></returns>
         public void SetLinkedCompetencyTextForAQuestions(string guidOfLinkedCompetency,DocumentProxy documentProxy)
         {
@@ -230,21 +213,22 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         }
         public void SetLinkedCompetencyForAGuid(string linkedCompetencyRef)
         {
-            linkedCompetencyRef = GetLinkedCompetencyForAGuid(linkedCompetencyRef);
+             GetLinkedCompetencyForAGuid(linkedCompetencyRef);
         }
 
         public string GetLinkedCompetencyNameForAGuid(string linkedCompetencyRef)
         {
            return GetLinkedCompetencyForAGuid(linkedCompetencyRef);
         }
+
         /// <summary>
         /// Get LinkedCompetency Text for a competency guid
         /// </summary>
         /// <param name="guidOfLinkedCompetency"></param>
+        /// <param name="documentProxy"> </param>
         /// <returns></returns>
         public void SetLinkedCompetencyTextForAQuestions(IList<string> guidOfLinkedCompetency, SkillSetProxy documentProxy)
         {
-            List<AutoCompleteProxy> lstOfAutoComplete = GetAllCompetencyListForDropDown();
             documentProxy.LinkedCompetencies.ToList().ForEach(c => SetLinkedCompetencyForAGuid(c));
         }
 
@@ -289,15 +273,14 @@ namespace SimChartMedicalOffice.ApplicationServices.Competency
         /// <summary>
         /// To Get Comptency from comptency List .
         /// </summary>
-        /// <param name="uniqueIdentifier"></param>
         /// <returns>Core.Competency.Competency</returns>
-        public Core.Competency.Competency GetCompetency(string competencyGUID)
+        public Core.Competency.Competency GetCompetency(string competencyGuid)
         {
             Core.Competency.Competency competency = new Core.Competency.Competency();
             IList<Core.Competency.Competency> competencyList  = _competencyDocument.GetAllCompetencies();
-            if (competencyGUID != null)
+            if (competencyGuid != null)
             {
-                 competency = (from com in competencyList where com.UniqueIdentifier.Equals(competencyGUID.ToString()) select com).SingleOrDefault();
+                 competency = (from com in competencyList where com.UniqueIdentifier.Equals(competencyGuid) select com).SingleOrDefault();
             }
             return competency;
         }

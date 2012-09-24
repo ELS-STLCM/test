@@ -59,11 +59,11 @@
         doAjaxCall("POST", "", urlAction, OnSuccessDeleteQuestion);
     }
 
-    function OnSuccessDeleteQuestion(result) {
+    function OnSuccessDeleteQuestion() {
         jAlert("Deleted", "Alert", function (isOk) {
             if (isOk) {
                 startAjaxLoader();
-                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val());
+                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate_input").val());
                 closeAjaxLoader();
             }
         });
@@ -79,6 +79,7 @@
         }
         if (questionBank.commonFunctions.checkIfCorrectAnswer("QuestionToQuestionBankNew") && isNewQuestionChecked) {
             isNewQuestion = true;
+            isNewQuestionRequired = true;
         }
         if (questionBank.commonFunctions.checkIfCorrectAnswer("QuestionToQuestionBankExisting") && isNewQuestionChecked) {
             isExistingQuestion = true;
@@ -97,17 +98,23 @@
     }
     function saveSkillSetQuestionSuccess(result) {
         if (result.isQuestionNameAlreadyExists) {
-            jAlert(QUESTION_NAME_EXISTS, "Alert", function (isOk) {
+            jAlert(QUESTION_NAME_EXISTS, "Alert", function () {
                 return false;
             });
         }
         else {
-            jAlert(SAVED_MESSAGE, "Alert", function(isOk) {
+            var alertMessageToBeDisplayed = SAVED_MESSAGE;
+            if (result.isQuestionSavedToQuestionBank != null) {
+                if (result.isQuestionSavedToQuestionBank) {
+                    alertMessageToBeDisplayed = QUESTION_SAVED_MASTER;
+                }
+            }
+            jAlert(alertMessageToBeDisplayed, "Alert", function (isOk) {
                 if (isOk) {
                     if (result.questionResult != null) {
                         startAjaxLoader();
                         isContentChanged = false;
-                        $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function() {
+                        $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate_input").val(), function () {
                             closeAjaxLoader();
                         });
                         questionCount = {
@@ -133,7 +140,7 @@
         jConfirm(status, 'Cancel', function (isCancel) {
             if (isCancel) {
                 startAjaxLoader();
-                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function () {
+                $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate_input").val(), function () {
                     closeAjaxLoader();
                 });
             }

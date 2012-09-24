@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SimChartMedicalOffice.Core
 {
@@ -12,7 +9,7 @@ namespace SimChartMedicalOffice.Core
         public string Url { get; set; }
         public void SetGuidValue()
         {
-            this._guidValue = Guid.NewGuid().ToString();
+            _guidValue = Guid.NewGuid().ToString();
         }
         public string GetNewGuidValue()
         {

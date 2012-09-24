@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using SimChartMedicalOffice.Core.ProxyObjects;
 
 namespace SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface
@@ -18,5 +15,6 @@ namespace SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface
         List<AutoCompleteProxy> GetExamRoomViewResourceList();
         List<string> GetOtherType();
         Dictionary<int, string> GetPatientProviderValuesBlock();
+        string GetProviderName(IList<int> providerIds, string seperatorForNames);
     }
 }

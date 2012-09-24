@@ -270,10 +270,6 @@ textarea
 {
     width: 97%;
 }
-.main-content-holder
-{
-    height: 542px;
-}
 .link
 {
     color: blue;
@@ -333,19 +329,23 @@ textarea
     float: left;
     font-size: 9px;
 }
+.underlineText 
+{
+    color: #d9d9d9;
+    text-decoration-line: underline;
+    text-underline-color: #d9d9d9;    
+}
 /**********Start*********navigational panels************************/
 .info-panel
 {
     padding-top: 0px;
     margin-left: 0px;
-    height: 370px;
     background-color: rgb(238, 238, 238);
 }
 .info-panel-competency
 {
     padding-top: 0px;
     margin-left: 0px;
-    height: 410px;
     background-color: rgb(238, 238, 238);
 }
 .align-competency
@@ -571,7 +571,7 @@ textarea
 }
 .form-patient-records-content
 {
-    height: 297px;
+    height: 200px;
     width: 98%;
 }
 .form-authorization-height
@@ -609,7 +609,6 @@ textarea
 .forms-pdf-content
 {
     width: 687px;
-    height: 308px;
 }
 /**********************************End*********Forms Repository********************************************/
 /**********************Start****************Question Bank Builder*********************************************/
@@ -884,8 +883,7 @@ th, td
 }
 thead th
 {
-    border-bottom: 2px solid #888;
-    background-image: url("../../../Content/Images/1px_tile_header_table.jpg");
+    border-bottom: 2px solid #888;    
     padding: .4em 1em .2em;
 }
 thead th.table-head
@@ -1081,7 +1079,6 @@ thead th.sorting_desc
 }
 .assignment-preview-content
 {
-    height: 335px;
     width: 98%;
 }
 .assignment-accordion
@@ -1107,7 +1104,6 @@ thead th.sorting_desc
 }
 .skill-set-preview-content
 {
-    height: 335px;
     width: 98%;
 }
 .skill-set-accordion
@@ -1171,8 +1167,7 @@ thead th.sorting_desc
 .vertical-text
     {
     color:#333;
-	border:0px solid red;
-	writing-mode:tb-rl;
+	border:0px solid red;	
 	-webkit-transform:rotate(270deg);
 	-moz-transform:rotate(270deg);
 	-o-transform: rotate(270deg);
@@ -1315,3 +1310,41 @@ position: relative;
     background-color: gainsboro;
 }
 
+
+
+/* Medical Records Release styles */
+.medical-fontweight
+{
+   
+    font-weight: bold;
+    
+}
+.medical-fontstyle
+{
+    
+   font-style:italic;
+    
+}
+.multimedia-title
+{
+    padding:5px;
+}
+
+.text-line-height
+{
+    height:5px;
+}
+/* End */
+/******************** Dynamic UI Changes *******************/
+.holder-height,.right-content-height,.right-inner-content-height,.search-result-height,
+.assignment-accordion-header,.assignment-accordion-close,.assignment-accordion-inner-header,
+.assignment-step4-header,.step4-height,.preview-publish-height,.step3-inner-height-without-validation,
+.dynamicHeight,.grid-height,.grid-inner-height,.patient-holder-height,
+.patient-content-height,.patient-search-result-height,.question-inner-content-height,
+.file-upload-popup,.validation-summary,.file-upload-input,.list-items,.competency-holder-height,
+.forms-content-height,.forms-inner-content-height,.clearWithHeight,.PatientRecord-inner-content-height,
+.calendarView,.assignment-accordion-open,.appointment,.examView,.isContentchanged,.skill-set-accordion-header,.link-button,
+.forms-container-height,.patient-list-height,.text-line-height,.medical-form-inner-content-height
+{    
+}
+/************************** End  ***********************************/

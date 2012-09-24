@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder;
+using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
+using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Extensions;
+using SimChartMedicalOffice.Core;
 using SimChartMedicalOffice.Core.DataInterfaces;
 using SimChartMedicalOffice.Core.DataInterfaces.QuestionBanks;
 using SimChartMedicalOffice.Core.ProxyObjects;
 using SimChartMedicalOffice.Core.QuestionBanks;
-using SimChartMedicalOffice.Core;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Common.Utility;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
-using SimChartMedicalOffice.Common.Extensions;
+using SimChartMedicalOffice.Core.DropBox;
+using SimChartMedicalOffice.Data;
 
 namespace SimChartMedicalOffice.ApplicationServices.Builder
 {
@@ -30,41 +30,50 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <param name="attachmentDocument"></param>
         /// <param name="folderDocumentInstance"></param>
         /// <param name="questionBankDocumentInstance"></param>
+        /// <param name="competencyService"> </param>
         public QuestionBankService(IQuestionDocument questionDocument, IAttachmentDocument attachmentDocument, IFolderDocument folderDocumentInstance, IQuestionBankDocument questionBankDocumentInstance, ICompetencyService competencyService)
         {
-            this._questionDocument = questionDocument;
-            this._attachmentDocument = attachmentDocument;
-            this._folderDocument = folderDocumentInstance;
-            this._questionBankDocument = questionBankDocumentInstance;
-            this._competencyService = competencyService;
+            _questionDocument = questionDocument;
+            _attachmentDocument = attachmentDocument;
+            _folderDocument = folderDocumentInstance;
+            _questionBankDocument = questionBankDocumentInstance;
+            _competencyService = competencyService;
+
+        }
+        public string CloneAttachmentToPersistent(string attachmentGuid)
+        {
+            string attachementPersistent = String.Empty;
+            if (!String.IsNullOrEmpty(attachmentGuid))
+            {
+                Attachment attachment = _attachmentDocument.Get(attachmentGuid);
+                if (attachment != null)
+                {
+                    attachementPersistent = _attachmentDocument.SaveOrUpdate(_attachmentDocument.GetAssignmentUrl(DocumentPath.Module.Attachments), attachment);
+                }
+            }
+            return attachementPersistent;
         }
 
         /// <summary>
         /// method to save a question
         /// </summary>
-        /// <param name="questionObjectFromUI"></param>
-        /// <param name="courseId"></param>
+        /// <param name="questionObjectFromUi"> </param>
+        /// <param name="dropBox"> </param>
         /// <param name="questionUrl"></param>
         /// <param name="folderIdentifier"></param>
         /// <param name="isEditMode"></param>
+        /// <param name="isImageMovedToPersistent"> </param>
         /// <returns></returns>
-        public bool SaveQuestion(Question questionObjectFromUi, string courseId, string questionUrl, string folderIdentifier, bool isEditMode)
+        public bool SaveQuestion(Question questionObjectFromUi, DropBoxLink dropBox, string questionUrl, string folderIdentifier, bool isEditMode, bool isImageMovedToPersistent)
         {
-            try
+            Question questionObject = questionObjectFromUi;
+            //A) Set Guid referncce and Correct Url
+            string strUrlToSave = FormAndSetUrlForQuestion(questionObject, dropBox, questionUrl, isEditMode, folderIdentifier);
+            if (!isImageMovedToPersistent)
             {
-                IList<AnswerOption> answerOptionList = new List<AnswerOption>();
-                Question questionObject = new Question();
-                IList<string> answerKeys = new List<string>();
-                questionObject = questionObjectFromUi;
-                //A) Set Guid referncce and Correct Url
-                string strUrlToSave = FormAndSetUrlForQuestion(questionObject, courseId, questionUrl, isEditMode, folderIdentifier);
                 SavePersistentImage(isEditMode, questionObject, strUrlToSave);
-                _questionDocument.SaveOrUpdate(strUrlToSave, questionObject);
             }
-            catch
-            {
-                //To-Do
-            }
+            _questionDocument.SaveOrUpdate(strUrlToSave, questionObject);
             return true;
         }
 
@@ -76,14 +85,12 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <param name="questionUrlReference"></param>
         private void SavePersistentImage(bool isEditMode, Question questionEntity, string questionUrlReference)
         {
-            string transientImage = String.Empty;
-            string persistentImage = String.Empty;
-            string imgUrl;
             if (!isEditMode)
             {
-                transientImage = questionEntity.QuestionImageReference;
+                string transientImage = questionEntity.QuestionImageReference;
                 if (!String.IsNullOrEmpty(transientImage))
                 {
+                    string persistentImage;
                     MoveTransientToPersistentAttachment(transientImage, out persistentImage);
                     questionEntity.QuestionImageReference = persistentImage;
                 }
@@ -93,7 +100,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                     {
                         if (!String.IsNullOrEmpty(item.AnswerImageReference))
                         {
-                            string imgAnswerPersistentImage = string.Empty;
+                            string imgAnswerPersistentImage;
                             MoveTransientToPersistentAttachment(item.AnswerImageReference, out imgAnswerPersistentImage);
                             item.AnswerImageReference = imgAnswerPersistentImage;
                         }
@@ -105,7 +112,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                 Question qnFromDb = GetQuestion(questionUrlReference);
                 if (qnFromDb != null)
                 {
-                    imgUrl = checkIfTransientImageExistsAndCreatePersistent(qnFromDb, questionEntity);
+                    string imgUrl = CheckIfTransientImageExistsAndCreatePersistent(qnFromDb, questionEntity);
                     questionEntity.QuestionImageReference = imgUrl;
                     SavePersistentImageForAnswers(qnFromDb, questionEntity);
                 }
@@ -118,7 +125,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <param name="questionEntity"></param>
         private void SavePersistentImageForAnswers(Question qnFromDb, Question questionEntity)
         {
-            string imgReference = String.Empty;
+            string imgReference;
 
             if (questionEntity.AnswerOptions != null && questionEntity.AnswerOptions.Count > 0)
             {
@@ -129,7 +136,6 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                         CheckAndMoveTransientImages(AppEnum.AttachmentActions.CreatePersistent, string.Empty, item.AnswerImageReference, out imgReference);
                         item.AnswerImageReference = imgReference;
                     }
-
                 }
             }
             if (qnFromDb.AnswerOptions != null && qnFromDb.AnswerOptions.Count > 0)
@@ -140,7 +146,10 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                     {
                         CheckAndMoveTransientImages(AppEnum.AttachmentActions.RemovePersistent, item.AnswerImageReference, string.Empty, out imgReference);
                     }
-
+                    else
+                    {
+                        item.AnswerImageReference = String.Empty;
+                    }
                 }
             }
         }
@@ -156,16 +165,13 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
             {
                 return AppEnum.AttachmentFlagsForStatus.NotExistsInUiAndDb;
             }
-            else if (isImageExistsInUi && isImageExistsInDb)
+            if (isImageExistsInUi && isImageExistsInDb)
             {
                 return AppEnum.AttachmentFlagsForStatus.ExistsInUiAndDb;
             }
-            else
+            if (isImageExistsInDb & !isImageExistsInUi)
             {
-                if (isImageExistsInDb & !isImageExistsInUi)
-                {
-                    return AppEnum.AttachmentFlagsForStatus.ExistsInDbNotInUI;
-                }
+                return AppEnum.AttachmentFlagsForStatus.ExistsInDbNotInUi;
             }
             return AppEnum.AttachmentFlagsForStatus.ExistsInUiNotInDb;
         }
@@ -180,7 +186,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         {
             switch (statusOfAttachment)
             {
-                case AppEnum.AttachmentFlagsForStatus.ExistsInDbNotInUI:
+                case AppEnum.AttachmentFlagsForStatus.ExistsInDbNotInUi:
                     return AppEnum.AttachmentActions.RemovePersistent;
                 case AppEnum.AttachmentFlagsForStatus.ExistsInUiNotInDb:
                     return AppEnum.AttachmentActions.CreatePersistent;
@@ -192,10 +198,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                         {
                             return AppEnum.AttachmentActions.None;
                         }
-                        else
-                        {
-                            return AppEnum.AttachmentActions.RemoveTransientPersistentAndCreatePersistent;
-                        }
+                        return AppEnum.AttachmentActions.RemoveTransientPersistentAndCreatePersistent;
                     }
             }
             return AppEnum.AttachmentActions.None;
@@ -207,13 +210,13 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <param name="questionFromDb"></param>
         /// <param name="questionFromUi"></param>
         /// <returns></returns>
-        private string checkIfTransientImageExistsAndCreatePersistent(Question questionFromDb, Question questionFromUi)
+        private string CheckIfTransientImageExistsAndCreatePersistent(Question questionFromDb, Question questionFromUi)
         {
             string persistentImage = questionFromDb.QuestionImageReference;
             string transientImage = questionFromUi.QuestionImageReference;
-            string imgUrl = string.Empty;
-            bool isImageExistsInDb = String.IsNullOrEmpty(questionFromDb.QuestionImageReference) ? false : true;
-            bool isImageExistsInUi = String.IsNullOrEmpty(questionFromUi.QuestionImageReference) ? false : true;
+            string imgUrl;
+            bool isImageExistsInDb = !String.IsNullOrEmpty(questionFromDb.QuestionImageReference);
+            bool isImageExistsInUi = !String.IsNullOrEmpty(questionFromUi.QuestionImageReference);
             AppEnum.AttachmentFlagsForStatus statusOfAttachment = GetAttachmentStatus(isImageExistsInDb, isImageExistsInUi);
             AppEnum.AttachmentActions attachmentActions = GetActionToPerformForAttachment(statusOfAttachment, persistentImage, transientImage);
             CheckAndMoveTransientImages(attachmentActions, persistentImage, transientImage, out imgUrl);
@@ -228,8 +231,15 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         public void MoveTransientToPersistentAttachment(string transientImage, out string persistentImageTemp)
         {
             Attachment transientAttachment = GetAttachment(transientImage);
-            SaveAttachment(String.Empty, transientAttachment, false, out persistentImageTemp);
-            RemoveAttachment(transientImage);
+            if (transientAttachment != null)
+            {
+                SaveAttachment(String.Empty, transientAttachment, false, out persistentImageTemp);
+                RemoveAttachment(transientImage);
+            }
+            else
+            {
+                persistentImageTemp = String.Empty;
+            }
         }
         /// <summary>
         /// To move transient images from Attachment/Transient to Attachment/Persistent
@@ -261,8 +271,6 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                 case AppEnum.AttachmentActions.None:
                     imgReference = persistentImage;
                     return;
-                default:
-                    break;
             }
             imgReference = persistentImageTemp;
         }
@@ -270,35 +278,23 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <summary>
         /// to set and get dynamic url for questions
         /// </summary>
-        /// <param name="questionObjFromUI"></param>
-        /// <param name="courseId"></param>
+        /// <param name="questionObjFromUi"></param>
+        /// <param name="dropBox"> </param>
         /// <param name="questionUrl"></param>
         /// <param name="isEditMode"></param>
         /// <param name="folderIdentifier"></param>
         /// <returns></returns>
-        private string FormAndSetUrlForQuestion(Question questionObjFromUI, string courseId, string questionUrl, bool isEditMode, string folderIdentifier)
+        private string FormAndSetUrlForQuestion(Question questionObjFromUi, DropBoxLink dropBox, string questionUrl, bool isEditMode, string folderIdentifier)
         {
-            try
+            if (isEditMode)
             {
-                if (isEditMode)
-                {
-                    return questionUrl;
-                }
-                else
-                {
-                    if (String.IsNullOrEmpty(questionUrl))
-                    {
-                        return string.Format(_questionDocument.Url, courseId, questionUrl, questionObjFromUI.GetNewGuidValue());
-                    }
-                    return string.Concat(questionUrl, '/', folderIdentifier, "/QuestionItems/", questionObjFromUI.GetNewGuidValue());
-                }
+                return questionUrl;
             }
-            catch
+            if (String.IsNullOrEmpty(questionUrl))
             {
-                //To-Do
+                return string.Format(_questionDocument.GetAssignmentUrl(dropBox,DocumentPath.Module.QuestionBank,AppConstants.Create),  questionUrl, questionObjFromUi.GetNewGuidValue());
             }
-            return String.Empty;
-
+            return string.Concat(questionUrl, '/', folderIdentifier, "/" + Respository.QuestionItems + "/", questionObjFromUi.GetNewGuidValue());
         }
 
         /// <summary>
@@ -310,42 +306,28 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         {
             return _questionDocument.Get(strGuidURlOfQuestion);
         }
+
+        //public Question GetQuestionWithGuid(string strGuid)
+        //{
+        //    string _questionDocumentUrl = "";
+        //    _questionDocumentUrl = string.Format(_questionDocument.GetAssignmentUrl(), strGuid);
+        //    return _questionDocument.Get(_questionDocumentUrl);
+        //}
         /// <summary>
         /// to get question with guid
         /// </summary>
-        /// <param name="strGuid"></param>
         /// <returns></returns>
-        public Question GetQuestionWithGuid(string strGuid)
-        {
-            string _questionDocumentUrl = "";
-            try
-            {
-                _questionDocumentUrl = string.Format(_questionDocument.Url, strGuid);
-            }
-            catch
-            {
-                //To-Do
-            }
-            return _questionDocument.Get(_questionDocumentUrl);
-        }
-
         /// <summary>
         /// to save the image 
         /// </summary>
         /// <param name="attachmentGuid"></param>
         /// <param name="attachmentObject"></param>
+        /// <param name="isTransient"> </param>
         /// <param name="attachmentUrl"></param>
         /// <returns></returns>
         public bool SaveAttachment(string attachmentGuid, Attachment attachmentObject, bool isTransient, out string attachmentUrl)
         {
-            if (isTransient)
-            {
-                attachmentUrl = _attachmentDocument.GetAttachementTransientUrl();
-            }
-            else
-            {
-                attachmentUrl = _attachmentDocument.Url;
-            }
+            attachmentUrl = isTransient ? _attachmentDocument.GetAssignmentUrl(DocumentPath.Module.Attachments,AppConstants.TransientAttachment) : _attachmentDocument.GetAssignmentUrl(DocumentPath.Module.Attachments);
             attachmentUrl = _attachmentDocument.SaveOrUpdate(attachmentUrl, attachmentObject);
             return true;
         }
@@ -367,48 +349,34 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public bool RemoveAttachment(string attachmentGuid)
         {
-            try
-            {
-                string result;
-                _attachmentDocument.Delete(attachmentGuid, out result);
-            }
-            catch
-            {
-
-                //To-Do
-            }
-
+            string result;
+            _attachmentDocument.Delete(attachmentGuid, out result);
             return true;
         }
+
+        //public bool DeleteQuestion(string questionGuid)
+        //{
+        //    string result;
+        //    string questionUrl = string.Format(_questionDocument.GetAssignmentUrl(), questionGuid);
+        //    _questionDocument.Delete(questionUrl, out result);
+        //    return true;
+        //}
+
+        #region Folder Functionalities
 
         /// <summary>
         /// to delete a particular question by passing a quid
         /// </summary>
-        /// <param name="questionGuid"></param>
         /// <returns></returns>
-        public bool DeleteQuestion(string questionGuid)
-        {
-            try
-            {
-                string result;
-                string questionUrl = string.Format(_questionDocument.Url, questionGuid);
-                _questionDocument.Delete(questionUrl, out result);
-            }
-            catch
-            {
-                //To-Do
-            }
-            return true;
-        }
-
-        #region Folder Functionalities
-
         /// <summary>
         /// To get folders inside a folder or tab given the url of the parent and type of folder(QuestionBank, PatientBuilder, etc...)
         /// </summary>
         /// <param name="parentFolderIdentifier"></param>
         /// <param name="folderType"></param>
         /// <param name="courseId"></param>
+        /// <param name="folderUrl"> </param>
+        /// <param name="breadCrumbFolders"> </param>
+        /// <param name="breadCrumbNeeded"> </param>
         /// <returns></returns>
         public IList<Folder> GetSubfolders(string parentFolderIdentifier, string courseId, int folderType, string folderUrl, out IList<BreadCrumbProxy> breadCrumbFolders, bool breadCrumbNeeded)
         {
@@ -430,15 +398,8 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public bool DeleteFolder(string folderIdentifier)
         {
-            try
-            {
-                string result;
-                _folderDocument.Delete(folderIdentifier, out result);
-            }
-            catch
-            {
-                //To-Do
-            }
+            string result;
+            _folderDocument.Delete(folderIdentifier, out result);
             return true;
         }
 
@@ -453,31 +414,22 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public string SaveFolder(Folder folderObject, int folderType, string courseId, string folderUrl, string folderGuid)
         {
-            string newFolderGUID = "";
-            try
+            string newFolderGuid = "";
+            if (folderObject != null)
             {
-                if (folderObject != null)
+                newFolderGuid = folderObject.GetNewGuidValue();
+                if (folderUrl == "")
                 {
-                    newFolderGUID = folderObject.GetNewGuidValue();
-                    if (folderUrl == "")
-                    {
-                        folderUrl = (string.Format(_folderDocument.Url, courseId, AppCommon.GetFolderType(folderType), "/" + newFolderGUID));
-                    }
-                    else
-                    {
-                        folderUrl = _folderDocument.GetCorrectFolderUrl(courseId, folderType, folderUrl, folderGuid);
-                        folderUrl = (folderUrl + "/" + newFolderGUID);
-                    }
-                    _folderDocument.SaveOrUpdate(folderUrl, folderObject);
+                    folderUrl = (string.Format(_folderDocument.GetAssignmentUrl(DocumentPath.Module.LCMFolders), AppCommon.GetFolderType(folderType), "/" + newFolderGuid));
                 }
+                else
+                {
+                        folderUrl = _folderDocument.GetCorrectFolderUrl(null, folderType, folderUrl, folderGuid);
+                    folderUrl = (folderUrl + "/" + newFolderGuid);
+                }
+                _folderDocument.SaveOrUpdate(folderUrl, folderObject);
             }
-            catch
-            {
-                //To-Do
-
-            }
-
-            return newFolderGUID;
+            return newFolderGuid;
         }
 
         /// <summary>
@@ -491,16 +443,8 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public bool UpdateFolder(int folderType, string folderUrl, string folderGuid, string courseId, Folder folderFromForm)
         {
-            try
-            {
-                string urlofFolder = "";
-                urlofFolder = folderUrl + '/' + folderGuid;
-                _folderDocument.SaveOrUpdate(urlofFolder, folderFromForm);
-            }
-            catch
-            {
-                //To-Do
-            }
+            string urlofFolder = folderUrl + '/' + folderGuid;
+            _folderDocument.SaveOrUpdate(urlofFolder, folderFromForm);
             return true;
         }
 
@@ -517,7 +461,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         {
             try
             {
-                _folderDocument.SaveOrUpdate(_folderDocument.GetCorrectFolderUrl(courseId, folderType, folderUrl, folderGuid), subFolderDictToSave);
+                _folderDocument.SaveOrUpdate(_folderDocument.GetCorrectFolderUrl(null, folderType, folderUrl, folderGuid), subFolderDictToSave);
             }
             catch
             {
@@ -528,30 +472,21 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
 
         #endregion Folder Functionalities
 
-
         /// <summary>
         /// to get list of questions
         /// </summary>
         /// <param name="parentFolderIdentifier"></param>
         /// <param name="folderType"></param>
-        /// <param name="courseId"></param>
+        /// <param name="dropBox"> </param>
         /// <param name="folderUrl"></param>
         /// <returns></returns>
-        public IList<Question> GetQuestionItems(string parentFolderIdentifier, int folderType, string courseId, string folderUrl)
+        public IList<Question> GetQuestionItems(string parentFolderIdentifier, int folderType, DropBoxLink dropBox, string folderUrl)
         {
-            try
+            if (AppCommon.CheckIfStringIsEmptyOrNull(parentFolderIdentifier))
             {
-                if (AppCommon.CheckIfStringIsEmptyOrNull(parentFolderIdentifier))
-                {
-                    return _questionDocument.GetQuestionItems(parentFolderIdentifier, folderType, courseId);
-                }
-                return _folderDocument.GetQuestionItems(parentFolderIdentifier, courseId, folderUrl);
+                return _questionDocument.GetQuestionItems(parentFolderIdentifier, folderType, dropBox);
             }
-            catch
-            {
-                //To-Do                
-            }
-            return new List<Question>();
+            return _folderDocument.GetQuestionItems(parentFolderIdentifier, dropBox, folderUrl);
         }
 
         /// <summary>
@@ -560,38 +495,30 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public List<DocumentProxy> GetAllQuestions()
         {
-            List<DocumentProxy> lstAllQuestions = new List<DocumentProxy>();
-            lstAllQuestions = _questionBankDocument.GetAllQuestionsInAQuestionBank();
+            List<DocumentProxy> lstAllQuestions = _questionBankDocument.GetAllQuestionsInAQuestionBank();
             return lstAllQuestions;
         }
+
         /// <summary>
         /// To get search results from question bank
         /// </summary>
         /// <param name="strSearchText"></param>
         /// <param name="sortColumnIndex"></param>
         /// <param name="sortColumnOrder"></param>
+        /// <param name="strQuestionType"> </param>
         /// <returns></returns>
         public List<DocumentProxy> GetSearchResultsForQuestionBank(string strSearchText, int sortColumnIndex, string sortColumnOrder, string strQuestionType)
         {
-            IList<DocumentProxy> lstQuestionSearchResult = new List<DocumentProxy>();
-            IList<DocumentProxy> lstQuestionSearchResultTemp = new List<DocumentProxy>();
-            lstQuestionSearchResult = _questionBankDocument.GetAllQuestionsInAQuestionBank();
+            IList<DocumentProxy> lstQuestionSearchResult = _questionBankDocument.GetAllQuestionsInAQuestionBank();
             lstQuestionSearchResult.ToList().ForEach(question => _competencyService.SetLinkedCompetencyTextForAQuestions(question.LinkedItemReference, question));
-            if (!String.IsNullOrEmpty(strSearchText))
-            {
-                lstQuestionSearchResultTemp = GetQuestionsMatchingText(strSearchText, lstQuestionSearchResult);
-            }
-            else
-            {
-                lstQuestionSearchResultTemp = lstQuestionSearchResult;
-            }
+            IList<DocumentProxy> lstQuestionSearchResultTemp = !String.IsNullOrEmpty(strSearchText) ? GetQuestionsMatchingText(strSearchText, lstQuestionSearchResult) : lstQuestionSearchResult;
             if (!String.IsNullOrEmpty(strQuestionType))
             {
                 lstQuestionSearchResultTemp = GetQuestionsMatchingQuestionType(strQuestionType, lstQuestionSearchResultTemp);
             }
-            string sortColumnName = AppCommon.gridColumnForQuestionSearchList[sortColumnIndex];
+            string sortColumnName = AppCommon.GridColumnForQuestionSearchList[sortColumnIndex];
             var sortableList = lstQuestionSearchResultTemp.AsQueryable();
-            lstQuestionSearchResultTemp = sortableList.OrderBy<DocumentProxy>(sortColumnName, sortColumnOrder).ToList<DocumentProxy>();
+            lstQuestionSearchResultTemp = sortableList.OrderBy(sortColumnName, sortColumnOrder).ToList();
             return lstQuestionSearchResultTemp.ToList();
         }
         /// <summary>
@@ -607,7 +534,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                                                    !String.IsNullOrEmpty(lstSearch.Text) && lstSearch.Text.ToLower().Contains(strSearchText.ToLower()))
                                                    || (!String.IsNullOrEmpty(lstSearch.LinkedItemReference) && lstSearch.LinkedItemReference.ToLower().Contains(strSearchText.ToLower()))
                                                    || (!String.IsNullOrEmpty(lstSearch.Rationale) && lstSearch.Rationale.ToLower().Contains(strSearchText.ToLower()))
-                                                   || (lstSearch.AnswerTexts != null && lstSearch.AnswerTexts.Count(F => (F != null && F.ToLower().Contains(strSearchText.ToLower()))) > 0)
+                                                   || (lstSearch.AnswerTexts != null && lstSearch.AnswerTexts.Count(f => (f != null && f.ToLower().Contains(strSearchText.ToLower()))) > 0)
                                                select lstSearch).ToList();
             return lstQuestionSearchResultTemp.ToList();
         }
@@ -629,21 +556,21 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
 
         public string GetQuestionUrlToUpdate(string strQuestionGuid)
         {
-            List<DocumentProxy> QuestionList = GetAllQuestions();
-            DocumentProxy lstQuestionSearchResultTemp = (from lstSearch in QuestionList
-                                               where (
-                                                   !String.IsNullOrEmpty(lstSearch.UniqueIdentifier) && lstSearch.UniqueIdentifier.ToLower().Contains(strQuestionGuid.ToLower()))
-                                               select lstSearch).SingleOrDefault();
-            return (lstQuestionSearchResultTemp.Url != null)?lstQuestionSearchResultTemp.Url.ToString():"";
+            List<DocumentProxy> questionList = GetAllQuestions();
+            DocumentProxy lstQuestionSearchResultTemp = (from lstSearch in questionList
+                                                         where (
+                                                             !String.IsNullOrEmpty(lstSearch.UniqueIdentifier) && lstSearch.UniqueIdentifier.ToLower().Contains(strQuestionGuid.ToLower()))
+                                                         select lstSearch).SingleOrDefault();
+            return lstQuestionSearchResultTemp != null && (lstQuestionSearchResultTemp.Url != null) ? lstQuestionSearchResultTemp.Url : "";
         }
 
         public bool IsQuestionNameExists(string strQuestionText)
         {
-            List<DocumentProxy> QuestionList = GetAllQuestions();
-            List<DocumentProxy> lstQuestionSearchResultTemp = (from lstSearch in QuestionList
-                                                         where (
-                                                             !String.IsNullOrEmpty(lstSearch.Text) && lstSearch.Text == strQuestionText)
-                                                         select lstSearch).ToList();
+            List<DocumentProxy> questionList = GetAllQuestions();
+            List<DocumentProxy> lstQuestionSearchResultTemp = (from lstSearch in questionList
+                                                               where (
+                                                                   !String.IsNullOrEmpty(lstSearch.Text) && lstSearch.Text == strQuestionText)
+                                                               select lstSearch).ToList();
             if (lstQuestionSearchResultTemp.Count > 0)
             {
                 return true;
@@ -653,15 +580,61 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
 
         public Dictionary<string, int> GetQuestionType()
         {
-            Dictionary<string, int> questionType = new Dictionary<string, int>();
-            questionType = _questionBankDocument.GetQuestionType();
+            Dictionary<string, int> questionType = _questionBankDocument.GetQuestionType();
             return questionType;
         }
 
-        public string FormUrlForSkillSetQuestionToQuestionBank(Question questionItemToEdit, string courseId)
+        public string FormUrlForSkillSetQuestionToQuestionBank(Question questionItemToEdit, DropBoxLink dropBox)
         {
-            return string.Format(_questionDocument.Url, courseId, "", questionItemToEdit.GetNewGuidValue());
+            return string.Format(_questionDocument.GetAssignmentUrl(dropBox,DocumentPath.Module.QuestionBank,AppConstants.Create),  "", questionItemToEdit.GetNewGuidValue());
         }
+
+        /// <summary>
+        /// To clone all the images in a question.
+        /// </summary>
+        /// <param name="questionObj"></param>
+        public void CloneImagesForQuestion(Question questionObj)
+        {
+            if (!String.IsNullOrEmpty(questionObj.QuestionImageReference))
+            {
+                questionObj.QuestionImageReference = CloneAttachmentToPersistent(questionObj.QuestionImageReference);
+            }
+            if (questionObj.AnswerOptions != null && questionObj.AnswerOptions.Count > 0)
+            {
+                foreach (AnswerOption item in questionObj.AnswerOptions)
+                {
+                    if (!String.IsNullOrEmpty(item.AnswerImageReference))
+                    {
+                        item.AnswerImageReference = CloneAttachmentToPersistent(item.AnswerImageReference);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// To delete all the images in a Question
+        /// </summary>
+        /// <param name="questionObj"></param>
+        public void DeleteImagesForQuestion(Question questionObj)
+        {
+            if (!String.IsNullOrEmpty(questionObj.QuestionImageReference))
+            {
+                RemoveAttachment(questionObj.QuestionImageReference);
+                questionObj.QuestionImageReference = String.Empty;
+            }
+            if (questionObj.AnswerOptions != null && questionObj.AnswerOptions.Count > 0)
+            {
+                foreach (AnswerOption item in questionObj.AnswerOptions)
+                {
+                    if (!String.IsNullOrEmpty(item.AnswerImageReference))
+                    {
+                        RemoveAttachment(item.AnswerImageReference);
+                        item.AnswerImageReference = String.Empty;
+                    }
+                }
+            }
+        }
+
 
 
     }

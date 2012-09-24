@@ -1,27 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web.Mvc;
-using SimChartMedicalOffice.Core;
-using SimChartMedicalOffice.Common.Utility;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.DropBox;
-using System.Web.Script.Serialization;
-using System.Web;
-using System.Collections;
-using SimChartMedicalOffice.Core.ProxyObjects;
 using System.IO;
-using SimChartMedicalOffice.Core.FrontOffice.Appointments;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Utility;
+using SimChartMedicalOffice.Core;
+using SimChartMedicalOffice.Core.DropBox;
+using SimChartMedicalOffice.Core.ProxyObjects;
 
 namespace SimChartMedicalOffice.Web.Controllers
 {
     public class BaseController : Controller
     {
-        /// <summary>s
+        /// <summary>
         /// To Serialize the AjaxResult object
         /// </summary>
-        /// <param name="AjaxResult"></param>        
+        /// <param name="applicationException"></param>
+        /// <returns></returns>
         protected string AjaxCallResult(AjaxResult applicationException)
         {
             return JsonSerializer.SerializeObject(applicationException);
@@ -31,27 +28,52 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// </summary>
         /// <param name="documentEntity"></param>
         /// <param name="isEditMode"></param>
-        public void SetAuditFields(DocumentEntity documentEntity,bool isEditMode)
+        public void SetAuditFields(DocumentEntity documentEntity, bool isEditMode)
         {
+            string loginUserId = GetLoginUserId();
+            DateTime currentServerTime = DateTime.Now;
             if (!documentEntity.IsActive)
             {
-                documentEntity.DeletedBy = GetLoginUserId();
-                documentEntity.DeletedTimeStamp = DateTime.Now;
+                documentEntity.DeletedBy = loginUserId;
+                documentEntity.DeletedTimeStamp = currentServerTime;
             }
             else
             {
                 if (isEditMode)
                 {
-                    documentEntity.ModifiedBy = GetLoginUserId();
-                    documentEntity.ModifiedTimeStamp = DateTime.Now;
+                    documentEntity.ModifiedBy = loginUserId;
+                    documentEntity.ModifiedTimeStamp = currentServerTime;
                 }
                 else
                 {
-                    documentEntity.CreatedBy = GetLoginUserId();
-                    documentEntity.CreatedTimeStamp = DateTime.Now;
+                    documentEntity.CreatedBy = loginUserId;
+                    documentEntity.CreatedTimeStamp = currentServerTime;
                 }
             }
 
+        }
+        public void SetClientAuditFields(AbstractChartData abstractChartData, bool isEditMode)
+        {
+            string loginUserId = GetLoginUserId();
+            SetAuditFields(abstractChartData, isEditMode);
+            if (!abstractChartData.IsActive)
+            {
+                abstractChartData.InactivatedBy = loginUserId;
+                abstractChartData.InactiveTimeStamp = DateTime.Now.ToString("");
+            }
+            else
+            {
+                if (isEditMode)
+                {
+                    abstractChartData.ChartModifiedBy = loginUserId;
+                    abstractChartData.ChartModifiedTimeStamp= DateTime.Now.ToString("");
+                }
+                else
+                {
+                    abstractChartData.Signature = loginUserId;
+                    abstractChartData.ChartTimeStamp = DateTime.Now.ToString("");
+                }
+            }
         }
         public string Serialize<T>() where T : DocumentEntity
         {
@@ -64,7 +86,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         protected string GetLoginUserCourse()
         {
             DropBoxLink drpLinkFromCookie = GetDropBoxFromCookie();
-            return (drpLinkFromCookie != null ? drpLinkFromCookie.CID : String.Empty);
+            return (drpLinkFromCookie != null ? drpLinkFromCookie.Cid : String.Empty);
         }
         /// <summary>
         /// To get login role from cookie
@@ -83,11 +105,11 @@ namespace SimChartMedicalOffice.Web.Controllers
         {
             return GetLoginUserCourse() + "/" + GetLoginUserRole();
         }
+
         /// <summary>
         /// To deserialize the Json string to List of Objects
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="objectString"></param>
         /// <returns></returns>
         public IList<T> DeSerializeToList<T>()
         {
@@ -95,11 +117,11 @@ namespace SimChartMedicalOffice.Web.Controllers
             return JsonSerializer.DeserializeObject<IList<T>>(objectString);
 
         }
+
         /// <summary>
         /// To deserialize the Json string to an Object
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="objectString"></param>
         /// <returns></returns>
         public T DeSerialize<T>()
         {
@@ -115,7 +137,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         protected string GetLoginUserId()
         {
             DropBoxLink drpLinkFromCookie = GetDropBoxFromCookie();
-            return (drpLinkFromCookie != null ? "LN" + drpLinkFromCookie.UID + ", FN" + drpLinkFromCookie.UID : String.Empty);
+            return (drpLinkFromCookie != null ? "LN" + drpLinkFromCookie.Uid + ", FN" + drpLinkFromCookie.Uid : String.Empty);
         }
 
         /// <summary>
@@ -125,7 +147,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         protected string GetLoginScenarioId()
         {
             DropBoxLink drpLinkFromCookie = GetDropBoxFromCookie();
-            return (drpLinkFromCookie != null ? drpLinkFromCookie.SID : String.Empty);
+            return (drpLinkFromCookie != null ? drpLinkFromCookie.Sid : String.Empty);
         }
 
         /// <summary>
@@ -134,15 +156,14 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         protected DropBoxLink GetDropBoxFromCookie()
         {
-            string dropboxLinkJson;
             DropBoxLink dropBoxLinkObj = new DropBoxLink();
-            dropboxLinkJson = (Request.Cookies["DROPBOXLINK"]!=null)?HttpUtility.UrlDecode(Request.Cookies["DROPBOXLINK"].Value):string.Empty;
+            string dropboxLinkJson = (Request.Cookies["DROPBOXLINK"] != null) ? HttpUtility.UrlDecode(Request.Cookies["DROPBOXLINK"].Value) : string.Empty;
             if (!String.IsNullOrEmpty(dropboxLinkJson))
             {
                 Dictionary<string, DropBoxLink> dropBoxDictionary = JsonSerializer.DeserializeObject<Dictionary<string, DropBoxLink>>(dropboxLinkJson);
                 foreach (var item in dropBoxDictionary)
                 {
-                    dropBoxLinkObj = (DropBoxLink)item.Value;
+                    dropBoxLinkObj = item.Value;
                 }
             }
             return dropBoxLinkObj;
@@ -154,15 +175,14 @@ namespace SimChartMedicalOffice.Web.Controllers
             List<AutoCompleteProxy> filterByTypeList = new List<AutoCompleteProxy>();
             foreach (var questionType in questionTypeList)
             {
-                AutoCompleteProxy filterType = new AutoCompleteProxy();
-                filterType.id = questionType.Key.ToString();
-                filterType.name = questionType.Value;
+                AutoCompleteProxy filterType = new AutoCompleteProxy
+                                                   {id = questionType.Key.ToString(), name = questionType.Value};
                 filterByTypeList.Add(filterType);
             }
             filterByTypeList = filterByTypeList.OrderBy(f => f.name).ToList();
             return filterByTypeList;
         }
-        
+
         public IList<AutoCompleteProxy> GetQuestionTypeFlexBoxList(Dictionary<string, int> questionTypeList)
         {
             List<AutoCompleteProxy> filterByTypeList = new List<AutoCompleteProxy>();
@@ -170,9 +190,11 @@ namespace SimChartMedicalOffice.Web.Controllers
             {
                 foreach (var questionType in questionTypeList)
                 {
-                    AutoCompleteProxy filterType = new AutoCompleteProxy();
-                    filterType.id = questionType.Value.ToString();
-                    filterType.name = questionType.Key.ToString();
+                    AutoCompleteProxy filterType = new AutoCompleteProxy
+                                                       {
+                                                           id = questionType.Value.ToString(),
+                                                           name = questionType.Key
+                                                       };
                     filterByTypeList.Add(filterType);
                 }
             }
@@ -180,8 +202,8 @@ namespace SimChartMedicalOffice.Web.Controllers
             return filterByTypeList;
         }
 
-        
-        
-        
+
+
+
     }
 }

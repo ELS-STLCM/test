@@ -1,4 +1,7 @@
-
+/*
+Note:File Modified for Simoffice requirement
+A)  Line changed from Ln 217: cell.find('div.fc-day-number').text(date.getDate());
+*/
 setDefaults({
 	weekMode: 'fixed'
 });
@@ -211,7 +214,15 @@ function BasicView(element, calendar, viewName) {
 			}else{
 				cell.removeClass(tm + '-state-highlight fc-today');
 			}
-			cell.find('div.fc-day-number').text(date.getDate());
+            //Simoffice code change- To display Month short name for first day of each month
+            if (viewName == 'month') {
+                if (!cell.hasClass('fc-other-month'))
+                cell.find('div.fc-day-number').text((date.getDate() == 1 ? dateFormat(date, "mmm") + ' ' + date.getDate() : date.getDate()));
+            }
+            else {
+                cell.find('div.fc-day-number').text(date.getDate());
+            }
+            //Simoffice code change end
 			if (dowDirty) {
 				setDayID(cell, date);
 			}

@@ -1,24 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.AssignmentBuilder;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder;
+using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
+using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Extensions;
+using SimChartMedicalOffice.Core;
+using SimChartMedicalOffice.Core.AssignmentBuilder;
+using SimChartMedicalOffice.Core.DataInterfaces;
 using SimChartMedicalOffice.Core.DataInterfaces.AssignmentBuilder;
+using SimChartMedicalOffice.Core.DataInterfaces.Patient;
 using SimChartMedicalOffice.Core.DataInterfaces.QuestionBanks;
 using SimChartMedicalOffice.Core.Patient;
 using SimChartMedicalOffice.Core.ProxyObjects;
-using SimChartMedicalOffice.Core.SkillSetBuilder;
-using System.Linq.Expressions;
-using SimChartMedicalOffice.Common.Extensions;
-using SimChartMedicalOffice.Core.DataInterfaces.Patient;
 using SimChartMedicalOffice.Core.QuestionBanks;
 using SimChartMedicalOffice.Core.SkillSetBuilder;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
-using SimChartMedicalOffice.Core;
-using SimChartMedicalOffice.Core.DataInterfaces;
-using System.Collections;
 
 
 namespace SimChartMedicalOffice.ApplicationServices.Builder
@@ -27,23 +23,26 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
     {
         private readonly IFolderDocument _folderDocument;
         private readonly IAssignmentDocument _assignmentDocument;
-        private readonly IAssignmentRepositoryDocument _assignmentRepositoryDocument;
+        
         private readonly IPatientDocument _patientDocument;
         private readonly ICompetencyService _competencyService;
         private readonly IAttachmentDocument _attachmentDocument;
         private readonly ISkillSetService _skillSetService;
+        private readonly IQuestionBankService _questionBankService;
 
-        private IList<AssignmentProxy> allAssignments = new List<AssignmentProxy>();
+        private IList<AssignmentProxy> _allAssignments = new List<AssignmentProxy>();
 
-        public AssignmentService(IAssignmentDocument assignmentDocumentInstance, IAssignmentRepositoryDocument assignmentRepositoryDocument, ICompetencyService competencyService, IPatientDocument patientDocument, IAttachmentDocument attachmentDocument, IFolderDocument folderDocument, ISkillSetService skillSetService)
+        public AssignmentService(IAssignmentDocument assignmentDocumentInstance, 
+            ICompetencyService competencyService, IPatientDocument patientDocument, IAttachmentDocument attachmentDocument,
+            IFolderDocument folderDocument, ISkillSetService skillSetService, IQuestionBankService questionBankService)
         {
-            this._assignmentDocument = assignmentDocumentInstance;
-            this._assignmentRepositoryDocument = assignmentRepositoryDocument;
-            this._patientDocument = patientDocument;
-            this._competencyService = competencyService;
-            this._attachmentDocument = attachmentDocument;
-            this._folderDocument = folderDocument;
-            this._skillSetService = skillSetService;
+            _assignmentDocument = assignmentDocumentInstance;
+            _patientDocument = patientDocument;
+            _competencyService = competencyService;
+            _attachmentDocument = attachmentDocument;
+            _folderDocument = folderDocument;
+            _skillSetService = skillSetService;
+            _questionBankService = questionBankService;
         }
 
         /// <summary>
@@ -51,39 +50,40 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// </summary>
         /// <param name="assignment"></param>
         /// <param name="courseId"></param>
+        /// <param name="isEditMode"> </param>
+        /// <param name="assignmentUrl"> </param>
         /// <returns></returns>
         public bool SaveAssignment(Assignment assignment, string courseId, bool isEditMode, string assignmentUrl)
         {
             if (!isEditMode)
             {
-                assignmentUrl = _assignmentDocument.FormAssignmentUrl(courseId, assignment.GetNewGuidValue());
+                assignmentUrl = _assignmentDocument.FormAssignmentUrl(null, assignment.GetNewGuidValue());
             }
 
-            if (assignmentUrl != null && assignmentUrl != "")
+            if (!string.IsNullOrEmpty(assignmentUrl))
             {
                 SavePersistentImage(false, assignment, assignmentUrl);
                 _assignmentDocument.SaveOrUpdate(assignmentUrl, assignment);
             }
             return true;
         }
+
         /// <summary>
         /// To save Persistent image under SimApp/Attachment/Persistent
         /// </summary>
         /// <param name="isEditMode"></param>
-        /// <param name="questionEntity"></param>
-        /// <param name="questionUrlReference"></param>
+        /// <param name="assignmentObject"> </param>
+        /// <param name="assignmentUrl"> </param>
         private void SavePersistentImage(bool isEditMode, Assignment assignmentObject, string assignmentUrl)
         {
-            string transientImage = String.Empty;
-            string persistentImage = String.Empty;
-            string imgUrl;
+            //string imgUrl;
             if (!isEditMode)
             {
                 if (assignmentObject.PatientImageReferance != null)
                 {
                     for (int item = 0; item < assignmentObject.PatientImageReferance.Count(); item++)
                     {
-                        string strPersistentImage = string.Empty;
+                        string strPersistentImage;
                         MoveTransientToPersistentAttachment(assignmentObject.PatientImageReferance[item], out strPersistentImage);
                         assignmentObject.PatientImageReferance[item] = strPersistentImage;
                     }
@@ -92,7 +92,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
             else
             {
                 Assignment assignmentFromDb = GetAssignment(assignmentUrl);
-                string imgReference = String.Empty;
+                string imgReference;
                 if (assignmentObject.PatientImageReferance.Count() > 0 && assignmentObject.PatientImageReferance.Count() > 0)
                 {
                     for (int item = 0; item < assignmentObject.PatientImageReferance.Count(); item++)
@@ -142,8 +142,6 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                 case AppEnum.AttachmentActions.None:
                     imgReference = persistentImage;
                     return;
-                default:
-                    break;
             }
             imgReference = persistentImageTemp;
         }
@@ -175,18 +173,12 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// </summary>
         /// <param name="attachmentGuid"></param>
         /// <param name="attachmentObject"></param>
+        /// <param name="isTransient"> </param>
         /// <param name="attachmentUrl"></param>
         /// <returns></returns>
         public bool SaveAttachment(string attachmentGuid, Attachment attachmentObject, bool isTransient, out string attachmentUrl)
         {
-            if (isTransient)
-            {
-                attachmentUrl = _attachmentDocument.GetAttachementTransientUrl();
-            }
-            else
-            {
-                attachmentUrl = _attachmentDocument.Url;
-            }
+            attachmentUrl = isTransient ? _attachmentDocument.GetAssignmentUrl(DocumentPath.Module.Attachments,AppConstants.TransientAttachment) : _attachmentDocument.GetAssignmentUrl(DocumentPath.Module.Attachments);
             attachmentUrl = _attachmentDocument.SaveOrUpdate(attachmentUrl, attachmentObject);
             return true;
         }
@@ -198,35 +190,18 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public bool RemoveAttachment(string attachmentGuid)
         {
-            try
-            {
-                string result;
-                _attachmentDocument.Delete(attachmentGuid, out result);
-            }
-            catch
-            {
-
-                //To-Do
-            }
-
+            string result;
+            _attachmentDocument.Delete(attachmentGuid, out result);
             return true;
         }
 
         public IList<Assignment> GetAssignmentItems(string parentFolderIdentifier, int folderType, string courseId, string folderUrl)
         {
-            try
+            if (AppCommon.CheckIfStringIsEmptyOrNull(parentFolderIdentifier))
             {
-                if (AppCommon.CheckIfStringIsEmptyOrNull(parentFolderIdentifier))
-                {
-                    return _assignmentDocument.GetAssignmentItems(parentFolderIdentifier, folderType, courseId);
-                }
-                return _folderDocument.GetAssignmentItems(parentFolderIdentifier, courseId, folderUrl);
+                    return _assignmentDocument.GetAssignmentItems(parentFolderIdentifier, folderType, null);
             }
-            catch
-            {
-                //To-Do                
-            }
-            return new List<Assignment>();
+            return _folderDocument.GetAssignmentItems(parentFolderIdentifier, courseId, folderUrl);
         }
 
         /// <summary>
@@ -236,8 +211,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public Assignment GetAssignment(string assignmentUrl)
         {
-            Assignment assignmentObj;
-            assignmentObj = _assignmentDocument.Get(assignmentUrl);
+            Assignment assignmentObj = _assignmentDocument.Get(assignmentUrl);
             return assignmentObj;
         }
 
@@ -247,12 +221,12 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <param name="strSearchText"></param>
         /// <param name="sortColumnIndex"></param>
         /// <param name="sortColumnOrder"></param>
+        /// <param name="strModule"> </param>
         /// <returns></returns>
         public List<AssignmentProxy> GetSearchResultsForAssignment(string strSearchText, int sortColumnIndex, string sortColumnOrder, string strModule)
         {
-            IList<AssignmentProxy> lstAssignmentSearchResult = new List<AssignmentProxy>();
             IList<AssignmentProxy> lstAssignmentSearchResultTemp = new List<AssignmentProxy>();
-            lstAssignmentSearchResult = GetAllAssignmentsInAssignmentRepository();
+            IList<AssignmentProxy> lstAssignmentSearchResult = GetAllAssignmentsInAssignmentRepository();
             if (!String.IsNullOrEmpty(strSearchText))
             {
                 lstAssignmentSearchResultTemp = GetAssignmentsMatchingText(strSearchText, lstAssignmentSearchResult);
@@ -261,9 +235,9 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
             {
                 lstAssignmentSearchResultTemp = GetAssignmentsMatchingModule(strModule, lstAssignmentSearchResultTemp);
             }
-            string sortColumnName = AppCommon.gridColumnForAssignmentSearchList[sortColumnIndex];
+            string sortColumnName = AppCommon.GridColumnForAssignmentSearchList[sortColumnIndex];
             var sortableList = lstAssignmentSearchResultTemp.AsQueryable();
-            lstAssignmentSearchResultTemp = sortableList.OrderBy<AssignmentProxy>(sortColumnName, sortColumnOrder).ToList<AssignmentProxy>();
+            lstAssignmentSearchResultTemp = sortableList.OrderBy(sortColumnName, sortColumnOrder).ToList();
             return lstAssignmentSearchResultTemp.ToList();
         }
 
@@ -274,6 +248,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <param name="assignmentProxyObject"></param>
         /// <param name="assignmentUrl"></param>
         /// <param name="courseId"></param>
+        /// <param name="isEditMode"> </param>
         /// <returns></returns>
         public string SaveAssignmentMetaData(AssignmentProxySave assignmentProxyObject, string assignmentUrl, string courseId,bool isEditMode)
         {
@@ -284,7 +259,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
             {
                 if (string.IsNullOrEmpty(assignmentUrl))
                 {
-                    assignmentUrl = _assignmentDocument.FormAssignmentUrl(courseId, assignmentGuid);
+                    assignmentUrl = _assignmentDocument.FormAssignmentUrl(null, assignmentGuid);
                 }
                 else
                 {
@@ -320,11 +295,10 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                     patientFromRepository.Url = assignmentUrl + "/Patients/" + patientGuid;
                     patientFromRepository.IsAssignmentPatient = true;
                     patientFromRepository.UniqueIdentifier = "";
-                    assignmentToSave.Patients = new Dictionary<string, Patient>();
-                    assignmentToSave.Patients.Add(patientGuid, patientFromRepository);
+                    assignmentToSave.Patients = new Dictionary<string, Patient> {{patientGuid, patientFromRepository}};
                 }
             }
-            assignmentToSave.SkillSets = new Dictionary<string, Core.SkillSetBuilder.SkillSet>();
+            assignmentToSave.SkillSets = new Dictionary<string, SkillSet>();
             if (assignmentProxyObject.SkillSets != null)
             {
                 foreach (AssignmentSkillSetProxy assignmentSkillSetProxy in assignmentProxyObject.SkillSets)
@@ -364,10 +338,14 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
 
         private SkillSet UpdateQuestionUrlForAssignmentSkillSet(SkillSet skillSetToUpdate)
         {
-            foreach (KeyValuePair<string, Question> question in skillSetToUpdate.Questions)
+            if (skillSetToUpdate.Questions != null && skillSetToUpdate.Questions.Count > 0)
             {
-                question.Value.SkillSetReferenceUrlOfQuestion = question.Value.Url;
-                question.Value.Url = skillSetToUpdate.Url + "/Questions/" + question.Key;
+                foreach (KeyValuePair<string, Question> question in skillSetToUpdate.Questions)
+                {
+                    question.Value.SkillSetReferenceUrlOfQuestion = question.Value.Url;
+                    question.Value.Url = skillSetToUpdate.Url + "/Questions/" + question.Key;
+                _questionBankService.CloneImagesForQuestion(question.Value);
+                }
             }
             return skillSetToUpdate;
         }
@@ -392,7 +370,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                 assignmentToSave.Keywords = assignmentProxyObject.Keywords;
                 assignmentToSave.Module = assignmentProxyObject.Module;
                 assignmentToSave.Duration = assignmentProxyObject.Duration;
-                assignmentToSave.Status = AppCommon.Status_InProgress;
+                assignmentToSave.Status = AppCommon.StatusInProgress;
                 if (!assignmentProxyObject.IsActive)
                 {
                     assignmentToSave.DeletedBy = assignmentProxyObject.DeletedBy;
@@ -435,23 +413,20 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
 
         public List<Patient> GetPatientListOfAssignment(string assignmentUrl)
         {
-            Assignment assignment = new Assignment();
-            List<Patient> patientListInAdmin = new List<Patient>();
-            List<Patient> patientListInAssignment = new List<Patient>();
-            List<Patient> patientList = new List<Patient>();
+            Assignment assignment = _assignmentDocument.Get(assignmentUrl);
 
-            patientListInAdmin = GetAdminPatientList();
-            assignment = _assignmentDocument.Get(assignmentUrl);
-            patientListInAssignment = ConvertDictionarytoPatientObject(assignment.Patients, assignmentUrl);
+            List<Patient> patientListInAdmin = GetAdminPatientList();
+          
+            List<Patient> patientListInAssignment = ConvertDictionarytoPatientObject(assignment.Patients, assignmentUrl);
 
-            patientList = patientListInAdmin.Where(admin => patientListInAssignment.Any(assign => assign.UniqueIdentifier == admin.UniqueIdentifier)).ToList();
+            List<Patient> patientList = patientListInAdmin.Where(admin => patientListInAssignment.Any(assign => assign.UniqueIdentifier == admin.UniqueIdentifier)).ToList();
 
             if (patientList.Count() <= 0)
             {
                 patientListInAdmin = patientListInAdmin.OrderBy(x => x.LastName).ToList();
                 if (patientListInAssignment.Count() != 0)
                 {
-                    if (patientListInAssignment[0].LastName != "" && patientListInAssignment[0].LastName != null)
+                    if (!string.IsNullOrEmpty(patientListInAssignment[0].LastName))
                     {
                         patientList.AddRange(patientListInAssignment);
                     }
@@ -520,7 +495,6 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
                 TraverseEachFolderForAssignments(parentFolder.SubFolders);
                 CollectAssignmentFromAssignmentRepository(parentFolder.Assignments, parentFolder);
             }
-            return;
         }
 
         /// <summary>
@@ -532,7 +506,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
             if (folderContent != null && folderContent.Count > 0)
             {
                 IList<Folder> folders = folderContent.Select(folder => folder.Value).ToList();
-                folders.ToList().ForEach(F => GetTotalAssignmentList(F));
+                folders.ToList().ForEach(f => GetTotalAssignmentList(f));
             }
         }
 
@@ -540,12 +514,13 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// 
         /// </summary>
         /// <param name="assignments"></param>
+        /// <param name="parentFolder"> </param>
         private void CollectAssignmentFromAssignmentRepository(Dictionary<string, Assignment> assignments, Folder parentFolder)
         {
             if (assignments != null && assignments.Count > 0)
             {
                 var assignmentList = assignments.Select(assignment => assignment.Value).ToList();
-                allAssignments = allAssignments.Concat(TransformAssignmentsToAssignmentProxy(assignmentList, parentFolder)).ToList();
+                _allAssignments = _allAssignments.Concat(TransformAssignmentsToAssignmentProxy(assignmentList, parentFolder)).ToList();
             }
         }
 
@@ -613,10 +588,10 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         private List<AssignmentProxy> GetAllAssignmentsInAssignmentRepository()
         {
-            Folder assignmentRepository = _assignmentRepositoryDocument.GetAssignmentRepository();
-            allAssignments = new List<AssignmentProxy>();
+            Folder assignmentRepository = _assignmentDocument.GetAssignmentRepository();
+            _allAssignments = new List<AssignmentProxy>();
             GetTotalAssignmentList(assignmentRepository);
-            return allAssignments.ToList();
+            return _allAssignments.ToList();
         }
 
         public bool DeleteAssignmentQuestion(string questionUrl)
@@ -631,8 +606,8 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public IList<SkillSet> GetSkillSetsForAnAssignment(Assignment assignmentObj)
         {
-            List<SkillSet> skillSetsForAssignment = new List<SkillSet>();
-            skillSetsForAssignment = assignmentObj.SkillSets.Select(s => s.Value).ToList();
+            List<SkillSet> skillSetsForAssignment=assignmentObj.SkillSets.Select(s => s.Value).ToList();
+           
             return skillSetsForAssignment;
         }
         /// <summary>
@@ -642,9 +617,8 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         public IList<Question> GetQuestionsInASkillForAnAssignment(SkillSet skillSetObj)
         {
-            List<Question> QuestionskillSetsForAssignment = new List<Question>();
-            QuestionskillSetsForAssignment = skillSetObj.Questions.Select(s => s.Value).ToList();
-            return QuestionskillSetsForAssignment;
+            List<Question> questionskillSetsForAssignment = skillSetObj.Questions.Select(s => s.Value).ToList();
+            return questionskillSetsForAssignment;
         }
 
         /// <summary>
@@ -654,18 +628,18 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
         /// <returns></returns>
         private List<DocumentListProxy> GetQuestionGroupedByCompetencyForASkillSet(SkillSet skillSetItem)
         {
-            IList<Question> QuestionskillSetsForAssignmentTemp = GetQuestionsInASkillForAnAssignment(skillSetItem);
+            IList<Question> questionskillSetsForAssignmentTemp = GetQuestionsInASkillForAnAssignment(skillSetItem);
             List<DocumentListProxy> questionsForAssignmentList = new List<DocumentListProxy>();
             List<DocumentListProxy> questionsForAssignmentListTemp = new List<DocumentListProxy>();
-
+            List<string> competenciesWithoutQuestions = (from lstCom in skillSetItem.Competencies where !((from item in questionskillSetsForAssignmentTemp select item.CompetencyReferenceGuid).Contains(lstCom)) select lstCom).ToList();
             //Get List of questions with competency reference.
-            foreach (var itemVal in QuestionskillSetsForAssignmentTemp)
+            foreach (var itemVal in questionskillSetsForAssignmentTemp)
             {
-                DocumentListProxy DocumentProxyItem = new DocumentListProxy();
-                string linkedComp = _competencyService.GetLinkedCompetencyNameForAGuid(itemVal.CompetencyReferenceGUID);
-                DocumentProxyItem.ItemReference = linkedComp;
-                DocumentProxyItem.Name = itemVal.QuestionText;
-                questionsForAssignmentList.Add(DocumentProxyItem);
+                DocumentListProxy documentProxyItem = new DocumentListProxy();
+                string linkedComp = _competencyService.GetLinkedCompetencyNameForAGuid(itemVal.CompetencyReferenceGuid);
+                documentProxyItem.ItemReference = linkedComp;
+                documentProxyItem.Name = itemVal.QuestionText;
+                questionsForAssignmentList.Add(documentProxyItem);
             }
             var questionsGroupedByCompetency = questionsForAssignmentList.GroupBy(question => question.ItemReference);
             //Grouping questions by competency
@@ -673,16 +647,28 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
             {
                 List<string> qnTextList = new List<string>();
                 string competencyVal = String.Empty;
-                DocumentListProxy DocumentProxyItem = new DocumentListProxy();
+                DocumentListProxy documentProxyItem = new DocumentListProxy();
                 foreach (var groupItem in group)
                 {
                     qnTextList.Add(groupItem.Name);
                     competencyVal = groupItem.ItemReference;
                 }
-                DocumentProxyItem.Name = competencyVal;
-                DocumentProxyItem.Items = qnTextList;
-                questionsForAssignmentListTemp.Add(DocumentProxyItem);
+                documentProxyItem.Name = competencyVal;
+                documentProxyItem.Items = qnTextList;
+                questionsForAssignmentListTemp.Add(documentProxyItem);
             }
+           
+            foreach (var item in competenciesWithoutQuestions)
+            {
+                DocumentListProxy docProxy = new DocumentListProxy
+                                                 {
+                                                     Items = new List<string>(),
+                                                     Name = _competencyService.GetLinkedCompetencyNameForAGuid(item)
+                                                 };
+
+                questionsForAssignmentListTemp.Add(docProxy);
+            }
+
             return questionsForAssignmentListTemp;
         }
 
@@ -698,9 +684,11 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
             IList<SkillSet> skillSetsForAssignmentTemp = GetSkillSetsForAnAssignment(assignmentObj);
             foreach (SkillSet item in skillSetsForAssignmentTemp)
             {
-                DocumentProxy docObj = new DocumentProxy();
-                docObj.Text = item.SkillSetTitle;
-                docObj.ListOfItems = GetQuestionGroupedByCompetencyForASkillSet(item);
+                DocumentProxy docObj = new DocumentProxy
+                                           {
+                                               Text = item.SkillSetTitle,
+                                               ListOfItems = GetQuestionGroupedByCompetencyForASkillSet(item)
+                                           };
                 skillSetsForAssignment.Add(docObj);
             }
 
@@ -734,7 +722,7 @@ namespace SimChartMedicalOffice.ApplicationServices.Builder
             Assignment assignmentObj = _assignmentDocument.Get(assignmentUrl);
             if (assignmentObj != null)
             {
-                assignmentObj.Status = AppCommon.Status_Published;
+                assignmentObj.Status = AppCommon.StatusPublished;
                 _assignmentDocument.SaveOrUpdate(assignmentUrl, assignmentObj);
                 return true;
             }

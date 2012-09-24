@@ -1,6 +1,4 @@
-﻿@using System.Collections
-@using System.Collections.Generic
-@using SimChartMedicalOffice.Core.QuestionBanks
+﻿@using SimChartMedicalOffice.Core.QuestionBanks
 @{
     Layout = null;
 }
@@ -11,8 +9,9 @@
         var a = $.ui.mouse.prototype._mouseMove;
         $.ui.mouse.prototype._mouseMove = function (b) {
             if ($.browser.msie && document.documentMode >= 9)
-            { b.button = 1 }; a.apply(this, [b]);
-        }
+            { b.button = 1;
+            }; a.apply(this, [b]);
+        };
     } (jQuery));
     parent.folderCount = parseInt('@ViewData["folderCount"]');
     var maxSequenceNumber = parseInt('@ViewData["MaxSequenceNumber"]');

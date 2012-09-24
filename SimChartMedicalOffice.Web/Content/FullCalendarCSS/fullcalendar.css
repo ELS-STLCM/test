@@ -129,14 +129,14 @@ html .fc,
 	
 .fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
 	/*background: #ffc;*/
-	/*karthik-modified style as per requirement*/
+	/*SimOffice code change-modified style as per requirement*/
 	/*border-color:#DE733E;*/	
 	border:0px;
 	outline:#E46C0A solid thin;
 	}
 	
 
-	/*Karthik-Added new class to highlight day header*/
+	/*SimOffice code change-Added new class to highlight day header*/
 	.fc-header-highlight
 	{
 	    background: #FFC000;
@@ -423,7 +423,7 @@ table.fc-border-separate {
 .fc-border-separate th,
 .fc-border-separate td 
 {
-    /*karthik-modified border width to add style for current day view*/
+    /*SimOffice code change-modified border width to add style for current day view*/
 	border-width: 1px 0 0 1px;	
 	}
 	

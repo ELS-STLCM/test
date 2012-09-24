@@ -1,47 +1,16 @@
 ﻿@{
     Layout = null;
 }
-<div class="grid_32 standard-text" id="questionHolder">
-<div class="grid_32 div-with-bottom-border">
-    <div class="clear-height-spacing clear">
-    </div>
-    <div class="grid_15 form-page-header" style="padding-top: 0px">
-        Question Bank
-    </div>
-    <div class="grid_7 align-div-inline" id="FilterByQuestionTypeForSearch">
-    </div>
-    <div class="align-div-inline standard-text">And / Or</div>
-    <div class="grid_8 align-div-inline">
-        @Html.TextBox("searchByText", "", new { id = "searchByText", @class = "grid_28" })
-        <img id="buttonSearch" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
-    </div>
-    <div class="clear-min-height-spacing clear">
-    </div>
-</div>
-    <div class="grid_8">
-        @Html.Partial("../../Views/Builder/QuestionBank/ReturnToQuestionBank")
-    </div>
-    <div class="grid_24">
-    <div class="grid_32 search-result-text">@if (!string.IsNullOrEmpty(ViewBag.SearchText))
-                                            { <text> Search Results for "@ViewBag.SearchText" </text> }</div>
-        <div class="clear clear-height-spacing">
-    </div>
-        <div class="clear clear-height-spacing">
-    </div>
-       @Html.Partial("../../Views/Builder/QuestionBank/_QuestionBankSearchGrid") 
-    </div>
-    <div class="clear clear-height-spacing">
-    </div>
-</div> 
-
 <script type="text/javascript">
     var filterByTypeList = @Html.Raw(Json.Encode(ViewBag.filterByQuestionTypeSearch)); 
     var searchText="@ViewBag.SearchText";
     var searchType="@ViewBag.SearchQuestionType";
     var searchTypeText="@ViewBag.SearchQuestionTypeText";
     $(document).ready(function () {
+        setAdjustedHeightSearchResultsContainer();
+        setRightHolderHeight('questionBankHeader');
         setMaxLenthSearchText("searchByText");
-        initializeFlexBoxForFilterByTypeForSearch("FilterByQuestionTypeForSearch",filterByTypeList)
+        initializeFlexBoxForFilterByTypeForSearch("FilterByQuestionTypeForSearch",filterByTypeList);
         $("#buttonSearch").click(function () {
             questionBank.commonFunctions.searchByText(true);
         });
@@ -51,7 +20,7 @@
                 questionBank.commonFunctions.searchByText(true);
             }
         });
-        $("#searchByText").val(searchText)
+        $("#searchByText").val(searchText);
         $('#FilterByQuestionTypeForSearch_input').val(searchType);
         $('#FilterByQuestionTypeForSearch_hidden').val(searchTypeText);         
     }); 
@@ -95,6 +64,38 @@ function initializeFlexBoxForFilterByTypeForSearch(divId, lstOfItems) {
     });
 }
 </script>
+<div class="grid_32 standard-text" id="questionHolder">
+<div class="grid_32 div-with-bottom-border">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_15 form-page-header" style="padding-top: 0px">
+        Question Bank
+    </div>
+    <div class="grid_7 align-div-inline" id="FilterByQuestionTypeForSearch">
+    </div>
+    <div class="align-div-inline standard-text">And/Or</div>
+    <div class="grid_8 align-div-inline">
+        @Html.TextBox("searchByText", "", new { id = "searchByText", @class = "grid_28" })
+        <img id="buttonSearch" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+    <div class="grid_8 search-result-height">
+        @Html.Partial("../../Views/Builder/QuestionBank/ReturnToQuestionBank")
+    </div>
+    <div class="grid_24 search-result-height">
+    <div class="grid_32 search-result-text">@if (!string.IsNullOrEmpty(ViewBag.SearchText))
+                                            { <text> Search Results for "@ViewBag.SearchText" </text> }</div>
+        <div class="clear clear-height-spacing">
+    </div>
+        <div class="clear clear-height-spacing">
+    </div>
+       @Html.Partial("../../Views/Builder/QuestionBank/_QuestionBankSearchGrid") 
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+</div>
 
 
 

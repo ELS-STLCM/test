@@ -1,51 +1,11 @@
 ﻿@{
     Layout = null;
 }
-<div class="grid_32 div-with-bottom-border">
-    <div class="clear-height-spacing clear">
-    </div>
-    <div class="grid_17 form-page-header" style="padding-top: 0px">
-        Skill Set Builder
-    </div>
-    <div class="grid_6 align-div-inline" id="FilterBySource" style="width: 160px">
-    </div>
-    <div class="align-div-inline standard-text">
-        And / Or</div>
-    <div class="grid_8 align-div-inline">
-        @Html.TextBox("searchByTextSSB", "", new { id = "searchByTextSSB", @class = "grid_28" })
-        <img id="buttonSearchSSB" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
-    </div>
-    <div class="clear-min-height-spacing clear">
-    </div>
-</div>
-<div class="grid_32">
-    <div class="clear-min-height-spacing clear">
-    </div>
-    <div id="BreadCrumbEntry">
-        @Html.Partial("../../Views/Builder/Authoring/_BreadCrumb")
-    </div>
-    <div class="clear-min-height-spacing clear">
-    </div>
-</div>
-<div class="grid_32">
-    <div id="skillSetBuilderFolderPanel" class="grid_8 remove-div-space container-folder-height">
-        @Html.Partial("../../Views/Builder/QuestionBank/Folder", new ViewDataDictionary { new KeyValuePair<string, object>("currentFolderPanel", "skillSetBuilderTab") })
-    </div>
-    <div class="grid_24 remove-div-space" style="width:75%">
-        <div class="grid_32 container-folder-height" style="width:100%">
-            <div class="grid_32 container-grid-height" style="float: left;width:100%">
-                @Html.Partial("../../Views/Builder/Authoring/_SkillSetBuilderGrid")
-            </div>
-         <div class="grid_32" style="width:100%">
-                @Html.Partial("../../Views/Builder/Authoring/PatientActions")
-            </div>
-        </div>
-    </div>
-</div>
 <script type="text/javascript">
     var filterBySourceList = @Html.Raw(Json.Encode(ViewBag.FilterBySource)); 
     isSearchPageForSkillSet=false;
     $(document).ready(function () { 
+       adjustHeight();
        setMaxLenthSearchText("searchByTextSSB");
        disableAButton("btnDeleteQuestions");
        disableAButton("btnCopyQuestions");
@@ -71,3 +31,46 @@
         });
     });
 </script>
+<div class="grid_32 div-with-bottom-border">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_17 form-page-header" style="padding-top: 0px">
+        Skill Set Builder
+    </div>
+    <div class="grid_6 align-div-inline" id="FilterBySource" style="width: 160px">
+    </div>
+    <div class="align-div-inline standard-text">
+        And/Or</div>
+    <div class="grid_8 align-div-inline">
+        @Html.TextBox("searchByTextSSB", "", new { id = "searchByTextSSB", @class = "grid_28" })
+        <img id="buttonSearchSSB" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+<div class="grid_32">
+    <div class="clear-min-height-spacing clear">
+    </div>
+    <div id="BreadCrumbEntry">
+        @Html.Partial("../../Views/Builder/Authoring/_BreadCrumb")
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+<div class="grid_32 dynamicHeight" id = "skillSetFolderGridContainer">
+    <div class="grid_8 remove-div-space dynamicHeight" id="skillSetBuilderFolderPanel">
+        @Html.Partial("../../Views/Builder/QuestionBank/Folder", new ViewDataDictionary { new KeyValuePair<string, object>("currentFolderPanel", "skillSetBuilderTab") })
+    </div>
+    <div class="grid_24 remove-div-space dynamicHeight" id = "skillSetGridButtonContainer" style="width:75%">
+        <div class="grid_32 grid-height" id = "innerSkillSetGridButtonContainer" style="width:100%">
+            <div class="grid_32 grid-inner-height" id = "skillSetGridContainer" style="float: left;width:100%">
+                @Html.Partial("../../Views/Builder/Authoring/_SkillSetBuilderGrid")
+            </div>
+            <div class="clear-min-height-spacing clear">
+            </div>
+            <div class="grid_32" id="skillSetButtonContainer" style="width:100%">
+                @Html.Partial("../../Views/Builder/Authoring/PatientActions")
+            </div>
+        </div>
+    </div>
+</div>

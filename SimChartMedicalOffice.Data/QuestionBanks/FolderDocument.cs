@@ -1,50 +1,45 @@
-﻿using SimChartMedicalOffice.Core.AssignmentBuilder;
-using SimChartMedicalOffice.Core.DataInterfaces.Patient;
-using SimChartMedicalOffice.Core.DataInterfaces.SkillSetBuilder;
-using SimChartMedicalOffice.Core.ProxyObjects;
-using SimChartMedicalOffice.Data.Repository;
-using SimChartMedicalOffice.Core.DataInterfaces.QuestionBanks;
-using SimChartMedicalOffice.Core.QuestionBanks;
-using SimChartMedicalOffice.Core.Patient;
-using SimChartMedicalOffice.Core.SkillSetBuilder;
+﻿using System;
 using System.Collections.Generic;
-using SimChartMedicalOffice.Common.Utility;
 using System.Linq;
-using System;
 using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Utility;
+using SimChartMedicalOffice.Core.AssignmentBuilder;
 using SimChartMedicalOffice.Core.DataInterfaces.AssignmentBuilder;
+using SimChartMedicalOffice.Core.DataInterfaces.Patient;
+using SimChartMedicalOffice.Core.DataInterfaces.QuestionBanks;
+using SimChartMedicalOffice.Core.DataInterfaces.SkillSetBuilder;
+using SimChartMedicalOffice.Core.Patient;
+using SimChartMedicalOffice.Core.ProxyObjects;
+using SimChartMedicalOffice.Core.QuestionBanks;
+using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Core.DropBox;
 
 namespace SimChartMedicalOffice.Data
 {
     public class FolderDocument : KeyValueRepository<Folder>, IFolderDocument
     {
-        public override string Url
-        {
-            get
-            {
-                //return "SimApp/Courses/{3}/{0}/{1}/{2}";
-                return "SimApp/Courses/{0}/{1}/SubFolders{2}";
-            }
-        }
+       
 
         private readonly IQuestionBankDocument _questionBankDocument;
         private readonly IPatientDocument _patientDocument;
-        private readonly IAssignmentRepositoryDocument _assignmentDocument;
-        private readonly ISkillSetRepositoryDocument _skillSetDocument;
-        
-        
+        private readonly IAssignmentDocument _assignmentDocument;
+        private readonly ISkillSetDocument _skillSetDocument;
+
+
         /// <summary>
         /// initalising the questionbank and patient document
         /// </summary>
         /// <param name="questionBankDocument"></param>
         /// <param name="patientDocument"></param>
         /// /// <param name="assignmentDocument"></param>
-        public FolderDocument(IQuestionBankDocument questionBankDocument, IPatientDocument patientDocument, IAssignmentRepositoryDocument assignmentDocument, ISkillSetRepositoryDocument skillSetDocument)
+        /// <param name="skillSetDocument"> </param>
+        public FolderDocument(IQuestionBankDocument questionBankDocument, IPatientDocument patientDocument, 
+            IAssignmentDocument assignmentDocument, ISkillSetDocument skillSetDocument)
         {
-            this._questionBankDocument = questionBankDocument;
-            this._patientDocument = patientDocument;
-            this._assignmentDocument = assignmentDocument;
-            this._skillSetDocument = skillSetDocument;
+            _questionBankDocument = questionBankDocument;
+            _patientDocument = patientDocument;
+            _assignmentDocument = assignmentDocument;
+            _skillSetDocument = skillSetDocument;
         }
 
         /// <summary>
@@ -54,6 +49,8 @@ namespace SimChartMedicalOffice.Data
         /// <param name="courseId"></param>
         /// <param name="folderType"></param>
         /// <param name="folderUrl"></param>
+        /// <param name="breadCrumbFolders"> </param>
+        /// <param name="breadCrumbNeeded"> </param>
         /// <returns></returns>
         public IList<Folder> GetSubfolders(string parentFolderIdentifier, string courseId, int folderType, string folderUrl, out IList<BreadCrumbProxy> breadCrumbFolders, bool breadCrumbNeeded)
         {
@@ -63,15 +60,14 @@ namespace SimChartMedicalOffice.Data
             {
                 breadCrumbFolders = GetBreadCrumbList(folderUrl, parentFolderIdentifier, folderType);
             }
-            string jsonString = GetJsonDocument(GetCorrectFolderUrl(courseId, folderType, folderUrl,parentFolderIdentifier));
-            Dictionary<string, Folder> subFolderList;
-            subFolderList = (jsonString=="null")?new Dictionary<string, Folder>():JsonSerializer.DeserializeObject<Dictionary<string, Folder>>(jsonString);
+            string jsonString = GetJsonDocument(GetCorrectFolderUrl(null, folderType, folderUrl,parentFolderIdentifier));
+            Dictionary<string, Folder> subFolderList = (jsonString=="null")?new Dictionary<string, Folder>():JsonSerializer.DeserializeObject<Dictionary<string, Folder>>(jsonString);
             if (subFolderList != null)
             {
                 foreach (var folderItem in subFolderList)
                 {
-                    folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
-                    folderItem.Value.Url = GetCorrectFolderUrl(courseId, folderType, folderUrl, parentFolderIdentifier);
+                    folderItem.Value.UniqueIdentifier = folderItem.Key;
+                    folderItem.Value.Url = GetCorrectFolderUrl(null, folderType, folderUrl, parentFolderIdentifier);
                 }
             }
             return ConvertDictionarytoObject(subFolderList);
@@ -80,9 +76,9 @@ namespace SimChartMedicalOffice.Data
         private IList<BreadCrumbProxy> GetBreadCrumbList(string currentFoderUrl, string currentFolderIdentifier, int folderType)
         {
             IList<BreadCrumbProxy> lstFolder = new List<BreadCrumbProxy>();
-            Folder MasterFolder = null;
+            Folder masterFolder = null;
             string sourceUrl = "";
-            string[] stringSeparators = new string[] { "SubFolders" };
+            string[] stringSeparators = new[] { "SubFolders" };
             string[] array = currentFoderUrl.Split(stringSeparators, StringSplitOptions.None);
             if (array.Length > 0)
             {
@@ -95,27 +91,25 @@ namespace SimChartMedicalOffice.Data
                 switch ((AppCommon.FolderType) folderType)
                 {
                     case AppCommon.FolderType.QuestionBank:
-                        MasterFolder = _questionBankDocument.GetQuestionBank();
+                        masterFolder = _questionBankDocument.GetQuestionBank();
 
                         break;
                     case AppCommon.FolderType.PatientRepository:
-                        MasterFolder = _patientDocument.GetPatientRepository("", "");
+                        masterFolder = _patientDocument.GetPatientRepository(AppConstants.AdminCourseId, AppConstants.AdminRole);
                         break;
                     case AppCommon.FolderType.AssignmentRepository:
-                        MasterFolder = _assignmentDocument.GetAssignmentRepository();
+                        masterFolder = _assignmentDocument.GetAssignmentRepository();
                         break;
                     case AppCommon.FolderType.SkillSetRepository:
-                        MasterFolder = _skillSetDocument.GetSkillSetRepository();
+                        masterFolder = _skillSetDocument.GetSkillSetRepository();
                         break;
                 }
 
                 // to give rootFolder name and send other properties as ""
-                targetFolder=new BreadCrumbProxy();
-                targetFolder.Name = AppCommon.GetFolderTypeName(folderType);
-                targetFolder.Url = "";
-                targetFolder.UniqueIdentifier = "";
-                lstFolder.Add(targetFolder);
-                targetFolder = null;
+                TargetFolder = new BreadCrumbProxy
+                                   {Name = AppCommon.GetFolderTypeName(folderType), Url = "", UniqueIdentifier = ""};
+                lstFolder.Add(TargetFolder);
+                TargetFolder = null;
                 // to get parents and grand parents
                 foreach (string item in array.Skip(1))
                 {
@@ -126,29 +120,29 @@ namespace SimChartMedicalOffice.Data
 
                         sourceUrl = sourceUrl + "SubFolders" + item;
 
-                        if (MasterFolder != null)
+                        if (masterFolder != null)
                         {
-                            TraverseEachFolderForQuestions(MasterFolder.SubFolders, folderId);
+                            TraverseEachFolderForQuestions(masterFolder.SubFolders, folderId);
                         }
-                        if (targetFolder != null)
+                        if (TargetFolder != null)
                         {
                             // assigning the correct URL for this folder
-                            targetFolder.Url = folderUrl;
-                            lstFolder.Add(targetFolder);
-                            targetFolder = null;
+                            TargetFolder.Url = folderUrl;
+                            lstFolder.Add(TargetFolder);
+                            TargetFolder = null;
                         }
                     }
                 }
 
                 // to get current Folder
-                if (MasterFolder != null)
+                if (masterFolder != null)
                 {
-                    TraverseEachFolderForQuestions(MasterFolder.SubFolders, currentFolderIdentifier);
+                    TraverseEachFolderForQuestions(masterFolder.SubFolders, currentFolderIdentifier);
                 }
-                if (targetFolder != null)
+                if (TargetFolder != null)
                 {
-                    lstFolder.Add(targetFolder);
-                    targetFolder = null;
+                    lstFolder.Add(TargetFolder);
+                    TargetFolder = null;
                 }
 
             }
@@ -157,26 +151,24 @@ namespace SimChartMedicalOffice.Data
         }
 
         //do not delete - this proxy folder is used for each BreadCrumb link creation
-        public BreadCrumbProxy targetFolder = null;
+        public BreadCrumbProxy TargetFolder;
 
-        
+
         /// <summary>
         /// to recursive find a folder inside the Master Folder object
         /// </summary>
         /// <param name="folderContent"></param>
+        /// <param name="folderId"> </param>
         private void TraverseEachFolderForQuestions(Dictionary<string, Folder> folderContent, string folderId)
         {
             if (folderContent != null && folderContent.Count > 0)
             {
-                IList<Folder> folders = folderContent.Select(folder => folder.Value).ToList();
                 //folders.ToList().ForEach(F => GetTotalFolderList(F));
                 foreach (var folderDict in folderContent)
                 {
                     if (folderDict.Key == folderId)
                     {
-                        targetFolder=new BreadCrumbProxy();
-                        targetFolder.Name = folderDict.Value.Name;
-                        targetFolder.UniqueIdentifier = folderId;
+                        TargetFolder = new BreadCrumbProxy {Name = folderDict.Value.Name, UniqueIdentifier = folderId};
                         break;
                     }
                     TraverseEachFolderForQuestions(folderDict.Value.SubFolders, folderId);
@@ -188,17 +180,16 @@ namespace SimChartMedicalOffice.Data
         /// Method to get the question items
         /// </summary>
         /// <param name="parentFolderIdentifier"></param>
-        /// <param name="courseId"></param>
+        /// <param name="dropBox"> </param>
         /// <param name="folderUrl"></param>
         /// <returns></returns>
-        public IList<Question> GetQuestionItems(string parentFolderIdentifier, string courseId, string folderUrl)
+        public IList<Question> GetQuestionItems(string parentFolderIdentifier, DropBoxLink dropBox, string folderUrl)
         {
             string jsonString = GetJsonDocument(string.Concat(folderUrl, "/", parentFolderIdentifier, "/QuestionItems"));
-            Dictionary<string, Question> questionList;
-            questionList = (jsonString=="null")?new Dictionary<string, Question>():JsonSerializer.DeserializeObject<Dictionary<string, Question>>(jsonString);
+            Dictionary<string, Question> questionList = (jsonString=="null")?new Dictionary<string, Question>():JsonSerializer.DeserializeObject<Dictionary<string, Question>>(jsonString);
             foreach (var folderItem in questionList)
             {
-                folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
+                folderItem.Value.UniqueIdentifier = folderItem.Key;
                 folderItem.Value.Url = string.Concat(folderUrl, "/", parentFolderIdentifier, "/QuestionItems/", folderItem.Value.UniqueIdentifier);
             }
             return ConvertDictionarytoObject(questionList);
@@ -207,11 +198,10 @@ namespace SimChartMedicalOffice.Data
         public IList<Patient> GetPatientItems(string parentFolderIdentifier, string courseId, string folderUrl)
         {
             string jsonString = GetJsonDocument(string.Concat(folderUrl, "/", parentFolderIdentifier, "/Patients"));
-            Dictionary<string, Patient> patientList;
-            patientList = (jsonString == "null") ? new Dictionary<string, Patient>() : JsonSerializer.DeserializeObject<Dictionary<string, Patient>>(jsonString);
+            Dictionary<string, Patient> patientList = (jsonString == "null") ? new Dictionary<string, Patient>() : JsonSerializer.DeserializeObject<Dictionary<string, Patient>>(jsonString);
             foreach (var folderItem in patientList)
             {
-                folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
+                folderItem.Value.UniqueIdentifier = folderItem.Key;
                 folderItem.Value.Url = string.Concat(folderUrl, "/", parentFolderIdentifier, "/Patients/", folderItem.Value.UniqueIdentifier);
             }
             return ConvertDictionarytoObject(patientList);
@@ -220,11 +210,10 @@ namespace SimChartMedicalOffice.Data
         public IList<Core.SkillSetBuilder.SkillSet> GetSkillSetItems(string parentFolderIdentifier, string courseId, string folderUrl)
         {
             string jsonString = GetJsonDocument(string.Concat(folderUrl, "/", parentFolderIdentifier, "/SkillSets"));
-            Dictionary<string, Core.SkillSetBuilder.SkillSet> skillSetList;
-            skillSetList = (jsonString == "null") ? new Dictionary<string, Core.SkillSetBuilder.SkillSet>() : JsonSerializer.DeserializeObject<Dictionary<string, Core.SkillSetBuilder.SkillSet>>(jsonString);
+            Dictionary<string, Core.SkillSetBuilder.SkillSet> skillSetList = (jsonString == "null") ? new Dictionary<string, Core.SkillSetBuilder.SkillSet>() : JsonSerializer.DeserializeObject<Dictionary<string, Core.SkillSetBuilder.SkillSet>>(jsonString);
             foreach (var folderItem in skillSetList)
             {
-                folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
+                folderItem.Value.UniqueIdentifier = folderItem.Key;
             }
             return ConvertDictionarytoObject(skillSetList);
         }
@@ -232,19 +221,20 @@ namespace SimChartMedicalOffice.Data
         /// <summary>
         /// Method to get the correct folder url
         /// </summary>
-        /// <param name="courseId"></param>
+        /// <param name="dropBox"> </param>
         /// <param name="folderType"></param>
         /// <param name="folderUrl"></param>
         /// <param name="parentFolderIdentifier"></param>
         /// <returns></returns>
-        public string GetCorrectFolderUrl(string courseId, int folderType, string folderUrl, string parentFolderIdentifier)
+        public string GetCorrectFolderUrl(DropBoxLink dropBox, int folderType, string folderUrl, string parentFolderIdentifier)
         {
-            if (String.IsNullOrEmpty(folderUrl))
-                return string.Format(Url, courseId, AppCommon.GetFolderType(folderType), folderUrl);
-            else
+            if (dropBox == null)
             {
-                return  string.Concat(folderUrl, "/", parentFolderIdentifier, "/SubFolders");
+                dropBox = GetAdminDropBox();
             }
+            if (String.IsNullOrEmpty(folderUrl))
+                return string.Format(GetAssignmentUrl(dropBox,Core.DocumentPath.Module.LCMFolders), AppCommon.GetFolderType(folderType), folderUrl);
+            return  string.Concat(folderUrl, "/", parentFolderIdentifier, "/SubFolders");
         }
         /// <summary>
         /// To convert Dictionary of Folder objects to List of Folder Objects
@@ -347,11 +337,10 @@ namespace SimChartMedicalOffice.Data
         public IList<Assignment> GetAssignmentItems(string parentFolderIdentifier, string courseId, string folderUrl)
         {
             string jsonString = GetJsonDocument(string.Concat(folderUrl, "/", parentFolderIdentifier, "/Assignments"));
-            Dictionary<string, Assignment> assignmentList;
-            assignmentList = (jsonString == "null") ? new Dictionary<string, Assignment>() : JsonSerializer.DeserializeObject<Dictionary<string, Assignment>>(jsonString);
+            Dictionary<string, Assignment> assignmentList = (jsonString == "null") ? new Dictionary<string, Assignment>() : JsonSerializer.DeserializeObject<Dictionary<string, Assignment>>(jsonString);
             foreach (var folderItem in assignmentList)
             {
-                folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
+                folderItem.Value.UniqueIdentifier = folderItem.Key;
                 folderItem.Value.Url = string.Concat(folderUrl, "/", parentFolderIdentifier, "/Assignments/", folderItem.Value.UniqueIdentifier);
             }
             return ConvertDictionarytoObject(assignmentList);

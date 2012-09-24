@@ -51,7 +51,7 @@ var assignBuilder = {
             var isSearchValid = true;
             if (isNullOrEmpty(searchText) || searchText.length < 2) {
                 isSearchValid = false;
-                jAlert(SEARCH_VALIDATION, ALERT_TITLE, function (isOk) {
+                jAlert(SEARCH_VALIDATION, ALERT_TITLE, function () {
                 });
             }
             if (isSearchValid) {
@@ -101,7 +101,7 @@ var assignBuilder = {
                     title: 'Linked Competencies',
                     height: 250,
                     width: 450,
-                    open: function (event, ui) {
+                    open: function () {
                         applyClassForDialogHeader();
                         if (CompetencyList != null && CompetencyList != "") {
                             $("#competenciesLoaded").empty();
@@ -147,7 +147,7 @@ var assignBuilder = {
             $("#SkillSetUnselectedList").contents().find("input[name='SelectSkillSet']:checked").each(function () {
                 $(this).attr('checked', false);
                 $(this).parent().removeClass("competency-highlight");
-                var listindex = selectSkillsetList.length;
+//                var listindex = selectSkillsetList.length;
                 var selectedskillset = {
                     "Guid": getDivData($(this).parent()[0].id, "guid"),
                     "SequenceNumber": assignBuilder.commonFunctions.GetMaxSeqNum(),
@@ -285,8 +285,7 @@ var assignBuilder = {
                 assignBuilder.commonFunctions.FilterSearchListBasedOnSelectedList(result.Result);
                 //assignBuilder.commonFunctions.LoadUnselectedSkillsets(result.Result);
             }
-            else
-                return null;
+            return null;
         },
         FilterSearchListBasedOnSelectedList: function (filteredList) {
             var skillSetIndex = 0;
@@ -345,7 +344,7 @@ var assignBuilder = {
             }
         },
         getPatientJson: function () {
-            var patientJson;
+            var patientJson = {};
             if ($('input:radio[name=PatientOption]:checked').val() == "createNewPatient") {
                 patientJson = {
                     "FirstName": $("#firstName").val(),
@@ -404,7 +403,7 @@ var assignBuilder = {
         },
         GetSelectedSkillSetsList: function () {
             selectedSkillSets_Filter = [];
-            for (skillCount = 0; skillCount < selectSkillsetList.length; skillCount++) {
+            for (var skillCount = 0; skillCount < selectSkillsetList.length; skillCount++) {
                 var skillSetObject = { "SkillSetIdentifier": selectSkillsetList[skillCount].SkillSetUrl,
                     "SequenceNumber": selectSkillsetList[skillCount].SequenceNumber
                 };
@@ -500,11 +499,15 @@ var assignBuilder = {
             }
 
             // load duration
-            if (assignmentToEdit.Duration != null) {
+            if (assignmentToEdit.Duration != null && assignmentToEdit.Duration != "") {
                 var duration = assignmentToEdit.Duration.split(':');
                 var hrs = duration[0].split("0", 2);
                 $("#AssignmentDurationHrs").val(hrs[1]);
                 $("#AssignmentDurationMns").val(duration[1]);
+            }
+            else {
+                $("#AssignmentDurationHrs").val(DROPDOWN_SELECT);
+                $("#AssignmentDurationMns").val(DROPDOWN_SELECT);
             }
 
             //load patient
@@ -543,7 +546,7 @@ var assignBuilder = {
             //load resources
 
             if (assignmentToEdit.Resources != null && assignmentToEdit.Resources.length > 0) {
-                for (resCount = 0; resCount < assignmentToEdit.Resources.length; resCount++) {
+                for (var resCount = 0; resCount < assignmentToEdit.Resources.length; resCount++) {
                     addResource();
                     $('input:checkbox[name=addResource]').attr('checked', true);
                     $("#addButton").show();
@@ -569,7 +572,7 @@ var assignBuilder = {
                 }
                 else {
 
-                    jAlert("Saved", ALERT_TITLE, function (isOk) {
+                    jAlert("Saved", ALERT_TITLE, function () {
 
                     });
                 }
@@ -599,7 +602,6 @@ var assignBuilder = {
                 competencyQuestionStringListTemp1.total = competencyQuestionStringListTemp1.results.length;
                 initializeFlexBox("LinkedCompetency", competencyQuestionStringListTemp1);
             }
-            else
                 return null;
         }
     },
@@ -651,13 +653,19 @@ var assignBuilder = {
 
     step3Actions: {
         revertToOriginal: function () {
-            var Url = "../AssignmentBuilder/RevertQuestionToOriginal?questionUrl=" + UrlOfSelectedQuestion + "&questionGuid=" + strQuestionGuid + "&skillSetGuid=" + selectedSkillSetGuid + "&isSelectedItemQuestion=" + isSelectedItemAQuestion;
-            doAjaxCall("POST", "", Url, assignBuilder.step3Actions.OnSuccessRevertQuestion);
+            var url = "../AssignmentBuilder/RevertQuestionToOriginal?questionUrl=" + UrlOfSelectedQuestion + "&questionGuid=" + strQuestionGuid + "&skillSetGuid=" + selectedSkillSetGuid + "&isSelectedItemQuestion=" + isSelectedItemAQuestion;
+            doAjaxCall("POST", "", url, assignBuilder.step3Actions.OnSuccessRevertQuestion);
         },
 
         OnSuccessRevertQuestion: function () {
+            //savedQuestionsCount.splice(strQuestionGuid, 1);
+            for (var count = 0; count < savedQuestionsCount.length; count++) {
+                if (strQuestionGuid == savedQuestionsCount[count].id) {
+                    savedQuestionsCount.splice(count, 1);
+                }
+            }
             startAjaxLoader();
-            $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val());
+            $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate_input").val());
             closeAjaxLoader();
         }
     }

@@ -9,7 +9,7 @@
 	
 .fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
 	/*background: #ffc;*/
-	/*karthik-modified style as per requirement*/
+	/*Simoffice code change-modified style as per requirement*/
 	/*border-color:#DE733E;*/	
 	border:0px;
 	outline:#DE733E solid thin;
@@ -21,11 +21,11 @@
 	filter: alpha(opacity=20); /* for IE */
 	}
 	
-/*Karthik-Added new class to highlight day header*/
+/*SimOffice code change-Added new class to highlight day header*/
 	.fc-header-highlight
 	{
-	    background: #DE733E;
-	    border-color:#DE733E;
+	   background: #FFC000;
+	    border-color:#E46C0A;	    
 	}
 
 /* Buttons

@@ -1,12 +1,13 @@
 ﻿using SimChartMedicalOffice.Core.Forms;
 using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Core.DropBox;
 
 namespace SimChartMedicalOffice.Core.DataInterfaces.Forms
 {
     public interface INoticeOfPrivacyPracticeDocument : IKeyValueRepository<NoticeOfPrivacyPractice>
     {
-        NoticeOfPrivacyPractice GetNoticeOfPrivacyPracticeDocument(string patientGUID, string courseId, string userRole, string UID, string SID);
-        string SaveNoticeFormUrl(string patientGUID, string courseId, string userRole, string UID, string SID);
+        NoticeOfPrivacyPractice GetNoticeOfPrivacyPracticeDocument(string patientGuid, DropBoxLink dropBox);
+        string SaveNoticeFormUrl(string patientGuid, DropBoxLink dropBox);
         Attachment GetNoticeOfPrivacyPracticePdfData();
     }
 }

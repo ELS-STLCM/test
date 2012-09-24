@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace SimChartMedicalOffice.Core.Json
 {
     /// <summary>
     /// Class that encapsulates most common parameters sent by DataTables plugin
     /// </summary>
-    public class jQueryDataTableParamModel
+    public class JQueryDataTableParamModel
     {
         /// <summary>
         /// Request sequence number sent by DataTable,

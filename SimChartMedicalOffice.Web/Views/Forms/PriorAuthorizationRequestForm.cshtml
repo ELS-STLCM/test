@@ -5,6 +5,9 @@
     $(document).ready(function () {
         forms.PatientSearch.DisableSelectBtn("savePatientRecord-" + '@ViewBag.FormValue');
         forms.PriorauthorizationRequestForm.DisableControls();
+        setFormsRepositoryHeight();
+        setFormsContentHeight();
+        setFormsInnerContentHeight();
     });
 
     $("#searchPatientButton").click(function () {
@@ -37,7 +40,7 @@
         });
     });
 </script>
-<div class="grid_24">
+<div class="grid_24 forms-content-height">
     <div class="form-page-header grid_32">
         Prior Authorization Request
     </div>
@@ -52,7 +55,7 @@
     </div>
     <div class="clear clear-height-spacing">
     </div>
-    <div id="prior_authorization_request_main_content" class="div-with-border grid_32 form-content vertical-content-scroll">
+    <div id="prior_authorization_request_main_content" class="div-with-border grid_32 form-content vertical-content-scroll forms-inner-content-height">
         <div class="clear-height-spacing clear">
         </div>
         <div class="grid_32 section-seperator">

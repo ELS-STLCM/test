@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -28,9 +27,9 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         public SkillSetController(ISkillSetService skillSetService, ICompetencyService competencyService, IQuestionBankService questionBankService)
         {
-            this._skillSetService = skillSetService;
-            this._competencyService = competencyService;
-            this._questionBankService = questionBankService;
+            _skillSetService = skillSetService;
+            _competencyService = competencyService;
+            _questionBankService = questionBankService;
         }
 
         public ActionResult LoadQuestionsForSkillSet(string skillSetUrl)
@@ -44,17 +43,17 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         public ActionResult SkillSetBuilderLanding()
         {
-            IList<CompetencySources> SourceList = _competencyService.GetAllCompetecnySources();
+            IList<CompetencySources> sourceList = _competencyService.GetAllCompetecnySources();
             int index = 0;
-            ViewBag.FilterBySource = SourceList.Select(cat => new { id = index++, name = cat.Name.ToString(CultureInfo.InvariantCulture) }).ToList();
+            ViewBag.FilterBySource = sourceList.Select(cat => new { id = index++, name = cat.Name.ToString(CultureInfo.InvariantCulture) }).ToList();
             return View("../Builder/SkillSet/SkillSetBuilderLanding");
         }
 
         public ActionResult SkillSetBuilder()
         {
-            IList<CompetencySources> SourceList = _competencyService.GetAllCompetecnySources();
+            IList<CompetencySources> sourceList = _competencyService.GetAllCompetecnySources();
             int index = 0;
-            ViewBag.FilterBySource = SourceList.Select(cat => new { id = index++, name = cat.Name.ToString(CultureInfo.InvariantCulture) }).ToList();
+            ViewBag.FilterBySource = sourceList.Select(cat => new { id = index++, name = cat.Name.ToString(CultureInfo.InvariantCulture) }).ToList();
             return View("../Builder/SkillSet/SkillSetBuilder");
         }
         /// <summary>
@@ -68,22 +67,19 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <param name="folderUrl"></param>
         /// <returns></returns>
         //[AcceptVerbs(HttpVerbs.Post)]
-        public ActionResult GetSkillSetList(jQueryDataTableParamModel param, string parentFolderIdentifier, int folderType, string filterBySource, string selectedSkillSetList, string folderUrl)
+        public ActionResult GetSkillSetList(JQueryDataTableParamModel param, string parentFolderIdentifier, int folderType, string filterBySource, string selectedSkillSetList, string folderUrl)
         {
-            int skillSetCount = 0;
             string[] gridColumnList = { "SkillSetTitle", "Competency", "Source", "CreatedTimeStamp", "Status" };
             IList<SkillSet> skillSetList = _skillSetService.GetSkillSetItems(parentFolderIdentifier, folderType, GetLoginUserCourse() + "/" + GetLoginUserRole(), folderUrl);
             IList<Competency> competencyAll = _competencyService.GetAllCompetencies();
             if (filterBySource != "")
             {
-                IList<SkillSet> skillSetLocal = new List<SkillSet>();
-
-                skillSetLocal = (from skillSet in skillSetList
-                                 where
-                                     skillSet.Competencies != null && skillSet.Competencies.Count > 0 &&
-                                     (_skillSetService.GetLinkedCompetencySources(skillSet.Competencies, competencyAll).
-                                         Any(x => x.ToLower().Contains(filterBySource.ToLower())))
-                                 select skillSet).ToList();
+                IList<SkillSet> skillSetLocal = (from skillSet in skillSetList
+                                       where
+                                           skillSet.Competencies != null && skillSet.Competencies.Count > 0 &&
+                                           (_skillSetService.GetLinkedCompetencySources(skillSet.Competencies, competencyAll).
+                                               Any(x => x.ToLower().Contains(filterBySource.ToLower())))
+                                       select skillSet).ToList();
                 skillSetList = skillSetLocal;
             }
 
@@ -127,12 +123,12 @@ namespace SimChartMedicalOffice.Web.Controllers
                     break;
                 default:
                     var sortableList = skillSetList.AsQueryable();
-                    skillSetList = sortableList.OrderBy<SkillSet>(sortColumnName, sortColumnOrder).ToList<SkillSet>();
+                    skillSetList = sortableList.OrderBy(sortColumnName, sortColumnOrder).ToList();
                     break;
-            };
+            }
             IList<SkillSet> skillSetListToRender = skillSetList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
             IList<Competency> skillSetCompetencies = _skillSetService.GetAllCompetenciesForSkillSets(skillSetListToRender);
-            skillSetCount = skillSetList.Count;
+            int skillSetCount = skillSetList.Count;
             string[] strArray = AppCommon.GetStringArrayAfterSplitting(selectedSkillSetList);
             var data = (from skillSetItem in skillSetListToRender
                         select new[]
@@ -166,7 +162,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                         (from source in competencyObj.Sources
                          where (!sourceListReqd.Contains(source.Name) && sourceListBasic.Contains(source.Name))
                          select source.Name).ToList();
-                    if (sourceNameLocal != null && sourceNameLocal.Count > 0)
+                    if (sourceNameLocal.Count > 0)
                     {
                         sourceListReqd = sourceListReqd.Concat(sourceNameLocal).ToList();
                     }
@@ -196,21 +192,22 @@ namespace SimChartMedicalOffice.Web.Controllers
             competenciesForSkillSet = competenciesForSkillSet.Distinct().ToList();
             return competenciesForSkillSet;
         }
+
         /// <summary>
         /// To refresh the grid on search
         /// </summary>
         /// <param name="param"></param>
         /// <param name="strSearchText"></param>
+        /// <param name="strSource"> </param>
         /// <returns></returns>
-        public ActionResult GetSkillSetSearchList(jQueryDataTableParamModel param, string strSearchText, string strSource)
+        public ActionResult GetSkillSetSearchList(JQueryDataTableParamModel param, string strSearchText, string strSource)
         {
             try
             {
-                IList<SkillSetProxy> lstSkillSetSearchResult = new List<SkillSetProxy>();
                 int sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
                 string sortColumnOrder = Request["sSortDir_0"];
                 IList<SkillSetProxy> lstSkillSetSearchResultTemp = _skillSetService.GetSearchResultsForSkillSet(strSearchText, sortColumnIndex, sortColumnOrder, strSource);
-                lstSkillSetSearchResult = lstSkillSetSearchResultTemp.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
+                IList<SkillSetProxy> lstSkillSetSearchResult = lstSkillSetSearchResultTemp.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
                 var data = (from skillSetItem in lstSkillSetSearchResult
                             select new[]
                                    {
@@ -251,10 +248,10 @@ namespace SimChartMedicalOffice.Web.Controllers
                 ViewBag.SkillFocus = _skillSetService.GetFocusForSkillSet(skillSetUrl);
                 ViewBag.SkillSetStatus = AppCommon.CheckIfPublished(_skillSetService.GetSkillSet(skillSetUrl).Status);
             }
-            catch
+            catch (Exception ex)
             {
-
-                //TO-dO
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: Controller: SkellSet, MethodName: PreviewAndPublishStep4", ex);
             }
             return View("../Builder/SkillSet/PreviewAndPublishStep4");
         }
@@ -270,9 +267,9 @@ namespace SimChartMedicalOffice.Web.Controllers
             ViewBag.SearchText = strSearchText;
             ViewBag.searchSource = strSource;
             //ViewBag.filterBySourceSearch = GetQuestionTypeFlexBoxList();
-            IList<CompetencySources> SourceList = _competencyService.GetAllCompetecnySources();
+            IList<CompetencySources> sourceList = _competencyService.GetAllCompetecnySources();
             int index = 0;
-            ViewBag.FilterBySource = SourceList.Select(cat => new { id = index++, name = cat.Name.ToString(CultureInfo.InvariantCulture) }).ToList();
+            ViewBag.FilterBySource = sourceList.Select(cat => new { id = index++, name = cat.Name.ToString(CultureInfo.InvariantCulture) }).ToList();
             ViewBag.searchSource = strSource;
             return View("../Builder/SkillSet/SKillSetSearchResults");
         }
@@ -299,13 +296,9 @@ namespace SimChartMedicalOffice.Web.Controllers
                                             select new
                                             {
                                                 Text = lstquestionItem.QuestionText,
-                                                QuestionTypeId = Convert.ToInt32(lstquestionItem.QuestionType),
-                                                IsQuestionFromTemplate = lstquestionItem.IsQuestionFromTemplate,
-                                                TypeOfQuestion = (AppCommon.QuestionTypeOptionsForLanding.Single(x => x.Key == Convert.ToInt32(lstquestionItem.QuestionType)).Value.ToString()),
-                                                OrderSequenceNumber = lstquestionItem.SequenceNumber,
-                                                Url = lstquestionItem.Url,
-                                                ParentReferenceGuid = lstquestionItem.ParentReferenceGuid,
-                                                TemplateSequenceNumber = lstquestionItem.TemplateSequenceNumber,
+                                                QuestionTypeId = Convert.ToInt32(lstquestionItem.QuestionType), lstquestionItem.IsQuestionFromTemplate,
+                                                TypeOfQuestion = (AppCommon.QuestionTypeOptionsForLanding.Single(x => x.Key == Convert.ToInt32(lstquestionItem.QuestionType)).Value),
+                                                OrderSequenceNumber = lstquestionItem.SequenceNumber, lstquestionItem.Url, lstquestionItem.ParentReferenceGuid, lstquestionItem.TemplateSequenceNumber,
                                                 UniqueIdentifier = (!String.IsNullOrEmpty(lstquestionItem.Url) ? lstquestionItem.Url.Split('/').Last() : String.Empty)
                                             });
                 selectedQuestionList.OrderBy(x => x.OrderSequenceNumber).ToList();
@@ -320,10 +313,10 @@ namespace SimChartMedicalOffice.Web.Controllers
 
             return View("../Builder/SkillSet/SkillStructureStepTwo");
         }
-        public ActionResult AddQuestionList(string UniqueIdentifier, string skillSetUrl)
+        public ActionResult AddQuestionList(string uniqueIdentifier, string skillSetUrl)
         {
             IList<DocumentProxy> competencyQuestionList = _skillSetService.GetCompetencyQuestionListInSkillSet(skillSetUrl, "", "");
-            competencyQuestionList = (from comp in competencyQuestionList where comp.UniqueIdentifier.ToString() != UniqueIdentifier select comp).ToList();
+            competencyQuestionList = (from comp in competencyQuestionList where comp.UniqueIdentifier != uniqueIdentifier select comp).ToList();
             return Json(new { CompetencyQuestionList = competencyQuestionList });
         }
 
@@ -340,21 +333,19 @@ namespace SimChartMedicalOffice.Web.Controllers
             string filterQuestionType = "";
 
             IList<Question> selectQuestionOrderList = new List<Question>();
-            SkillSetProxy competencyQuestionFilterObject;
             string competencyQuestionListJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-            competencyQuestionFilterObject = JsonSerializer.DeserializeObject<SkillSetProxy>(competencyQuestionListJson);
+            SkillSetProxy competencyQuestionFilterObject = JsonSerializer.DeserializeObject<SkillSetProxy>(competencyQuestionListJson);
             // getting the required Filters
             if (competencyQuestionFilterObject != null)
             {
                 skillSetUniqueIdentifier = competencyQuestionFilterObject.UniqueIdentifier;
-                competencySearchText = competencyQuestionFilterObject.competencyText;
+                competencySearchText = competencyQuestionFilterObject.CompetencyText;
                 filterQuestionType = competencyQuestionFilterObject.FilterQuestionType;
                 selectQuestionOrderList = competencyQuestionFilterObject.Questions;
             }
             IList<DocumentProxy> competencyQuestionList = GetCompetencyQuestionListInSkillSet(skillSetUniqueIdentifier, competencySearchText, filterQuestionType);
             //competencyQuestionList = ( from comQues in competencyQuestionList join selectQues in selectQuestionOrderList on (comQues.UniqueIdentifier.Equals(selectQues.UniqueIdentifier) select comQues).ToList();
             competencyQuestionList = (from comQues in competencyQuestionList where !(selectQuestionOrderList.Any(selQues => selQues.ParentReferenceGuid == comQues.Url)) select comQues).ToList();
-            IList<Question> SkillQuestionList = new List<Question>();
             //return Json(new { CompetencyQuestionList = competencyQuestionList, SkillQuestionList = SkillQuestionList });
             return Json(new { CompetencyQuestionList = competencyQuestionList });
         }
@@ -362,13 +353,11 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveSkillStructure(string uniqueIdentifierUrl)
         {
-            string result = AppConstants.FileUploadSuccess;
-            bool isSaved = false;
+            string result;
             try
             {
-                List<DocumentProxy> selectQuestionOrderList = new List<DocumentProxy>();
                 string selectQuestionOrderListJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                selectQuestionOrderList = JsonSerializer.DeserializeObject<List<DocumentProxy>>(selectQuestionOrderListJson);
+                List<DocumentProxy> selectQuestionOrderList = JsonSerializer.DeserializeObject<List<DocumentProxy>>(selectQuestionOrderListJson);
                 //selectQuestionOrderList = selectQuestionOrderList.Select(proxyQues => SetAuditFields(proxyQues, false));
                 //selectQuestionOrderList = selectQuestionOrderList.ForEach(docProxy => SetAuditFields(docProxy, false)).se.ToList<DocumentProxy>();    
                 foreach (var item in selectQuestionOrderList)
@@ -380,27 +369,15 @@ namespace SimChartMedicalOffice.Web.Controllers
                     }
                     else
                     {
-                        if (item.Url.IndexOf("SkillSets") < 0)
-                        {
-                            SetAuditFields(item, false);
-                        }
-                        else
-                        {
-                            SetAuditFields(item, true);
-                        }
+                        SetAuditFields(item, item.Url.IndexOf("SkillSets") >= 0);
                     } 
                 }
-                isSaved = _skillSetService.SaveSkillStructure(uniqueIdentifierUrl, selectQuestionOrderList);
-                if(isSaved) {
-                    result = AppConstants.Save;
-                }
-                else{
-                    result = AppConstants.Error;
-                }
+                bool isSaved = _skillSetService.SaveSkillStructure(uniqueIdentifierUrl, selectQuestionOrderList);
+                result = isSaved ? AppConstants.Save : AppConstants.Error;
             }
             catch (Exception ex)
             {
-                result = AjaxCallResult(new AjaxResult(SimChartMedicalOffice.Common.AppEnum.ResultType.Error, ex.ToString(), ""));
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
                 result = "Error";
             }
             return Json(new { Result = result , SkillSetUrl = uniqueIdentifierUrl });
@@ -410,21 +387,22 @@ namespace SimChartMedicalOffice.Web.Controllers
 
 
         [AcceptVerbs(HttpVerbs.Post)]
-        public JsonResult GetCompetencyForSkillSetFlexBox(string UniqueIdentifier)
+        public JsonResult GetCompetencyForSkillSetFlexBox(string uniqueIdentifier)
         {
             List<AutoCompleteProxy> competencyStringListTemp = new List<AutoCompleteProxy>();
             try
             {
-                if (!String.IsNullOrEmpty(UniqueIdentifier))
+                if (!String.IsNullOrEmpty(uniqueIdentifier))
                 {
-                    competencyStringListTemp = _skillSetService.GetCompetencyGuidListInSkillSetForFlexBox(UniqueIdentifier);
+                    competencyStringListTemp = _skillSetService.GetCompetencyGuidListInSkillSetForFlexBox(uniqueIdentifier);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: Controller: SkillSet, MethodName: GetCompetencyForSkillSetFlexBox", ex);
             }
-            return Json(new { competencyStringListTemp = JsonSerializer.SerializeObject(competencyStringListTemp), competencyArray = competencyStringListTemp.Select(S => S.name).ToArray() });
+            return Json(new { competencyStringListTemp = JsonSerializer.SerializeObject(competencyStringListTemp), competencyArray = competencyStringListTemp.Select(s => s.name).ToArray() });
         }
 
         /// <summary>
@@ -434,7 +412,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public JsonResult PublishASkillSet(string skillSetUrl)
         {
-            bool isPublishedSuccessfully = false;
+            bool isPublishedSuccessfully;
             try
             {
                 isPublishedSuccessfully = _skillSetService.PublishSkillSet(skillSetUrl);
@@ -452,21 +430,20 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// </summary>
         /// <param name="sourceUrl"></param>
         /// <param name="destinationUrl"></param>
-        /// <param name="SkillSetUrl"></param>
+        /// <param name="skillSetUrl"></param>
         /// <returns></returns>
-        public ActionResult SwapQuestionsForSkillSet(string sourceUrl, string destinationUrl, string SkillSetUrl)
+        public ActionResult SwapQuestionsForSkillSet(string sourceUrl, string destinationUrl, string skillSetUrl)
         {
-            Question questionSource = new Question();
-            Question questionDestination = new Question();
-            questionSource = _questionBankService.GetQuestion(sourceUrl);
-            questionDestination = _questionBankService.GetQuestion(destinationUrl);
-            int tempSequenceNumber = 0;
-            tempSequenceNumber = (questionSource != null) ? questionSource.SequenceNumber : 1;
-            questionSource.SequenceNumber = (questionDestination != null) ? questionDestination.SequenceNumber : 1;
-            questionDestination.SequenceNumber = (tempSequenceNumber != 0) ? tempSequenceNumber : 1;
-            _questionBankService.SaveQuestion(questionSource, "", sourceUrl, "", true);
-            _questionBankService.SaveQuestion(questionDestination, "", destinationUrl, "", true);
-            IList<Question> questionsForSkillSet = _skillSetService.GetQuestionsForSkillSet(SkillSetUrl);
+            Question questionSource = _questionBankService.GetQuestion(sourceUrl);
+            Question questionDestination = _questionBankService.GetQuestion(destinationUrl);
+            int tempSequenceNumber = (questionSource != null) ? questionSource.SequenceNumber : 1;
+            if (questionSource != null)
+                questionSource.SequenceNumber = (questionDestination != null) ? questionDestination.SequenceNumber : 1;
+            if (questionDestination != null)
+                questionDestination.SequenceNumber = (tempSequenceNumber != 0) ? tempSequenceNumber : 1;
+            _questionBankService.SaveQuestion(questionSource, GetDropBoxFromCookie(), sourceUrl, "", true,true);
+            _questionBankService.SaveQuestion(questionDestination, GetDropBoxFromCookie(), destinationUrl, "", true,true);
+            IList<Question> questionsForSkillSet = _skillSetService.GetQuestionsForSkillSet(skillSetUrl);
             questionsForSkillSet = questionsForSkillSet.OrderBy(x => x.SequenceNumber).ToList();
             return Json(new { Result = string.Empty, questionList = questionsForSkillSet, strSourceUrl = sourceUrl });
 
@@ -478,9 +455,8 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public ActionResult LoadCompetenciesForSkillSet(string skillSetUrl)
         {
-            List<AutoCompleteProxy> competencyStringListTemp = new List<AutoCompleteProxy>();
             List<AutoCompleteProxy> savedCompetencyList = new List<AutoCompleteProxy>();
-            competencyStringListTemp = _competencyService.GetAllCompetencyListForDropDown();
+            List<AutoCompleteProxy> competencyStringListTemp = _competencyService.GetAllCompetencyListForDropDown();
             if (!string.IsNullOrEmpty(skillSetUrl))
             {
                 // if edit mode, get saved and formatted competency list for the skillset
@@ -500,10 +476,14 @@ namespace SimChartMedicalOffice.Web.Controllers
 
             return View("../Builder/SkillSet/SkillSetMetadata");
         }
+
         /// <summary>
         /// To save/update a skill set object
         /// </summary>
         /// <param name="skillSetUrl"></param>
+        /// <param name="isEditMode"> </param>
+        /// <param name="folderIdentifier"> </param>
+        /// <param name="folderUrl"> </param>
         /// <returns></returns>
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveSkillSet(string skillSetUrl, bool isEditMode, string folderIdentifier, string folderUrl)
@@ -512,16 +492,14 @@ namespace SimChartMedicalOffice.Web.Controllers
             string skillsetIdentifier = string.Empty;
             try
             {
-                string skillSetJson;
-                SkillSet skillSetToSave;
-                skillSetJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                skillSetToSave = JsonSerializer.DeserializeObject<SkillSet>(skillSetJson);
+                string skillSetJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                SkillSet skillSetToSave = JsonSerializer.DeserializeObject<SkillSet>(skillSetJson);
                 if (skillSetToSave != null)
                 {
                     skillSetToSave.IsActive = true;
-                    skillSetToSave.Status = AppCommon.Status_InProgress;
+                    skillSetToSave.Status = AppCommon.StatusInProgress;
                     SetAuditFields(skillSetToSave, false);
-                    bool result = _skillSetService.SaveSkillSet(skillSetToSave, GetLoginUserCourse() + "/" + GetLoginUserRole(), skillSetUrl, folderIdentifier, isEditMode, out skillsetIdentifier);
+                    bool result = _skillSetService.SaveSkillSet(skillSetToSave, GetDropBoxFromCookie(), skillSetUrl, folderIdentifier, isEditMode, out skillsetIdentifier);
                     if (result)
                     {
                         message = "Success";
@@ -529,9 +507,10 @@ namespace SimChartMedicalOffice.Web.Controllers
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: Controller: SkellSet, MethodName: SaveSkillSet", ex);
             }
             return Json(new { messageToReturn = message, uniqueIdentifier = skillsetIdentifier });
         }
@@ -542,10 +521,8 @@ namespace SimChartMedicalOffice.Web.Controllers
             List<AutoCompleteProxy> competencyStringListTemp = new List<AutoCompleteProxy>();
             try
             {
-                string skillSetJson;
-                SkillSetProxy skillSetFilterObject;
-                skillSetJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                skillSetFilterObject = JsonSerializer.DeserializeObject<SkillSetProxy>(skillSetJson);
+                string skillSetJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                SkillSetProxy skillSetFilterObject = JsonSerializer.DeserializeObject<SkillSetProxy>(skillSetJson);
 
                 IList<string> savedCompetencyList = new List<string>();
                 IList<string> filterSourceList = new List<string>();
@@ -556,7 +533,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                 {
                     savedCompetencyList = skillSetFilterObject.SelectedCompetencyList;
                     filterSourceList = skillSetFilterObject.FilterSourceList;
-                    competencyFilterText = skillSetFilterObject.competencyText;
+                    competencyFilterText = skillSetFilterObject.CompetencyText;
                 }
                 competencyStringListTemp = _competencyService.GetAllCompetencyListForDropDown();
 
@@ -567,12 +544,13 @@ namespace SimChartMedicalOffice.Web.Controllers
                 }
 
                 competencyStringListTemp = (from lst in competencyStringListTemp
-                                            where lst.name.ToLower().Contains(competencyFilterText.ToLower()) && (filterSourceList.Count > 0 ? filterSourceList.Any(s => lst.name.ToLower().Contains(s.ToLower())) : true)
+                                            where lst.name.ToLower().Contains(competencyFilterText.ToLower()) && (filterSourceList.Count <= 0 || filterSourceList.Any(s => lst.name.ToLower().Contains(s.ToLower())))
                                             select lst).ToList();
             }
-            catch
+            catch (Exception ex)
             {
-
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: Controller: SkellSet, MethodName: GetFilteredCompetencyList", ex);
             }
             return Json(new { filteredCompetencyList = competencyStringListTemp });
         }
@@ -583,20 +561,18 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public ActionResult ViewSeletedCompetencies(string skillSetUrl)
         {
-            List<AutoCompleteProxy> competencyStringListTemp = new List<AutoCompleteProxy>();
-            List<AutoCompleteProxy> CompetencyList = new List<AutoCompleteProxy>();
-            competencyStringListTemp = _competencyService.GetAllCompetencyListForDropDown();
+            List<AutoCompleteProxy> competencyList = new List<AutoCompleteProxy>();
             // if edit mode, get saved and formatted competency list for the skillset
             if (!string.IsNullOrEmpty(skillSetUrl))
             {
                 SkillSet skillSetObj = _skillSetService.GetSkillSet(skillSetUrl);
                 if (skillSetObj != null)
                 {
-                    CompetencyList = _skillSetService.GetFormattedCompetenciesForSkillSet(skillSetObj).ToList();
+                    competencyList = _skillSetService.GetFormattedCompetenciesForSkillSet(skillSetObj).ToList();
                 }
             }
             // to remove saved competencies from competencies all list
-            ViewBag.CompetencyList = CompetencyList;
+            ViewBag.CompetencyList = competencyList;
             return View("../Builder/SkillSet/_ViewSeletedCompetenciesInStep2");
         }
 
@@ -608,20 +584,18 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public ActionResult CheckIfQuestionsPresentForListOfCompetencies(string skillSetIdentifier)
         {
-            string skillSetCompetencyJson;
-            bool isQuestionsExist = false;
+            //bool isQuestionsExist = false;
             string strQuestionText = String.Empty;
-            IList<Question> lstOfSkillSetQuestion = new List<Question>();
             IList<string> lstOfSkillSetQuestionText = new List<string>();
-            skillSetCompetencyJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+            string skillSetCompetencyJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
             List<string> competencylstOfGuids = JsonSerializer.DeserializeObject<List<string>>(skillSetCompetencyJson);
             SkillSet skillSetObj = _skillSetService.GetSkillSet(skillSetIdentifier);
             if (skillSetObj != null && skillSetObj.Questions != null)
             {
-                lstOfSkillSetQuestion = skillSetObj.Questions.Select(q => q.Value).ToList();
-                lstOfSkillSetQuestionText = (from lstQns in lstOfSkillSetQuestion join compIdentifier in competencylstOfGuids on lstQns.CompetencyReferenceGUID equals compIdentifier select lstQns.QuestionText).ToList();
+                IList<Question> lstOfSkillSetQuestion = skillSetObj.Questions.Select(q => q.Value).ToList();
+                lstOfSkillSetQuestionText = (from lstQns in lstOfSkillSetQuestion join compIdentifier in competencylstOfGuids on lstQns.CompetencyReferenceGuid equals compIdentifier select lstQns.QuestionText).ToList();
 
-                strQuestionText = AppCommon.QuestionsForCOmpetencies_Confirmation + "</br>";
+                strQuestionText = AppCommon.QuestionsForCompetenciesConfirmation + "</br>";
                 strQuestionText += "<UL>";
                 foreach (var item in lstOfSkillSetQuestionText)
                 {
@@ -652,18 +626,15 @@ namespace SimChartMedicalOffice.Web.Controllers
                     if (skillSetObj != null && skillSetObj.Questions != null)
                     {
                         IList<Question> questionList = skillSetObj.Questions.Select(qn => qn.Value).ToList();
-                        countOfConfiguredQuestions = (from skillSetlst in questionList where (skillSetlst.CompetencyReferenceGUID == null || skillSetlst.CompetencyReferenceGUID == String.Empty) select skillSetlst).Count();
+                        countOfConfiguredQuestions = (from skillSetlst in questionList where string.IsNullOrEmpty(skillSetlst.CompetencyReferenceGuid) select skillSetlst).Count();
                     }
                     break;
                 case AppCommon.AuthoringType.AssignmentBuilder:
                     break;
-                default:
-                    break;
             }
             if (countOfConfiguredQuestions > 0)
                 return false;
-            else
-                return true;
+            return true;
         }
     }
 }

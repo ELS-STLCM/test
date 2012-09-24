@@ -1,6 +1,6 @@
 ﻿<div id="patientBuilder_grid_Pagination"></div>
 <div id="patientBuilder_grid_display" style="overflow-x: hidden;
-    overflow-y: hidden;width:102%;height:310px">
+    overflow-y: hidden;width:99%;">
     <table id="patientBuilderGrid" class="standard-text table-scroll-border">
         <thead style="text-align: center;">
           <tr class="dataTables_scrollHeadInner">
@@ -13,8 +13,8 @@
                 <th title="Last Name" class="datatable-tooltip datatable-background" style="width: 15%">
                     Last Name
                 </th>
-                <th title="Gender" class="datatable-tooltip datatable-background" style="width: 13%">
-                    Gender
+                <th title="Sex" class="datatable-tooltip datatable-background" style="width: 13%">
+                    Sex
                 </th>
                 <th title="Date Of Birth" class="datatable-tooltip datatable-background" style="width: 14%">
                     DOB
@@ -51,9 +51,8 @@
             aoData.push({ "name": "folderUrl", "value": getDivData("practiceTab", "currentFolder") });
             $.getJSON(sSource, aoData, function (json) {
                 fnCallback(json);
-                if ($('#patientBuilder_grid_display .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                if ($('#patientBuilder_grid_display .dataTables_scrollBody').css('height').replace('px', '') > setInnerAdjustedHeight('innerPatientGridButtonContainer', 'patientButtonContainer')) {
                     setScrollableTableBorder(true, 'patientBuilder_grid_display');
-
                 }
                 else {
                     setScrollableTableBorder(false, 'patientBuilder_grid_display');
@@ -67,7 +66,7 @@
             { "bSortable": false, "sName": "Select" },
             { "bSortable": true, "sName": "FirstName" },
             { "bSortable": true, "sName": "LastName" },
-            { "bSortable": true, "sName": "Gender" },
+            { "bSortable": true, "sName": "Sex" },
             { "bSortable": true, "sName": "DOB" },
             { "bSortable": false, "sName": "Age" },
             { "bSortable": true, "sName": "CreatedOn" },
@@ -82,8 +81,8 @@
         "bPaginate": true,
         "sPaginationType": "full_numbers",
         "bSort": true,
-        "sScrollY": "270px",
         "sScrollX": "100%",
+        "sScrollY": setInnerAdjustedHeight('innerPatientGridButtonContainer', 'patientButtonContainer') + "px",
         "bScrollCollapse": true,
         "fnDrawCallback": function () {
             setScrollableTableHeight(this);

@@ -1,6 +1,7 @@
 ﻿@{
     Layout = null;
 }
+<div style="height:57px">
 <div class="grid_32 page-title">
     Step 4 of 5: Office Setting
 </div>
@@ -15,14 +16,15 @@
     Crop patient data to modify a patient record for the purpose of an assignment
 </div>
 <div class="grid_32 clear guidance-text-spacing" />
-<div class="grid_8 div-with-border align-div-inline" style="height: 270px;">
+</div>
+<div class="grid_8 div-with-border align-div-inline step4-height">
     <div class="header-text div-with-bottom-border">
         Select Patients
     </div>
-    <div id="patient-list" class="grid_32" style="height: 250px; overflow-y: auto; overflow-x: hidden;">
+    <div id="patient-list" class="grid_32 patient-list-height" style="overflow-y: auto; overflow-x: hidden;">
     </div>
 </div>
-<div class="grid_24 standard-text div-with-border align-div-inline" style="height: 270px">
+<div class="grid_24 standard-text div-with-border align-div-inline step4-height">
     <div class="div-with-border" style="height: 72px;">
         <div id="patient_image" class="align-div-inline align-div-inline image-holder-div">
             <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="Image" id="assignmentPatientImage" class="image-holder" />
@@ -98,6 +100,8 @@
     });
 
     $(document).ready(function () {
+        setStep4Height();
+        setStep4PatientListHeight();
         $("#stepwiseImage").empty();
         $("#stepwiseImage").append("<img alt='' src='../../Content/Images/Buttons/step4AssignmentBuilder.PNG'/>");
         assignment.officeSetting.loadOfficeSettingpage();

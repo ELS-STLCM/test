@@ -38,9 +38,8 @@ var assignment = {
     /*Common functions used in Assignment module*/
     commonFunctions: {
         getOrSetImageReference: function (isValueReturn, imageRefName, imageRefId) {
-            var valueToreturn = "";
             if (isValueReturn) {
-                return getImageRefData(imageRefName)
+                return getImageRefData(imageRefName);
             }
             else {
                 var position = imageRefId.lastIndexOf("/");
@@ -62,7 +61,7 @@ var assignment = {
             // !!!important!!!!: Just removing the meta data in page. Image should be removed only on click of save.
             jConfirm(IMAGE_REMOVE, "Remove Image", function (isOk) {
                 if (isOk) {
-                    var guidOfImg = getImageRefData(idMetadataContent);
+                    getImageRefData(idMetadataContent);
                     removeMetaDataForImage(idMetadataContent);
                     $("#" + idMetadataContent + "_main").remove();
                     for (var imgList = 0; imgList < imageCount - 1; imgList++) {
@@ -82,12 +81,12 @@ var assignment = {
         assignmentImageUpload: function () {
             resetImageUploadForm();
             $('#imageLoadAssignmentContent').load("../QuestionBank/SimOfficeImageUpload", function () {
-                var $dialog = $('#imageLoadAssignmentContent').dialog({
+                $('#imageLoadAssignmentContent').dialog({
                     autoOpen: false,
                     modal: true,
                     closeOnEscape: false,
                     resizable: false,
-                    open: function (event, ui) {
+                    open: function () {
                         applyClassForDialogHeader();
                     },
                     title: 'Image Upload',
@@ -105,16 +104,16 @@ var assignment = {
                 startAjaxLoader();
                 $("#validationSummary").hide();
                 var assignmentJson;
-                var MCEOutput;
+                var mceOutput;
                 var imageDescriptionList = new Array();
                 var imageUrlList = new Array();
                 for (var imgId = 0; imgId < imageReferenceList.length; imgId++) {
                     imageDescriptionList[imgId] = $("#" + imageReferenceList[imgId] + "_description").val();
                     imageUrlList[imgId] = getImageRefData(imageReferenceList[imgId]);
                 }
-                MCEOutput = tinyMCE.get("OrientationEditor").getContent();
+                mceOutput = tinyMCE.get("OrientationEditor").getContent();
                 assignmentJson = {
-                    "Orientation": MCEOutput,
+                    "Orientation": mceOutput,
                     "PatientImageReferance": imageUrlList,
                     "PatientImageDescription": imageDescriptionList,
                     "VideoReferance": videoList,
@@ -146,7 +145,7 @@ var assignment = {
                                     isSaveAndProceedStep2 = false;
                                     assignBuilder.redirectionFunctions.loadStep3OfAssignmentBuilder();
                                 } else {
-                                    jAlert("Saved", ALERT_TITLE, function (isOk) {
+                                    jAlert("Saved", ALERT_TITLE, function () {
 
                                     });
                                 }
@@ -162,21 +161,22 @@ var assignment = {
         },
         initializePopup: function () {
             $("#videoAudioUpload").show();
-            $("#videoAudioUpload").dialog({ height: 350,
-                width: 450,
+            $("#videoAudioUpload").dialog({ 
+                minHeight: 350,
+                minWidth: 450,
                 modal: true,
                 position: 'center',
                 resizable: false,
                 autoOpen: true,
                 closeOnEscape: false,
                 title: 'Video/Audio Upload',
-                open: function (event, ui) {
+                open: function () {
                     applyClassForDialogHeader();
                 },
                 overlay: { opacity: 0.5, background: 'black' }
             });
         },
-        contentChanged: function (patientID, patientUrl) {            
+        contentChanged: function (patientId, patientUrl) {            
             var urlToPatient = "../Patient/GetPatientForGuid?patientUrl=" + patientUrl;
             startAjaxLoader();
             $.ajax({
@@ -191,8 +191,8 @@ var assignment = {
                     if (result.Result.LastName != "" && result.Result.LastName != null) {
                         $(".clear-background").css("background", "none");
                         $(".clear-background").css("color", "black");
-                        $("#" + patientID).css("background", "#0070C0");
-                        $("#" + patientID).css("color", "white");
+                        $("#" + patientId).css("background", "#0070C0");
+                        $("#" + patientId).css("color", "white");
                         loadImageToImageDiv(result.Result.UploadImage, "assignmentPatientImage", true);
                         $("#patient-name").html(result.Result.LastName.toString() + ", " + result.Result.FirstName.toString() + " " + result.Result.MiddleInitial.toString());
                         $("#patient-gender").html(result.Result.Sex.toString() + ", " + result.PatientAge.toString());
@@ -209,9 +209,8 @@ var assignment = {
             }
         },
         validatePatientFields: function () {
-            var errormessage = "";
             var isValid = false;
-            errorMessage = "<UL>";
+            var errorMessage = "<UL>";
             if (isNullOrEmpty(tinyMCE.get("OrientationEditor").getContent())) {
                 errorMessage += "<LI>" + INPUT_REQUIRED + "</LI>";
                 isValid = true;
@@ -247,11 +246,10 @@ var assignment = {
                     $("#patient-image-content").empty();
                     $("#video-content").empty();
                     imageCount = 1;
-                    videoCount = 0;
                     imageReferenceList = new Array();
                     //videoList = new Array();
                     if (result.Result.PatientImageReferance != null) {
-                        var imgList = new Array();
+//                        var imgList = new Array();
                         for (var imgCount = 0; imgCount < result.Result.PatientImageReferance.length; imgCount++) {
                             assignment.commonFunctions.getOrSetImageReference(false, "", result.Result.PatientImageReferance[imgCount]);
                             var position = result.Result.PatientImageReferance[imgCount].lastIndexOf("/");
@@ -301,7 +299,7 @@ var assignment = {
                 $("#create-new-patient").hide();
             }
         },
-        cancel: function (isEditMode, savePatientUrl) {
+        cancel: function () {
             var status = "Are you sure you want to cancel? Your changes will not be saved.";
             jConfirm(status, 'Cancel', function (isCancel) {
                 if (isCancel) {

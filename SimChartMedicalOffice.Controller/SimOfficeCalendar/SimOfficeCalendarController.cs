@@ -1,21 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Web;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
 using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.Forms;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Forms;
-using SimChartMedicalOffice.Core.Json;
-using SimChartMedicalOffice.Core.Patient;
-using SimChartMedicalOffice.Common.Utility;
-using SimChartMedicalOffice.Core.QuestionBanks;
-using SimChartMedicalOffice.Core;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface;
-using SimChartMedicalOffice.Core.ProxyObjects;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.FrontOffice;
 
 namespace SimChartMedicalOffice.Web.Controllers
@@ -24,11 +11,11 @@ namespace SimChartMedicalOffice.Web.Controllers
     {
 
         private readonly IMasterService _masterService;
-        private readonly IAppointmentService _appointmentService;
+        //private readonly IAppointmentService _appointmentService;
         public SimOfficeCalendarController(IMasterService masterService, IAppointmentService appointmentService)
         {
-            this._masterService = masterService;
-            this._appointmentService = appointmentService;
+            _masterService = masterService;
+            //this._appointmentService = appointmentService;
         }
 
        

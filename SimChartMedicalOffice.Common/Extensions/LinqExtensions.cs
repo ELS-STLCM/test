@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Linq.Expressions;
 
 namespace SimChartMedicalOffice.Common.Extensions
@@ -11,7 +9,7 @@ namespace SimChartMedicalOffice.Common.Extensions
         /// <summary>Orders the sequence by specific column and direction.</summary>
         /// <param name="query">The query.</param>
         /// <param name="sortColumn">The sort column.</param>
-        /// <param name="ascending">if set to true [ascending].</param>
+        /// <param name="direction"> </param>
         public static IQueryable<T> OrderBy<T>(this IQueryable<T> query, string sortColumn, string direction)
         {
             string methodName = string.Format("OrderBy{0}",
@@ -47,7 +45,7 @@ namespace SimChartMedicalOffice.Common.Extensions
 
             MemberExpression memberAccess = null;
             foreach (var property in column.Split('.'))
-                memberAccess = MemberExpression.Property
+                memberAccess = Expression.Property
                    (memberAccess ?? (parameter as Expression), property);
 
             //change param value type
@@ -58,7 +56,7 @@ namespace SimChartMedicalOffice.Common.Extensions
                 );
 
             //switch operation
-            Expression condition = null;
+            Expression condition;
             LambdaExpression lambda = null;
             switch (operation)
             {

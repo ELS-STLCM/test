@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace SimChartMedicalOffice.Common
 {
     public class AppEnum
     {
         public enum AttachmentFlagsForStatus
         {
-             ExistsInDbNotInUI=1,
-             ExistsInUiNotInDb=2,
-             NotExistsInUiAndDb=3,
-             ExistsInUiAndDb=4
+            ExistsInDbNotInUi = 1,
+            ExistsInUiNotInDb = 2,
+            NotExistsInUiAndDb = 3,
+            ExistsInUiAndDb = 4
         }
         public enum RecurrencePattern
         {
@@ -22,13 +18,13 @@ namespace SimChartMedicalOffice.Common
         }
         public enum AttachmentActions
         {
-            RemoveTransient=1,
-            RemovePersistent=2,
+            RemoveTransient = 1,
+            RemovePersistent = 2,
             RemoveTransientAndCreatePersistent = 3,
-            CreateTransient=4,
-            CreatePersistent=5,
-            RemoveTransientPersistentAndCreatePersistent=6,
-            None=7
+            CreateTransient = 4,
+            CreatePersistent = 5,
+            RemoveTransientPersistentAndCreatePersistent = 6,
+            None = 7
         }
         public enum WhereOperation
         {
@@ -38,13 +34,14 @@ namespace SimChartMedicalOffice.Common
         }
         public enum FormsRepository
         {
-            HipaaForm=1,
-            ReferrelForm=2,
-            BillOfRights=3,
-            PatientInformation=4,
-            PatientRecordAccess=5,
-            PriorAuthorizationRequestForm=6,
-            Confirmation=7
+            HipaaForm = 1,
+            ReferrelForm = 2,
+            BillOfRights = 3,
+            PatientInformation = 4,
+            PatientRecordAccess = 5,
+            PriorAuthorizationRequestForm = 6,
+            Confirmation = 7,
+            MedicalRecordsRelease = 8
         }
         /// <summary>
         /// To load the master page in Admin Login
@@ -61,7 +58,8 @@ namespace SimChartMedicalOffice.Common
         {
             Error = 1,
             Success = 2,
-            None = 3
+            None = 3,
+            Validation = 4
         }
         /// <summary>
         /// Question Type Enum - Should match with Dictionary in AppCommon
@@ -74,59 +72,69 @@ namespace SimChartMedicalOffice.Common
             MultipleChoice = 6,
             ShortAnswer = 7,
             TrueFalseQuestionSetUp = 8,
-            None =99999
+            None = 99999
         }
         public enum ApplicationEnvironment
         {
-            Dev=1,
-            Int=2,
-            Cert=3,
-            Prod=4
+            Dev = 1,
+            Int = 2,
+            Cert = 3,
+            Prod = 4
         }
         public enum ApplicationRole
         {
-            Student=1,
-            Admin=2,
-            Instructor=3
+            Student = 1,
+            Admin = 2,
+            Instructor = 3
         }
         public enum AppointmentTypes
         {
-            PatientVisit=1,
-            Block=2,
-            Other=3,
-            All=4
+            PatientVisit = 1,
+            Block = 2,
+            Other = 3,
+            All = 4
         }
         public enum CalendarFilterTypes
         {
             ExamRoom = 1,
             Provider = 2,
             AppointmentType = 3,
-            None = 4
+            None = 4,
+            Patient=5
         }
         public enum CalendarViewTypes
         {
-            month=1,
-            agendaDay=2,
-            agendaWeek=3,
-            resourceDay=4
+            month = 1,
+            agendaDay = 2,
+            agendaWeek = 3,
+            resourceDay = 4,
+            None=5
         }
 
         public enum EditStatus
-        { 
+        {
             All = 1,
             Current = 2,
-            CurrentFucture = 3
+            CurrentFuture = 3,
+            None = 4
         }
 
         public enum AppointmentStatus
-        { 
+        {
             Scheduled = 1,
-            ArrivedOnTime =2,
-            ArrivedLate =3,
-            Canceled=4,
-            LeftWithoutBeingSeen=4,
-            NoShow=5,
-            CheckedOut=6
+            ArrivedOnTime = 2,
+            ArrivedLate = 3,
+            Canceled = 4,
+            LeftWithoutBeingSeen = 4,
+            NoShow = 5,
+            CheckedOut = 6
+        }
+
+        public enum ProviderType
+        {
+            SingleProvider = 1,
+            MultiProvider = 2,
+            None=3
         }
 
         //public enum AppointmentRecurrenceType

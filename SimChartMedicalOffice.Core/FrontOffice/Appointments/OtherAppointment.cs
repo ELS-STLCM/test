@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
 {
@@ -13,7 +10,7 @@ namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
         //}
         public override Appointment Clone()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             OtherAppointment deepCopyData = new OtherAppointment();
             foreach (System.Reflection.PropertyInfo objProp in type.GetProperties())
             {

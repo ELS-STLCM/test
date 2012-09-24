@@ -4,6 +4,6 @@ namespace SimChartMedicalOffice.Core.DataInterfaces
 {
     public interface IAttachmentDocument : IKeyValueRepository<Attachment>
     {
-       string GetAttachementTransientUrl();
+       //string GetAttachementTransientUrl();
     }
 }

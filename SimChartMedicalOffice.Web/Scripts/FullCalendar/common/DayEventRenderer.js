@@ -1,4 +1,8 @@
-
+/*
+    Note : File modified for Event title display in SimChart for Medical Office
+    Line Changed from : Ln.No 219 -  "<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+    Line Changed to : Ln.No 221 - "<span class='fc-event-title'>" + replaceHTMLBreak(event.title) + "</span>" +
+*/
 function DayEventRenderer() {
     var t = this;
 
@@ -211,7 +215,10 @@ function DayEventRenderer() {
                 "</span>";
             }
             html +=
-            "<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+            //Commented for customizing title display  - Original Line in js 
+                //  "<span class='fc-event-title'>" + htmlEscape(event.title) + "</span>" +
+            //Customizing Title display for SimChart for Medical office
+            "<span class='fc-event-title'>" + replaceHTMLBreak(event.title) + "</span>" +
             "</div>";
             if (seg.isEnd && isEventResizable(event)) {
                 html +=

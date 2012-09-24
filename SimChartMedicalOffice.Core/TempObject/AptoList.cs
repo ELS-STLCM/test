@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Collections;
-using SimChartMedicalOffice.Common;
+﻿using System.Collections.Generic;
 namespace SimChartMedicalOffice.Core.TempObject
 {
     public class AptoList<T> where T:DocumentEntity

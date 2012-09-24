@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 using System.Web.Script.Serialization;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Collections;
+using System.Globalization;
 
 
 namespace SimChartMedicalOffice.Common
@@ -22,8 +19,11 @@ namespace SimChartMedicalOffice.Common
             SkillSetRepository = 4,
             None = 0
         }
-        public static string GetFolderType(int folderType) {
-            switch ((FolderType)folderType) { 
+
+        public static string GetFolderType(int folderType)
+        {
+            switch ((FolderType)folderType)
+            {
                 case FolderType.QuestionBank:
                     return "QuestionBank";
                 case FolderType.PatientRepository:
@@ -54,18 +54,15 @@ namespace SimChartMedicalOffice.Common
         {
             if (roleName == AppEnum.ApplicationRole.Admin)
             {
-                return AppConstants.ADMIN_ROLE;
+                return AppConstants.AdminRole;
             }
-            else if (roleName == AppEnum.ApplicationRole.Instructor)
+            if (roleName == AppEnum.ApplicationRole.Instructor)
             {
-                return AppConstants.INSTRUCTOR_ROLE;
+                return AppConstants.InstructorRole;
             }
-            else
-            {
-                return AppConstants.STUDENT_ROLE;
-            }
+            return AppConstants.StudentRole;
         }
-       
+
         public static string GetFormName(int formNumber)
         {
             switch ((AppEnum.FormsRepository)formNumber)
@@ -82,6 +79,8 @@ namespace SimChartMedicalOffice.Common
                     return "Patient Records Access Request";
                 case AppEnum.FormsRepository.PriorAuthorizationRequestForm:
                     return "Prior Authorization Request";
+                case AppEnum.FormsRepository.MedicalRecordsRelease:
+                    return "Medical Records Release";
                 default: return "";
             }
         }
@@ -89,10 +88,9 @@ namespace SimChartMedicalOffice.Common
         {
             log4net.Config.XmlConfigurator.Configure();
         }
-        public static string GetAppSettingValue(string key,string defaultValue)
+        public static string GetAppSettingValue(string key, string defaultValue)
         {
-            string appSettingValue;
-            appSettingValue = System.Configuration.ConfigurationManager.AppSettings[key];
+            string appSettingValue = System.Configuration.ConfigurationManager.AppSettings[key];
             if (appSettingValue != null)
             {
                 return appSettingValue;
@@ -105,16 +103,8 @@ namespace SimChartMedicalOffice.Common
         }
         private static string GetRepositoryUrl()
         {
-            string connectionString = "";
-            string connection = "RepositoryUrl";//System.Configuration.ConfigurationManager.AppSettings["RepositoryUrl"].ToString();
-            if (System.Configuration.ConfigurationManager.AppSettings[connection] != null)
-            {
-                connectionString = System.Configuration.ConfigurationManager.AppSettings[connection].ToString();
-            }
-            else
-            {
-                connectionString = "http://simoffice-sandbox.apto.elsevier.com/Test-Environment"; 
-            }
+            const string connection = "RepositoryUrl"; //System.Configuration.ConfigurationManager.AppSettings["RepositoryUrl"].ToString();
+            string connectionString = System.Configuration.ConfigurationManager.AppSettings[connection] != null ? System.Configuration.ConfigurationManager.AppSettings[connection] : "http://simoffice-sandbox.apto.elsevier.com/Test-Environment";
             return connectionString;
         }
         #region Finding executing Environment
@@ -127,7 +117,7 @@ namespace SimChartMedicalOffice.Common
             if (IsCertEnvironment())
             {
                 return AppEnum.ApplicationEnvironment.Cert;
-            }            
+            }
             if (IsIntEnvironment())
             {
                 return AppEnum.ApplicationEnvironment.Int;
@@ -174,12 +164,9 @@ namespace SimChartMedicalOffice.Common
             nodes = nodes.TrimEnd('/');
             if (nodes == "")
             {
-                return connection +".json";
+                return connection + ".json";
             }
-            else
-            {
-                return connection + "/" + nodes +".json";
-            }
+            return connection + "/" + nodes + ".json";
         }
         public static string Help()
         {
@@ -191,7 +178,7 @@ namespace SimChartMedicalOffice.Common
             return (string.IsNullOrEmpty(checkString) || checkString == "null");
         }
 
-        
+
 
         public static void AddCookie(string cookieName, object cookieValue)
         {
@@ -236,12 +223,11 @@ namespace SimChartMedicalOffice.Common
             return inputString.Replace("\n", "<br/>");
         }
 
-        public static string celciusToFarenheit(string celcius)
+        public static string CelciusToFarenheit(string celcius)
         {
             if (!String.IsNullOrEmpty(celcius))
                 return ((Convert.ToDouble(celcius) * 9 / 5) + 32).ToString();
-            else
-                return AppConstants.EmptyDataForReports;
+            return AppConstants.EmptyDataForReports;
         }
 
         /// <summary>
@@ -252,56 +238,42 @@ namespace SimChartMedicalOffice.Common
         /// <param name="heightInFeet"></param>
         /// <param name="heightInInches"></param>
         /// <returns></returns>
-        public static float CalculateBMI(float weightInPounds, float weightInOunces,
+        public static float CalculateBmi(float weightInPounds, float weightInOunces,
                             float heightInFeet, float heightInInches)
         {
-            float feetToInches;
-            float totalHeightInInches;
-            double heightInMeter;
-            float poundsToOunces;
-            float weightInKilograms;
             float bmiValue = 0;
-            float roundBMIValue;
-            feetToInches = heightInFeet * 12;
-            totalHeightInInches = feetToInches + heightInInches;
-            heightInMeter = (float)(totalHeightInInches * 0.0254);
-            poundsToOunces = (weightInPounds * 16) + weightInOunces;
-            weightInKilograms = (float)(poundsToOunces * 0.02835);
+            float feetToInches = heightInFeet * 12;
+            float totalHeightInInches = feetToInches + heightInInches;
+            double heightInMeter = (float)(totalHeightInInches * 0.0254);
+            float poundsToOunces = (weightInPounds * 16) + weightInOunces;
+            float weightInKilograms = (float)(poundsToOunces * 0.02835);
             if (heightInMeter != 0)
             {
                 bmiValue = (float)(weightInKilograms / (heightInMeter * heightInMeter));
             }
-            roundBMIValue = (float)(System.Math.Round(bmiValue, 1));
-            return (float)roundBMIValue;
+            float roundBmiValue = (float)(Math.Round(bmiValue, 1));
+            return roundBmiValue;
         }
         public static double CalculateHeight(double heightInFeet, double heightInInches)
         {
-            double feetToInches;
-            double totalHeightInInches;
-            double heightInCm;
-            double roundheight;
-            feetToInches = heightInFeet * 12;
-            totalHeightInInches = feetToInches + heightInInches;
-            heightInCm = (double)(totalHeightInInches * 2.54);
-            roundheight = (double)(System.Math.Round(heightInCm, 1));
+            double feetToInches = heightInFeet * 12;
+            double totalHeightInInches = feetToInches + heightInInches;
+            double heightInCm = totalHeightInInches * 2.54;
+            double roundheight = Math.Round(heightInCm, 1);
             return roundheight;
         }
         public static double CalculateWeight(double weightInPounds, double weightInOunces)
         {
-            double poundsToOunces;
-            double weightInKilograms;
-            double roundweight;
-            poundsToOunces = (weightInPounds * 16) + weightInOunces;
-            weightInKilograms = (double)(poundsToOunces * 0.02835);
-            roundweight = (double)(System.Math.Round(weightInKilograms, 1));
+            double poundsToOunces = (weightInPounds * 16) + weightInOunces;
+            double weightInKilograms = (poundsToOunces * 0.02835);
+            double roundweight = Math.Round(weightInKilograms, 1);
             return roundweight;
 
         }
 
         public static int GenerateRandomNumber()
         {
-            int iRandomNumber;
-            iRandomNumber = GenerateRandomNumberWithinRange(1000000, 9999999);
+            int iRandomNumber = GenerateRandomNumberWithinRange(1000000, 9999999);
             return iRandomNumber;
         }
 
@@ -327,10 +299,7 @@ namespace SimChartMedicalOffice.Common
             {
                 return Convert.ToInt32(hour[0]);
             }
-            else
-            {
-                return 0;
-            }
+            return 0;
         }
 
         public static int GetMinute(string time)
@@ -340,10 +309,7 @@ namespace SimChartMedicalOffice.Common
             {
                 return Convert.ToInt32(minute[1]);
             }
-            else
-            {
-                return 0;
-            }
+            return 0;
         }
 
         /// <summary>
@@ -353,15 +319,10 @@ namespace SimChartMedicalOffice.Common
         /// <returns></returns>
         public static string GetMilitaryTime(DateTime dtDateTime)
         {
-            string militaryTime = "";
-            if (dtDateTime != null)
-            {
-                militaryTime = string.Format("{0:HH:mm}", dtDateTime);
-                return militaryTime;
-            }
+            string militaryTime = string.Format("{0:HH:mm}", dtDateTime);
             return militaryTime;
         }
-        
+
         /// <summary>
         ///  //To validate for standard file formats  .pdf .jpeg .png .gif .bmp
         /// </summary>
@@ -369,8 +330,12 @@ namespace SimChartMedicalOffice.Common
         /// <returns>true if valid formats</returns>
         public static bool IsValidImageFormatForSimOffice(string strTypeOfContent)
         {
-            return ((strTypeOfContent == "image/x-png" || strTypeOfContent == "image/pjpeg" || strTypeOfContent == "image/bmp" || strTypeOfContent == "image/gif" || strTypeOfContent == "image/jpeg" || strTypeOfContent == "image/png") ? true : false);
+            if (strTypeOfContent == "image/x-png" || strTypeOfContent == "image/pjpeg" ||
+                strTypeOfContent == "image/bmp" || strTypeOfContent == "image/gif" || strTypeOfContent == "image/jpeg" ||
+                strTypeOfContent == "image/png") return true;
+            return false;
         }
+
         /// <summary>
         /// Method to set value in a multiple values cookie
         /// </summary>
@@ -384,11 +349,11 @@ namespace SimChartMedicalOffice.Common
             T cookieValue = js.Deserialize<T>(jsonCookieString);
             if (cookieValueList.Count > 0)
             {
-                System.Web.HttpContext.Current.Response.Cookies.Remove(cookieName);
+                HttpContext.Current.Response.Cookies.Remove(cookieName);
             }
             cookieValueList.Add(cookieValue);
             string serializedCookieValue = js.Serialize(cookieValueList);
-            System.Web.HttpContext.Current.Response.Cookies[cookieName].Value = serializedCookieValue;
+            HttpContext.Current.Response.Cookies[cookieName].Value = serializedCookieValue;
         }
 
         /// <summary>
@@ -401,9 +366,9 @@ namespace SimChartMedicalOffice.Common
         {
             JavaScriptSerializer js = new JavaScriptSerializer();
             List<T> cookieValueList = new List<T>();
-            if (System.Web.HttpContext.Current.Request.Cookies[cookieName] != null)
+            if (HttpContext.Current.Request.Cookies[cookieName] != null)
             {
-                cookieValueList = js.Deserialize<List<T>>(System.Web.HttpContext.Current.Request.Cookies[cookieName].Value.ToString());
+                cookieValueList = js.Deserialize<List<T>>(HttpContext.Current.Request.Cookies[cookieName].Value);
             }
             return cookieValueList;
         }
@@ -415,8 +380,12 @@ namespace SimChartMedicalOffice.Common
         /// <returns>true if valid formats</returns>
         public static bool IsValidFileForExcelUpload(string strTypeOfContent)
         {
-            return ((strTypeOfContent == "xls" || strTypeOfContent == "xlsx" || strTypeOfContent == "application/vnd.ms-excel" || strTypeOfContent == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") ? true : false);
+            if (strTypeOfContent == "xls" || strTypeOfContent == "xlsx" ||
+                strTypeOfContent == "application/vnd.ms-excel" ||
+                strTypeOfContent == "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") return true;
+            return false;
         }
+
         /// <summary>
         /// Return Key of Question based on value
         /// </summary>
@@ -424,12 +393,12 @@ namespace SimChartMedicalOffice.Common
         /// <returns></returns>
         public static string GetKeyBasedOnQuestionType(int iQuestionType)
         {
-            var keyValuePairOfQuestion = AppCommon.QuestionOptionsPage.Single(x => x.Value == iQuestionType);
+            var keyValuePairOfQuestion = QuestionOptionsPage.Single(x => x.Value == iQuestionType);
             return keyValuePairOfQuestion.Key;
         }
 
-        public static Dictionary<int, string> QuestionTypeOptions = new Dictionary<int, string>()
-        {
+        public static Dictionary<int, string> QuestionTypeOptions = new Dictionary<int, string>
+                                                                        {
             {1, "-SELECT-"},
             {2, "Charting Exercise"},
             {3, "Correct Order"},
@@ -442,8 +411,8 @@ namespace SimChartMedicalOffice.Common
             
         };
 
-        public static Dictionary<string, int> QuestionOptionsPage = new Dictionary<string, int>()
-        {
+        public static Dictionary<string, int> QuestionOptionsPage = new Dictionary<string, int>
+                                                                        {
             {"_ChartingExercise",2},
             {"_CorrectOrder",3},
             {"_FillInTheBlank",4},
@@ -455,8 +424,8 @@ namespace SimChartMedicalOffice.Common
             
         };
 
-        public static List<string> BlankOrientation = new List<string>()
-        {
+        public static List<string> BlankOrientation = new List<string>
+                                                          {
             "-Select-",
             "(Blank) (Text)",
             "(Text) (Blank) (Text)",
@@ -466,8 +435,8 @@ namespace SimChartMedicalOffice.Common
             "(Blank) (Blank) (Text)",
             "(Text) (Blank) (Blank)"                                                     
         };
-        public static Dictionary<int, string> QuestionTypeOptionsForLanding = new Dictionary<int, string>()
-        {
+        public static Dictionary<int, string> QuestionTypeOptionsForLanding = new Dictionary<int, string>
+                                                                                  {
             //{1, "Filter by question type"},
             {2, "Charting Exercise"},
             {3, "Correct Order"},
@@ -478,22 +447,22 @@ namespace SimChartMedicalOffice.Common
             {7, "Short Answer"},
             {8, "True/False"}
         };
-        public static Dictionary<int, string> SourceOptions = new Dictionary<int, string>()
-        {
+        public static Dictionary<int, string> SourceOptions = new Dictionary<int, string>
+                                                                  {
             {1, "-SELECT-"},
             {2, "ABHES"},
             {3, "CAAHEP"},
             {4, "MAERB"},
         };
-        public static Dictionary<int, string> SourceOptionsForLanding = new Dictionary<int, string>()
-        {
+        public static Dictionary<int, string> SourceOptionsForLanding = new Dictionary<int, string>
+                                                                            {
             //{1, "Filter by Source"},
             {2, "ABHES"},
             {3, "CAAHEP"},
             {4, "MAERB"},
         };
-        public static List<string> NoOfLabels = new List<string>()
-        {
+        public static List<string> NoOfLabels = new List<string>
+                                                    {
             "-Select-",
             "1",
             "2",
@@ -505,40 +474,36 @@ namespace SimChartMedicalOffice.Common
             "8"                                       
         };
 
-        public static List<string> NoOfAttempts = new List<string>()
-        {
+        public static List<string> NoOfAttempts = new List<string>
+                                                      {
             "1",
             "2",
             "3"
         };
 
-        public static  string GetObjectPropertyVal(Object inputVal, bool isBlank)
+        public static string GetObjectPropertyVal(Object inputVal, bool isBlank)
         {
-            if (isBlank==true)
+            if (isBlank)
             {
                 return "";
             }
-            else if (inputVal!=null && inputVal.ToString()!="")
+            if (inputVal != null && inputVal.ToString() != "")
             {
                 return inputVal.ToString();
             }
-            else 
-            {
-                return "--";
-            }
-
+            return "--";
         }
+
         /// <summary>
         /// Method used to serialize a Json object to string 
         /// </summary>
         /// <param name="obj"> Json object value</param>
         /// <returns></returns>
-        public static string serializeToJson(Object obj)
+        public static string SerializeToJson(Object obj)
         {
-            string Json;
             JavaScriptSerializer js = new JavaScriptSerializer();
-            Json = js.Serialize(obj).Replace("\"\\/Date(", "new Date(parseInt(").Replace(")\\/\"", "))");
-            return Json;
+            string json = js.Serialize(obj).Replace("\"\\/Date(", "new Date(parseInt(").Replace(")\\/\"", "))");
+            return json;
         }
 
         public static string CheckIfArrayHasValueAndReturn(string[] arrStringToCheck, string strToCheck)
@@ -557,26 +522,27 @@ namespace SimChartMedicalOffice.Common
             string[] strArray = null;
             if (strStringWithDelimiter != string.Empty)
             {
-                strArray = strStringWithDelimiter.Split(AppConstants.demiliter);
+                strArray = strStringWithDelimiter.Split(AppConstants.Demiliter);
             }
             strArray = (strArray == null) ? new string[1] : strArray;
             return strArray;
         }
 
-        public static string[] gridColumnForQuestionSearchList = { "Text", "LinkedItemReference", "FolderName", "TypeOfQuestion", "CreatedTimeStamp" };
+        public static string[] GridColumnForQuestionSearchList = { "Text", "LinkedItemReference", "FolderName", "TypeOfQuestion", "CreatedTimeStamp" };
         public static string QuestionBankLandingPageFolderName = "Question Bank";
         public static string AssignmentLandingPageFolderName = "Assignment Builder";
-        public static string[] gridColumnForPatientSearchList = { "FirstName", "LastName", "Sex", "DateOfBirth", "AgeInYears", "CreatedTimeStamp", "Status" };
-        public static string[] gridColumnForPatientList = { "FirstName", "LastName", "Sex", "DateOfBirth", "AgeInYears", "CreatedTimeStamp", "Status" };
-        public static string[] gridColumnForSkillSetSearchList = { "SkillSetTitle", "LinkedCompetenciesText", "SourceNameText", "CreatedOn", "Status" };
-        public static string[] gridColumnForAppointmentPatientList = { "StartDateTime", "Type", "Status", "ProviderId" };
+        public static string[] GridColumnForPatientSearchList = { "FirstName", "LastName", "Sex", "DateOfBirth", "AgeInYears", "CreatedTimeStamp", "Status" };
+        public static string[] GridColumnForPatientList = { "FirstName", "LastName", "Sex", "DateOfBirth", "AgeInYears", "CreatedTimeStamp", "Status" };
+        public static string[] GridColumnForSkillSetSearchList = { "SkillSetTitle", "LinkedCompetenciesText", "SourceNameText", "CreatedOn", "Status" };
+        public static string[] GridColumnForAppointmentPatientList = { "StartDateTime", "Type", "Status", "ProviderId" };
         public static string SkillSetLandingPageFolderName = "SkillSet";
-        public static string Status_Published = "Published";
-        public static string Status_InProgress = "Unpublished";
-        public static string[] gridColumnForAssignmentSearchList = { "Patient", "AssignmentTitle", "Module", "LinkedCompetencies", "Duration", "FolderName", "CreatedTimeStamp", "status" };
+        public static string StatusPublished = "Published";
+        public static string StatusInProgress = "Unpublished";
+        public static string[] GridColumnForAssignmentSearchList = { "Patients", "AssignmentTitle", "Module", "LinkedCompetencies", "Duration", "FolderName", "CreatedTimeStamp", "status" };
+        public static int AllStaffId = 1004;
 
-        public static List<string> officeTypeOptions = new List<string>()
-        {
+        public static List<string> OfficeTypeOptions = new List<string>
+                                                           {
             "-Select-",
             "Family Practice",
             "Geriatric",
@@ -584,15 +550,15 @@ namespace SimChartMedicalOffice.Common
             "Pediatric"                                                              
         };
 
-        public static List<string> providerOptions = new List<string>()
-        {
+        public static List<string> ProviderOptions = new List<string>
+                                                         {
             "-SELECT-",
             "Dr. James A. Martin, MD",
             "Dr. Julie Walden, MD",            
             "Jean Burke, NP",                                                             
         };
 
-        public static string breakWord(string word, int breakLength)
+        public static string BreakWord(string word, int breakLength)
         {
             string outputStr = Regex.Replace(word, @"([\w-*]{" + breakLength + "}(?=\\w+))", "$1\n");
             return outputStr;
@@ -600,11 +566,10 @@ namespace SimChartMedicalOffice.Common
 
         public static List<string> CalculatePassRate(double noOfQuestions)
         {
-            List<string> passRateValuesToReturn = new List<string>();
-            passRateValuesToReturn.Add(AppConstants.Select_DropDown);
-            double breakValue = 100/noOfQuestions;
+            List<string> passRateValuesToReturn = new List<string> {AppConstants.SelectDropDown};
+            double breakValue = 100 / noOfQuestions;
             double percentageValue = 0;
-            for (int questionCount = 0; questionCount < noOfQuestions; questionCount++ )
+            for (int questionCount = 0; questionCount < noOfQuestions; questionCount++)
             {
                 percentageValue = percentageValue + breakValue;
                 passRateValuesToReturn.Add(Convert.ToInt32(Math.Round(percentageValue)).ToString() + "%");
@@ -614,7 +579,7 @@ namespace SimChartMedicalOffice.Common
 
         public static bool CheckIfPublished(string strStatus)
         {
-            if (!String.IsNullOrEmpty(strStatus) && strStatus.ToLower().Equals(Status_Published.ToLower()))
+            if (!String.IsNullOrEmpty(strStatus) && strStatus.ToLower().Equals(StatusPublished.ToLower()))
             {
                 return true;
             }
@@ -637,7 +602,7 @@ namespace SimChartMedicalOffice.Common
             Cancel = 4,
             Proceed = 5,
             Preview = 6,
-            Publish = 7 
+            Publish = 7
         }
 
         public enum AuthoringType
@@ -646,8 +611,8 @@ namespace SimChartMedicalOffice.Common
             AssignmentBuilder = 2,
         }
 
-        public static List<string>AssignmentDurationHrs = new List<string>()
-        {
+        public static List<string> AssignmentDurationHrs = new List<string>
+                                                               {
             "-Select-",
             "1",
             "2",
@@ -656,8 +621,8 @@ namespace SimChartMedicalOffice.Common
             "5"
         };
 
-        public static List<string> AssignmentDurationMns = new List<string>()
-        {
+        public static List<string> AssignmentDurationMns = new List<string>
+                                                               {
             "-Select-",
             "5",
             "10",
@@ -672,8 +637,8 @@ namespace SimChartMedicalOffice.Common
             "55"
         };
 
-        public static List<string> AppointmentVisitType = new List<string>()
-        {
+        public static List<string> AppointmentVisitType = new List<string>
+                                                              {
             "-Select-",
             "New Patient Visit",
             "Wellness Exam",
@@ -682,8 +647,8 @@ namespace SimChartMedicalOffice.Common
             "Annual Exam"
         };
 
-        public static List<string> ExamRoom = new List<string>()
-        {
+        public static List<string> ExamRoom = new List<string>
+                                                  {
             "-SELECT-",
             "Exam Room 1", 
             "Exam Room 2",
@@ -697,8 +662,8 @@ namespace SimChartMedicalOffice.Common
             "Exam Room 10"
         };
 
-        public static List<string> TimeList = new List<string>()
-        {
+        public static List<string> TimeList = new List<string>
+                                                  {
             "-Select-",
             "12:00 AM",
             "12:15 AM",
@@ -706,31 +671,17 @@ namespace SimChartMedicalOffice.Common
             "12:45 AM"
         };
 
-        public static string QuestionsForCOmpetencies_Confirmation = "Removing this competency will automatically remove the following questions from this skill set";
-
-        /// <summary>
-        /// Get formatted Identifier for a month
-        /// </summary>
-        /// <param name="Url"></param>
-        /// <param name="courseId"></param>
-        /// <param name="role"></param>
-        /// <param name="assignmentScenarioId"></param>
-        /// <param name="appointmentDate"></param>
-        /// <returns></returns>
-        public  static string GetUrlForMonthFilter(string Url, string courseId, AppEnum.ApplicationRole role, string assignmentScenarioId, DateTime appointmentDate,string uid)
-        {
-            return string.Format(Url, courseId, AppCommon.GetRoleDescription(role),uid, assignmentScenarioId, string.Format("{0:yyyyMM}", appointmentDate));
-        }
+        public static string QuestionsForCompetenciesConfirmation = "Removing this competency will automatically remove the following questions from this skill set";
 
         /// <summary>
         /// Get identifier for A Date
         /// </summary>
-        /// <param name="Url"></param>
+        /// <param name="url"></param>
         /// <param name="appointmentDate"></param>
         /// <returns></returns>
-        public static string GetUrlForDateFilter(string Url, DateTime appointmentDate)
+        public static string GetUrlForDateFilter(string url, DateTime appointmentDate)
         {
-            return Url +"/" + string.Format("Day" + string.Format("{0:dd}", appointmentDate));
+            return url + "/" + string.Format("D" + string.Format("{0:dd}", appointmentDate));
         }
 
         /// <summary>
@@ -738,7 +689,7 @@ namespace SimChartMedicalOffice.Common
         /// </summary>
         /// <param name="jsonString"></param>
         /// <returns></returns>
-        public static bool isValidJsonString(string jsonString)
+        public static bool IsValidJsonString(string jsonString)
         {
             if (!String.IsNullOrEmpty(jsonString) && jsonString != "null")
             {
@@ -758,45 +709,190 @@ namespace SimChartMedicalOffice.Common
             return roleType;
         }
 
-        public static string DROPDOWN_SELECT = "-Select-";
-        public static string VIEW_MORE = "View All";
+        public static string DropdownSelect = "-Select-";
+        public static string ViewMore = "View All";
         /// <summary>
         /// to get the value of provider with the providerId
         /// </summary>
-        public static Dictionary<int, string> providerList = new Dictionary<int, string>()
-        {
-            {1004, "-Select-"},
+        public static Dictionary<int, string> ProviderList = new Dictionary<int, string>
+                                                                 {
+            {1000, "-Select-"},
             {1003, "Dr. James A. Martin, MD"},
             {1002, "Dr. Julie Walden, MD"},
             {1001, "Jean Burke, NP"},        
+            {1004, "All Staff"}
         };
 
-
-        public static Dictionary<int, string> AppointmentStatus = new Dictionary<int, string>()
-        {
+        public static int AllStaffIdentifier = 1004;
+        public static Dictionary<int, string> AppointmentStatus = new Dictionary<int, string>
+                                                                      {
             {0,"-Select-"},
-            {1,"Scheduled"},
-            {2,"Arrived on-time"},
-            {3,"Arrived Late"},
-            {4,"Canceled"},
-            {5,"Left without being seen"},
+            {3,"Arrived Late"},            
+            {2,"Arrived on-time"},            
+            {4,"Canceled"},            
+            {7,"Checked Out"},
+            {5,"Left without being seen"},            
             {6,"No show"},
-            {7,"Checked Out"}
+            {1,"Scheduled"}
             
         };
 
-        public static Dictionary<int, string> StatusLocation = new Dictionary<int, string>()
-        {
+        public static Dictionary<int, string> StatusLocation = new Dictionary<int, string>
+                                                                   {
+            
             {0,"-Select-"},
-            {1,"Waiting room"},
             {2,"Exam room"},
+            {1,"Waiting room"},
             {3,"With MA"},
             {4,"With Provider"}
         };
 
+
         public static string GetStatusLocationString(int statusLocationKey)
         {
-            return statusLocationKey!=0?StatusLocation.Where(s => s.Key.Equals(statusLocationKey)).Select(s => s.Value.ToString()).SingleOrDefault():String.Empty;
+            return statusLocationKey != 0 ? StatusLocation.Where(s => s.Key.Equals(statusLocationKey)).Select(s => s.Value.ToString()).SingleOrDefault() : String.Empty;
+        }
+
+        public static string FormatAssignmentUrl(string courseId, AppEnum.ApplicationRole role, string userId, string scenarioId)
+        {
+            return "SimApp/Courses/" + courseId + "/" + GetRoleDescription(role) + "/" + userId + "/" + "Assignments" + "/" + scenarioId;
+        }
+
+        public static string Ellipsis = "..";
+        public static string FormStringWithEllipsis(string actualString, int maxLengthToDisplay)
+        {
+            if (!String.IsNullOrEmpty(actualString) && actualString.Length > maxLengthToDisplay)
+            {
+                return actualString.Substring(0, maxLengthToDisplay - 3) + Ellipsis;
+            }
+            return actualString;
+        }
+
+        public static int EventsTitleMaxLength = 15;
+        public static string SliceStringAfterLength(string actualString, int maxLengthToDisplay)
+        {
+            if (!String.IsNullOrEmpty(actualString) && actualString.Length > maxLengthToDisplay)
+            {
+                return actualString.Substring(0, maxLengthToDisplay - 3);
+            }
+            return actualString;
+        }
+
+        public static string GetAppointmentStatusString(int appointmentStatus)
+        {
+            return appointmentStatus != 0 ? AppointmentStatus.Where(s => s.Key.Equals(appointmentStatus)).Select(s => s.Value.ToString()).SingleOrDefault() : String.Empty;
+        }
+        /// <summary>
+        /// to check the two list of int has the same value 
+        /// </summary>
+        /// <param name="sourceList"></param>
+        /// <param name="destinationList"></param>
+        /// <returns></returns>
+        public static bool IsListSame(IList<int> sourceList, IList<int> destinationList)
+        {
+            bool isListSame = false;
+            if (sourceList != null && destinationList != null)
+            {
+                isListSame = sourceList.OrderBy(x => x).SequenceEqual(destinationList.AsEnumerable().OrderBy(x => x));
+            }
+            return isListSame;
+        }
+
+        public static string SessionExpiredMessage = "Your session is no longer active";
+
+        /// <summary>
+        /// Get Week of year value from a date
+        /// </summary>
+        /// <param name="dateValue"></param>
+        /// <returns></returns>
+        public static string GetWeekOfYear(DateTime dateValue)
+        {
+            DateTimeFormatInfo myCi = DateTimeFormatInfo.CurrentInfo;
+            Calendar cal = myCi.Calendar;
+            cal.GetWeekOfYear(dateValue, myCi.CalendarWeekRule,
+                                          myCi.FirstDayOfWeek);
+            return cal.GetWeekOfYear(dateValue, myCi.CalendarWeekRule,
+                                          myCi.FirstDayOfWeek).ToString();
+        }
+        #region calendar nodes
+        public static string CalendarYearMonthNode = "{0:yyyyMM}";
+        public static string CalendarDayNode = "{0:dd}";
+        public static string CalendarWeekNodePrefix = "W";
+        public static string CalendarDayNodePrefix = "D";
+        /// <summary>
+        /// Get week node for calendar
+        /// </summary>
+        /// <param name="dateValue"></param>
+        /// <returns></returns>
+        public static string GetWeekNode(DateTime dateValue)
+        {
+            return CalendarWeekNodePrefix + GetWeekOfYear(dateValue);
+        }
+
+        /// <summary>
+        /// Get day node for calendar
+        /// </summary>
+        /// <param name="dateValue"></param>
+        /// <returns></returns>
+        public static string GetDayNode(DateTime dateValue)
+        {
+            return CalendarDayNodePrefix + string.Format(CalendarDayNode, dateValue);
+        }
+
+        /// <summary>
+        /// Get MonthNode for calendar
+        /// </summary>
+        /// <param name="dateValue"></param>
+        /// <returns></returns>
+        public static string GetMonthNode(DateTime dateValue)
+        {
+            return string.Format(CalendarYearMonthNode, dateValue);
+        }
+        #endregion
+
+        #region Calendar view classes - should match with simOfficeCalendarOverride.css file
+        public static string PatientVisitType = "patient-visit";
+        public static string BlockType = "blocked-appointment";
+        public static string OtherType = "other-appointment";
+        public static string ViewMoreLink = "view-more";
+        #endregion
+        public static string CommaSeperator = ", ";
+        public static string SemicolonSeperator = "; ";
+        public static string NewLineSeperator = "\n";
+        public static string HyphenSeperator = " - ";
+        public static string NewLineHtmlSeperator = "<br/>";
+        public static string DateHMmTt = "{0:h:mm tt}";
+        public const char DataDelimiter = 'Ø';
+        /// <summary>
+        /// Get Patient name from First,last,middle name
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        /// <param name="middleInitial"></param>
+        /// <returns></returns>
+        public static string GetPatientName(string firstName,string lastName,string middleInitial)
+        {
+            return string.Format("{1}, {0} {2}", firstName, lastName, middleInitial);
+        }
+
+        /// <summary>
+        /// get date formatted in given value
+        /// </summary>
+        /// <param name="formatOfDate"></param>
+        /// <param name="dateTimeValue"></param>
+        /// <returns></returns>
+        public static string GetDateInGivenFormat(string formatOfDate, DateTime dateTimeValue)
+        {
+            return String.Format(formatOfDate, dateTimeValue);
+        }
+
+        public static string[] GetValuesFromDelimitedString(string value,char delimiter)
+        {
+            if(!String.IsNullOrEmpty(value))
+            {
+                return value.Split(delimiter);
+            }
+            return new string[] {};
         }
     }
 }

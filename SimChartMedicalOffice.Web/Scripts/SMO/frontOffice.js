@@ -1,4 +1,6 @@
 ﻿var patientMedicalRecordRequestLst = [];
+var patientMedicalRecordRelease = [];
+var medicalRecordsReleaseTwo = [];
 var forms = {
     EnableSaveBtn: function (formValue) {
         enableAButtonForms("savePatientRecord-" + formValue, ORANGE_BUTTON, "navigation-button", "");
@@ -12,7 +14,7 @@ var forms = {
     ReferralForm: {
         Save: function (formValue) {
             var referralJson;
-            var patientGUID = getDivData("referralContent", "patientGUID");
+            var patientGuid = getDivData("referralContent", "patientGuid");
             var isUpdate = true;
             var uniqueIdentifier = null;
             //setDivData(getDivObject("referralContent"), "PatientName", $("#patientName").val());
@@ -58,7 +60,7 @@ var forms = {
                 "PhoneOfInitiatedPerson": encodeSpecialSymbols($("#referrerPhone").val()),
                 "SignatureOfInitiatedPerson": encodeSpecialSymbols($("#referrerSignature").val()),
                 "DateInitiated": encodeSpecialSymbols($("#referrerSignatureDate").val()),
-                "PatientReferenceId": patientGUID,
+                "PatientReferenceId": patientGuid,
                 "UniqueIdentifier": uniqueIdentifier
             };
             $.ajax({
@@ -79,7 +81,7 @@ var forms = {
                         forms.DisableSaveBtn(formValue);
                         forms.ReferralForm.DisableControls();
                         setDivData(getDivObject("referralContent"), "uniqueIdentifier", "");
-                        setDivData(getDivObject("referralContent"), "patientGUID", "");
+                        setDivData(getDivObject("referralContent"), "patientGuid", "");
                         refreshFrontOfficeTab(7, formValue, patientName);
                     }
                 },
@@ -87,12 +89,12 @@ var forms = {
             });
             return false;
         },
-        LoadPatientInfo: function (formValue, patientGUID) {
+        LoadPatientInfo: function (formValue, patientGuid) {
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 //data: JSON.stringify(priorAuthorizationRequestJson),
-                url: "../Forms/LoadPatientInfo?patientGUID=" + patientGUID,
+                url: "../Forms/LoadPatientInfo?patientGuid=" + patientGuid,
                 contentType: AJAX_CONTENT_TYPE,
                 error: function (result) {
                     if (result != null) {
@@ -102,10 +104,10 @@ var forms = {
                 success: function (result) {
                     if (result != null) {
                         if (result.PatientInfo != null) {
-                            $("#patientName").val(result.PatientInfo.LastName + ", " + result.PatientInfo.FirstName + " " + result.PatientInfo.MiddleInitial);
+                            $("#PatientName").val(result.PatientInfo.LastName + ", " + result.PatientInfo.FirstName + " " + result.PatientInfo.MiddleInitial);
                             // setting div data PatientName
                             setDivData(getDivObject("referralContent"), "PatientName", result.PatientInfo.FirstName + " " + result.PatientInfo.LastName);
-                            $("#dateOfBirthReferral").val(result.PatientInfo.DateOfBirth);
+                            $("#DateOfBirth").val(result.PatientInfo.DateOfBirth);
                             forms.EnableSaveBtn(formValue);
                             forms.ReferralForm.EnableControls();
                             //alert('PriorAuthorizationRequest Info Saved!');
@@ -118,12 +120,12 @@ var forms = {
                 traditional: true
             });
         },
-        LoadReferralForm: function (formValue, patientGUID) {
+        LoadReferralForm: function (formValue, patientGuid) {
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 //data: JSON.stringify(priorAuthorizationRequestJson),
-                url: "../Forms/LoadReferralForm?patientGUID=" + patientGUID,
+                url: "../Forms/LoadReferralForm?patientGuid=" + patientGuid,
                 contentType: AJAX_CONTENT_TYPE,
                 error: function (result) {
                     if (result != null) {
@@ -140,7 +142,7 @@ var forms = {
                         }
                         // if no forms are present call patient info
                         else {
-                            forms.ReferralForm.LoadPatientInfo(formValue, patientGUID);
+                            forms.ReferralForm.LoadPatientInfo(formValue, patientGuid);
                         }
                     }
                 },
@@ -183,10 +185,10 @@ var forms = {
             $("#referrerSignatureDate").val(formValues.DateInitiated);
         },
         Print: function () {
-            var formID = getDivData("referralContent", "uniqueIdentifier");
-            if (formID != "") {
-                var patientGUID = getDivData("referralContent", "patientGUID");
-                window.open("../Forms/FilledReferralFormPrint?patientGUID=" + patientGUID + "&formID=" + formID);
+            var formId = getDivData("referralContent", "uniqueIdentifier");
+            if (formId != "") {
+                var patientGuid = getDivData("referralContent", "patientGuid");
+                window.open("../Forms/FilledReferralFormPrint?patientGuid=" + patientGuid + "&formId=" + formId);
             }
             else {
                 window.open("../Forms/EmptyReferralFormPrint");
@@ -317,7 +319,7 @@ var forms = {
         Save: function (formValue) {
             if (forms.PatientRecordsAccessForm.Validate()) {
                 var patientRecordsAccessFormJson;
-                var patientGUID = getDivData("patient_records_access_main_content", "patientGUID");
+                var patientGuid = getDivData("patient_records_access_main_content", "patientGuid");
                 var isUpdate = true;
                 var uniqueIdentifier = null;
                 //setDivData(getDivObject("patient_records_access_main_content"), "PatientName", $("#PatientName").val());
@@ -350,7 +352,7 @@ var forms = {
                     "SignatureDate": encodeSpecialSymbols($("#SignatureDate").val()),
                     "WitnessSignature": encodeSpecialSymbols($("#WitnessSignature").val()),
                     "WitnessSignatureDate": encodeSpecialSymbols($("#WitnessSignatureDate").val()),
-                    "PatientReferenceId": patientGUID,
+                    "PatientReferenceId": patientGuid,
                     "UniqueIdentifier": uniqueIdentifier
                 };
                 $.ajax({
@@ -370,7 +372,7 @@ var forms = {
                             forms.PatientRecordsAccessForm.ResetPage();
                             var patientName = getDivData("patient_records_access_main_content", "PatientName");
                             setDivData(getDivObject("patient_records_access_main_content"), "uniqueIdentifier", "");
-                            setDivData(getDivObject("patient_records_access_main_content"), "patientGUID", "");
+                            setDivData(getDivObject("patient_records_access_main_content"), "patientGuid", "");
                             refreshFrontOfficeTab(7, formValue, patientName);
                         }
                     },
@@ -379,12 +381,12 @@ var forms = {
                 return false;
             }
         },
-        LoadPatientInfo: function (formValue, patientGUID) {
+        LoadPatientInfo: function (formValue, patientGuid) {
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 //data: JSON.stringify(priorAuthorizationRequestJson),
-                url: "../Forms/LoadPatientInfo?patientGUID=" + patientGUID,
+                url: "../Forms/LoadPatientInfo?patientGuid=" + patientGuid,
                 contentType: AJAX_CONTENT_TYPE,
                 error: function (result) {
                     if (result != null) {
@@ -410,13 +412,13 @@ var forms = {
                 traditional: true
             });
         },
-        LoadPatientRecordAccess: function (formValue, patientGUID) {
+        LoadPatientRecordAccess: function (formValue, patientGuid) {
             forms.PatientRecordsAccessForm.HideValidation();
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 //data: JSON.stringify(priorAuthorizationRequestJson),
-                url: "../Forms/LoadPatientRecordsAccessForm?patientGUID=" + patientGUID,
+                url: "../Forms/LoadPatientRecordsAccessForm?patientGuid=" + patientGuid,
                 contentType: AJAX_CONTENT_TYPE,
                 error: function (result) {
                     if (result != null) {
@@ -463,7 +465,7 @@ var forms = {
                         }
                         else {
                             //if no Forms present for Patient show default patient info
-                            forms.PatientRecordsAccessForm.LoadPatientInfo(formValue, patientGUID);
+                            forms.PatientRecordsAccessForm.LoadPatientInfo(formValue, patientGuid);
                         }
                     }
                 },
@@ -497,10 +499,10 @@ var forms = {
             $("#patient_records_access_main_content").scrollTop(0);
         },
         Print: function () {
-            var formID = getDivData("patient_records_access_main_content", "uniqueIdentifier");
-            if (formID != "") {
-                var patientGUID = getDivData("patient_records_access_main_content", "patientGUID");
-                window.open("../Forms/FilledPatientRecordsAccessFormPrint?patientGUID=" + patientGUID + "&formID=" + formID);
+            var formId = getDivData("patient_records_access_main_content", "uniqueIdentifier");
+            if (formId != "") {
+                var patientGuid = getDivData("patient_records_access_main_content", "patientGuid");
+                window.open("../Forms/FilledPatientRecordsAccessFormPrint?patientGuid=" + patientGuid + "&formId=" + formId);
             }
             else {
                 window.open("../Forms/EmptyPatientRecordsAccessFormPrint");
@@ -586,7 +588,7 @@ var forms = {
     },
     PriorauthorizationRequestForm: {
         Save: function (formValue) {
-            var patientGUID = getDivData("prior_authorization_request_main_content", "patientGUID");
+            var patientGuid = getDivData("prior_authorization_request_main_content", "patientGuid");
             var priorAuthorizationRequestJson;
             var isUpdate = true;
             var uniqueIdentifier = null;
@@ -623,7 +625,7 @@ var forms = {
                 "AuthorizationNumber": encodeSpecialSymbols($("#authorizationNumber").val()),
                 "EffectiveDate": encodeSpecialSymbols($("#effectiveDate").val()),
                 "ExpiryDate": encodeSpecialSymbols($("#expirationDate").val()),
-                "PatientReferenceId": patientGUID,
+                "PatientReferenceId": patientGuid,
                 "UniqueIdentifier": uniqueIdentifier
             };
             $.ajax({
@@ -645,7 +647,7 @@ var forms = {
                         var patientName = getDivData("prior_authorization_request_main_content", "PatientName");
                         forms.PriorauthorizationRequestForm.DisableControls();
                         setDivData(getDivObject("prior_authorization_request_main_content"), "uniqueIdentifier", "");
-                        setDivData(getDivObject("prior_authorization_request_main_content"), "patientGUID", "");
+                        setDivData(getDivObject("prior_authorization_request_main_content"), "patientGuid", "");
                         refreshFrontOfficeTab(7, formValue, patientName);
                     }
                 },
@@ -653,12 +655,12 @@ var forms = {
             });
             return false;
         },
-        LoadPatientInfo: function (formValue, patientGUID) {
+        LoadPatientInfo: function (formValue, patientGuid) {
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 //data: JSON.stringify(priorAuthorizationRequestJson),
-                url: "../Forms/LoadPatientInfo?patientGUID=" + patientGUID,
+                url: "../Forms/LoadPatientInfo?patientGuid=" + patientGuid,
                 contentType: AJAX_CONTENT_TYPE,
                 error: function (result) {
                     if (result != null) {
@@ -684,12 +686,12 @@ var forms = {
                 traditional: true
             });
         },
-        LoadPrioAuthorizationRequestForm: function (formValue, patientGUID) {
+        LoadPrioAuthorizationRequestForm: function (formValue, patientGuid) {
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 //data: JSON.stringify(priorAuthorizationRequestJson),
-                url: "../Forms/LoadPriorAuthorizationRequestForm?patientGUID=" + patientGUID,
+                url: "../Forms/LoadPriorAuthorizationRequestForm?patientGuid=" + patientGuid,
                 contentType: AJAX_CONTENT_TYPE,
                 error: function (result) {
                     if (result != null) {
@@ -729,7 +731,7 @@ var forms = {
                         }
                         else {
                             //if no Forms present for Patient show default patient info
-                            forms.PriorauthorizationRequestForm.LoadPatientInfo(formValue, patientGUID);
+                            forms.PriorauthorizationRequestForm.LoadPatientInfo(formValue, patientGuid);
                         }
                     }
                 },
@@ -737,10 +739,10 @@ var forms = {
             });
         },
         Print: function () {
-            var formID = getDivData("prior_authorization_request_main_content", "uniqueIdentifier");
-            if (formID != "") {
-                var patientGUID = getDivData("prior_authorization_request_main_content", "patientGUID");
-                window.open("../Forms/FilledPriorAuthorizationRequestPrint?patientGUID=" + patientGUID + "&formID=" + formID);
+            var formId = getDivData("prior_authorization_request_main_content", "uniqueIdentifier");
+            if (formId != "") {
+                var patientGuid = getDivData("prior_authorization_request_main_content", "patientGuid");
+                window.open("../Forms/FilledPriorAuthorizationRequestPrint?patientGuid=" + patientGuid + "&formId=" + formId);
             }
             else {
                 window.open("../Forms/EmptyPriorAuthorizationRequestPrint");
@@ -845,7 +847,7 @@ var forms = {
                     if (result != null) {
                         var patientName = getDivData("notice_form_main_content", "PatientName");
                         setDivData(getDivObject("notice_form_main_content"), "uniqueIdentifier", "");
-                        setDivData(getDivObject("notice_form_main_content"), "patientGUID", "");
+                        setDivData(getDivObject("notice_form_main_content"), "patientGuid", "");
                         refreshFrontOfficeTab(7, formValue, patientName);
                     }
                 },
@@ -853,12 +855,12 @@ var forms = {
             });
             return false;
         },
-        LoadPatientInfo: function (formValue, patientGUID) {
+        LoadPatientInfo: function (formValue, patientGuid) {
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 //data: JSON.stringify(priorAuthorizationRequestJson),
-                url: "../Forms/LoadPatientInfo?patientGUID=" + patientGUID,
+                url: "../Forms/LoadPatientInfo?patientGuid=" + patientGuid,
                 contentType: AJAX_CONTENT_TYPE,
                 error: function (result) {
                     if (result != null) {
@@ -902,7 +904,7 @@ var forms = {
                     if (result != null) {
                         var patientName = getDivData("billOfRights", "PatientName");
                         setDivData(getDivObject("billOfRights"), "uniqueIdentifier", "");
-                        setDivData(getDivObject("billOfRights"), "patientGUID", "");
+                        setDivData(getDivObject("billOfRights"), "patientGuid", "");
                         refreshFrontOfficeTab(7, formValue, patientName);
                     }
                 },
@@ -910,12 +912,12 @@ var forms = {
             });
             return false;
         },
-        LoadPatientInfo: function (formValue, patientGUID) {
+        LoadPatientInfo: function (formValue, patientGuid) {
             $.ajax({
                 type: "POST",
                 dataType: 'json',
                 //data: JSON.stringify(priorAuthorizationRequestJson),
-                url: "../Forms/LoadPatientInfo?patientGUID=" + patientGUID,
+                url: "../Forms/LoadPatientInfo?patientGuid=" + patientGuid,
                 contentType: AJAX_CONTENT_TYPE,
                 error: function (result) {
                     if (result != null) {
@@ -948,7 +950,7 @@ var forms = {
                 autoOpen: true,
                 closeOnEscape: false,
                 title: 'Patient Search',
-                open: function (event, ui) {
+                open: function () {
                     $("#filterDateOfBirth").datepicker("hide");
                     applyBlueClassForDialogHeader();
                     forms.PatientSearch.DisableSelectBtn("PatientSearch_BtnSelect");
@@ -1050,50 +1052,58 @@ var forms = {
                 forms.PatientSearch.LoadPatientFormType(formValue, this.id);
             });
         },
-        LoadPatientFormType: function (formValue, patientGUID) {
+        LoadPatientFormType: function (formValue, patientGuid) {
             switch (formValue) {
                 case '1':
-                    //setDivData(getDivObject("referralContent"), "patientGUID", patientGUID);
-                    forms.NoticeOfPrivacyPractice.LoadPatientInfo(formValue, patientGUID);
+                    //setDivData(getDivObject("referralContent"), "patientGuid", patientGuid);
+                    forms.NoticeOfPrivacyPractice.LoadPatientInfo(formValue, patientGuid);
                     break;
                 case '2':
-                    setDivData(getDivObject("referralContent"), "patientGUID", patientGUID);
+                    setDivData(getDivObject("referralContent"), "patientGuid", patientGuid);
                     // if saved form data needed loadForm else Patient info 
-                    //forms.ReferralForm.LoadReferralForm(formValue, patientGUID);
-                    forms.ReferralForm.LoadPatientInfo(formValue, patientGUID);
+                    //forms.ReferralForm.LoadReferralForm(formValue, patientGuid);
+                    forms.ReferralForm.LoadPatientInfo(formValue, patientGuid);
                     break;
                 case '3':
-                    //setDivData(getDivObject("referralContent"), "patientGUID", patientGUID);
-                    //forms.ReferralForm.LoadReferralForm(formValue, patientGUID);
-                    forms.PatientBillofRights.LoadPatientInfo(formValue, patientGUID);
+                    //setDivData(getDivObject("referralContent"), "patientGuid", patientGuid);
+                    //forms.ReferralForm.LoadReferralForm(formValue, patientGuid);
+                    forms.PatientBillofRights.LoadPatientInfo(formValue, patientGuid);
                     break;
                 case '5':
-                    setDivData(getDivObject("patient_records_access_main_content"), "patientGUID", patientGUID);
+                    setDivData(getDivObject("patient_records_access_main_content"), "patientGuid", patientGuid);
                     // if saved form data needed loadForm else Patient info 
-                    //forms.PatientRecordsAccessForm.LoadPatientRecordAccess(formValue, patientGUID);
-                    forms.PatientRecordsAccessForm.LoadPatientInfo(formValue, patientGUID);
+                    //forms.PatientRecordsAccessForm.LoadPatientRecordAccess(formValue, patientGuid);
+                    forms.PatientRecordsAccessForm.LoadPatientInfo(formValue, patientGuid);
                     break;
                 case '6':
-                    setDivData(getDivObject("prior_authorization_request_main_content"), "patientGUID", patientGUID);
+                    setDivData(getDivObject("prior_authorization_request_main_content"), "patientGuid", patientGuid);
                     // if saved form data needed loadForm else Patient info 
-                    //forms.PriorauthorizationRequestForm.LoadPrioAuthorizationRequestForm(formValue, patientGUID);
-                    forms.PriorauthorizationRequestForm.LoadPatientInfo(formValue, patientGUID);
+                    forms.PriorauthorizationRequestForm.LoadPrioAuthorizationRequestForm(formValue, patientGuid);
+                    //forms.PriorauthorizationRequestForm.LoadPatientInfo(formValue, patientGuid);
                     break;
+                case '8':
+                    setDivData(getDivObject("medical_records_release_main_content"), "patientGuid", patientGuid);
+                    // if saved form data needed loadForm else Patient info 
+                    forms.MedicalRecordReleaseForm.LoadMedicalRecordsReleaseForm(formValue, patientGuid);
+                    //forms.MedicalRecordReleaseForm.LoadPatientInfo(formValue, patientGuid);
+                    break;
+
+
                 default:
             }
         },
         ResetFormBeforePatientSearch: function (formValue) {
             switch (formValue) {
                 case '2':
-                    setDivData(getDivObject("referralContent"), "patientGUID", "");
+                    setDivData(getDivObject("referralContent"), "patientGuid", "");
                     forms.ReferralForm.ResetPage();
                     break;
                 case '5':
-                    setDivData(getDivObject("patient_records_access_main_content"), "patientGUID", "");
+                    setDivData(getDivObject("patient_records_access_main_content"), "patientGuid", "");
                     forms.PatientRecordsAccessForm.ResetPage();
                     break;
                 case '6':
-                    setDivData(getDivObject("prior_authorization_request_main_content"), "patientGUID", "");
+                    setDivData(getDivObject("prior_authorization_request_main_content"), "patientGuid", "");
                     forms.PriorauthorizationRequestForm.ResetPage();
                     break;
                 default:
@@ -1103,6 +1113,10 @@ var forms = {
         //            $("#PatientSearch_BtnSelect").removeClass('disabled-text');
         //            $("#PatientSearch_BtnSelect").attr('disabled', false);
         //        },
+
+
+
+
         DisableSelectBtn: function (buttonId) {
             $("#" + buttonId).removeClass('transaction-button').removeClass('navigation-button').removeClass('cancel-button').removeClass('remove-button');
             $("#" + buttonId).addClass('disabled-button');
@@ -1110,8 +1124,290 @@ var forms = {
             $("#" + buttonId + "-RightCurve").attr('src', '../Content/Images/Buttons/Button_right_curve_grey.jpg');
             $("#" + buttonId).attr('disabled', true);
         }
+    },
 
+
+
+    MedicalRecordReleaseForm: {
+
+        //Page load event for"Medical Record Release" form
+        OnPageLoadOfMedicalRecordRelease: function (formValue) {
+            // if Student mode -- needs to be dynamic
+            var isStudent = true;
+            if (isStudent) {
+                $("#PatientName").attr('disabled', 'disabled');
+                $("#dateOfBirth").attr('disabled', 'disabled');
+                $("#SSN").attr('disabled', 'disabled');
+                $("#phone").attr('disabled', 'disabled');
+                $("#address").attr('disabled', 'disabled');
+                $("#doctorName").attr('disabled', 'disabled');
+                $("#authorize").attr('disabled', 'disabled');
+                $("input[type=checkbox][name^='MedicalRecordRelease']").attr('disabled', true);
+                $("#date").attr('disabled', 'disabled');
+                $("#name").attr('disabled', 'disabled');
+                $("#diffPhone").attr('disabled', 'disabled');
+                $("#diffAddress").attr('disabled', 'disabled');
+                $("#laterThan").attr('disabled', 'disabled');
+                $("#event").attr('disabled', 'disabled');
+                $("#signature").attr('disabled', 'disabled');
+                $("#diffDate").attr('disabled', 'disabled');
+                $("#printedName").attr('disabled', 'disabled');
+                $("#authoritySign").attr('disabled', 'disabled');
+                $("#other").attr('disabled', 'disabled');
+                $("#diffOther").attr('disabled', 'disabled');
+                $("#fax").attr('disabled', 'disabled');
+
+
+            }
+
+
+            forms.PatientSearch.DisableSelectBtn("savePatientRecord-" + formValue);
+        },
+        EnableControls: function () {
+            $("#PatientName").attr('disabled', false);
+            $("#dateOfBirth").attr('disabled', false);
+            $("#SSN").attr('disabled', false);
+            $("#phone").attr('disabled', false);
+            $("#address").attr('disabled', false);
+            $("#doctorName").attr('disabled', false);
+            $("#authorize").attr('disabled', false);
+            $("input[type=checkbox][name^='MedicalRecordRelease']").attr('disabled', false);
+            $("#date").attr('disabled', false);
+            $("#name").attr('disabled', false);
+            $("#diffPhone").attr('disabled', false);
+            $("#diffAddress").attr('disabled', false);
+            $("#laterThan").attr('disabled', false);
+            $("#event").attr('disabled', false);
+            $("#signature").attr('disabled', false);
+            $("#diffDate").attr('disabled', false);
+            $("#printedName").attr('disabled', false);
+            $("#authoritySign").attr('disabled', false);
+            $("#fax").attr('disabled', false);
+
+
+        },
+
+        funpatientMedicalRecordReleaseLst: function () {
+
+            patientMedicalRecordReleaseLst = []; medicalRecordsReleaseTwo = [];
+            $("input[type=checkbox][name='MedicalRecordRelease']:checked").each(function () {
+
+                var recordRequestId = encodeSpecialSymbols($(this).val());
+                var recordRequestValue = encodeSpecialSymbols(($(this).val() == "Other") ? $("#other").val() : $(this).val());
+                var recordRequestJson = {
+                    "Id": recordRequestId,
+                    "Value": recordRequestValue
+                };
+
+                patientMedicalRecordReleaseLst.push(recordRequestJson);
+
+            });
+            $("input[type=checkbox][name='MedicalRecordReleaseTwo']:checked").each(function () {
+
+                var recordRequestId = encodeSpecialSymbols($(this).val());
+                var recordRequestValue = encodeSpecialSymbols(($(this).val() == "ForOther") ? $("#diffOther").val() : $(this).val());
+                var recordRequestJsonTwo = {
+                    "Id": recordRequestId,
+                    "Value": recordRequestValue
+                };
+                medicalRecordsReleaseTwo.push(recordRequestJsonTwo);
+            });
+
+
+        },
+
+        Save: function (formValue) {
+
+            var medicalRecordsRequestJson;
+            var patientGuid = getDivData("medical_records_release_main_content", "patientGuid");
+            var isUpdate = true;
+            var uniqueIdentifier = null;
+            //setDivData(getDivObject("patient_records_access_main_content"), "PatientName", $("#PatientName").val());
+            if (isUpdate) {
+                uniqueIdentifier = getDivData("medical_records_release_main_content", "uniqueIdentifier");
+                // if uniqueIdentifier not set , set it as null to save a new form
+                if (uniqueIdentifier == "") {
+                    uniqueIdentifier = null;
+                }
+            }
+
+
+
+
+            medicalRecordsRequestJson = {
+                //"Id": "0",
+                "PatientName": encodeSpecialSymbols($("#PatientName").val()),
+                "Ssn": encodeSpecialSymbols($("#SSN").val()),
+                "DateOfBirth": encodeSpecialSymbols($("#dateOfBirth").val()),
+                "Address": encodeSpecialSymbols($("#address").val()),
+                "Phone": encodeSpecialSymbols($("#phone").val()),
+                "DiffName": encodeSpecialSymbols($("#diffName").val()),
+                "DoctorName": encodeSpecialSymbols($("#doctorName").val()),
+                "Authorize": encodeSpecialSymbols($("#authorize").val()),
+                "Date": encodeSpecialSymbols($("#date").val()),
+                "Name": encodeSpecialSymbols($("#name").val()),
+                "DiffAddress": encodeSpecialSymbols($("#diffAddress").val()),
+                "Other": encodeSpecialSymbols($("#other").val()),
+                "DiffOther": encodeSpecialSymbols($("#diffOther").val()),
+                "DiffPhone": encodeSpecialSymbols($("#diffPhone").val()),
+                "Fax": encodeSpecialSymbols($("#fax").val()),
+                //"InjuryRelated": encodeSpecialSymbols($('input:radio[name=injuryRelated]:checked').val()),
+                "Signature": encodeSpecialSymbols($("#signature").val()),
+                "DiffDate": encodeSpecialSymbols($("#diffDate").val()),
+                "PrintedDate": encodeSpecialSymbols($("#printedDate").val()),
+                "PrintedName": encodeSpecialSymbols($("#printedName").val()),
+                "MedicalRecordsReleaseForm": patientMedicalRecordReleaseLst,
+                "MedicalRecordsReleaseFormTwo": medicalRecordsReleaseTwo,
+                "AuthoritySign": encodeSpecialSymbols($("#authoritySign").val()),
+                "LaterThan": encodeSpecialSymbols($("#laterThan").val()),
+                "Event": encodeSpecialSymbols($("#event").val()),
+
+                "PatientReferenceId": patientGuid,
+                "UniqueIdentifier": uniqueIdentifier
+            };
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                data: JSON.stringify(medicalRecordsRequestJson),
+                url: '../Forms/SaveMedicalRecordsReleaseForm',
+                contentType: AJAX_CONTENT_TYPE,
+                error: function (result) {
+                    if (result != null) {
+                        jAlert(SAVE_ERROR, "Alert");
+                    }
+                },
+                success: function (result) {
+                    if (result != null) {
+                        forms.DisableSaveBtn(formValue);
+                        var patientName = getDivData("medical_records_release_main_content", "PatientName");
+                        setDivData(getDivObject("medical_records_release_main_content"), "uniqueIdentifier", "");
+                        setDivData(getDivObject("medical_records_release_main_content"), "patientGuid", "");
+                        refreshFrontOfficeTab(7, formValue, patientName);
+                    }
+                },
+                traditional: true
+            });
+
+
+        },
+        LoadMedicalRecordsReleaseForm: function (formValue, patientGuid) {
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                //data: JSON.stringify(priorAuthorizationRequestJson),
+                url: "../Forms/LoadMedicalRecordsReleaseForm?patientGuid=" + patientGuid,
+                contentType: AJAX_CONTENT_TYPE,
+                error: function (result) {
+                    if (result != null) {
+                        jAlert(LOAD_ERROR, "Alert");
+                    }
+                },
+                success: function (result) {
+                    if (result != null) {
+                        if (result.MedicalRecordsRelease != null) {
+                            $("#PatientName").val(result.MedicalRecordsRelease.PatientName);
+                            $("#SSN").val(result.MedicalRecordsRelease.Ssn);
+                            $("#dateOfBirth").val(result.MedicalRecordsRelease.DateOfBirth);
+                            $("#address").val(result.MedicalRecordsRelease.Address);
+                            $("#phone").val(result.MedicalRecordsRelease.Phone);
+                            $("#diffName").val(result.MedicalRecordsRelease.DiffName);
+                            $("#doctorName").val(result.MedicalRecordsRelease.DoctorName);
+                            $("#authorize").val(result.MedicalRecordsRelease.Authorize);
+                            $("#date").val(result.MedicalRecordsRelease.Date);
+                            $("#name").val(result.MedicalRecordsRelease.Name);
+                            $("#diffAddress").val(result.MedicalRecordsRelease.DiffAddress);
+                            $("#other").val(result.MedicalRecordsRelease.Other);
+                            $("#diffOther").val(result.MedicalRecordsRelease.DiffOther);
+                            $("#diffPhone").val(result.MedicalRecordsRelease.DiffPhone);
+                            $("#fax").val(result.MedicalRecordsRelease.Fax);
+                            $("#signature").val(result.MedicalRecordsRelease.Signature);
+                            $("#diffDate").val(result.MedicalRecordsRelease.DiffDate);
+                            // $("#dateOfInjuryWorkersCompensationRelated").val(result.PriorAuthorizationRequest.WorkerCompDateOfInjury);
+                            $("#printedDate").val(result.MedicalRecordsRelease.PrintedDate);
+                            $("#printedName").val(result.MedicalRecordsRelease.PrintedName);
+                            $("#authoritySign").val(result.MedicalRecordsRelease.AuthoritySign);
+                            $("#laterThan").val(result.MedicalRecordsRelease.LaterThan);
+                            $("#event").val(result.MedicalRecordsRelease.Event);
+                            var i;
+                            if (result.MedicalRecordsRelease.MedicalRecordsReleaseForm != null) {
+                                for (var iRecordCount = 0; iRecordCount < result.MedicalRecordsRelease.MedicalRecordsReleaseForm.length; iRecordCount++) {
+
+                                    $("input[type=checkbox][id='MedicalRecordRelease_" + result.MedicalRecordsRelease.MedicalRecordsReleaseForm[iRecordCount].Id + "']").attr('checked', true);
+                                    if (result.MedicalRecordsRelease.MedicalRecordsReleaseForm[iRecordCount].Id == "Other") {
+                                        $("#other").val(result.MedicalRecordsRelease.MedicalRecordsReleaseForm[iRecordCount].Value);
+                                    }
+
+
+                                }
+                            }
+                            if (result.MedicalRecordsRelease.MedicalRecordsReleaseFormTwo != null) {
+                                for (i = 0; i < result.MedicalRecordsRelease.MedicalRecordsReleaseFormTwo.length; i++) {
+
+                                    $("input[type=checkbox][id='MedicalRecordReleaseTwo_" + result.MedicalRecordsRelease.MedicalRecordsReleaseFormTwo[i].Id + "']").attr('checked', true);
+                                    if (result.MedicalRecordsRelease.MedicalRecordsReleaseFormTwo[i].Id == "ForOther") {
+                                        $("#diffOther").val(result.MedicalRecordsRelease.MedicalRecordsReleaseFormTwo[i].Value);
+                                    }
+
+
+                                }
+                            }
+                            // $('input:radio[id=workersCompensationRelated' + result.PriorAuthorizationRequest.WorkerCompentationRelated + ']').attr('checked', true);
+
+                            forms.EnableSaveBtn(formValue);
+                            forms.MedicalRecordReleaseForm.EnableControls();
+                            setDivData(getDivObject("medical_records_release_main_content"), "uniqueIdentifier", result.MedicalRecordsRelease.UniqueIdentifier);
+                        }
+                        else {
+                            //if no Forms present for Patient show default patient info
+                            forms.MedicalRecordReleaseForm.LoadPatientInfo(formValue, patientGuid);
+                        }
+                    }
+                },
+                traditional: true
+            });
+        },
+        Print: function () {
+            var formId = getDivData("medical_records_release_main_content", "uniqueIdentifier");
+            if (formId != "") {
+                var patientGuid = getDivData("medical_records_release_main_content", "patientGuid");
+                window.open("../Forms/FilledMedicalRecordsReleasePrint?patientGuid=" + patientGuid + "&formId=" + formId);
+            }
+            else {
+                window.open("../Forms/EmptyMedicalRecordsReleasePrint");
+            }
+        },
+        LoadPatientInfo: function (formValue, patientGuid) {
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                //data: JSON.stringify(priorAuthorizationRequestJson),
+                url: "../Forms/LoadPatientInfo?patientGuid=" + patientGuid,
+                contentType: AJAX_CONTENT_TYPE,
+                error: function (result) {
+                    if (result != null) {
+                        jAlert(LOAD_ERROR, "Alert");
+                    }
+                },
+                success: function (result) {
+                    if (result != null) {
+                        if (result.PatientInfo != null) {
+                            $("#PatientName").val(result.PatientInfo.LastName + ", " + result.PatientInfo.FirstName + " " + result.PatientInfo.MiddleInitial);
+                            // setting div data PatientName
+                            setDivData(getDivObject("medical_records_release_main_content"), "PatientName", result.PatientInfo.FirstName + " " + result.PatientInfo.LastName);
+                            $("#dateOfBirth").val(result.PatientInfo.DateOfBirth);
+                            forms.EnableSaveBtn(formValue);
+                            forms.MedicalRecordReleaseForm.EnableControls();
+                            //forms.PatientRecordsAccessForm.EnableControls();
+                            //alert('PriorAuthorizationRequest Info Saved!');
+                        }
+                        else {
+                            jAlert("Patient not found", "Error");
+                        }
+                    }
+                },
+                traditional: true
+            });
+        }
     }
 };
-    
-    
+

@@ -14,7 +14,7 @@
     Dictionary<string, DropBoxLink> dropBoxDictionary =JsonSerializer.DeserializeObject<Dictionary<string, DropBoxLink>>(dropboxLinkJson);
         foreach (var item in dropBoxDictionary)
         {
-             dropBoxLinkObj = (DropBoxLink)item.Value;
+             dropBoxLinkObj = item.Value;
         }
     }
     var role = String.IsNullOrEmpty(dropBoxLinkObj.UserRole) ? String.Empty : (", " + dropBoxLinkObj.UserRole + ":");

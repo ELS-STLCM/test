@@ -1,55 +1,49 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using SimChartMedicalOffice.MasterUpload;
-using SimChartMedicalOffice.Core.Competency;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
-using SimChartMedicalOffice.MasterUpload.Utilities;
-using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.ApplicationServices.Competency;
+using SimChartMedicalOffice.Core.Competency;
 using SimChartMedicalOffice.Data;
-using System.Xml.Linq;
 using SimChartMedicalOffice.Data.Competency;
+using SimChartMedicalOffice.MasterUpload.Utilities;
 
 namespace SimChartMedicalOffice.MasterUpload.Forms
 {
-    public partial class CompetencyForm : SimChartMedicalOffice.MasterUpload.Forms.SimOfficeForm
+    public partial class CompetencyForm : SimOfficeForm
     {
 
-        DataSet excelDataCompetency;
-        CompetencyDocument competencyDocumentInstance = new CompetencyDocument();
-        List<Competency> competencyListToSave = new List<Competency>();
-        List<Core.Competency.CompetencySources> competencySourcesList = new List<CompetencySources>();
-        List<Core.Competency.ApplicationModules> applicationModulesList = new List<ApplicationModules>();
-        Dictionary<string, Dictionary<string, Competency>> competencyCategotyDic = new Dictionary<string, Dictionary<string, Competency>>();
+        DataSet _excelDataCompetency;
+        readonly CompetencyDocument _competencyDocumentInstance = new CompetencyDocument();
+        readonly List<CompetencySources> _competencySourcesList = new List<CompetencySources>();
+        readonly List<ApplicationModules> _applicationModulesList = new List<ApplicationModules>();
+        readonly Dictionary<string, Dictionary<string, Competency>> _competencyCategotyDic = new Dictionary<string, Dictionary<string, Competency>>();
 
-        private CompetencyService _competencyService;
-        ApplicationModuleDocument applicationModuleDocument = new ApplicationModuleDocument();
-        CompetencySourceDocument competecnySourceDocument = new CompetencySourceDocument();
+        private readonly CompetencyService _competencyService;
+        readonly ApplicationModuleDocument _applicationModuleDocument = new ApplicationModuleDocument();
+        readonly CompetencySourceDocument _competecnySourceDocument = new CompetencySourceDocument();
         public CompetencyForm()
         {
             InitializeComponent();
-            _competencyService = new CompetencyService(competencyDocumentInstance, competecnySourceDocument, applicationModuleDocument);
+            _competencyService = new CompetencyService(_competencyDocumentInstance, _competecnySourceDocument, _applicationModuleDocument);
         }
 
 
-        private void Competency_Load(object sender, EventArgs e)
+        private void CompetencyLoad(object sender, EventArgs e)
         {
             try
             {
-                ConfigurationObject configObject = new ConfigurationObject();
-                configObject.DataSheetName = "Competency";
-                configObject.DataFileName = "Competency.xls";
-                configObject.FormObject = this;
+                ConfigurationObject configObject = new ConfigurationObject
+                                                       {
+                                                           DataSheetName = "Competency",
+                                                           DataFileName = "Competency.xls",
+                                                           FormObject = this
+                                                       };
 
-                excelDataCompetency = SimChartMedicalOffice.MasterUpload.ExcelConnection.ExcelDataConnection.GetExcelData(configObject.DataFileName, configObject.DataSheetName);
+                _excelDataCompetency = ExcelConnection.ExcelDataConnection.GetExcelData(configObject.DataFileName, configObject.DataSheetName);
                 //DataTable dtCompetency = excelDataCompetency.Tables["Competency"].Rows.Cast<DataRow>().Where(row => !row.ItemArray.All(field => field is System.DBNull || string.Compare((field as string).Trim(), string.Empty) == 0)).CopyToDataTable();
-                DataTable dtCompetency = ApplicationUtility.RemoveNullValueRow(excelDataCompetency, configObject.DataSheetName);
+                DataTable dtCompetency = ApplicationUtility.RemoveNullValueRow(_excelDataCompetency, configObject.DataSheetName);
                 dataGridView1.DataSource = dtCompetency;
 
 
@@ -59,76 +53,78 @@ namespace SimChartMedicalOffice.MasterUpload.Forms
                 #region Option5
 
 
-                List<string> catXLList = dtCompetency.Rows.OfType<DataRow>().Select(dr => dr.Field<string>("Category")).Distinct().ToList<string>();
+                List<string> catXlList = dtCompetency.Rows.OfType<DataRow>().Select(dr => dr.Field<string>("Category")).Distinct().ToList();
 
 
 
 
-                foreach (string catXL in catXLList)
-                 {
+                foreach (string catXl in catXlList)
+                {
 
-                    DataRow[] groupCatXL = dtCompetency.Select("Category like '%" + catXL.ToString() + "%'");
+                    DataRow[] groupCatXl = dtCompetency.Select("Category like '%" + catXl + "%'");
 
                     Dictionary<string, Competency> competencyDic = new Dictionary<string, Competency>();
 
-                    foreach (DataRow drCom in groupCatXL)
+                    foreach (DataRow drCom in groupCatXl)
                     {
                         try
                         {
-                            Competency com = new Competency();
+                            Competency com = new Competency
+                                                 {
+                                                     Focus = drCom.Field<string>("Focus"),
+                                                     Name = drCom.Field<string>("Competency Name")
+                                                 };
                             //com.SetGuidValue();
-                            com.Focus = drCom.Field<string>("Focus");
-                            com.Name = drCom.Field<string>("Competency Name");
                             if (com.Name != null)
                             {
                                 List<Source> lstSource = new List<Source>();
                                 if (drCom.Field<string>("CAAHEP") != null)
                                 {
-                                    Source source = new Source();
-                                    source.Name = "CAAHEP";
-                                    source.Number = drCom.Field<string>("CAAHEP");
-                                    source.IsActive = true;
+                                    Source source = new Source
+                                                        {
+                                                            Name = "CAAHEP",
+                                                            Number = drCom.Field<string>("CAAHEP"),
+                                                            IsActive = true
+                                                        };
                                     lstSource.Add(source);
                                     AddCompetencySources(source.Name);
                                 }
                                 if (drCom.Field<string>("ABHES") != null)
                                 {
-                                    Source source = new Source();
-                                    source.Name = "ABHES";
-                                    source.Number = drCom.Field<string>("ABHES");
-                                    source.IsActive = true;
+                                    Source source = new Source
+                                                        {
+                                                            Name = "ABHES",
+                                                            Number = drCom.Field<string>("ABHES"),
+                                                            IsActive = true
+                                                        };
                                     lstSource.Add(source);
                                     AddCompetencySources(source.Name);
                                 }
                                 if (drCom.Field<string>("Source") == "MAERB")
                                 {
-                                    Source source = new Source();
-                                    source.Name = "MAERB";
-                                    source.Number = "";
-                                    source.IsActive = true;
+                                    Source source = new Source {Name = "MAERB", Number = "", IsActive = true};
                                     lstSource.Add(source);
                                     AddCompetencySources(source.Name);
                                 }
                                 com.Sources = lstSource;
                                 com.IsActive = true;
-                                
+
 
                                 //bool exist = applicationModulesList.Select(foc => foc.Name.Equals(com.Focus)).SingleOrDefault();
-                                int intdd = applicationModulesList.FindIndex(foc => foc.Name.Equals(com.Focus));
+                                int intdd = _applicationModulesList.FindIndex(foc => foc.Name.Equals(com.Focus));
                                 if (intdd < 0)
                                 {
                                     if (com.Focus != null)
                                     {
-                                        ApplicationModules appModule = new ApplicationModules();
-                                        appModule.Name = com.Focus;
-                                        applicationModulesList.Add(appModule);
+                                        ApplicationModules appModule = new ApplicationModules {Name = com.Focus};
+                                        _applicationModulesList.Add(appModule);
                                     }
                                 }
-                                com.Category = catXL;
+                                com.Category = catXl;
                                 competencyDic.Add(com.GetNewGuidValue(), com);
                             }
-                            
-                            
+
+
                         }
                         catch (Exception ex)
                         {
@@ -140,7 +136,7 @@ namespace SimChartMedicalOffice.MasterUpload.Forms
 
                     if (competencyDic.Count > 0)
                     {
-                        competencyCategotyDic.Add(catXL, competencyDic);
+                        _competencyCategotyDic.Add(catXl, competencyDic);
                     }
                 }
 
@@ -291,53 +287,45 @@ namespace SimChartMedicalOffice.MasterUpload.Forms
 
         private void AddCompetencySources(string sourceName)
         {
-            int existIndex = competencySourcesList.FindIndex(foc => foc.Name.Equals(sourceName));
+            int existIndex = _competencySourcesList.FindIndex(foc => foc.Name.Equals(sourceName));
             if (existIndex < 0)
             {
-                CompetencySources comSource = new CompetencySources();
-                comSource.Name = sourceName;
-                competencySourcesList.Add(comSource);
+                CompetencySources comSource = new CompetencySources {Name = sourceName};
+                _competencySourcesList.Add(comSource);
             }
         }
 
-        private void btnFireBase_Click(object sender, EventArgs e)
+        private void BtnFireBaseClick(object sender, EventArgs e)
         {
 
-            try
+            const string savedMsg = "Saved !";
+            //_competencyService.SaveCompetencyList(competencyCategotyDic);
+            foreach (var item in _competencyCategotyDic)
             {
-                //_competencyService.SaveCompetencyList(competencyCategotyDic);
-                foreach (var item in competencyCategotyDic)
+                foreach (var itemComp in item.Value)
                 {
-                    foreach(var itemComp in item.Value)
-                    {
-                        Competency comp = (Competency)itemComp.Value;
-                        comp.CreatedTimeStamp = DateTime.Now;
-                        _competencyService.SaveCompetency(comp, "", false);    
-                    
-                    }                    
-                }               
-
-
-                foreach (ApplicationModules appModule in applicationModulesList)
-                {
-                    _competencyService.SaveApplicationModule(appModule, "", false);
+                    Competency comp = itemComp.Value;
+                    comp.CreatedTimeStamp = DateTime.Now;
+                    _competencyService.SaveCompetency(comp, "", false);
 
                 }
-                foreach (CompetencySources comSource in competencySourcesList)
-                {
-                    _competencyService.SaveCompetencySource(comSource, "", false);
+            }
 
-                }
-                MessageBox.Show("Saved !");
-            }
-            catch (Exception ex)
+
+            foreach (ApplicationModules appModule in _applicationModulesList)
             {
-                string exst = ex.ToString();
-                //to  do throw;
+                _competencyService.SaveApplicationModule(appModule, "", false);
+
             }
+            foreach (CompetencySources comSource in _competencySourcesList)
+            {
+                _competencyService.SaveCompetencySource(comSource, "", false);
+
+            }
+            MessageBox.Show(savedMsg);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1Click(object sender, EventArgs e)
         {
             CompetencySources comSource = new CompetencySources();
             _competencyService.SaveCompetencySource(comSource, "", false);

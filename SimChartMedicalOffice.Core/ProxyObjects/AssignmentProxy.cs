@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
 using SimChartMedicalOffice.Core.SkillSetBuilder;
 
 namespace SimChartMedicalOffice.Core.ProxyObjects
 {
     public class AssignmentProxy : DocumentEntity
     {
-        public AssignmentProxy() { }
         public string FolderName { get; set; }
 
         public string FolderIdentifier { get; set; }

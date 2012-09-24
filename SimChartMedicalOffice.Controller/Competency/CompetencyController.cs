@@ -1,9 +1,10 @@
 ﻿using System.Xml;
 using System.Web;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Web.Mvc;
+using SimChartMedicalOffice.Common.Logging;
+using SimChartMedicalOffice.Core;
 using SimChartMedicalOffice.Core.Competency;
 using SimChartMedicalOffice.Common;
 using SimChartMedicalOffice.Common.Utility;
@@ -21,7 +22,7 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         public CompetencyController(ICompetencyService competencyService)
         {
-            this._competencyService = competencyService;
+            _competencyService = competencyService;
         }
 
         public ActionResult LoadMaster(int iReferenceOfMasterToLoad)
@@ -37,8 +38,7 @@ namespace SimChartMedicalOffice.Web.Controllers
             IList<CompetencySources> competencySourceList = _competencyService.GetAllCompetecnySources();
             IList<ApplicationModules> competencyMainFocusList = new List<ApplicationModules>();
             IList<ApplicationModules> competencyFocusList = _competencyService.GetAllApplicationModules();
-            ApplicationModules app = new ApplicationModules();
-            app.Name = "-Select-";
+            ApplicationModules app = new ApplicationModules {Name = "-Select-"};
             competencyMainFocusList.Add(app);
             competencyMainFocusList = competencyMainFocusList.Concat(competencyFocusList).ToList();
             int index = 0;
@@ -51,7 +51,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         }
         public void ExportCompetencyToXmlDocument()
         {
-            List<Core.Competency.Competency> competencyList = _competencyService.GetAllCompetencies().ToList();
+            List<Competency> competencyList = _competencyService.GetAllCompetencies().ToList();
 
             var competencyData = (from competency in competencyList
                                   select new
@@ -60,12 +60,12 @@ namespace SimChartMedicalOffice.Web.Controllers
                                                  CompetencyName = competency.Name,
                                                  CAAHEP = ((competency.Sources) != null && (competency.Sources.Count) > 0) ? competency.Sources.OrderBy(source => source.Name).Where(source => source.Name.Equals("CAAHEP")).Select(source => source.Number).FirstOrDefault() : "",
                                                  ABHES = ((competency.Sources) != null && (competency.Sources.Count) > 0) ? competency.Sources.OrderBy(source => source.Name).Where(source => source.Name.Equals("ABHES")).Select(source => source.Number).FirstOrDefault() : "",
-                                                 Source = ((competency.Sources) != null && (competency.Sources.Count) > 0) ? (string.Join(",", competency.Sources.OrderBy(source => source.Name).Select(source => source.Name.ToString()).ToArray())).ToString() : "",
+                                                 Source = ((competency.Sources) != null && (competency.Sources.Count) > 0) ? (string.Join(",", competency.Sources.OrderBy(source => source.Name).Select(source => source.Name.ToString()).ToArray())) : "",
                                                  Focus = competency.Focus,
                                                  Status = (competency.IsActive) ? "Active" : "Deleted",
                                              }).ToList();
 
-            XmlDocument competencyXmlDocument = (XmlDocument)JsonSerializer.DeserializeXmlObject(
+            XmlDocument competencyXmlDocument = JsonSerializer.DeserializeXmlObject(
                 JsonSerializer.SerializeObject(competencyData));
 
             MemoryStream ms = new MemoryStream();
@@ -93,9 +93,8 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveCompetency(string competencyUrlReference, bool isEditMode)
         {
-            Competency competencyObject = new Competency();
             string competencyObjJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-            competencyObject = JsonSerializer.DeserializeObject<Competency>(competencyObjJson);
+            Competency competencyObject = JsonSerializer.DeserializeObject<Competency>(competencyObjJson);
             SetAuditFields(competencyObject, isEditMode);
             _competencyService.SaveCompetency(competencyObject, competencyUrlReference, isEditMode);
             return Json(new { Success = "" });
@@ -104,17 +103,20 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <summary>
         /// method to save competency
         /// </summary>
-        /// <param name="isEditMode"></param>
-        /// <param name="competencyUrlReference"></param>
+        /// <param name="param"></param>
+        /// <param name="searchByText"></param>
+        /// <param name="selectedCompetencyList"></param>
+        /// <param name="isCompetencySave"></param>
+        /// <param name="isCompetencyDelete"></param>
         /// <returns></returns>
-        public ActionResult GetCompetencyList(jQueryDataTableParamModel param, string searchByText, string selectedCompetencyList, bool isCompetencySave, bool isCompetencyDelete)
+        public ActionResult GetCompetencyList(JQueryDataTableParamModel param, string searchByText, string selectedCompetencyList, bool isCompetencySave, bool isCompetencyDelete)
         {
-            int competencyCount = 0;
+           // int competencyCount=0;
 
             IList<Competency> competencyList = _competencyService.GetAllCompetencies();
             if (searchByText != "")
             {
-                competencyList = (from com in competencyList where com.Category.ToLower().StartsWith(searchByText.ToLower().ToString()) || com.Name.ToLower().StartsWith(searchByText.ToLower().ToString()) select com).Distinct().ToList();
+                competencyList = (from com in competencyList where com.Category.ToLower().StartsWith(searchByText.ToLower()) || com.Name.ToLower().StartsWith(searchByText.ToLower()) select com).Distinct().ToList();
 
             }
 
@@ -129,15 +131,15 @@ namespace SimChartMedicalOffice.Web.Controllers
                     if (sortColumnOrder == "asc")
                     {
                         competencyList = (from com in competencyList
-                                          let SourceNumber = ((com.Sources) !=null &&(com.Sources.Count) > 0) ? (string.Join(", ", com.Sources.OrderBy(sour => sour.Name).Select(sour => sour.Name.ToString()).ToArray())).ToString() : ""
-                                          orderby SourceNumber
+                                          let sourceNumber = ((com.Sources) !=null &&(com.Sources.Count) > 0) ? (string.Join(", ", com.Sources.OrderBy(sour => sour.Name).Select(sour => sour.Name.ToString()).ToArray())) : ""
+                                          orderby sourceNumber
                                           select com).ToList();
                     }
                     else
                     {
                         competencyList = (from com in competencyList
-                                          let SourceNumber = ((com.Sources) != null && (com.Sources.Count) > 0) ? (string.Join(", ", com.Sources.OrderBy(sour => sour.Name).Select(sour => sour.Name.ToString()).ToArray())).ToString() : ""
-                                          orderby SourceNumber descending
+                                          let sourceNumber   = ((com.Sources) != null && (com.Sources.Count) > 0) ? (string.Join(", ", com.Sources.OrderBy(sour => sour.Name).Select(sour => sour.Name.ToString()).ToArray())) : ""
+                                          orderby sourceNumber descending
                                           select com).ToList();
                     }
                     break;
@@ -146,27 +148,27 @@ namespace SimChartMedicalOffice.Web.Controllers
                     var sortableList = competencyList.AsQueryable();
                     if (isCompetencySave && !isCompetencyDelete)
                     {
-                        competencyList = sortableList.OrderByDescending(com => (!(com.CreatedTimeStamp.Equals(DateTime.MinValue))?com.CreatedTimeStamp:com.ModifiedTimeStamp)).ThenByDescending(comp=>comp.IsActive).ToList<Competency>();
+                        competencyList = sortableList.OrderByDescending(com => (!(com.CreatedTimeStamp.Equals(DateTime.MinValue))?com.CreatedTimeStamp:com.ModifiedTimeStamp)).ThenByDescending(comp=>comp.IsActive).ToList();
                     }
                     else if (!isCompetencySave && isCompetencyDelete)
                     {
-                        competencyList = sortableList.OrderByDescending(com => com.DeletedTimeStamp).ThenByDescending(comp => comp.IsActive).ToList<Competency>();
+                        competencyList = sortableList.OrderByDescending(com => com.DeletedTimeStamp).ThenByDescending(comp => comp.IsActive).ToList();
                     }
                     else
                     {
-                        competencyList = sortableList.OrderBy<Competency>(sortColumnName, sortColumnOrder).ToList<Competency>();
+                        competencyList = sortableList.OrderBy(sortColumnName, sortColumnOrder).ToList();
                     }                    
                     break;
             }
             IList<Competency> competencyListToRender = competencyList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
-            competencyCount = competencyList.Count;
+          int  competencyCount = competencyList.Count;
             string[] strArray = AppCommon.GetStringArrayAfterSplitting(selectedCompetencyList);
             var data = (from competencyItem in competencyListToRender
                         select new[]
                                    {(competencyItem.IsActive)? "<input type='checkbox' id='" + competencyItem.UniqueIdentifier + "' onClick='competency.commonFunctions.competencyItemChanged(this)'" + AppCommon.CheckForFlagAndReturnValue(strArray, competencyItem.UniqueIdentifier) + "/>": "",
                                        !string.IsNullOrEmpty(competencyItem.Category) ? competencyItem.Category : "",
                                        !string.IsNullOrEmpty(competencyItem.Name) ? ( (competencyItem.IsActive)?"<a href='#' onclick=\"competency.commonFunctions.loadCompetency('"+competencyItem.UniqueIdentifier+"')\" class=\"link select-hand\">" + competencyItem.Name + "</a>" :competencyItem.Name) : "",
-                                       ((competencyItem.Sources) !=null &&(competencyItem.Sources.Count) > 0) ? ( string.Join(", ",competencyItem.Sources.OrderBy(sour=>sour.Name).Select(sour=> sour.Name.ToString()).ToArray())).ToString() : "",
+                                       ((competencyItem.Sources) !=null &&(competencyItem.Sources.Count) > 0) ? ( string.Join(", ",competencyItem.Sources.OrderBy(sour=>sour.Name).Select(sour=> sour.Name.ToString()).ToArray())) : "",
                                        !string.IsNullOrEmpty(competencyItem.Focus) ? competencyItem.Focus : "",
                                        (competencyItem.IsActive) ? "Active" : "Deleted"
                                        }).ToArray();
@@ -187,9 +189,8 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveCompetencySources()
         {
-            CompetencySources sourceObject = new CompetencySources();
             string competencySourceObjJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-            sourceObject = JsonSerializer.DeserializeObject<CompetencySources>(competencySourceObjJson);
+            CompetencySources sourceObject = JsonSerializer.DeserializeObject<CompetencySources>(competencySourceObjJson);
             _competencyService.SaveCompetencySource(sourceObject, "", false);
             IList<CompetencySources> competencySourceList = _competencyService.GetAllCompetecnySources();
             var strSourceList = competencySourceList.Select(source => source.Name.ToString()).ToList();
@@ -226,9 +227,10 @@ namespace SimChartMedicalOffice.Web.Controllers
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: Controller: Competency, MethodName: SetViewBagsForCompetencyEditMode", ex);
             }
 
         }
@@ -239,13 +241,12 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult DeleteCompetency()
         {
-            string competencyListOfIds = "";
             string competencyListOfIdsJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-            competencyListOfIds = JsonSerializer.DeserializeObject<string>(competencyListOfIdsJson);
+            string competencyListOfIds = JsonSerializer.DeserializeObject<string>(competencyListOfIdsJson);
             string[] strArray = AppCommon.GetStringArrayAfterSplitting(competencyListOfIds);
-            for (int i = 0; i < strArray.Length; i++)
+            foreach (string t in strArray)
             {
-                Core.Competency.Competency deleteCompetecny = _competencyService.GetCompetency(strArray[i]);
+                Competency deleteCompetecny = _competencyService.GetCompetency(t);
                 deleteCompetecny.IsActive = false;
                 SetAuditFields(deleteCompetecny, true);
                 _competencyService.DeleteCompetency(deleteCompetecny);

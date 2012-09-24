@@ -1,55 +1,14 @@
 ﻿@{
     Layout = null;
 }
-<div class="grid_32 div-with-bottom-border">
-    <div class="clear-height-spacing clear">
-    </div>
-    <div class="grid_17 form-page-header" style="padding-top: 0px">
-        Question Bank
-    </div>
-    <div class="grid_6 align-div-inline" id="FilterByQuestionType" style="width: 160px">
-        @*@Html.DropDownList("filterByType", null, new { id = "filterByType", @class = "grid_31" })*@
-    </div>
-    <div class="align-div-inline standard-text">
-        And / Or</div>
-    <div class="grid_8 align-div-inline">
-        @Html.TextBox("searchByText", "", new { id = "searchByText", @class = "grid_28" })
-        <img id="buttonSearch" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
-    </div>
-    <div class="clear-min-height-spacing clear">
-    </div>
-</div>
-<div class="grid_32">
-    <div class="clear-min-height-spacing clear">
-    </div>
-    <div id="BreadCrumbEntry">
-        @Html.Partial("../../Views/Builder/Authoring/_BreadCrumb")
-    </div>
-    <div class="clear-min-height-spacing clear">
-    </div>
-</div>
-<div class="grid_32">
-    <div id="questionBankFolderPanel" class="grid_8 remove-div-space container-folder-height">
-        @Html.Partial("../../Views/Builder/QuestionBank/Folder", new ViewDataDictionary { new KeyValuePair<string, object>("currentFolderPanel", "questionBankTab") })
-    </div>
-    <div class="grid_24 remove-div-space" style="width:75%">
-        <div class="grid_32 container-folder-height" style="width:100%">
-            <div class="grid_32 container-grid-height" style="float: left;width:100%">
-                @Html.Partial("../../Views/Builder/Authoring/_QuestionBankGrid")
-            </div>
-            <div class="grid_32" style="width:100%">
-                @Html.Partial("../../Views/Builder/Authoring/PatientActions")
-            </div>
-        </div>
-    </div>
-</div>
 <script type="text/javascript">
     var filterByTypeList = @Html.Raw(Json.Encode(ViewBag.FilterByQuestionType)); 
     $(document).ready(function () {
-       setMaxLenthSearchText("searchByText");
-       disableAButton("btnDeleteQuestions");
-       disableAButton("btnCopyQuestions");
-       disableAButton("btnMoveQuestions");
+        adjustHeight();
+        setMaxLenthSearchText("searchByText");
+        disableAButton("btnDeleteQuestions");
+        disableAButton("btnCopyQuestions");
+        disableAButton("btnMoveQuestions");
         startAjaxLoader();
         waterMarkTextForSearch();
         initializeFlexBoxForFilterByType("FilterByQuestionType", filterByTypeList);
@@ -76,3 +35,47 @@
         });
     });
 </script>
+<div class="grid_32 div-with-bottom-border" id = "questionLandingHeader">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_17 form-page-header" style="padding-top: 0px">
+        Question Bank
+    </div>
+    <div class="grid_6 align-div-inline" id="FilterByQuestionType" style="width: 160px">
+        @*@Html.DropDownList("filterByType", null, new { id = "filterByType", @class = "grid_31" })*@
+    </div>
+    <div class="align-div-inline standard-text">
+        And/Or</div>
+    <div class="grid_8 align-div-inline">
+        @Html.TextBox("searchByText", "", new { id = "searchByText", @class = "grid_28" })
+        <img id="buttonSearch" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+<div class="grid_32">
+    <div class="clear-min-height-spacing clear">
+    </div>
+    <div id="BreadCrumbEntry">
+        @Html.Partial("../../Views/Builder/Authoring/_BreadCrumb")
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+<div class="grid_32 dynamicHeight" id = "questionFolderGridContainer">
+    <div class="grid_8 remove-div-space dynamicHeight" id="questionBankFolderPanel">
+        @Html.Partial("../../Views/Builder/QuestionBank/Folder", new ViewDataDictionary { new KeyValuePair<string, object>("currentFolderPanel", "questionBankTab") })
+    </div>
+    <div class="grid_24 remove-div-space dynamicHeight" id = "questionGridButtonContainer" style="width:75%">
+        <div class="grid_32 grid-height" id = "innerQuestionGridButtonContainer" style="width:100%">
+            <div class="grid_32 grid-inner-height" id = "questionGridContainer" style="float: left;width:100%">
+                @Html.Partial("../../Views/Builder/Authoring/_QuestionBankGrid")
+            </div>
+            <div class="clear-min-height-spacing clear">
+            </div>
+            <div class="grid_32" id="questionButtonContainer" style="width:100%">
+                @Html.Partial("../../Views/Builder/Authoring/PatientActions")
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Castle.DynamicProxy;
 using System.Diagnostics;
-using System.Web;
-using SimChartMedicalOffice.Common.Logging;
+using Castle.DynamicProxy;
 using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Logging;
 
 namespace SimChartMedicalOffice.Infrastructure.Aspects
 {

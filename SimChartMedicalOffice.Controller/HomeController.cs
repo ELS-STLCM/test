@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using SimChartMedicalOffice.ApplicationServices;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface;
 
@@ -11,12 +7,12 @@ namespace SimChartMedicalOffice.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private ITestService testServiceInstance;
-        private ITestService testService2Instance;
+        //private ITestService testServiceInstance;
+        //private ITestService testService2Instance;
         public HomeController(TestService testServiceObject,ITestService testService2Object)
         {
-            this.testServiceInstance = testServiceObject;
-            this.testService2Instance=testService2Object;
+          //  this.testServiceInstance = testServiceObject;
+            //this.testService2Instance=testService2Object;
         }
         public ActionResult Welcome()
         {

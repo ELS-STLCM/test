@@ -5,6 +5,9 @@
     $(document).ready(function () {
         forms.PatientSearch.DisableSelectBtn("savePatientRecord-" + '@ViewBag.FormValue');
         forms.ReferralForm.DisableControls();
+        setFormsRepositoryHeight();
+        setFormsContentHeight();
+        setFormsInnerContentHeight();
     });
     $("#searchPatientButton").click(function () {
         // load patient search popup 
@@ -36,7 +39,7 @@
         });
     });
 </script>
-<div class="grid_24 standard-text">
+<div class="grid_24 standard-text forms-content-height">
     <div class="form-page-header">
         Referral
     </div>
@@ -67,7 +70,7 @@
     </div>
     <div class="clear clear-height-spacing">
     </div>
-    <div id="referralContent" class="div-with-border grid_32 form-content vertical-content-scroll">
+    <div id="referralContent" class="div-with-border grid_32 form-content vertical-content-scroll forms-inner-content-height">
         <div class="clear clear-height-spacing">
         </div>
         <div class="grid_16">

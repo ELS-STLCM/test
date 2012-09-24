@@ -1,5 +1,4 @@
-﻿@inherits System.Web.Mvc.WebViewPage
-@using SimChartMedicalOffice.Common
+﻿@inherits WebViewPage
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
@@ -11,8 +10,8 @@
     <script src="@Url.Content("~/Scripts/PopUp.js")" type="text/javascript"></script>
 </head>
 <body> 
-    <div id="smoMainContent" class="main-content-holder standard-text" style="height: 495px;">
-        <ul>
+    <div id="smoMainContent" class="standard-text">
+        <ul id="authoringTabs">
             <li><a href="#smoHome"><span class="tab-header">Home</span></a></li>
             <li><a href="../Forms/FormsRepository?iReferenceOfFormToLoad=5&formName=&patientName=" title="#smoFrontOffice"><span class="tab-header">Front Office</span></a></li>
             <li><a href="#smoClinicalCare"><span class="tab-header">Clinical Care</span></a></li>
@@ -25,7 +24,7 @@
             To Do
         </div>
         </div>
-        <div id="smoFrontOffice">
+        <div id="smoFrontOffice" class = "forms-container-height">
         </div>
         <div id="smoClinicalCare">
                 @Html.Partial("../../Views/Shared/_ProgressLoader")

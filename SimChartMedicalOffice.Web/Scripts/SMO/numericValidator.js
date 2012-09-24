@@ -63,7 +63,7 @@ function IsValidPositiveNumeric(value) {
 function isNumeric(event) {
     var inputString = '';
     if (event != undefined) {
-        var evt = (event.which == undefined) ? event.keyCode : event.which
+        var evt = (event.which == undefined) ? event.keyCode : event.which;
         if (evt == 8 || evt == 0) {
             return true;
         }
@@ -74,7 +74,8 @@ function isNumeric(event) {
         else {
             return false;
         }
-    }        
+    }
+    return false;
 }
 
 
@@ -82,7 +83,7 @@ function isNumeric(event) {
 function isAlphaNumeric(event) {    
     var inputString = '';
     if (event != undefined) {
-        var evt = (event.which == undefined) ? event.keyCode : event.which                
+        var evt = (event.which == undefined) ? event.keyCode : event.which;
         if (evt == 8 || evt == 0) {
             return true;
         }        
@@ -93,6 +94,22 @@ function isAlphaNumeric(event) {
         else {
             return false;
             }  
-    }             
+    }
+    return false;
 }
 
+function removeNonAlphaNumeric() {
+    var initVal = $(this).val();
+    outputVal = initVal.replace(/[^0-9a-zA-Z]/g, "");
+    if (initVal != outputVal) {
+        $(this).val(outputVal);
+    }
+}
+
+function removeNonNumeric() {
+    var initVal = $(this).val();
+    outputVal = initVal.replace(/[^0-9]/g, "");
+    if (initVal != outputVal) {
+        $(this).val(outputVal);
+    }
+}

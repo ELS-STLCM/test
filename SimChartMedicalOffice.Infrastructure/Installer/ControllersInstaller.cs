@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Web.Mvc;
 using Castle.MicroKernel.Registration;
-using Castle.Windsor;
 using Castle.MicroKernel.SubSystems.Configuration;
-using System.Web.Mvc;
+using Castle.Windsor;
 using SimChartMedicalOffice.Web.Controllers;
-using Castle.Core;
 
 namespace SimChartMedicalOffice.Infrastructure.Installer
 {

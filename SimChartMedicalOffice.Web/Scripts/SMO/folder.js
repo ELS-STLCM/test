@@ -337,7 +337,7 @@ function initializeRearrangeDialog()
         autoOpen: true,
         closeOnEscape: false,
         title: 'Rearrange Folders',
-        open: function (event, ui) {
+        open: function () {
             //$("#filterDateOfBirth").datepicker("hide");
             applyBlueClassForDialogHeader();
             //forms.PatientSearch.DisableSelectBtn("PatientSearch_BtnSelect");
@@ -345,7 +345,7 @@ function initializeRearrangeDialog()
             //removeCloseIconForDialogHeader(this);
             applyBlueBorderForDialogHeader();
         },
-        close: function (event, ui) {
+        close: function () {
             $("#Rearrange_BtnCancel").die();
             $("#Rearrange_BtnOk").die();
             $(this).dialog('destroy').remove();

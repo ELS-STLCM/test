@@ -1,7 +1,6 @@
 ﻿@{
     Layout = null;
 }
-@using SimChartMedicalOffice.Common;
 @{
     string strFirstName = (ViewBag.FirstName != null) ? ViewBag.FirstName : String.Empty;
     string strLastName = (ViewBag.LastName != null) ? ViewBag.LastName : String.Empty;
@@ -27,16 +26,15 @@
             <div class="grid_24">
                 <img alt="" src="@Url.Content("~/Content/Images/Buttons/Step1of3.png")" /></div>
         </div>
-        <div class=" grid_8">
+        <div class=" grid_8 patient-holder-height">
             @Html.Partial("../../Views/Builder/Patient/ReturnToPatientBuilder")
         </div>
-        <div class="grid_24">
+        <div class="grid_24 patient-holder-height">
             <div class="grid_32 remove-div-space" style="overflow-y: auto; width: 700px">
-                <div class="grid_32 form-page-header standard-text">
+                <div id = "patientStep1InnerHeader"class="grid_32 form-page-header standard-text">
                     Step 1 of 3: Patient Profile
                 </div>
-                <div id="PatientData" class="grid_32 div-with-border standard-text" style="height: 320px;
-                    overflow-y: auto; overflow-x: hidden;">
+                <div id="PatientData" class="grid_32 div-with-border standard-text patient-content-height" style="overflow-y: auto; overflow-x: hidden;">
                     <div id="validationSummary" class="errormessage grid_32">
                         @Html.ValidationSummary()</div>
                     <div class="grid_32 mandatory-field-note">
@@ -47,8 +45,9 @@
                     @Html.Partial("../../Views/Builder/Patient/_CreateNewPatient")
                     </div>
                 </div>
-            </div>
-            <div class="grid_4 prefix_6">
+                <div class="clear-height-spacing clear">
+                </div>
+                <div class="grid_4 prefix_6">
                 <div class="align-div-inline">
                     <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
                      class="standard-height-for-buttons" /></div>
@@ -58,7 +57,7 @@
                     <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
                      class="standard-height-for-buttons" /></div>
             </div>
-            <div class="grid_5">
+                <div class="grid_6">
                 <div class="align-div-inline">
                     <img alt="left" id="btnSavePatientLeftCurve" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_blue.jpg")"
                      class="standard-height-for-buttons" /></div>
@@ -68,13 +67,14 @@
                     <img alt="right" id="btnSavePatientRightCurve" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_blue.jpg")"
                      class="standard-height-for-buttons" /></div>
             </div>
-            <div class="grid_6">
+                <div class="grid_6">
                 <div class="align-div-inline">
                     <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
                 <input type="submit" class="cancel-button align-div-inline standard-text standard-height-for-buttons"
                     onclick="CancelPatient()" style="width: 60px;" value="Cancel" />
                 <div class="align-div-inline">
                     <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")" class="standard-height-for-buttons" /></div>
+            </div>
             </div>
             <div id="imageLoadPatient" style="display: none">
                 <div id="imageLoadPatientContent">
@@ -87,8 +87,7 @@
             </div>
         </div>
     </div>
-    <script type="text/javascript">
-
+<script type="text/javascript">
 var savePatientUrl;
 var createdTimestamp;
 createdTimestamp = "@createdTime";
@@ -100,6 +99,8 @@ createdTimestamp = "@createdTime";
         type: "POST"
     });
     $(document).ready(function () {
+        setPatientBuilderHeight();
+        setPatientBuilderContentHeight();
         disableAButton("btnSavePatient");
         $("#medicalRecordNumber").val(@ViewBag.MrnNumber);
         $("#uploadImageLinkPatient").click(function () {
@@ -123,7 +124,7 @@ createdTimestamp = "@createdTime";
             $("#ageInDays").val("@strAgeInDays");
             $("#dayOfBirth").val("@strDateOfBirth");
             $("#" + "@strSex" + "Sex").attr('checked', true);
-            patient.pageOperations.getOrSetImageReference(false, "patientImage", "@imageUpload")
+            patient.pageOperations.getOrSetImageReference(false, "patientImage", "@imageUpload");
             $("#medicalRecordNumber").val("@strMedicalRecordNumber");
             $("#officeType").val("@strOfficeType");
             $("#provider").val("@strProvider");            

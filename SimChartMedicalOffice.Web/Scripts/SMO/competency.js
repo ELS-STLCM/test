@@ -11,7 +11,7 @@ var competency = {
             var isSearchValid = true;
             if (!isNullOrEmpty(searchText) && !(searchText.length >= 2)) {
                 isSearchValid = false;
-                jAlert(SEARCH_VALIDATION, ALERT_TITLE, function (isOk) {
+                jAlert(SEARCH_VALIDATION, ALERT_TITLE, function () {
                 });
             }
             if (isSearchValid) {
@@ -74,7 +74,7 @@ var competency = {
                 "ABHES": $("#ABHES").val(),
                 "Url": "",
                 "UniqueIdentifier": ""
-            }
+            };
             return competencyObj;
         },
         /*List formation for Competency Source*/
@@ -93,21 +93,20 @@ var competency = {
                     "Name": competencySource,
                     "Number": numberValue,
                     "IsActive": false
-                }
+                };
                 sourceListJson.push(competencySourcesJson);
             });
             return sourceListJson;
         },
         /*validation for competency*/
         validateCompetencyFields: function () {
-            var errormessage = "";
             var isInputRequired = false;
-            var isCAAHEPNumberRequired = false;
-            var isABHESNumberRequired = false;
-            var isNumberRequired = false;
+            var isCaahepNumberRequired = false;
+            var isAbhesNumberRequired = false;
+//            var isNumberRequired = false;
             var isValid = false;
             var isSourceRequired = false;
-            errorMessage = "<UL>";
+            var errorMessage = "<UL>";
             if (isNullOrEmpty($("#CompetencyCategory_input").val()) || validateSpecialCharacters($("#CompetencyCategory_input").val()) || isNullOrEmpty($("#Name").val()) || hasDropDownValue($("#CompetencyFocus").val())) {
                 isInputRequired = true;
                 isValid = true;
@@ -115,16 +114,21 @@ var competency = {
             if (isInputRequired) {
                 errorMessage += "<LI>" + INPUT_REQUIRED + "</LI>";
             }
+            //error message for special character validation on competency name
+            //            if (validateSpecialCharacters($("#CompetencyCategory_input").val())) {
+            //                errorMessage += "<LI>" + "Category should not contain special characters" + "</LI>";
+            //                isValid = true;
+            //            }
             if (isNullOrEmpty($("#CAAHEP").val()) && isNullOrEmpty($("#ABHES").val())) {
                 $("input[type=checkbox][name^='CompetencySourceCheckBox']").each(function () {
                     var competencySource = $(this)[0].value;
                     if (($('input[name=CompetencySourceCheckBox]').is(':checked'))) {
                         if (competencySource == CAAHEP_COMPETENCY_SOURCE && this.checked) {
-                            isCAAHEPNumberRequired = true;
+                            isCaahepNumberRequired = true;
                             isValid = true;
                         }
                         if (competencySource == ABHES_COMPETENCY_SOURCE && this.checked) {
-                            isABHESNumberRequired = true;
+                            isAbhesNumberRequired = true;
                             isValid = true;
                         }
                     }
@@ -137,16 +141,16 @@ var competency = {
                         isValid = true;
                     }
                 });
-                if (!isCAAHEPNumberRequired && !isABHESNumberRequired) {
+                if (!isCaahepNumberRequired && !isAbhesNumberRequired) {
                     errorMessage += "<LI>" + CAAHEP_COMPETENCY_SOURCE + " # " + " or " + ABHES_COMPETENCY_SOURCE + " # " + COMPETENCY_IS_REQUIRED + "</LI>";
                     isValid = true;
                 }
                 else {
-                    if (isCAAHEPNumberRequired) {
+                    if (isCaahepNumberRequired) {
                         errorMessage += "<LI>" + CAAHEP_COMPETENCY_SOURCE + " # " + COMPETENCY_IS_REQUIRED + "</LI>";
                         isValid = true;
                     }
-                    if (isABHESNumberRequired) {
+                    if (isAbhesNumberRequired) {
                         errorMessage += "<LI>" + ABHES_COMPETENCY_SOURCE + " # " + COMPETENCY_IS_REQUIRED + "</LI>";
                         isValid = true;
                     }
@@ -211,20 +215,20 @@ var competency = {
         /*  to show competency pop up*/
         showCompetency: function (titleText) {
             $("#validationSummary").hide();
-            var $dialog = $('#competency_content').dialog({
+            $('#competency_content').dialog({
                 autoOpen: true,
                 modal: true,
                 closeOnEscape: false,
                 resizable: false,
-                open: function (event, ui) {
+                open: function () {
                     $('#image_view_load_inner_content').css('overflow', 'hidden');
                     removeDialogForGrayHeader();
 
                 },
-                close: function (event, ui) {
+                close: function () {
                     $(this).dialog('destroy').remove();
                 },
-                beforeClose: function (event, ui) {
+                beforeClose: function () {
                     reapplyDialogHeader();
                 },
                 title: '<div class="header-text">' + titleText + '</div>',
@@ -238,7 +242,7 @@ var competency = {
                 $("#validationSummary").hide();
                 var competencySourcesJson = {
                     "Name": $("#Source").val()
-                }
+                };
                 var urlToSaveSource = "../Competency/SaveCompetencySources";
                 if (competencySourcesJson != null) {
                     startAjaxLoader();
@@ -247,9 +251,8 @@ var competency = {
                 }
             }
             else {
-                var errormessage = "";
-                errorMessage = "<UL> <LI>" + INPUT_REQUIRED + "</LI> </UL>";
-                $("#validationSummary")[0].innerHTML = errorMessage;
+                var errormessage = "<UL> <LI>" + INPUT_REQUIRED + "</LI> </UL>";
+                $("#validationSummary")[0].innerHTML = errormessage;
                 $("#validationSummary").focus();
                 $("#validationSummary").show();
             }

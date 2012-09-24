@@ -2,14 +2,16 @@
     Layout = null;
 }
 <div class="grid_32 remove-div-space" id="content_step3_skillSet_changed">
-    <div class="page-title">
-        Step 3 of 5: Skill Sets
+    <div style="height:38px">
+        <div class="page-title">
+            Step 3 of 5: Skill Sets
+        </div>  
+        <div class="grid_32 mandatory-field-note">
+            Fields with " <span class="mandatory-field">*</span> " are mandatory
+        </div>
     </div>
-    <div class="grid_32 mandatory-field-note">
-        Fields with " <span class="mandatory-field">*</span> " are mandatory
-    </div>
-    <div class="grid_32 div-with-border standard-text assignment-builder-panel" style="width: 780px; overflow-y: hidden"
-         id="qn-type-holder-all-questions">
+    <div class="grid_32 div-with-border standard-text right-inner-content-height" style="width: 780px; overflow-y: hidden"
+         id="qn-type-holder-all-questions_assignment">
         <div id="validationSummaryForStep3" class="errormessage grid_32" style="padding: 0px"></div>
         <div class="grid_32 clear clear-height-spacing" />
         <div class="grid_32">
@@ -25,8 +27,8 @@
             </div>
             <div class="grid_7 prefix_5">
                 Assignment Pass Rate <span class="mandatory-field">*</span>:</div>
-            <div class="grid_2">
-                @Html.DropDownList("PassRate", null, new { @class = "standard-text", @id="AssignmentPassRate" })
+            <div class="grid_5 standard-text" id="AssignmentPassRate">
+         @*       @Html.DropDownList("PassRate", null, new { @class = "standard-text", @id="AssignmentPassRate" })*@
             </div>
             <div class="grid_32 clear clear-height-spacing" />
         </div>
@@ -38,7 +40,7 @@
                 <a href="#" id="addQuestionLink" class="link align-content-right">Add New From Question
                     Bank</a>
             </div>
-            <div class="grid_8 remove-div-space div-with-border align-div-inline skill-set-without-validation" style="display: none" id="SkillSetSlideDiv">
+            <div class="grid_8 remove-div-space div-with-border align-div-inline step3-inner-height-without-validation" style="display: none" id="SkillSetSlideDiv">
                 <div class="grid_32 background-panel">
                     <div class="grid_4" id="closeSkillSetSlide" style="padding-bottom: -5px">
                         <img src="@Url.Content("~/Content/Images/Collapse_Left.png")" alt="swap-up" />
@@ -71,7 +73,7 @@
             @*give width as 535*@
             @*give width as 596*@
             @*give width as 718*@
-            <div class="remove-div-space div-with-border align-div-inline skill-set-without-validation" style="overflow-y: auto;" id="QuestionTemplateSlide">
+            <div class="remove-div-space div-with-border align-div-inline step3-inner-height-without-validation" style="overflow-y: auto;" id="QuestionTemplateSlide">
                 <div id="questionTypeLoad">
                 </div>
                 <div id="questionTemplateActions">
@@ -203,16 +205,23 @@
     questionList = @Html.Raw(Json.Encode(ViewBag.QuestionList));
     var selectedAttempts = @Html.Raw(Json.Encode(ViewBag.SelectedAttempts));
     var selectedPassRate = @Html.Raw(Json.Encode(ViewBag.SelectedPassRate));
+    if(selectedPassRate =="")
+    {
+      selectedPassRate = "-Select-";
+    }
+    var AssignmentPassRateList = @Html.Raw(Json.Encode(ViewBag.AssignmentPassRateList));
     selectedAttempts = (selectedAttempts != "") ? selectedAttempts : "1";
     selectedPassRate = (selectedPassRate != "") ? selectedPassRate : "-Select-";
     var isSelectedItemQuestion = false;
     var isSelectedItemSkillSet = false;
     $(document).ready(function() {
+        setRightHolderInnerHeight();
+        setAssignmentStep3InnerHeightWithoutValidation();
         $("#stepwiseImage").empty();
         disableAButton("btnRevertToOriginal");
         $("#stepwiseImage").append("<img alt='' src='../../Content/Images/Buttons/step3AssignmentBuilder.PNG'/>");
         $("#NoOfAttemptsAllowed").val(selectedAttempts);
-        $("#AssignmentPassRate").val(selectedPassRate);
+        $("#AssignmentPassRate_input").val(selectedPassRate);
         $("#uploadImageLink").click(function () {
             showImageUpload("QNIMAGE");
         });
@@ -230,6 +239,31 @@
         $("#swapSkillSetUp").attr('disabled', true);
         $("#swapSkillSetDown").attr('disabled', true);
         closeAjaxLoader();
+          if (AssignmentPassRateList != null) {
+                AssignmentPassRate.results = AssignmentPassRateList;
+                AssignmentPassRate.total = AssignmentPassRate.results.count;
+                $('#AssignmentPassRate').flexbox(AssignmentPassRate, {
+                    initialValue:selectedPassRate,
+                    resultTemplate: '{name}',
+                    width: 70,
+                    paging: false,
+                    maxVisibleRows: 10,
+                    allowInput:false,
+                    noResultsText: '',
+                    noResultsClass: '',
+                    matchClass: '',
+                    matchAny: true
+                    //                    onSelect: function () {
+                    //                        startAjaxLoader();
+                    //                        selectedQuestionTypeFilterText = $('#' + divId + "_hidden").val();
+                    //                        skillSet.stepTwoSkillStructure.getQuestionBank();
+                    //                        closeAjaxLoader();
+                    //                    }
+                });
+                $("#AssignmentPassRate_ctr").attr("style", "left: 0px;top: 22px;width: 70px;");
+//                $("#AssignmentPassRate_input").attr("style", "width: 50px;");
+                $("#AssignmentPassRate_ctr").hide();
+            }
     });
     $("#addQuestionLink").click(function () {
         startAjaxLoader();
@@ -330,10 +364,10 @@
                 autoOpen: true,
                 closeOnEscape: false,
                 title: 'Question Bank',
-                open: function (event, ui) {
+                open: function () {
                     applyClassForDialogHeader();
                 },
-                close: function (event, ui) {
+                close: function () {
                     $(this).dialog('destroy').remove();
                 },
                 overlay: { opacity: 0.5, background: 'black' }
@@ -353,13 +387,13 @@
                 $("#SkillSetsTree").append(skillSetStartDiv + imageDiv + skillSetLabelDiv + skillSetEndDiv);
                 var questionDivStart = "<div id='questionsForSkillSet_" + skillSetList[skillSetCount].UniqueIdentifier + "' class='hide-content'>";
                 var questionDivs = "";
-                for (var questionCount = 0; questionCount < skillSetList[skillSetCount].Questions.length; questionCount++) {
-                    QuestionList.push(skillSetList[skillSetCount].Questions[questionCount]);
-                    //questionDivs = questionDivs + "<div class='grid_29 prefix_3 section-seperator-spacing skill-tree-padding' id='question_" + skillSetList[skillSetCount].Questions[questionCount].UniqueIdentifier +"' onclick='selectQuestionItem(\"" + skillSetList[skillSetCount].Questions[questionCount].UniqueIdentifier +"\",\"" + skillSetList[skillSetCount].Questions[questionCount].Url + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].QuestionType + "\",\"" + skillSetList[skillSetCount].UniqueIdentifier + "\")'>" + skillSetList[skillSetCount].Questions[questionCount].QuestionText + "</div>";
-                    if (skillSetCount == 0 && questionCount == 0) {
-                        questionDivs = questionDivs + "<div class='grid_29 prefix_3 question-highlight skill-tree-padding select-hand' id='question_" + skillSetList[skillSetCount].Questions[questionCount].UniqueIdentifier + "' onclick='selectQuestionItem(\"" + skillSetList[skillSetCount].Questions[questionCount].UniqueIdentifier + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].Url + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].QuestionType + "\",\"" + skillSetList[skillSetCount].UniqueIdentifier + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].SkillSetReferenceUrlOfQuestion + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].ParentReferenceGuid + "\")'>" + skillSetList[skillSetCount].Questions[questionCount].QuestionText + "</div>";
+                for (var questionCounts = 0; questionCounts < skillSetList[skillSetCount].Questions.length; questionCounts++) {
+                    QuestionList.push(skillSetList[skillSetCount].Questions[questionCounts]);
+                    //questionDivs = questionDivs + "<div class='grid_29 prefix_3 section-seperator-spacing skill-tree-padding' id='question_" + skillSetList[skillSetCount].Questions[questionCounts].UniqueIdentifier +"' onclick='selectQuestionItem(\"" + skillSetList[skillSetCount].Questions[questionCounts].UniqueIdentifier +"\",\"" + skillSetList[skillSetCount].Questions[questionCounts].Url + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].QuestionType + "\",\"" + skillSetList[skillSetCount].UniqueIdentifier + "\")'>" + skillSetList[skillSetCount].Questions[questionCounts].QuestionText + "</div>";
+                    if (skillSetCount == 0 && questionCounts == 0) {
+                        questionDivs = questionDivs + "<div class='grid_29 prefix_3 question-highlight skill-tree-padding select-hand' id='question_" + skillSetList[skillSetCount].Questions[questionCounts].UniqueIdentifier + "' onclick='selectQuestionItem(\"" + skillSetList[skillSetCount].Questions[questionCounts].UniqueIdentifier + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].Url + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].QuestionType + "\",\"" + skillSetList[skillSetCount].UniqueIdentifier + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].SkillSetReferenceUrlOfQuestion + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].ParentReferenceGuid + "\")'>" + skillSetList[skillSetCount].Questions[questionCounts].QuestionText + "</div>";
                     } else {
-                        questionDivs = questionDivs + "<div class='grid_29 prefix_3 skill-tree-padding select-hand' id='question_" + skillSetList[skillSetCount].Questions[questionCount].UniqueIdentifier + "' onclick='selectQuestionItem(\"" + skillSetList[skillSetCount].Questions[questionCount].UniqueIdentifier + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].Url + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].QuestionType + "\",\"" + skillSetList[skillSetCount].UniqueIdentifier + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].SkillSetReferenceUrlOfQuestion + "\",\"" + skillSetList[skillSetCount].Questions[questionCount].ParentReferenceGuid + "\")'>" + skillSetList[skillSetCount].Questions[questionCount].QuestionText + "</div>";
+                        questionDivs = questionDivs + "<div class='grid_29 prefix_3 skill-tree-padding select-hand' id='question_" + skillSetList[skillSetCount].Questions[questionCounts].UniqueIdentifier + "' onclick='selectQuestionItem(\"" + skillSetList[skillSetCount].Questions[questionCounts].UniqueIdentifier + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].Url + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].QuestionType + "\",\"" + skillSetList[skillSetCount].UniqueIdentifier + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].SkillSetReferenceUrlOfQuestion + "\",\"" + skillSetList[skillSetCount].Questions[questionCounts].ParentReferenceGuid + "\")'>" + skillSetList[skillSetCount].Questions[questionCounts].QuestionText + "</div>";
                     }
                 }
                 var questionDivEnd = "</div>";
@@ -407,7 +441,7 @@
                 break;
             }
         }
-        if(isOverrideEnabled == "" || isOverrideEnabled == undefined || isOverrideEnabled == null) {
+        if(isOverrideEnabled == "" || isOverrideEnabled == undefined || isOverrideEnabled == null || isOverrideEnabled == "null") {
             $("#existingQuestion").hide();
         }
         else {
@@ -513,12 +547,12 @@
         }
     }
 
-    function successSwap(result) {
+    function successSwap() {
 //        questionList = result.questionList;
 //        skillSetList = result.skillSetList;
         //SkillSetsTree
         //renderSkillSetTree();
-        $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate").val(), function () {
+        $("#divToLoadSteps").load("../AssignmentBuilder/LoadAssignmentStep3?assignmentUrl=" + assignBuilder.commonFunctions.getAssignmentUniqueIdentifier() + "&selectedAttempts=" + $("#NoOfAttemptsAllowed").val() + "&selectedPassRate=" + $("#AssignmentPassRate_input").val(), function () {
             closeAjaxLoader();
         });
     }
@@ -533,16 +567,17 @@
     
     function SaveStep3() {
         $("#validationSummaryForStep3")[0].innerHTML = "";
-        if($("#AssignmentPassRate").val() == "-Select-") {
-            $("#SkillSetSlideDiv").removeClass('skill-set-without-validation').addClass('skill-set-with-validation');
-            $("#QuestionTemplateSlide").removeClass('skill-set-without-validation').addClass('skill-set-with-validation');
+        if($("#AssignmentPassRate_input").val() == "-Select-") {
+            $("#SkillSetSlideDiv").removeClass('step3-inner-height-without-validation').addClass('step3-inner-height-with-validation');
+            $("#QuestionTemplateSlide").removeClass('step3-inner-height-without-validation').addClass('step3-inner-height-with-validation');
             $("#divToLoadSkillSetTree").removeClass('skill-set-tree-without-validation').addClass('skill-set-tree-with-validation');
+            setAssignmentStep3InnerHeightWithValidation();
             $("#validationSummaryForStep3")[0].innerHTML = "<UL><LI>" + INPUT_REQUIRED + "</LI><UL>";
         }
         else {
             var assignmentObj = {
                 "NoOfAttemptsAllowed": $("#NoOfAttemptsAllowed").val(),
-                "AssignmentPassRate": $("#AssignmentPassRate").val(),
+                "AssignmentPassRate": $("#AssignmentPassRate_input").val(),
                 "Url": assignBuilder.commonFunctions.getAssignmentUniqueIdentifier()
             };
             var urlForString = "../AssignmentBuilder/SaveAssignmentStep3";
@@ -550,7 +585,7 @@
         }
     }
 
-    function successSave(result) {
+    function successSave() {
 //        jAlert(SAVED_MESSAGE, "Alert", function(isOk) {
 //            if (isOk) {
 ////                

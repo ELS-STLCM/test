@@ -301,10 +301,10 @@ function AgendaView(element, calendar, viewName) {
 		
 		axisFirstCells = axisFirstCells.add(slotTable.find('th:first'));
 	}
-	
-	
-	
-	function updateCells() {
+
+
+
+	function updateCells() {	    
 		var i;
 		var headCell;
 		var bodyCell;
@@ -316,12 +316,14 @@ function AgendaView(element, calendar, viewName) {
 			headCell.html(formatDate(date, colFormat));
 			bodyCell = dayBodyCells.eq(i);
 			if (+date == +today) {
-			    bodyCell.addClass(tm + '-state-highlight fc-today');
-			    //karthik-added style to the current header 
-			    headCell.addClass(tm + '-header-highlight');
+               //Simoffice code change- Added below condition to remove the unwanted styles in Day view
+                if (viewName!="agendaDay")
+			        bodyCell.addClass(tm + '-state-highlight fc-today');
+			        //simoffice code change-added style to the current header 
+			        headCell.addClass(tm + '-header-highlight');
 			}else{
 			    bodyCell.removeClass(tm + '-state-highlight fc-today');
-			    //Karthik-added style to current header
+			    //simoffice code change-added style to current header
 			    headCell.removeClass(tm + '-header-highlight');
 			}
 			setDayID(headCell.add(bodyCell), date);

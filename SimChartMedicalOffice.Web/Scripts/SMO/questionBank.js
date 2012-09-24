@@ -35,7 +35,7 @@ var questionBank = {
             var isSearchValid = true;
             if (isNullOrEmpty(searchText) || searchText.length < 2) {
                 if (isSearchButtonClicked == true) {
-                    jAlert(SEARCH_VALIDATION, ALERT_TITLE, function (isOk) {
+                    jAlert(SEARCH_VALIDATION, ALERT_TITLE, function () {
                     });
                     return false;
                 }
@@ -55,6 +55,7 @@ var questionBank = {
                     //closeAjaxLoader();
                 });
             }
+            return false;
         },
         /*Template dropdown change function*/
         dropDownChange: function () {
@@ -98,10 +99,10 @@ var questionBank = {
         },
         hideOrShowQuestionBankContent: function (isShow) {
             if (isShow) {
-                $("#questionTypesLoading").addClass('hide-content')
+                $("#questionTypesLoading").addClass('hide-content');
                 $("#questionLoaded").removeClass('hide-content');
             } else {
-                $("#questionTypesLoading").removeClass('hide-content')
+                $("#questionTypesLoading").removeClass('hide-content');
                 $("#questionLoaded").addClass('hide-content');
             }
         },
@@ -206,13 +207,18 @@ var questionBank = {
             var orientationControls = orientationFormat.split(" ");
             if ($("div[id^=" + divId + "]") != undefined && $("div[id^=" + divId + "]").length > 0) {
                 for (var i = 0; i < orientationControls.length; i++) {
-                    if (orientationControls[i] == "(Blank)") {
-                        blankCount = blankCount + 1;
-                        questionTextToSave = questionTextToSave + FILL_IN_THE_BLANKS_BLANK;
-                    }
-                    else if (orientationControls[i] == "(Text)") {
-                        textCount = textCount + 1;
-                        questionTextToSave = questionTextToSave + $("#" + divId + "text" + textCount).val();
+
+                    if (!isNullOrEmpty($("#" + divId + "text1").val())) {
+                        if (orientationControls[i] == "(Blank)") {
+                            blankCount = blankCount + 1;
+                            questionTextToSave = questionTextToSave + FILL_IN_THE_BLANKS_BLANK;
+                        }
+                        else if (orientationControls[i] == "(Text)") {
+                            textCount = textCount + 1;
+                            questionTextToSave = questionTextToSave + $("#" + divId + "text" + textCount).val();
+
+
+                        }
                     }
                 }
             }
@@ -220,7 +226,6 @@ var questionBank = {
         },
         /*To get/set image References for answers/questions*/
         getOrSetImageReference: function (isValueReturn, qnOrAnsImageRefIdName, imageRefId) {
-            var valueToreturn = "";
             switch (qnOrAnsImageRefIdName) {
                 case "QNIMAGE":
                     {
@@ -276,6 +281,7 @@ var questionBank = {
                         break;
                     }
             }
+            return false;
         },
         /*To get answeroption list */
         getAnswerOptions: function (lenghtOfAnswers) {
@@ -285,16 +291,16 @@ var questionBank = {
                 $('select#AnswerOptions').find('option').each(function () {
                     answerList.push($(this).val());
                 });
-                for (var iIndex = 1; iIndex <= answerList.length; iIndex++) {
-                    var imgId = "ANSIMAGE" + iIndex;
-                    var answerOption = {
+                for (var iCount = 1; iCount <= answerList.length; iCount++) {
+//                    var imgId = "ANSIMAGE" + iCount;
+                    var answerOptions = {
                         "AnswerImageReference": null,
                         "Rationale": null,
-                        "AnswerText": encodeSpecialSymbols(answerList[iIndex - 1]),
-                        "AnswerSequence": iIndex,
+                        "AnswerText": encodeSpecialSymbols(answerList[iCount - 1]),
+                        "AnswerSequence": iCount,
                         "IsCorrectAnswer": false
                     };
-                    answerOptionList.push(answerOption);
+                    answerOptionList.push(answerOptions);
                 }
             }
             else if (questionTypeLoaded != "3") { //Answer options doesnt exists for correct order
@@ -333,6 +339,7 @@ var questionBank = {
                     return true;
                 }
             }
+            return false;
         },
         /*To check if the answeroption is a correct answer */
         checkIfCorrectAnswer: function (valueToCheck) {
@@ -346,7 +353,7 @@ var questionBank = {
             // !!!important!!!!: Just removing the meta data in page. Image should be removed only on click of save.
             jConfirm(IMAGE_REMOVE, "Remove Image", function (isOk) {
                 if (isOk) {
-                    var guidOfImg = getImageRefData(idMetadataContent);
+//                    var guidOfImg = getImageRefData(idMetadataContent);
                     removeMetaDataForImage(idMetadataContent);
                     $("#" + idMetadataContent).attr('src', "../Content/Images/Image_Div.png");
                 }
@@ -451,10 +458,11 @@ var questionBank = {
             }
         },
         loadDynamicQuestionTextInEditMode: function (questiontext, divId) {
+
             var questionTextItems = questiontext.split(FILL_IN_THE_BLANKS_BLANK);
             questionTextItems = $.grep(questionTextItems, function (item) { return item.length != 0; });
             for (var count = 1; count <= textCount; count++) {
-                $("#" + divId + "text" + count).val(questionTextItems[count - 1]);
+                $("#" + divId + "text" + count).val($.trim(questionTextItems[count - 1]));
             }
         },
         enableValidRaioButtons: function () {
@@ -465,17 +473,16 @@ var questionBank = {
             }
         },
         /*Common functions for validating the controls used in question bank module*/
-        validateQuestionBankFields: function (questionTypeLoaded, IsNewQuestion) {
-            var maxAnswersLength = -1;
+        validateQuestionBankFields: function (questionTypeLoaded, isNewQuestion) {
+//            var maxAnswersLength = -1;
             var isValid = false;
             var isInputRequired = false;
             var answerTextCount = 0;
             var answerMatchCount = 0;
-            var errormessage = "";
-            errorMessage = "<UL class = 'validation_ul'>";
+            var errorMessage = "<UL class = 'validation_ul'>";
             var selectedCompetency = $("#LinkedCompetency_input").val();
-            if (!isNullOrEmpty($.trim(selectedCompetency))) {
-                if (jQuery.inArray($.trim(selectedCompetency), competencyArray) >= 0) {
+            if (!isNullOrEmpty(selectedCompetency)) {
+                if (jQuery.inArray(selectedCompetency, competencyArray) >= 0) {
                     isLinkedCompetencyselected = true;
                 }
                 else
@@ -486,8 +493,9 @@ var questionBank = {
             if (questionTypeLoaded == "5") {
                 if ((isNullOrEmpty($("#QuestionText").val())) || !isLinkedCompetencyselected) {
                     errorMessage += "<LI>" + INPUT_REQUIRED + "</LI>";
+                    isInputRequired = false;
                     isValid = true;
-            }
+                }
             }
             if ((isNullOrEmpty($("#QuestionText").val()) && questionTypeLoaded != "4" && questionTypeLoaded != "5") || (questionTypeLoaded != "5" && !isLinkedCompetencyselected) || (questionTypeLoaded == "9" && hasDropDownValue($("#NoOfLabels").val()))) {
                 isInputRequired = true;
@@ -521,16 +529,16 @@ var questionBank = {
                         }
                         break;
                     case "5":
-                        for (var answerOptionCount = 1; answerOptionCount <= maxLenghtOfAnswers; answerOptionCount++) {
-                            if (!isNullOrEmpty($("#AnswerOption_" + answerOptionCount).val())) {
+                        for (var answerOptionCounts = 1; answerOptionCounts <= maxLenghtOfAnswers; answerOptionCounts++) {
+                            if (!isNullOrEmpty($("#AnswerOption_" + answerOptionCounts).val())) {
                                 answerTextCount = answerTextCount + 1;
                             }
                         }
-                        for (var answerOptionCount = 1; answerOptionCount <= maxLenghtOfAnswers; answerOptionCount++) {
-                            if (!isNullOrEmpty($("#AnswerMatch_" + answerOptionCount).val())) {
+                        for (var answerOption = 1; answerOption <= maxLenghtOfAnswers; answerOption++) {
+                            if (!isNullOrEmpty($("#AnswerMatch_" + answerOption).val())) {
                                 answerMatchCount = answerMatchCount + 1;
                             }
-                            else if (questionBank.commonFunctions.getOrSetImageReference(true, "ANSIMAGE" + answerOptionCount, "NA") != "" && questionBank.commonFunctions.getOrSetImageReference(true, "ANSIMAGE" + answerOptionCount, "NA") != undefined) {
+                            else if (questionBank.commonFunctions.getOrSetImageReference(true, "ANSIMAGE" + answerOption, "NA") != "" && questionBank.commonFunctions.getOrSetImageReference(true, "ANSIMAGE" + answerOption, "NA") != undefined) {
                                 answerMatchCount = answerMatchCount + 1;
                             }
                         }
@@ -566,8 +574,8 @@ var questionBank = {
                         }
                         if (questionTypeLoaded == "4") {
                             if (!hasDropDownValue($("#BlankOrientation").val())) {
-                                for (var count = 1; count <= textCount; count++) {
-                                    if (isNullOrEmpty($("#dynamicRenderDivtext" + count).val())) {
+                                for (var countQuestion = 1; countQuestion <= textCount; countQuestion++) {
+                                    if (isNullOrEmpty($("#dynamicRenderDivtext" + countQuestion).val())) {
                                         isInputRequired = true;
                                         isValid = true;
                                         break;
@@ -588,7 +596,7 @@ var questionBank = {
                         break;
                 }
             }
-            if (IsNewQuestion && isNewQuestionRequired) {
+            if (isNewQuestion && isNewQuestionRequired) {
                 if (questionTypeLoaded != "4") {
                     if (questionTypeLoaded == "9") {
                         if (isNullOrEmpty($("#QuestionTextNew").val())) {
@@ -632,7 +640,7 @@ var questionBank = {
                 }
 
             }
-            if (isInputRequired && questionTypeLoaded != "5") {
+            if (isInputRequired) {
                 errorMessage += "<LI>" + INPUT_REQUIRED + "</LI>";
                 isValid = true;
             }
@@ -683,7 +691,7 @@ var questionBank = {
                     }
                 }
             },
-            loadQuestionInEditMode: function (stringQuestion) {
+            loadQuestionInEditMode: function () {
 
             }
         },

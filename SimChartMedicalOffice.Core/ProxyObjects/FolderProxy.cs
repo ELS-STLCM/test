@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using SimChartMedicalOffice.Common;
+﻿using System.Collections.Generic;
 using SimChartMedicalOffice.Core.QuestionBanks;
 
 namespace SimChartMedicalOffice.Core.ProxyObjects

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Net;
 using System.IO;
-using System.Configuration;
-using SimChartMedicalOffice.Common.Logging;
-using System.Web;
+using System.Net;
 using System.Net.Cache;
+using System.Text;
+using SimChartMedicalOffice.Common.Logging;
 
 namespace SimChartMedicalOffice.Common.Utility
 {
@@ -44,24 +40,26 @@ namespace SimChartMedicalOffice.Common.Utility
         private static string MakeRestFulApiCall(string url, RestfulMethods requestMethod, string postdata)
         {
             StringBuilder restURL = new StringBuilder();
+<<<<<<< Updated upstream
+            string result = string.Empty;
+=======
             HttpWebRequest restRequest;
             HttpWebResponse restResponse;
-            string result = string.Empty;
+>>>>>>> Stashed changes
             try
             {
                 restURL.AppendFormat(url);
-                restRequest = (HttpWebRequest) WebRequest.Create(restURL.ToString());
+                HttpWebRequest restRequest = (HttpWebRequest) WebRequest.Create(restURL.ToString());
                 restRequest.Method = GetRequestMethod(requestMethod);
                 restRequest.Timeout = System.Threading.Timeout.Infinite;
                 restRequest.ContentType = "application/json";
 
                 #region For Offshore Connectivity
-                string environment = AppCommon.GetAppSettingValue("ENVIRONMENT");
-                if (environment != null && environment.ToString().ToUpper().Equals("OFFSHORE"))
+                string webProxy = AppCommon.GetAppSettingValue("WebProxyUrl");
+                if (webProxy != null && !webProxy.Equals(""))
                 {
-                    WebProxy proxy = new WebProxy();
-                    proxy.UseDefaultCredentials = true;
-                    Uri proxyurl = new Uri("http://10.87.104.178:80");
+                    WebProxy proxy = new WebProxy {UseDefaultCredentials = true};
+                    Uri proxyurl = new Uri(webProxy);
                     proxy.Address = proxyurl;
                     restRequest.Proxy = proxy;
                     restRequest.CachePolicy = new HttpRequestCachePolicy(HttpRequestCacheLevel.NoCacheNoStore);
@@ -77,19 +75,14 @@ namespace SimChartMedicalOffice.Common.Utility
                         ps.Write(bytes, 0, bytes.Length);
                     }
                 }
-<<<<<<< Updated upstream
-                string aptoLogin;
-                string aptoPassword;
-                aptoLogin = AppCommon.GetAppSettingValue("AptoUserId");
-                aptoPassword = AppCommon.GetAppSettingValue("AptoPassword");
+                // restRequest.Credentials = new NetworkCredential("admin", "Frinov25");
+                string aptoLogin = AppCommon.GetAppSettingValue("AptoUserId");
+                string aptoPassword = AppCommon.GetAppSettingValue("AptoPassword");
                 restRequest.Credentials = new NetworkCredential(aptoLogin, aptoPassword);
-=======
-                // restRequest.Headers.Add("Authorization", "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes("admin:bitsark01")));
-               // restRequest.Credentials = new NetworkCredential("admin", "Frinov25");
->>>>>>> Stashed changes
                 
-                restResponse = (HttpWebResponse) restRequest.GetResponse();
+                HttpWebResponse restResponse = (HttpWebResponse) restRequest.GetResponse();
                 ExceptionManager.Info(RestApiRequestString(url,GetRequestMethod(requestMethod),postdata));
+                string result;
                 using (StreamReader reader = new StreamReader(restResponse.GetResponseStream()))
                 {
                     result = reader.ReadToEnd();

@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Web.Mvc;
-using Castle.MicroKernel;
 using System.Web.Routing;
-using System.Web;
 using Castle.Windsor;
 
 namespace SimChartMedicalOffice.Web.Controllers

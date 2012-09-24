@@ -12,6 +12,7 @@
         //questionBankClick();
         //loadFlexBoxForFilterByType();
         //$("#questionTemplateDiv").trigger()
+        setRightHolderInnerHeight();
         startAjaxLoader();
         skillSet.commonFunctions.loadImageForAStep("2");
         questionBankClick();
@@ -62,7 +63,7 @@
         });
 
 
-        $("#SkillSetBuilderSkillStructureDiv :input").change(function (event) {
+        $("#SkillSetBuilderSkillStructureDiv :input").change(function () {
             isSkillStructureContentChange = true;
         });
 
@@ -120,11 +121,11 @@
                 autoOpen: true,
                 closeOnEscape: false,
                 title: 'Selected Competencies',
-                open: function (event, ui) {
+                open: function () {
                     applyClassForDialogHeader();
                     closeAjaxLoader();
                 },
-                close: function (event, ui) {
+                close: function () {
                     $(this).dialog('destroy').remove();
                 },
                 overlay: { opacity: 0.5, background: 'black' }
@@ -133,6 +134,7 @@
     }
 
 </script>
+<div style="height:38px">
     <div class="page-title grid_25">
         Step 2 of 4: Skill Structure
     </div>
@@ -141,9 +143,10 @@
             Competencies</a>
     </div>
     <div class="grid_32 mandatory-field-note">
-    Fields with " <span class="mandatory-field">*</span> " are mandatory
+        Fields with " <span class="mandatory-field">*</span> " are mandatory
+    </div>
 </div>
-<div class="grid_32 div-with-border vertical-content-scroll skillset-step-two" id="SkillSetBuilderSkillStructureDiv" >
+<div class="grid_32 div-with-border vertical-content-scroll right-inner-content-height" id="SkillSetBuilderSkillStructureDiv" >
 <div id="validationSummary" class="error-message grid_32">
     </div>    
     <div class="clear-height-spacing clear">
@@ -180,7 +183,7 @@
                     <div class="clear-height-spacing clear">
                     </div>
                     <div class="grid_20 header-text" style="text-align:right">
-                        And /Or</div>
+                        And/Or</div>
                     <div class="clear-height-spacing clear">
                     </div>
                     <div class="grid_32">

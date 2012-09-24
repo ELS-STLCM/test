@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Xml;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Xml;
 
 namespace SimChartMedicalOffice.Common.Utility
 {
@@ -26,13 +25,10 @@ namespace SimChartMedicalOffice.Common.Utility
         public static List<string> GetAllKeysFromJson(string jsonString)
         {
             List<string> keyList = new List<string>();
-            if (jsonString != null && jsonString != "")
+            if (!string.IsNullOrEmpty(jsonString))
             {
-                JObject searchCriteria = JObject.Parse(jsonString);                
-                foreach (JToken keyValue in (IEnumerable<JToken>)searchCriteria)
-                {
-                    keyList.Add(((JProperty)keyValue).Name);
-                }
+                JObject searchCriteria = JObject.Parse(jsonString);
+                keyList.AddRange(from keyValue in (IEnumerable<JToken>) searchCriteria select ((JProperty) keyValue).Name);
             }
             return keyList;
         }
@@ -52,7 +48,7 @@ namespace SimChartMedicalOffice.Common.Utility
         {
             JObject searchCriteria = JObject.Parse(jsonString);
             List<string> keyList = new List<string>();
-            StringBuilder jsonValueString = new StringBuilder();
+            //StringBuilder jsonValueString = new StringBuilder();
             foreach (JToken keyValue in (IEnumerable<JToken>)searchCriteria)
             {
                 if (((JProperty)keyValue).Name == key)

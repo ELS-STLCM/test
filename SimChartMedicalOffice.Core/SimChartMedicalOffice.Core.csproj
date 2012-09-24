@@ -49,6 +49,8 @@
     <Compile Include="AssignmentBuilder\Assignment.cs" />
     <Compile Include="AssignmentBuilder\AssignmentRepository.cs" />
     <Compile Include="AssignmentBuilder\Resource.cs" />
+    <Compile Include="AbstractChartData.cs" />
+    <Compile Include="DataInterfaces\Forms\IMedicalRecordsRelease.cs" />
     <Compile Include="DataInterfaces\FrontOffice\IAppointmentDocument.cs" />
     <Compile Include="DataInterfaces\IMasterDocument.cs" />
     <Compile Include="DataInterfaces\FrontOffice\IBlockAppointmentDocument.cs" />
@@ -57,6 +59,8 @@
     <Compile Include="DataInterfaces\FrontOffice\IRecurrenceGroupDocument.cs" />
     <Compile Include="DataInterfaces\TempObject\IAppointmentDocument.cs" />
     <Compile Include="DocumentListProxy.cs" />
+    <Compile Include="DocumentPath.cs" />
+    <Compile Include="Forms\MedicalRecordsRelease.cs" />
     <Compile Include="FrontOfficeCalendar\Appointment.cs" />
     <Compile Include="FrontOffice\Appointments\Appointment.cs" />
     <Compile Include="FrontOffice\Appointments\BlockAppointment.cs" />

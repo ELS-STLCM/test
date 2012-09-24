@@ -11,7 +11,7 @@ function encodeSpecialSymbols(value) {
 }
 //  Competency Master Load Content 
 function showExcelFileUpload() {
-    var $dialog = $('#CompetencyMasterLoadContent').dialog({
+    $('#CompetencyMasterLoadContent').dialog({
         autoOpen: true,
         modal: true,
         title: 'Excel File Upload',
@@ -206,16 +206,17 @@ function trimTrailingAndPrecedingSpace(stringToTrim) {
 }
 
 /*
-* Action       : To get system time stamp
+* Action       : To get client system time stamp
 */
-function getSystemTimeStamp() {
-    return new Date(), JS_FORMAT;
+function getClientTimeStamp() {
+    return new Date();
 }
-function getSystemTimeStampString() {
-    return dateFormat(new Date(), JS_FORMAT);
+function getClientTimeStampString() {
+    return dateFormat(getClientTimeStamp(), JS_CLIENT_DATE_FORMAT);
 }
-
-
+function getLoginUserId() {
+    return "";
+}
 /*
 * Action : for validating MM-DD-YYYY
 */
@@ -235,12 +236,12 @@ function showImageUpload(imageId) {
     qnOrAnsImageRefIdNameTemp = imageId;
     resetImageUploadForm();
     $('#imageLoadContent').load("../QuestionBank/SimOfficeImageUpload", function () {
-        var $dialog = $('#imageLoadContent').dialog({
+        $('#imageLoadContent').dialog({
             autoOpen: false,
             modal: true,
             closeOnEscape: false,
             resizable: false,
-            open: function (event, ui) {
+            open: function () {
                 applyClassForDialogHeader();
             },
             title: 'Image Upload',
@@ -276,12 +277,12 @@ function showImageUploadForPatient(imageId,contentId) {
     contentPlaceHolderforImage = contentId;
     resetImageUploadForm();
     $('#' + contentPlaceHolderforImage).load("../QuestionBank/SimOfficeImageUpload", function () {
-        var $dialog = $('#' + contentPlaceHolderforImage).dialog({
+        $('#' + contentPlaceHolderforImage).dialog({
             autoOpen: false,
             modal: true,
             closeOnEscape: false,
             resizable: false,
-            open: function (event, ui) {
+            open: function () {
                 applyClassForDialogHeader();
             },
             title: 'Image Upload',
@@ -307,7 +308,7 @@ function resetImageUploadForm() {
 /*Action : Image Upload success function*/
 
 function checkTheFileUploadSuccess(resultOfAjax) {
-    $("#ajaxUploadForm").unblock();
+    $(".file-upload-popup").unblock();
     if (checkImageUploadAndDisplayMessage(resultOfAjax)) {
         questionBank.commonFunctions.getOrSetImageReference(false, qnOrAnsImageRefIdNameTemp, resultOfAjax.imageRefId);
         patient.pageOperations.getOrSetImageReference(false, imageRefIdNameTemp, resultOfAjax.imageRefId);
@@ -345,6 +346,7 @@ function checkImageUploadAndDisplayMessage(jsonResult, imageId) {
             return true;
         }
     }
+    return false;
 }
 /* Action : To load image to a content Div */
 function loadImageToImageDiv(imageGuid, imageContentId, isMetaDataSet) {
@@ -384,7 +386,7 @@ function getImageRefData(imgRefIdDiv) {
 }
 /*Action : To show loading image on loading image*/
 function blockUploadOnLoading() {
-    $("#ajaxUploadForm").block({
+    $(".file-upload-popup").block({
         message: '<h3><img height="16px" width="16px" src="../Content/Images/loading.gif"/> Uploading file...</h3>'
     });
 }
@@ -404,16 +406,16 @@ function initializeAjaxForm(divIdToInitialize) {
 function viewImageLarger(imageId, imgLargeId) {
     startAjaxLoader();
     loadImageToImageDiv(getImageRefData(imageId), imgLargeId, false);
-    var $dialog = $('#image_view_load_inner_content').dialog({
+    $('#image_view_load_inner_content').dialog({
         autoOpen: false,
         modal: true,
         closeOnEscape: false,
         resizable: false,
-        open: function (event, ui) {
+        open: function () {
             $('#image_view_load_inner_content').css('overflow', 'hidden');
             removeDialogHeader();
         },
-        beforeClose: function (event, ui) {
+        beforeClose: function () {
             reapplyDialogHeader();
         },
         width: 430
@@ -470,6 +472,7 @@ function getOrSetReferenceUrlFromFolders(isValueSet, urlToSet) {
     else {
         return strUrlReferenceForQnInEditMode;
     }
+    return false;
 }
 /*Action : function to remove attachment from app*/
 function removeAttachmentFrmApp(guidOfAttachment) {
@@ -478,7 +481,7 @@ function removeAttachmentFrmApp(guidOfAttachment) {
     return true;
 }
 
-function attachmentRemoveSuccess(result) {
+function attachmentRemoveSuccess() {
     //To-Do
 }
 
@@ -489,7 +492,7 @@ function attachmentRemoveSuccess(result) {
 *                            false otherwise
 */
 function hasDropDownValue(value) {
-    if (value == "" || value == null || value == undefined || value == DROPDOWN_SELECT) {
+    if (value == "" || value == null || value == undefined || value == DROPDOWN_SELECT || value == SelectNumericValue) {
         return true;
     }
     else {
@@ -508,8 +511,7 @@ function successCompetencyFetch1(result) {
         competencyStringListTemp.total = competencyStringListTemp.results.length;
         populateLinkedCompetencies();
     }
-    else
-        return null;
+    return null;
 }
 
 function AssignDefaultTextValue(divId) {
@@ -526,7 +528,8 @@ function initializeFlexBox(divId, lstOfItems) {
         noResultsText: '',
         noResultsClass: '',
         matchClass: '',
-        matchAny: true
+        matchAny: true,
+        doNotClearId: true
     });
     $('#' + divId + "_ctr").attr("style", "left: 0px; top: 22px; width: 600px; display: none;");
     $('#' + divId + "_input").watermark(WATER_MARK_COMPETENCY, { className: 'watermark watermark-text' });
@@ -544,7 +547,7 @@ function populateLinkedCompetencies() {
 }
 
 function initializeFlexBoxForCompetencyCategory(divId, lstOfItems, defaultValue) {
-    lstOfItemsForComp = {}
+    lstOfItemsForComp = {};
     lstOfItemsForComp.results = lstOfItems;
     lstOfItemsForComp.total = lstOfItemsForComp.results.length;
     $('#' + divId).flexbox(lstOfItemsForComp, {
@@ -557,6 +560,17 @@ function initializeFlexBoxForCompetencyCategory(divId, lstOfItems, defaultValue)
         noResultsClass: '',
         matchClass: '',
         matchAny: true
+        });
+    $('#' + divId + "_input").live('keyup', function () {
+        if (validateSpecialCharacters(this.value)) {
+            var competencyCategoryItem = this.value;
+            competencyCategoryItem = competencyCategoryItem.substring(0, competencyCategoryItem.length - 1);
+            $('#' + divId + "_input").val(competencyCategoryItem);
+            return false;
+        }
+        else {
+            return true;
+        }
     });
     $('#' + divId + "_ctr").attr("style", "left: 0px;top: 22px;width: 290px;");
     $('#' + divId + "_ctr").hide();
@@ -649,6 +663,7 @@ function check_AddOrRemoveIfItemExistsInString(strItemsWithDelimiter, itemToChec
         }
         return strItemsWithDelimiter;
     }
+    return false;
 }
 
 /*Common function to disable a button*/
@@ -734,12 +749,12 @@ function getControlValueByElementId(controlName, controlType) {
     switch (controlType) {
         case TEXTBOX_CONTROL:
             if ($("#" + controlName) != undefined && $("#" + controlName) != null && $("#" + controlName).length > 0) {
-                var valueOfText = $("#" + controlName).val();
-                if (valueOfText != "" && valueOfText != null && valueOfText != undefined) {
+                var valueText = $("#" + controlName).val();
+                if (valueText != "" && valueText != null && valueText != undefined) {
                     //valueOfText = valueOfText.replace(/\+/g, "%2B");
-                    valueOfText = encodeSpecialSymbols(valueOfText);
+                    valueText = encodeSpecialSymbols(valueText);
                 }
-                return valueOfText;
+                return valueText;
             }
             else {
                 return "";
@@ -753,7 +768,6 @@ function getControlValueByElementId(controlName, controlType) {
                 valueOfText = "";
             }
             return valueOfText;
-            break;
         case CHECKBOX_CONTROL:
             if ($("#" + controlName) != undefined && $("#" + controlName) != null && $("#" + controlName).length > 0) {
                 var checkList = [];
@@ -785,6 +799,7 @@ function getControlValueByElementId(controlName, controlType) {
                 return "";
             }
     }
+    return "";
 }
 
 function encodeSpecialSymbols(value) {
@@ -809,11 +824,12 @@ function validateSpecialCharacters(value) {
     if (value != null && value != "") {
         return (strRegExpAlphabetNumber.test(value)) ? false : true;
     }
+    return false;
 }
 
 
 function initializeFlexBoxForFilterByModules(divId, lstOfItems) {
-    lstOfItemsForModule = {}
+    lstOfItemsForModule = {};
     lstOfItemsForModule.results = lstOfItems;
     lstOfItemsForModule.total = lstOfItemsForModule.results.length;
     $('#' + divId).flexbox(lstOfItemsForModule, {
@@ -862,7 +878,7 @@ function setMaxLenthSearchText(controlId) {
 
 
 function initializeFlexBoxForFilterBySource(divId, lstOfItems) {
-    lstOfItemsForSource = {}
+    lstOfItemsForSource = {};
     lstOfItemsForSource.results = lstOfItems;
     lstOfItemsForSource.total = lstOfItemsForSource.results.length;
     $('#' + divId).flexbox(lstOfItemsForSource, {
@@ -875,7 +891,7 @@ function initializeFlexBoxForFilterBySource(divId, lstOfItems) {
         matchClass: '',
         matchAny: true,
         onSelect: function () {
-            isSourceFilterValueSelected = true
+            isSourceFilterValueSelected = true;
             isSourceFilterValueSelectedForSearch = false;
             isSearchPageForSkillSet = false;
             startAjaxLoader();
@@ -908,11 +924,9 @@ function initializeFlexBoxForFilterBySource(divId, lstOfItems) {
 }
 
 //Method to autohide/show the scroll for Datatable
-function setScrollableTableHeight(tableId) {    
+function setScrollableTableHeight(tableId) {
     var tableObject = $("#" + tableId[0].id + "_wrapper");
     var contentDiv = tableObject.find("div.dataTables_scrollBody");
-
-    //debugger;
     
     var newStyleWithHeight=changeAttributeValue(contentDiv.attr("style"), "height",4,"");
     
@@ -931,14 +945,14 @@ function setScrollableTableHeight(tableId) {
     //IF IE value is 18, for FF value is 2px
     var browserDifferenceInWidth=18;
     if (GetBrowserType() == BROWSER_FF) {
-        browserDifferenceInWidth=0
+        browserDifferenceInWidth = 0;
     }
     var newOuterBodySTyle = changeAttributeValue(outerContent.attr("style"), "width", 0, (parseInt(headerRowWidth.replace("px", "")) + browserDifferenceInWidth) + "px");
     outerContent.attr("style", newOuterBodySTyle);
 }
 function changeAttributeValue(styleString, stylAttributeToChange, valueToAdd,setNewValue) {
     var finalString = "";
-    var styleArray = styleString.split(";")
+    var styleArray = styleString.split(";");
     for (index = 0; index <= styleArray.length - 1; index++) {
         var currentAttribute = styleArray[index];
         var keyValuePair = currentAttribute.split(":");
@@ -950,13 +964,13 @@ function changeAttributeValue(styleString, stylAttributeToChange, valueToAdd,set
                 currentAttribute = stylAttributeToChange + ":" + setNewValue;
             }
         }
-        currentAttribute = currentAttribute + ";"
+        currentAttribute = currentAttribute + ";";
         finalString = finalString + currentAttribute;
     }
     return finalString;
 }
 function getAttributeValue(styleString, stylAttributeToChange) {
- var styleArray = styleString.split(";")
+    var styleArray = styleString.split(";");
  for (index = 0; index <= styleArray.length - 1; index++) {
      var currentAttribute = styleArray[index];
      var keyValuePair = currentAttribute.split(":");
@@ -965,6 +979,7 @@ function getAttributeValue(styleString, stylAttributeToChange) {
          return keyValuePair[1];
      }
  }
+    return false;
 }
 
 function expandOrCollapseAnAccordion(objDiv) {
@@ -1036,6 +1051,7 @@ function showLogOutConfirmDialog() {
             closeAjaxLoader();
             return false;
         }
+        return false;
     });
 }
 
@@ -1055,9 +1071,323 @@ function showLogOutConfirmDialogOverPdf() {
                     $(".forms-pdf-content").show();
                     closeBackgound_Blur();
                 }
+                return false;
             });
             return false;     
         }
     }
     showLogOutConfirmDialog();
+    return false;
 }
+//To Adjust the height of Landing page according to screen resolution dynamically.
+function adjustHeight() {
+    setAdjustedHeightGridButtonContainer();
+    setAdjustedHeightGridContainer();
+    setAdjustedHeightInnerGridContainer();
+}
+function setAdjustedHeightGridButtonContainer() {
+    var newHeight = calculateAdjustedHeight();
+    $("div .dynamicHeight").css('height', newHeight);
+}
+//function calculateAdjustedHeight() {
+//    var mainHeight = $('#main').height();
+//    var setHeight = mainHeight - (mainHeight * 26 / 100);
+//    return setHeight;
+//}
+function calculateAdjustedHeight() {
+    var clearSpace = 23;
+    var mainHeight = $('#main').height();
+    var adminTabHeight = $('#ul_admin').height();
+    var authoringTabHeight = $('#ul_authoring').height();
+    var setContentHeight = mainHeight - adminTabHeight - authoringTabHeight - questionLandingHeader - clearSpace;
+    return setContentHeight;
+}
+//To Adjust the height of Grid Container according to screen resolution dynamically.
+function setAdjustedHeightGridContainer() {
+    var newGridHeight = calculateAdjustedHeightGridContainer();
+    $("div .grid-height").css('height', newGridHeight);
+}
+function calculateAdjustedHeightGridContainer() {
+    var clearSpace = 5;
+    var gridButtonContainerHeight = $("div .dynamicHeight").height();
+    var setGridHeight = gridButtonContainerHeight - clearSpace;
+    return setGridHeight;
+}
+//To Adjust the height of Inner rid Container according to screen resolution dynamically.
+function setAdjustedHeightInnerGridContainer() {
+    var newGridHeight = calculateAdjustedHeightInnerGridContainer();
+    $("div .grid-inner-height").css('height', newGridHeight);
+}
+function calculateAdjustedHeightInnerGridContainer() {
+    var clearSpace = 23;
+    var gridContainerHeight = $("div .grid-height").height();
+    var setGridHeight = gridContainerHeight - clearSpace;
+    return setGridHeight;
+}
+//To Adjust the height of Data Table according to screen resolution dynamically.
+function setInnerAdjustedHeight(innerDivId, buttonDivId) {
+    var newHeight = calculateInnerAdjustedHeight(innerDivId, buttonDivId);
+//    $("div .dataTables_scrollBody").css('height', newHeight);
+    return newHeight;
+}
+function calculateInnerAdjustedHeight(innerDivId, buttonDivId) {
+    var clearSpace = 2;
+    var gridContainerHeight = $('#' + innerDivId).height();
+    var buttonContainerHeight = $('#' + buttonDivId).height();
+    var setInnerHeight = gridContainerHeight - buttonContainerHeight - tableInfoHeight - tableHeaderHeight - clearSpace;
+    return setInnerHeight;
+}
+
+//To Adjust the height of SkillSet Step1 according to screen resolution dynamically.
+function setContentHeightForAllBuilders() {
+    var newContentHeight = calculateContentHeightForAllBuilders();
+    $("div .holder-height").css('height', newContentHeight);
+}
+function calculateContentHeightForAllBuilders() {
+    var clearSpace = 13;
+    var mainHeight = $('#main').height();
+    var adminTabHeight = $('#ul_admin').height();
+    var authoringTabHeight = $('#ul_authoring').height();
+    var setContentHeight = mainHeight - adminTabHeight - authoringTabHeight - clearSpace;
+    return setContentHeight;
+}
+//To Adjust the height of SkillSet Step1 Right Holder according to screen resolution dynamically.
+function setRightHolderHeight(headerDiv) {
+    var newRightHolderHeight = calculateRightHolderHeight(headerDiv);
+    $("div .right-content-height").css('height', newRightHolderHeight);
+}
+function calculateRightHolderHeight() {
+    var clearSpace = $("div .clear-height-spacing").height();
+    var holderHeight = $("div .holder-height").height();
+    var setRightHolderHeight = holderHeight - pageHeaderHeight - (2*clearSpace);
+    return setRightHolderHeight;
+}
+//To Adjust the height of SkillSet Step1 Right Holder according to screen resolution dynamically.
+function setRightHolderInnerHeight(){
+    var newRightHolderInnerHeight = calculateRightHolderInnerHeight();
+    $("div .right-inner-content-height").css('height', newRightHolderInnerHeight);
+}
+function calculateRightHolderInnerHeight() {
+    var clearSpace = $("div .clear-height-spacing").height();
+    var rightInnerHeight = $("div .right-content-height").height();
+    var setRightHolderInnerHeight = rightInnerHeight - assignmentTitleDivHeight - ButtonDivHeight - (clearSpace);
+    return setRightHolderInnerHeight;
+}
+//To Adjust the height of Preview and Publish screen according to screen resolution dynamically.
+function setPreviewPublishHeight() {
+    var newPreviewPublishHeight = calculatePreviewPublishHeight();
+    $("div .preview-publish-height").css('height', newPreviewPublishHeight);
+}
+function calculatePreviewPublishHeight() {
+    var clearSpace = $("div .clear-height-spacing").height();
+    var rightInnerHeight = $("div .right-content-height").height();
+    var setPreviewPublishHeight = rightInnerHeight - ButtonDivHeight - clearSpace;
+    return setPreviewPublishHeight;
+}
+//To Adjust the height of Assignment Step4 according to screen resolution dynamically.
+function setStep4Height() {
+    var newsetStep4Height = calculateStep4Height();
+    $("div .step4-height").css('height', newsetStep4Height);
+}
+function calculateStep4Height() {
+    var clearSpace = 14;
+    var rightInnerHeight = $("div .right-content-height").height();
+    var setStep4Height = rightInnerHeight - assignmentStep4TitleDivHeight - ButtonDivHeight - clearSpace;
+    return setStep4Height;
+}
+//To Adjust the height of Assignment Step4 Patient List according to screen resolution dynamically.
+function setStep4PatientListHeight() {
+    var newsetStep4Height = calculateStep4PatientListHeight();
+    $("div .patient-list-height").css('height', newsetStep4Height);
+}
+function calculateStep4PatientListHeight() {
+    var clearSpace = 20;
+    var rightInnerHeight = $("div .step4-height").height();
+    var setStep4PatientListHeight = rightInnerHeight - clearSpace;
+    return setStep4PatientListHeight;
+}
+//To Adjust the height of SkillSet Step1 Right Holder according to screen resolution dynamically.
+function setQuestionHolderInnerHeight() {
+    var newQuestionHolderInnerHeight = calculateQuestionHolderInnerHeight();
+    $("div .question-inner-content-height").css('height', newQuestionHolderInnerHeight);
+}
+function calculateQuestionHolderInnerHeight() {
+    var clearSpace = $("div .clear-height-spacing").height();
+    var rightInnerHeight = $("div .right-content-height").height();
+    var setQuestionHolderInnerHeight = rightInnerHeight - ButtonDivHeight - (1.5 * clearSpace);
+    return setQuestionHolderInnerHeight;
+} 
+//To Adjust the height of Assignment Step3 inner divs without validation according to screen resolution dynamically.
+function setAssignmentStep3InnerHeightWithoutValidation() {
+    var newAssignmentStep3InnerHeightWithoutValidation = calculateAssignmentStep3InnerHeightWithoutValidation();
+    $("div .step3-inner-height-without-validation").css('height', newAssignmentStep3InnerHeightWithoutValidation);
+}
+function calculateAssignmentStep3InnerHeightWithoutValidation() {
+    var rightInnerContentHeight = $("div .right-inner-content-height").height();
+    var setAssignmentStep3InnerHeight = rightInnerContentHeight - assignmentStep3InnerHeightWithoutValidation;
+    return setAssignmentStep3InnerHeight;
+}
+//To Adjust the height of Assignment Step3 inner divs with validation according to screen resolution dynamically.
+function setAssignmentStep3InnerHeightWithValidation() {
+    var newAssignmentStep3InnerHeightWithValidation = calculateAssignmentStep3InnerHeightWithValidation();
+    $("div .step3-inner-height-with-validation").css('height', newAssignmentStep3InnerHeightWithValidation);
+}
+function calculateAssignmentStep3InnerHeightWithValidation() {
+    var rightInnerContentHeight = $("div .right-inner-content-height").height();
+    var setAssignmentStep3InnerHeight = rightInnerContentHeight - assignmentStep3InnerHeightWithValidation;
+    return setAssignmentStep3InnerHeight;
+}
+//To Adjust the height of Forms Repository according to screen resolution dynamically.
+function setFormsRepositoryHeight() {
+    var newFormsHeight = calculateFormsRepositoryHeight();
+    $("div .forms-container-height").css('height', newFormsHeight);
+}
+function calculateFormsRepositoryHeight() {
+    var clearSpace = 23;
+    var mainHeight = $('#main').height();
+    var adminTabHeight = $('#authoringTabs').height();
+    var setFormsHeight = mainHeight - adminTabHeight - clearSpace;
+    return setFormsHeight;
+}
+//To Adjust the height of Forms Inner Content according to screen resolution dynamically.
+function setFormsContentHeight() {
+    var newFormsContentHeight = calculateFormsContentHeight();
+    $("div .forms-content-height").css('height', newFormsContentHeight);
+}
+function calculateFormsContentHeight() {
+    var formsRepositoryHeight = $("div .forms-container-height").height();
+    var formsHeaderHeight = $('#formsRepositoryHeader').height();
+    var setFormsContentHeight = formsRepositoryHeight - formsBottomHeight - formsHeaderHeight;
+    return setFormsContentHeight;
+}
+//To Adjust the height of Patient Records Access Request according to screen resolution dynamically.
+function setPatientRecordsInnerContentHeight() {
+    var newFormsInnerContentHeight = calculatePatientRecordsInnerContentHeight();
+    $("div .PatientRecord-inner-content-height").css('height', newFormsInnerContentHeight);
+}
+function calculatePatientRecordsInnerContentHeight() {
+    var formsRepositoryHeight = $("div .forms-content-height").height();
+    var setPatientRecordsInnerContentHeight = formsRepositoryHeight - formsInnerHeaderHeight - 15;
+    return setPatientRecordsInnerContentHeight;
+}
+//To Adjust the height of Forms Inner Content according to screen resolution dynamically.
+function setFormsInnerContentHeight() {
+    var newFormsInnerContentHeight = calculateFormsInnerContentHeight();
+    $("div .forms-inner-content-height").css('height', newFormsInnerContentHeight);
+}
+function calculateFormsInnerContentHeight() {
+    var formsRepositoryHeight = $("div .forms-content-height").height();
+    var setFormsInnerContentHeight = formsRepositoryHeight - formsInnerHeaderHeight;
+    return setFormsInnerContentHeight;
+}
+//To Adjust the height of Medical Forms Inner Content according to screen resolution dynamically.
+function setMedicalFormInnerContentHeight() {
+    var newFormsInnerContentHeight = calculateMedicalFormsInnerContentHeight();
+    $("div .medical-form-inner-content-height").css('height', newFormsInnerContentHeight);
+}
+function calculateMedicalFormsInnerContentHeight() {
+    var formsRepositoryHeight = $("div .forms-content-height").height();
+    var setFormsInnerContentHeight = formsRepositoryHeight - formsInnerHeaderHeight - 5;
+    return setFormsInnerContentHeight;
+}
+//To Adjust the height of Competency Landing page according to screen resolution dynamically.
+function setCompetencyContainerAdjustedHeight() {
+    var newHeight = calculateCompetencyContainerAdjustedHeight();
+    $("div .competency-holder-height").css('height', newHeight);
+}
+function calculateCompetencyContainerAdjustedHeight() {
+    var clearSpace = 20;
+    var mainHeight = $('#main').height();
+    var adminTabHeight = $('#ul_admin').height();
+    var sectionSeperator = $("div .section-seperator-normal").height();
+    var setContentHeight = mainHeight - adminTabHeight - sectionSeperator - ButtonDivHeight - clearSpace;
+    return setContentHeight;
+}
+//To Adjust the height of Competency Data Table according to screen resolution dynamically.
+function setCompetencyTableHeight() {
+    var newCompetencyTableHeight = calculateCompetencyTableHeight();
+    $("div .dataTables_scrollBody").css('height', newCompetencyTableHeight);
+}
+function calculateCompetencyTableHeight() {
+    var clearSpace = 20;
+    var competencyHolderHeight = $("div .competency-holder-height").height();
+    var tableInfoHeight = $("div .dataTables_info").height();
+    var tableHeaderHeight = $("div .dataTables_scrollHead").height();
+    var competencyTableHeight = competencyHolderHeight - ButtonDivHeight - tableInfoHeight - tableHeaderHeight - clearSpace;
+    return competencyTableHeight;
+}
+//To Adjust the height of Patient Step1 according to screen resolution dynamically.
+function setPatientBuilderHeight() {
+    var newPatientBuilderHeight = calculatePatientBuilderHeight();
+    $("div .patient-holder-height").css('height', newPatientBuilderHeight);
+}
+function calculatePatientBuilderHeight() {
+    var clearSpace = 30;
+    var mainHeight = $('#main').height();
+    var adminTabHeight = $('#ul_admin').height();
+    var authoringTabHeight = $('#ul_authoring').height();
+    var setContentHeight = mainHeight - adminTabHeight - authoringTabHeight - patientBuilderHeader - clearSpace;
+    return setContentHeight;
+}
+//To Adjust the height of Patient Step1 content according to screen resolution dynamically.
+function setPatientBuilderContentHeight() {
+    var newPatientBuilderContentHeight = calculatePatientBuilderContentHeight();
+    $("div .patient-content-height").css('height', newPatientBuilderContentHeight);
+}
+function calculatePatientBuilderContentHeight() {
+    var clearSpace = 23;
+    var patientHolder = $("div .patient-holder-height").height();
+    var patientInnerHeader = $('#patientStep1InnerHeader').height();
+    var setPatientBuilderContentHeight = patientHolder - ButtonDivHeight - patientInnerHeader - clearSpace;
+    return setPatientBuilderContentHeight;
+}
+//To Adjust the height of search grids container according to screen resolution dynamically.
+function setAdjustedHeightSearchResultsContainer() {
+    var newHeight = calculateAdjustedHeightSearchResultsContainer();
+    $("div .search-result-height").css('height', newHeight);
+}
+function calculateAdjustedHeightSearchResultsContainer() {
+    var clearSpace = 20;
+    var mainHeight = $('#main').height();
+    var adminTabHeight = $('#ul_admin').height();
+    var authoringTabHeight = $('#ul_authoring').height();
+    var setContentHeight = mainHeight - adminTabHeight - authoringTabHeight - questionLandingHeader - clearSpace;
+    return setContentHeight;
+}
+//To Adjust the height of search grid according to screen resolution dynamically.
+function setAdjustedHeightSearchGrid() {
+    var newHeight = calculateAdjustedHeightSearchGrid();
+    //$("div .dataTables_scrollBody").css('height', newHeight);
+    return newHeight;
+}
+function calculateAdjustedHeightSearchGrid() {
+    var clearSpace = 84;
+    var searchResult = $("div .search-result-height").height();
+    var setSearchGridHeight = searchResult - clearSpace;
+    return setSearchGridHeight;
+}
+//To Adjust the height of Patient Search grid container according to screen resolution dynamically.
+function setAdjustedHeightPatientSearchResultsContainer() {
+    var newHeight = calculateAdjustedHeightPatientSearchResultsContainer();
+    $("div .patient-search-result-height").css('height', newHeight);
+}
+function calculateAdjustedHeightPatientSearchResultsContainer() {
+    var clearSpace = 20;
+    var mainHeight = $('#main').height();
+    var adminTabHeight = $('#ul_admin').height();
+    var authoringTabHeight = $('#ul_authoring').height();
+    var setContentHeight = mainHeight - adminTabHeight - authoringTabHeight - questionLandingHeader - clearSpace;
+    return setContentHeight;
+}
+//To Adjust the height of patient search grid according to screen resolution dynamically.
+function setAdjustedHeightPatientSearchGrid() {
+    var newHeight = calculateAdjustedHeightPatientSearchGrid();
+    //$("div .dataTables_scrollBody").css('height', newHeight);
+    return newHeight;
+}
+function calculateAdjustedHeightPatientSearchGrid() {
+    var clearSpace = 84;
+    var searchResult = $("div .patient-search-result-height").height();
+    var setSearchGridHeight = searchResult - clearSpace;
+    return setSearchGridHeight;
+} 

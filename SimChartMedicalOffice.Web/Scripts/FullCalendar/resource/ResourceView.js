@@ -1,4 +1,7 @@
-
+/*
+Note : File modified for removing styles for Resource view in SimChart for Medical Office
+Commented the lines at 326 and 328
+*/
 setDefaults({
     allDaySlot: true,
     allDayText: 'all-day',
@@ -320,9 +323,9 @@ function ResourceView(element, calendar, viewName) {
             headCell.attr("id", resources[i].id);
             bodyCell = dayBodyCells.eq(i);
             if (+date == +today) {
-                bodyCell.addClass(tm + '-state-highlight fc-today');
+                //bodyCell.addClass(tm + '-state-highlight fc-today');
             }else{
-                bodyCell.removeClass(tm + '-state-highlight fc-today');
+                //bodyCell.removeClass(tm + '-state-highlight fc-today');
             }
             setDayID(headCell.add(bodyCell), date);
         }

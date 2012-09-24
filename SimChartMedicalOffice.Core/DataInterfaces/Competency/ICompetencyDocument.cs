@@ -7,7 +7,7 @@ namespace SimChartMedicalOffice.Core.DataInterfaces.Competency
     {
         IList<Core.Competency.Competency> GetAllCompetencies();
         IList<string> GetAllCategories();
-        string FormCompetencyUrl(string competencyUrl, bool isEditMode, Core.Competency.Competency competencyUIObject);
+        string FormCompetencyUrl(string competencyUrl, bool isEditMode, Core.Competency.Competency competencyUiObject);
         void LoadCompetencies();
     }
 }

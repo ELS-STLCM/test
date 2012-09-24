@@ -1,4 +1,8 @@
-
+/*
+Note : File modified for Event title display in SimChart for Medical Office
+    Line Changed from : Ln.No 334 -   htmlEscape(event.title) 
+    Line Changed to : Ln.No 336 - replaceHTMLBreak(event.title) +
+*/
 function ResourceEventRenderer() {
     var t = this;
 	
@@ -326,8 +330,11 @@ function ResourceEventRenderer() {
         "</div>" +
         "<div class='fc-event-content'>" +
         "<div class='fc-event-title'>" +
-        htmlEscape(event.title) +
-        "</div>" +
+        //Commented for customizing title display - Original Line in js 
+            //  htmlEscape(event.title) +
+        //Customizing Title display for SimChart for Medical office
+             replaceHTMLBreak(event.title) +
+         "</div>" +
         "</div>" +
         "<div class='fc-event-bg'></div>" +
         "</div>"; // close inner

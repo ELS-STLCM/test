@@ -54,7 +54,7 @@
             </div>
             <div>
                 <div class="grid_32 calendar-pane header-text"  style="width: 100%;">
-                <div class="div-with-top-bottom-border alpha" style="padding-bottom:3px;padding-top:3px; padding-left:6px; width: 100%;"">
+                <div class="div-with-top-bottom-border alpha" style="padding-bottom:3px;padding-top:3px; padding-left:6px; width: 100%;">
                     Filter By</div>
                 </div>
                 <div class="clear clear-min-height-spacing">&nbsp;</div>
@@ -78,7 +78,7 @@
                 <div class="clear clear-min-height-spacing">&nbsp;</div>
                 <div class="grid_32">
                 <div class="grid_15 calender-appointment-type appointment" style="padding-top:6px; padding-left:6px" id="appointment-link_Blocked--2">
-                    Blocked</div>
+                    Block</div>
                 <div class="grid_10">
                     <img src="@Url.Content("~/Content/Images/color_blocked_type.png")" class="calender-color-icon" alt="Blocked"/>
                     </div>
@@ -86,7 +86,7 @@
                 <div class="clear clear-min-height-spacing">&nbsp;</div>
                 <div class="grid_32">
                 <div class="grid_15 calender-appointment-type appointment" style="padding-top:6px; padding-left:6px" id="appointment-link_Other--3">
-                    Others</div>
+                    Other</div>
                     <div class="grid_10">
                     <img src="@Url.Content("~/Content/Images/color_others_type.png")" class="calender-color-icon" alt="Others"/>
                 </div>
@@ -95,14 +95,14 @@
                 <div class="clear clear-min-height-spacing">&nbsp;</div>
                 <div class="clear clear-min-height-spacing">&nbsp;</div>
                 <div class="grid_20 header-text" style="padding-top:6px; padding-left:6px">
-                    Provider :</div>
+                    Provider:</div>
                 <div class="grid_30" style="padding-left:6px"> 
                     @Html.DropDownList("ProviderCalendar", null, new { id = "ProviderCalendar", @class = "grid_30" })
                 </div>
                 <div class="clear clear-min-height-spacing">&nbsp;</div>
                 <div class="clear clear-min-height-spacing">&nbsp;</div>
-                <div class="grid_20 header-text" style="padding-top:6px; padding-left:6px">
-                    Exam Room :</div>
+                <div class="grid_20 header-text" style="padding-top:6px; padding-left:6px" id="lbl_ExamRm">
+                    Exam Room:</div>
                 <div class="grid_30"  style="padding-left:6px">
                     @Html.DropDownList("ExamRoomCalendar", null, new { id = "ExamRoomCalendar", @class = "grid_30" })
                 </div>
@@ -155,19 +155,19 @@
                     <div class="grid_16">Children</div> 
                     <div class="clear clear-min-height-spacing">&nbsp;</div>   
                                         <div class="grid_16">Exam Room 4 - </div>
-                    <div class="grid_16">Children</div> 
+                    <div class="grid_16">General</div> 
                     <div class="clear clear-min-height-spacing">&nbsp;</div>   
                                         <div class="grid_16">Exam Room 5 - </div>
-                    <div class="grid_16">Children</div> 
+                    <div class="grid_16">General</div> 
                     <div class="clear clear-min-height-spacing">&nbsp;</div>   
                                         <div class="grid_16">Exam Room 6 - </div>
-                    <div class="grid_16">Children</div> 
+                    <div class="grid_16">General</div> 
                     <div class="clear clear-min-height-spacing">&nbsp;</div>   
                                         <div class="grid_16">Exam Room 7 - </div>
-                    <div class="grid_16">Children</div> 
+                    <div class="grid_16">General</div> 
                     <div class="clear clear-min-height-spacing">&nbsp;</div>   
                                         <div class="grid_16">Exam Room 8 - </div>
-                    <div class="grid_16">Children</div> 
+                    <div class="grid_16">General</div> 
                     <div class="clear clear-min-height-spacing">&nbsp;</div>   
                                         <div class="grid_16">Exam Room 9 - </div>
                     <div class="grid_16">Women's health</div> 
@@ -182,13 +182,14 @@
 </div>
 
 <div id="office-floor-image" style="display: none">
-        <div id="office-floor-image_inner_content" class="office-floor-plan-content">
+        <div id="office-floor-image_inner_content" class="office-floor-plan-content" style="overflow:hidden">
             <img id="office-floor-image_view" src="@Url.Content("~/Content/Images/ExamRoomPlan.jpg")" alt="x" class="office-floor-plan"/>
         </div>
     </div>
 <script language="javascript" type="text/javascript">
     $(document).ready(function () {
         appointment.commonFunction.setAssignmentUniqueIdentifier('@ViewBag.AssignmentUniquePath');
+        lstPatient = @Html.Raw(Json.Encode(ViewBag.AppointmentPatientList));
         waterMarkTextForCalendarSearchPatient();
         $(".calendarView").click(function () {
             startAjaxLoader();
@@ -219,6 +220,7 @@
             $("#calendar").show();
             $("#searchPatientForAppointment").hide(); 
             smoCalendar.setCalendarFilterCriteria();
+            $("#accordion-body-calendarView").scrollTo("#lbl_ExamRm",100);
         });
         $("#ExamRoomCalendar").change(function () {
             startAjaxLoader();
@@ -233,6 +235,7 @@
                 calendarfilterType = 4;
             }
             smoCalendar.setCalendarFilterCriteria();
+            $("#accordion-body-calendarView").scrollTo("#lbl_ExamRm",100);
         });
         $("#btnSmoAddAppointment").click(function () {
             smoCalendar.showAppointmentsOfADay();
@@ -272,6 +275,7 @@
                 smoCalendarFilter.AppointmentType = 4;
             }
             smoCalendar.setCalendarFilterCriteria();
+            $("#accordion-body-calendarView").scrollTo("#lbl_ExamRm",100);
             return false;
         });
     });
@@ -293,8 +297,7 @@
        $("#searchByPatientCalendar_input").watermark(PATIENT_SEARCH_WATERMARK, { className: 'water-mark watermark-text' }); 
        $('#searchByPatientCalendar_input').addClass('watermark watermark-text'); 
     }
-    function waterMarkTextForCalendarSearchPatient() {    
-        var lstPatient = @Html.Raw(Json.Encode(ViewBag.AppointmentPatientList));
+    function waterMarkTextForCalendarSearchPatient() {         
         var lstPatientTemp=[];
         lstPatientTemp = lstPatient;
         lstPatient.results=lstPatientTemp;
@@ -306,8 +309,11 @@
         noResultsText: '',
         noResultsClass: '',
         matchClass: '',
-        matchAny: true
+        matchAny: true,
+        maxVisibleRows: 5,
+        paging: false
     });
+     
     $("#searchByPatientCalendar_input").watermark(PATIENT_SEARCH_WATERMARK, { className: 'water-mark watermark-text' });
     $('#searchByPatientCalendar_input').live('blur', function () {
         if ($('#searchByPatientCalendar_input').val() == "") {

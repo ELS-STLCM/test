@@ -1,4 +1,5 @@
-﻿<div class="grid_8  tool-bar-header" id="frontOfficeTitle">
+﻿<div id="formsRepositoryHeader" style="height:38px">
+<div class="grid_8  tool-bar-header" id="frontOfficeTitle">
     Form Repository</div>
 <div class="grid_14 tool-bar">
     <a class="grid_7 action-icons select-hand" id="calendarForFrontOffice">
@@ -14,6 +15,7 @@
 <div class="grid_32 clear-height-spacing">
     &nbsp;
 </div>
+</div>
 <script type="text/javascript">
     $(document).ready(function () {
         $("#calendarForFrontOffice").click(function () {
@@ -21,7 +23,7 @@
             var urlToRefreshCalendar = "../Appointment/FrontOfficeCalendar";
             $("#smoFrontOffice").load(urlToRefreshCalendar, function () {
             });
-        })
+        });
     });
      
     </script>

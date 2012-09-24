@@ -1,17 +1,16 @@
-﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace SimChartMedicalOffice.Core.QuestionBanks
 {
     public class Question : DocumentEntity
     {
-        public Question() { }
         /// <summary>
         /// This property is a reference to Object Competency
         /// Relationship is one to one.
         /// </summary>
-        public string CompetencyReferenceGUID { get; set; }
+        public string CompetencyReferenceGuid { get; set; }
 
         /// <summary>
         /// This property is a reference to Object QuestionBank with a particular Folder property
@@ -76,28 +75,25 @@ namespace SimChartMedicalOffice.Core.QuestionBanks
 
         public Question Clone()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             Question questionData = new Question();
             foreach (System.Reflection.PropertyInfo objProp in type.GetProperties())
             {
-                if (objProp.PropertyType.IsGenericType == true)
+                if (objProp.PropertyType.IsGenericType)
                 {
                     if (objProp.Name.ToUpper() == "ANSWEROPTIONS")
                     {
                         List<AnswerOption> listAnswerOptionsData = new List<AnswerOption>();
 
-                        if (this.AnswerOptions != null && this.AnswerOptions.Count > 0)
+                        if (AnswerOptions != null && AnswerOptions.Count > 0)
                         {
-                            foreach (AnswerOption answerOptionData in this.AnswerOptions)
-                            {
-                                listAnswerOptionsData.Add(answerOptionData.Clone());
-                            }
+                            listAnswerOptionsData.AddRange(AnswerOptions.Select(answerOptionData => answerOptionData.Clone()));
                             questionData.AnswerOptions = listAnswerOptionsData;
                         }
                     }
                     else if (objProp.Name.ToUpper() == "CORRECTORDER")
                     {
-                        questionData.CorrectOrder = this.CorrectOrder;
+                        questionData.CorrectOrder = CorrectOrder;
                     }
                     else
                     {

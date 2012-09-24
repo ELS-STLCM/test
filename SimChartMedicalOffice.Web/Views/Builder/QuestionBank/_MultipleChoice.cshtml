@@ -7,12 +7,10 @@
     string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
     string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
     string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
-    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty; ;
-    string strQuestionguid = string.Empty;
-    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty; ;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty;
     string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
     bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
-    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
     string answerText1 = (ViewData["AnswerOption_1"] != null) ? ViewData["AnswerOption_1"].ToString() : String.Empty;
     string answerText2 = (ViewData["AnswerOption_2"] != null) ? ViewData["AnswerOption_2"].ToString() : String.Empty;
     string answerText3 = (ViewData["AnswerOption_3"] != null) ? ViewData["AnswerOption_3"].ToString() : String.Empty;

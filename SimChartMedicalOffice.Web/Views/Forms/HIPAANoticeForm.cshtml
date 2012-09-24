@@ -1,4 +1,4 @@
-﻿<div class="grid_24">
+﻿<div class="grid_24 forms-content-height">
     <div class="form-page-header grid_32">
         Notice of Privacy Practice
     </div>
@@ -13,15 +13,18 @@
     </div>
     <div class="clear clear-height-spacing">
     </div>
-    <div id="notice_form_main_content" class="grid_32">
+    <div id="notice_form_main_content" class="grid_32 forms-inner-content-height">
     @*Do not change the class name of the iframe. Class names are used for selectors*@
-        <iframe class="forms-pdf-content" scrolling="no"  id="NoticePdfId" src="@Url.Action("GetPdfAttachment", "Forms", new { strFormName = @ViewBag.NoticeFormPdfid, nocache = '1' })">
+        <iframe class="forms-pdf-content forms-inner-content-height" scrolling="no"  id="NoticePdfId" src="@Url.Action("GetPdfAttachment", "Forms", new { strFormName = @ViewBag.NoticeFormPdfid, nocache = '1' })">
         </iframe>
     </div>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
         disableAButtonForForms("savePatientRecord-1");
+        setFormsRepositoryHeight();
+        setFormsContentHeight();
+        setFormsInnerContentHeight();
     });
     $("#savePatientRecord-1").click(function () {
         forms.NoticeOfPrivacyPractice.Save('@ViewBag.FormValue');

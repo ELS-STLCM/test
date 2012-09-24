@@ -1,10 +1,12 @@
 ﻿/**SimOffice Calendar start**/
+ 
 .fc-event-skin
 {
     background-color:transparent;
     color:Black;
     border-style:none;
 }
+ 
 .fc-event-title
 {
     color:Black;
@@ -62,7 +64,7 @@
 {
     display:none;
 }
-.ui-state-default ui-state-active
+.ui-state-default .ui-state-active
 {
     border:none;
     border-style:none;
@@ -79,6 +81,14 @@
     border-style:none;
     color:Black;
     cursor:pointer;
+    height:25px;
+}
+.patient-visit-view-all
+{
+    background-color:#A0C1E8;
+    border-style:none;
+    color:Black;
+    cursor:pointer;
 }
 .blocked-appointment
 {
@@ -86,8 +96,24 @@
     border-style:none;
     color:Black;
     cursor:pointer;
+    height:25px;
+}
+.blocked-appointment-view-all
+{
+    background-color:#E6B9B8;
+    border-style:none;
+    color:Black;
+    cursor:pointer;
 }
 .other-appointment
+{
+    background-color:#D7E4BD;
+    border-style:none;
+    color:Black;
+    cursor:pointer;
+    height:25px;
+}
+.other-appointment-view-all
 {
     background-color:#D7E4BD;
     border-style:none;
@@ -146,9 +172,20 @@
  
 td.week-highlight   
 {
+   
+}
+.ui-datepicker-today
+{
+    /* border: 1px black solid !important;*/
+}
+.day-highlight 
+{
+     
+}
+.day-highlight-a
+{
     border: 1px black solid !important;
 }
-
 td.disabled-date a.ui-state-default
 {
     color:Gray;
@@ -301,6 +338,11 @@ tbody th, tbody td
 .fc-agenda .fc-agenda-axis
 {
     font-weight:bold;
+    border-right:1px solid #ccc;
+}
+.fc-agenda-axis.fc-widget-header.fc-first	
+{
+    border:0px;
 }
 	
  /**SimOffice Calendar End**/

@@ -1,23 +1,21 @@
 ﻿@{
     Layout = null;
 }
-<div class="page-title grid_32" id="mainStep3SkillSet">
-    Step 3 of 4: Configure Questions and Answers
+<div style="height:38px">
+    <div class="page-title grid_32" id="mainStep3SkillSet">
+        Step 3 of 4: Configure Questions and Answers
+    </div>
+    <div class="header-text grid_32">
+        Please configure all question templates in order to proceed to the next step.
+    </div>
 </div>
-<div class="grid_32 clear clear-height-spacing">
-</div>
-<div class="header-text grid_32">
-    Please configure all question templates in order to proceed to the next step.
-</div>
-<div class="grid_32 clear clear-height-spacing">
-</div>
-<div class="grid_32 div-with-border standard-text assignment-builder-panel isContentchanged"
-    style="width: 780px; height: 280px;" id="content_skillset_changed">
+<div class="grid_32 div-with-border standard-text right-inner-content-height isContentchanged"
+    style="width: 780px;" id="content_skillset_changed">
      <div class="align-div-inline">
         <img alt="x" src="@Url.Content("~/Content/Images/SkillSet_builder_Step3Expand.png")" id="QuestionBankSlideButton" style="display: none;" class="select-hand"/>
     </div>
-    <div class="grid_32 remove-div-space align-div-inline" style="width: 780px;" id="slide-content-div-qn-skill-set">
-        <div class="grid_8 remove-div-space div-with-border" id="SkillSetSlideDiv">
+    <div class="grid_32 remove-div-space align-div-inline right-inner-content-height" style="width: 780px;" id="slide-content-div-qn-skill-set">
+        <div class="grid_8 remove-div-space div-with-border right-inner-content-height" id="SkillSetSlideDiv">
             <div class="background-panel">
                 <div class="grid_4" id="closeSkillSetSlide" style="padding-bottom: -5px">
                     <img src="@Url.Content("~/Content/Images/Collapse_Left.png")" alt="swap-up" class="select-hand" />
@@ -32,7 +30,7 @@
             <div id="QuestionList" style="height: 251px; overflow-y: auto">
             </div>
         </div>
-        <div class="align-div-inline remove-div-space" id="QuestionTemplateSlide"
+        <div class="align-div-inline remove-div-space right-inner-content-height" id="QuestionTemplateSlide"
             style="overflow-y: auto; overflow-x: hidden; height: 280px">
             <div id="content_questions">
                 <div id="questionTypesLoading" class="hide-content">
@@ -183,6 +181,7 @@
     var SkillSetUrl = "@ViewBag.SkillSetUrl";
     isProceedToStep4Valid=@ViewBag.isProceedToStep4Valid.ToString().ToLower();
     $(document).ready(function () {
+            setRightHolderInnerHeight();
             $("#uploadImageLink").click(function () {
             showImageUpload("QNIMAGE");
         });

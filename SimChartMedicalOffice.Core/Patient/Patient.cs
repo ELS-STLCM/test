@@ -1,7 +1,7 @@
-﻿using SimChartMedicalOffice.Core.Forms;
+﻿using System;
 using System.Collections.Generic;
-using System;
 using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Core.Forms;
 
 namespace SimChartMedicalOffice.Core.Patient
 {
@@ -98,7 +98,12 @@ namespace SimChartMedicalOffice.Core.Patient
         /// This property holds the dictionary of PatientRecordsAccessForm form object as value and its uniqueIdentifier as key
         /// </summary>
         public Dictionary<string, PatientRecordsAccessForm> PatientRecordsAccessForms { get; set; }
-
+        /// <summary>
+        /// This property holds the dictionary of MedicalRecordsRelease form object as value and its uniqueIdentifier as key
+        /// </summary>
+        public Dictionary<string, MedicalRecordsRelease> MedicalRecordsReleaseForms { get; set; }
+        
+      
         /// <summary>
         /// This property holds the dictionary of PriorAuthorizationRequestForm form object as value and its uniqueIdentifier as key
         /// </summary>
@@ -122,7 +127,7 @@ namespace SimChartMedicalOffice.Core.Patient
         /// <summary>
         /// This property holds the ID Number of patient
         /// </summary>
-        public string IDNumber{ get; set;}
+        public string IdNumber{ get; set;}
 
         /// <summary>
         /// This property holds the Name of Policy holder for the patient
@@ -137,13 +142,13 @@ namespace SimChartMedicalOffice.Core.Patient
         /// <summary>
         /// This property holds the SSN of Policy holder for the patient
         /// </summary>
-        public string SSNofPolicyHolder { get; set; }
+        public string SsNofPolicyHolder { get; set; }
         
         public string FormAgeText()
         {
-            string patientAge = ((this.AgeInYears > 0) ? this.AgeInYears + " " + AppConstants.PatientAgeYearText + " " : "");
-            patientAge += ((this.AgeInMonths > 0) ? this.AgeInMonths + " " + AppConstants.PatientAgeMonthText + " " : "");
-            patientAge += ((this.AgeInDays > 0) ? this.AgeInDays + " " + AppConstants.PatientAgeDaysText + " " : "");
+            string patientAge = ((AgeInYears > 0) ? AgeInYears + " " + AppConstants.PatientAgeYearText + " " : "");
+            patientAge += ((AgeInMonths > 0) ? AgeInMonths + " " + AppConstants.PatientAgeMonthText + " " : "");
+            patientAge += ((AgeInDays > 0) ? AgeInDays + " " + AppConstants.PatientAgeDaysText + " " : "");
             return patientAge;
         }
     }

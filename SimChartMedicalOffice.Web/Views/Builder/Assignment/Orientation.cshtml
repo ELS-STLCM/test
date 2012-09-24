@@ -31,15 +31,16 @@
     </script>
 </head>
 <body>
-    <div class="remove-div-space" style="overflow-y: auto;">
-        <div class="grid_32 form-page-header standard-text">
-            Step 2 of 5: Orientation
+    <div class="remove-div-space right-content-height" style="overflow-y: auto;">
+        <div style="height:38px">
+            <div class="grid_32 form-page-header standard-text">
+                Step 2 of 5: Orientation
+            </div>
+            <div class="grid_32 mandatory-field-note">
+                Fields with " <span class="mandatory-field">*</span> " are mandatory
+            </div>
         </div>
-        <div class="grid_32 mandatory-field-note">
-            Fields with " <span class="mandatory-field">*</span> " are mandatory
-        </div>
-        <div id="OrientationData" class="grid_32 div-with-border standard-text" style="height: 297px;
-            overflow-y: auto; overflow-x: hidden;">
+        <div id="OrientationData" class="grid_32 div-with-border standard-text right-inner-content-height" style="overflow-y: auto; overflow-x: hidden;">
             <div id="validationSummary" class="errormessage grid_32">
                 @Html.ValidationSummary()</div>
             <div class="grid_32">
@@ -120,72 +121,86 @@
             <div class="clear-height-spacing clear">
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     1.</div>
-                <div class="grid_31">
-                   &nbsp;Go to www.youtube.com.</div>
+                <div class="grid_30">
+                    Go to www.youtube.com.</div>
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     2.</div>
-                <div class="grid_31">
-                   &nbsp;Click "Create Account".</div>
+                <div class="grid_30">
+                    Click "Create Account".</div>
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     3.</div>
-                <div class="grid_31">
-                    &nbsp;Log in to your account.</div>
+                <div class="grid_30">
+                    Log in to your account.</div>
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     4.</div>
-                <div class="grid_31">
-                    &nbsp;Click "Upload" at the top of the homepage</div>
+                <div class="grid_30">
+                    Click "Upload" at the top of the homepage</div>
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     5.</div>
-                <div class="grid_31">
-                    &nbsp;Click "Browse" to choose a video file from your computer. YouTube accepts these
-                    <br />&nbsp;video formats:
-                    <br />&nbsp;
-                    · .AVI (Audio Video Interleaved)<br />
-                   &nbsp; · .3GP (cell phones)<br />
+                <div class="grid_30">
+                    Click "Browse" to choose a video file from your computer. YouTube accepts
+                    these video formats:
+                    <br />
+                    &nbsp;· .AVI (Audio Video Interleaved)<br />
+                    &nbsp;· .3GP (cell phones)<br />
                     &nbsp;· .MOV (Mac)<br />
                     &nbsp;· .MPEG or .MPG (Motion Picture Experts Group)<br />
                     &nbsp;· .FLV (Adobe Flash)<br />
-                   &nbsp; · .SWF (Shockwave Flash)<br />
+                    &nbsp;· .SWF (Shockwave Flash)<br />
                     &nbsp;· .M4V (h.264)<br />
-                    &nbsp;· .WMV (Windows Media Video) · .WEBM (HTML5)</div>
+                    &nbsp;· .WMV (Windows Media Video)<br />
+                    &nbsp;· .WEBM (HTML5)</div>
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     6.</div>
-                <div class="grid_31">
-                    &nbsp;Click "Upload Video".</div>
+                <div class="grid_30">
+                    Click "Upload Video".</div>
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     7.</div>
-                <div class="grid_31">
-                    &nbsp;Enter the details of the video. Required information includes the video title,
-                    <br />&nbsp;description,category, and tags. You can also enter broadcast, date and map, and
-                    <br />&nbsp;sharing options.Privacy setting should be "Unlisted".</div>
+                <div class="grid_30">
+                    Enter the details of the video. Required information includes the video title,
+                    description,category, and tags. You can also enter broadcast, date and map,
+                    and sharing options.Privacy setting should be "Unlisted".</div>
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     8.</div>
-                <div class="grid_31">
-                    &nbsp;Click "Save".</div>
+                <div class="grid_30">
+                    Click "Save".</div>
             </div>
             <div class="grid_32">
-                <div class="grid_1">
+                <div class="grid_2">
                     9.</div>
-                <div class="grid_31">
-                    &nbsp;Copy saved video link and paste into Multimedia textbox in Step 2 of Assignment
-                    <br />&nbsp;Builder</div>
+                <div class="grid_30">
+                    Click "Share".</div>
             </div>
+            <div class="grid_32">
+                <div class="grid_2">
+                    10.</div>
+                <div class="grid_30">
+                    Click "Embed".</div>
+            </div>        
+            <div class="grid_32">
+                <div class="grid_2">
+                    11.</div>
+                <div class="grid_30">
+                    Copy the video link from the text area below and paste into Multimedia textbox in Step 2 of Assignment Builder                   
+            </div>
+        </div>
+         <div class="clear-height-spacing clear">
         </div>
     </div>
     <div class="clear-height-spacing clear">
@@ -234,6 +249,7 @@
                  class="standard-height-for-buttons" /></div>
         </div>
     </div>
+    </div>
     <script type="text/javascript">
         $.ajaxSetup({
             cache: false,
@@ -243,6 +259,7 @@
         var videoList = new Array();
         var videoCount = 0;
         $(document).ready(function () {
+            setRightHolderInnerHeight();
             $("#stepwiseImage").empty();
             $("#stepwiseImage").append("<img alt='' src='../../Content/Images/Buttons/step2AssignmentBuilder.PNG'/>");
             $("#disabledUploadImageLink").hide();
@@ -255,7 +272,7 @@
         function removeImage(patientImage) {
             var position = patientImage.lastIndexOf("_");
             var imageId = patientImage.slice(0, position);
-            assignment.commonFunctions.removeAttachment(imageId)
+            assignment.commonFunctions.removeAttachment(imageId);
         }
 
         function showVideoPopup() {
@@ -263,27 +280,41 @@
         }
 
         function addMoreVideo() {
+            var title = "";
             if ($("#Multimedia").val() != "") {
                 srcVideo = $("#Multimedia").val();
-                setVideo(srcVideo, videoCount);
-                $("#Multimedia").val("");
+                var srcVideoUrlSplit = srcVideo.split('/');
+                var videoId = srcVideoUrlSplit[srcVideoUrlSplit.length - 1];
+                $.ajax({
+                    url: 'http://gdata.youtube.com/feeds/api/videos/' + videoId,
+                    dataType: 'jsonp',
+                    async: false,
+                    success: function (data) {
+                        if ($(data).find('title').length > 0)
+                            title = $(data).find('title')[0].innerText;
+                            setVideo(srcVideo, title);
+                            $("#Multimedia").val("");
+                    }
+                });                           
+               
+
             }
         }
 
-        function setVideo(srcVideo, videoCount) {
+        function setVideo(srcVideo, videoTitle) {             
             if (GetBrowserType() == BROWSER_IE && $.browser.version == "9.0") {
-                $("<object id='video-frame_" + videoCount + "' type='application/x-shockwave-flash' data='" + srcVideo + "' width='425' height='344'></object><div class='grid_10' id='video-frame_" + videoCount + "_remove'><div class='align-div-inline'><img alt='left' src='../Content/Images/Buttons/Button_left_curve_grey.jpg' class='standard-height-for-buttons' /></div><input type='submit' class='remove-button align-div-inline standard-height-for-buttons' value='Remove' onclick='removeVideo(this.parentNode.id)' /><div class='align-div-inline'><img alt='right' src='../Content/Images/Buttons/Button_right_curve_grey.jpg'class='standard-height-for-buttons' /></div></div><div class='clear-height-spacing clear'></div>").appendTo("#video-content");
+                $("<div class='grid_32 multimedia-title' id='video-frame_" + videoCount + "_title'>" + videoTitle + "</div><object id='video-frame_" + videoCount + "' type='application/x-shockwave-flash' data='" + srcVideo + "' width='425' height='344'></object><div class='grid_10' id='video-frame_" + videoCount + "_remove'><div class='align-div-inline'><img alt='left' src='../Content/Images/Buttons/Button_left_curve_grey.jpg' class='standard-height-for-buttons' /></div><input type='submit' class='remove-button align-div-inline standard-height-for-buttons' value='Remove' onclick='removeVideo(this.parentNode.id)' /><div class='align-div-inline'><img alt='right' src='../Content/Images/Buttons/Button_right_curve_grey.jpg'class='standard-height-for-buttons' /></div></div><div class='clear-height-spacing clear'></div>").appendTo("#video-content");
             }
             else {
-                $("<iframe class='grid_20' id='video-frame_" + videoCount + "' src='" + srcVideo + "?wmode=transparent' style='width: 60%; width='425' height='344' height: 100%' scrolling='yes'></iframe><div class='grid_10' id='video-frame_" + videoCount + "_remove'><div class='align-div-inline'><img alt='left' src='../Content/Images/Buttons/Button_left_curve_grey.jpg' class='standard-height-for-buttons' /></div><input type='submit' class='remove-button align-div-inline standard-height-for-buttons' value='Remove' onclick='removeVideo(this.parentNode.id)' /><div class='align-div-inline'><img alt='right' src='../Content/Images/Buttons/Button_right_curve_grey.jpg'class='standard-height-for-buttons' /></div></div><div class='clear-height-spacing clear'></div>").appendTo("#video-content");
+                $("<div class='grid_32 multimedia-title' id='video-frame_" + videoCount + "_title'>" + videoTitle + "</div><iframe class='grid_20' id='video-frame_" + videoCount + "' src='" + srcVideo + "?wmode=transparent' style='width: 60%; width='425' height='344' height: 100%' scrolling='yes'></iframe><div class='grid_10' id='video-frame_" + videoCount + "_remove'><div class='align-div-inline'><img alt='left' src='../Content/Images/Buttons/Button_left_curve_grey.jpg' class='standard-height-for-buttons' /></div><input type='submit' class='remove-button align-div-inline standard-height-for-buttons' value='Remove' onclick='removeVideo(this.parentNode.id)' /><div class='align-div-inline'><img alt='right' src='../Content/Images/Buttons/Button_right_curve_grey.jpg'class='standard-height-for-buttons' /></div></div><div class='clear-height-spacing clear'></div>").appendTo("#video-content");
             }
             videoList.splice(videoCount, 0, srcVideo);
-            setDivData(getDivObject("video-frame_" + videoCount), "videoUrl", srcVideo)
+            setDivData(getDivObject("video-frame_" + videoCount), "videoUrl", srcVideo);
             videoCount++;
         }
 
 
-        function removeVideo(videoId) {
+        function removeVideo(videoId) {                     
             var position = videoId.lastIndexOf("_");
             var video = videoId.slice(0, position);
             for (var videoListCount = 0; videoListCount <= videoCount; videoListCount++) {
@@ -293,6 +324,7 @@
             }
             $("#" + video).remove();
             $("#" + video + "_remove").remove();
+            $("#" + video + "_title").remove();
         }
 
         function saveStep2() {
@@ -300,7 +332,7 @@
         }
 
         function redirectToStep3() {
-            var isValidAssignment = true;
+//            var isValidAssignment = true;
             assignment.commonFunctions.saveStep2(true);
             //            if (isValidAssignment) {
             //                assignBuilder.redirectionFunctions.loadStep3OfAssignmentBuilder();

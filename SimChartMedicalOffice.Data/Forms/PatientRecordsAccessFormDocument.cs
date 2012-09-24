@@ -3,24 +3,18 @@ using SimChartMedicalOffice.Data.Repository;
 using SimChartMedicalOffice.Core.DataInterfaces.Forms;
 using System.Collections.Generic;
 using SimChartMedicalOffice.Core.Forms;
+using SimChartMedicalOffice.Core.DropBox;
 namespace SimChartMedicalOffice.Data.Forms
 {
     public class PatientRecordsAccessFormDocument : KeyValueRepository<PatientRecordsAccessForm>, IPatientRecordsAccessFormDocument
     {
-        public override string Url
-        {
-            get
-            {
-                //return "SimApp/Courses/ALL_swhitcomb5_0001/Student/UID1/Assignments/ScenarioId1/Patients/{0}";
-                return "SimApp/Courses/{0}/Patients/{1}/PatientRecordsAccessForms/{2}";
-            }
-        }
+        
 
-        public IList<PatientRecordsAccessForm> GetAllPatientRecordsAccessFormsForPatient(string courseId, string userRole, string UID, string SID, string patientGuid, string formId)
+        public IList<PatientRecordsAccessForm> GetAllPatientRecordsAccessFormsForPatient(DropBoxLink dropBox, string patientGuid, string formId)
         {
-            string patientRecordsJSON = GetJsonDocument(FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,patientGuid, formId));
+            string patientRecordsJson = GetJsonDocument(FormAndSetUrlForStudentPatient(dropBox, patientGuid, formId));
             Dictionary<string, PatientRecordsAccessForm> patientRecordsAccessForms =
-                JsonSerializer.DeserializeObject<Dictionary<string, PatientRecordsAccessForm>>(patientRecordsJSON);
+                JsonSerializer.DeserializeObject<Dictionary<string, PatientRecordsAccessForm>>(patientRecordsJson);
             return ConvertDictionarytoObject(patientRecordsAccessForms);
         }
 
@@ -45,21 +39,13 @@ namespace SimChartMedicalOffice.Data.Forms
         /// <summary>
         /// To form/set the URL for the form object
         /// </summary>
-        /// <param name="courseId"></param>
-        /// <param name="userRole"></param>
-        /// <param name="UID"></param>
-        /// <param name="SID"></param>
+        /// <param name="dropBox"> </param>
         /// <param name="patientGuid"></param>
         /// <param name="formId"></param>
         /// <returns></returns>
-        public string FormAndSetUrlForStudentPatient(string courseId, string userRole, string UID, string SID, string patientGuid, string formId)
+        public string FormAndSetUrlForStudentPatient(DropBoxLink dropBox, string patientGuid, string formId)
         {
-            if (userRole == "Student")
-            {
-                return string.Format(Url, courseId + "/" + userRole + "/" + UID + "/Assignments/" + SID, patientGuid,formId);
-            }
-            // if Admin or Instructor
-            return "";
+            return string.Format(GetAssignmentUrl(dropBox,Core.DocumentPath.Module.PatientRecordsAccessForms), patientGuid, formId);
         }
     }
 }

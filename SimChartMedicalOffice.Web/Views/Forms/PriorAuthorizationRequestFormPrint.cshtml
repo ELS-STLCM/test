@@ -4,7 +4,7 @@
      Layout = "~/Views/Shared/_LayoutPartialForPrint.cshtml";
  }
  @{
-     PriorAuthorizationRequestForm priorAuthorityRequestObj = null;
+     PriorAuthorizationRequestForm priorAuthorityRequestObj;
      bool blankform = false;
      if (ViewBag.PriorAuthorityRequestObj == null)
      {
@@ -71,7 +71,7 @@
           <hr />
           <div class="clear clear-height-spacing">
           </div>
-        <div>
+       </div>
             <div class="clear-height-spacing clear">
             </div>
             <div class="grid_32 section-seperator">
@@ -114,7 +114,7 @@
                     <div class="grid_18 text-in-box-print">
                         @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.PhysicianAddress, blankform)
                     </div>
-                </div>
+          </div>
                 <div class="grid_16">
                     <div class="standard-label-print grid_14 ">
                         Provider:
@@ -159,7 +159,7 @@
                 </div>
                 <div class="clear-height-spacing clear">
                 </div>
-            </div>
+        </div>
             <div class="clear-height-spacing clear">
             </div>
             <div class="clear-height-spacing clear">
@@ -196,7 +196,7 @@
                         Procedure/CPT-4 Code(s):
                     </div>
                     <div class="grid_18 text-line-print">
-                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ProcedureCPT4Codes, blankform)
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.ProcedureCpt4Codes, blankform)
                     </div>
                 </div>
                 <div class="grid_16">
@@ -212,7 +212,7 @@
                         Diagnosis/ICD-9 Code:
                     </div>
                     <div class="grid_18 text-line-print">
-                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.DiagonsisOrICD9Code8, blankform)
+                        @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.DiagonsisOrIcd9Code8, blankform)
                     </div>
                 </div>
                 <div class="clear-height-spacing clear">
@@ -243,7 +243,7 @@
                     else
                     {
                         <div class="grid_18 standard-text">
-                            @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.InjuryRelated, blankform)
+                            @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.InjuryRelated, false)
                         </div>
                     }
                     <div class="clear-height-spacing clear">
@@ -275,7 +275,7 @@
                     else
                     {
                         <div class="grid_18 standard-text">
-                            @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.WorkerCompentationRelated, blankform)
+                            @AppCommon.GetObjectPropertyVal(priorAuthorityRequestObj.WorkerCompentationRelated, false)
                         </div>
                     }
                     <div class="clear-height-spacing clear">
@@ -410,6 +410,5 @@
                 </ol>
             </div>
         </div>
-        </div>
-    </div>
-</div>
+       </div>
+    

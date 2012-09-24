@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using SimChartMedicalOffice.Core.DataInterfaces.Patient;
 using System.Web.Mvc;
-using System.Web.Script.Serialization;
+using SimChartMedicalOffice.Common.Logging;
 using SimChartMedicalOffice.Core.Patient;
 using SimChartMedicalOffice.Core;
 using SimChartMedicalOffice.Common.Utility;
 using System.Web;
 using System.IO;
-using SimChartMedicalOffice.ApplicationServices.Builder;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder;
 using SimChartMedicalOffice.Core.Json;
 using SimChartMedicalOffice.Common;
@@ -23,8 +20,8 @@ namespace SimChartMedicalOffice.Web.Controllers
         private readonly IMasterService _masterService;
         public PatientController(IPatientService patientService, IMasterService masterService)
         {
-            this._patientService = patientService;
-            this._masterService = masterService;
+            _patientService = patientService;
+            _masterService = masterService;
         }
 
         /// <summary>
@@ -35,7 +32,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         {
             try
             {
-                ViewData["officeType"] = new SelectList(AppCommon.officeTypeOptions, "officeType");
+                ViewData["officeType"] = new SelectList(AppCommon.OfficeTypeOptions, "officeType");
                 Dictionary<int, string> patientProviderValues = _masterService.GetPatientProviderValues();
                 var patientProviderList = (from item in patientProviderValues select new { Id = item.Key, Name = item.Value }).ToList();
                 ViewData["provider"] = new SelectList(patientProviderList, "Id", "Name", 2);
@@ -43,26 +40,26 @@ namespace SimChartMedicalOffice.Web.Controllers
                 //ViewBag.PatientList = GetPatientForGuid();
                 ViewBag.MrnNumber = AppCommon.GenerateRandomNumber();
             }
-            catch
+            catch (Exception ex)
             {
-                //to do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: Patient, MethodName:Patient", ex);
             }
             return View("../Builder/Patient/PatientProfileSetUp");
         }
 
         public List<Patient> GetAllPatients()
         {
-            List<Patient> patientsList = new List<Patient>();
-            patientsList = _patientService.GetAllPatients();
+            List<Patient> patientsList = _patientService.GetAllPatients();
             return patientsList;
         }
 
         public ActionResult GetPatientForGuid(string patientUrl)
         {
-            Patient patientForGuid = new Patient();
-            patientForGuid = _patientService.GetPatientForGuid(patientUrl);
+            Patient patientForGuid = _patientService.GetPatientForGuid(patientUrl);
             return Json(new { Result = patientForGuid, PatientAge = patientForGuid.FormAgeText()});
         }
+
         /// <summary>
         /// To save the patient
         /// </summary>
@@ -70,14 +67,12 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SavePatient(string patientUrlReference, string folderIdentifier, bool isEditMode)
         {
-            string patientJson = "";
-            string result = "";
-            Patient patientObject = new Patient();
+            string result;
             Patient patient = new Patient();
             try
             {
-                patientJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                patientObject = JsonSerializer.DeserializeObject<Patient>(patientJson);
+                string patientJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                Patient patientObject = JsonSerializer.DeserializeObject<Patient>(patientJson);
                 patientObject.Status = "Unpublished";
                 patientObject.IsActive = true;
                 SetAuditFields(patientObject, isEditMode);
@@ -90,13 +85,16 @@ namespace SimChartMedicalOffice.Web.Controllers
                     }
                 }                
                 _patientService.SavePatient(patient, GetLoginUserCourse() + "/" + GetLoginUserRole(), patientUrlReference, folderIdentifier, isEditMode);
+                result = "success";
             }
             catch (Exception ex)
             {
-                result = "A problem was encountered preventing" + ex;
+                result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("error: ControllerName: Patient, MethodName: SavePatient", ex);
+                //errorMessage = AppConstants.Error;
             }
 
-            return Json(new { Result = "success" });
+            return Json(new { Result = result });
         }
 
         /// <summary>
@@ -107,13 +105,13 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <param name="folderType"></param>
         /// <param name="filterByAge"></param>
         /// <param name="filterBySearch"></param>
+        /// <param name="selectedPatientList"> </param>
+        /// <param name="folderUrl"> </param>
         /// <returns></returns>
-        public ActionResult GetPatientList(jQueryDataTableParamModel param, string parentFolderIdentifier, int folderType, string filterByAge, string filterBySearch, string selectedPatientList, string folderUrl)
+        public ActionResult GetPatientList(JQueryDataTableParamModel param, string parentFolderIdentifier, int folderType, string filterByAge, string filterBySearch, string selectedPatientList, string folderUrl)
         {
-            var result = "";
             try
             {
-                int patientListCount = 0;                
                 int sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
                 string sortColumnOrder = Request["sSortDir_0"];   
                 IList<Patient> patientList = _patientService.GetPatientItems(parentFolderIdentifier, folderType, sortColumnIndex, sortColumnOrder,
@@ -123,7 +121,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                 IList<Patient> patientListToRender =
                     patientList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
                 string[] strArray = AppCommon.GetStringArrayAfterSplitting(selectedPatientList);
-                patientListCount = patientList.Count;
+                int patientListCount = patientList.Count;
                 var data = (from patientItem in patientListToRender
                             select new[]
                                    {                                       
@@ -140,7 +138,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                                        !string.IsNullOrEmpty(patientItem.CreatedTimeStamp.ToString("MM/dd/yyyy"))
                                            ? patientItem.CreatedTimeStamp.ToString("MM/dd/yyyy")
                                            : "",
-                                       !string.IsNullOrEmpty(patientItem.Status) ? patientItem.Status : "",
+                                       !string.IsNullOrEmpty(patientItem.Status) ? patientItem.Status : ""
                                    }).ToArray();
                 var jsonData = Json(new
                                         {
@@ -154,7 +152,7 @@ namespace SimChartMedicalOffice.Web.Controllers
             }
             catch (Exception patientGrid)
             {
-                result = AjaxCallResult(new AjaxResult(SimChartMedicalOffice.Common.AppEnum.ResultType.Error, patientGrid.ToString(), ""));
+                string result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, patientGrid.ToString(), ""));
                 return Json(new { Result = result });
             }
         }
@@ -171,18 +169,16 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <param name="param"></param>
         /// <param name="strSearchText"></param>
         /// <returns></returns>
-        public ActionResult GetPatientSearchList(jQueryDataTableParamModel param, string strSearchText)
+        public ActionResult GetPatientSearchList(JQueryDataTableParamModel param, string strSearchText)
         {
 
             try
             {
-                int patientCount = 0;
-                IList<PatientProxy> lstPatientSearchResult = new List<PatientProxy>();
                 int sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
                 string sortColumnOrder = Request["sSortDir_0"];
-                lstPatientSearchResult = _patientService.GetSearchResultsForPatient(strSearchText, sortColumnIndex, sortColumnOrder, GetLoginUserCourse(), GetLoginUserRole());               
+                IList<PatientProxy> lstPatientSearchResult = _patientService.GetSearchResultsForPatient(strSearchText, sortColumnIndex, sortColumnOrder, GetLoginUserCourse(), GetLoginUserRole());               
                 IList<PatientProxy> patientSearchListToRender = lstPatientSearchResult.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
-                patientCount = lstPatientSearchResult.Count;
+                int patientCount = lstPatientSearchResult.Count;
                 var data = (from patientItem in patientSearchListToRender
                             select new[]
                                    {
@@ -193,11 +189,11 @@ namespace SimChartMedicalOffice.Web.Controllers
                                            : "",
                                        !string.IsNullOrEmpty(patientItem.Sex) ? ((patientItem.Sex == "Male")?"M":"F") : "",
                                        !string.IsNullOrEmpty(patientItem.DateOfBirth) ? patientItem.DateOfBirth : "",
-                                       !string.IsNullOrEmpty(patientItem.Age.ToString()) ? patientItem.Age.ToString() : "",
+                                       !string.IsNullOrEmpty(patientItem.Age) ? patientItem.Age : "",
                                        !string.IsNullOrEmpty(patientItem.CreatedTimeStamp.ToString("MM/dd/yyyy"))
                                            ? patientItem.CreatedTimeStamp.ToString("MM/dd/yyyy")
                                            : "",
-                                       !string.IsNullOrEmpty(patientItem.Status) ? patientItem.Status : "",
+                                       !string.IsNullOrEmpty(patientItem.Status) ? patientItem.Status : ""
                                    }).ToArray();
                 return Json(new
                 {
@@ -209,9 +205,10 @@ namespace SimChartMedicalOffice.Web.Controllers
             JsonRequestBehavior.AllowGet);
 
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: Patient, MethodName: GetPatientSearchList", ex);
             }
             return Json(new { Result = string.Empty });
         }
@@ -220,24 +217,24 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <summary>
         /// To render patient in edit mode
         /// </summary>
-        /// <param name="patientid">Url of patient to load</param>
+        /// <param name="patientUrl"></param>
         /// <returns></returns>
         public ActionResult RenderPatientInEditMode(string patientUrl)
         {
 
             try
             {
-                Patient patientObject = new Patient();
-                patientObject = _patientService.GetPatientForGuid(patientUrl);
+                Patient patientObject = _patientService.GetPatientForGuid(patientUrl);
                 SetViewBagsForEditMode(patientObject);
                 ViewBag.PatientUrl = patientUrl;
+                ViewData["officeType"] = new SelectList(AppCommon.OfficeTypeOptions, "officeType");
+                ViewData["provider"] = new SelectList(AppCommon.ProviderOptions, "provider");
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: Patient, MethodName:RenderPatientInEditMode", ex);
             }
-            ViewData["officeType"] = new SelectList(AppCommon.officeTypeOptions, "officeType");
-            ViewData["provider"] = new SelectList(AppCommon.providerOptions, "provider");
             return View("../Builder/Patient/PatientProfileSetUp");
         }
 
@@ -268,9 +265,10 @@ namespace SimChartMedicalOffice.Web.Controllers
                 }
 
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: Patient, MethodName:SetViewBagsForEditMode", ex);
             }
         }
     }

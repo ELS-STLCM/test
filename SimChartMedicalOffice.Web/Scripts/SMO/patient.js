@@ -11,7 +11,7 @@ var patient = {
             var isSearchValid = true;
             if (isNullOrEmpty(searchText) || searchText.length < 2) {
                 isSearchValid = false;
-                jAlert(SEARCH_VALIDATION, ALERT_TITLE, function (isOk) {
+                jAlert(SEARCH_VALIDATION, ALERT_TITLE, function () {
                 });
             }
             if (isSearchValid) {
@@ -69,7 +69,7 @@ var patient = {
             };
             return patientJson;
         },
-        cancel: function (isEditMode, savePatientUrl) {
+        cancel: function () {
             var status = "Are you sure you want to cancel? Your changes will not be saved.";
             jConfirm(status, 'Cancel', function (isCancel) {
                 if (isCancel) {
@@ -87,9 +87,8 @@ var patient = {
             });
         },
         validatePatientFields: function () {
-            var errormessage = "";
             var isValid = false;
-            errorMessage = "<UL>";
+            var errorMessage = "<UL>";
             if (isNullOrEmpty($("#firstName").val()) || isNullOrEmpty($("#lastName").val()) ||
                 (isNullOrEmpty($("#ageInYears").val()) && isNullOrEmpty($("#ageInMonths").val()) &&
                 isNullOrEmpty($("#ageInDays").val())) || isNullOrEmpty($("#dayOfBirth").val()) ||
@@ -125,11 +124,12 @@ var patient = {
         getOrSetImageReference: function (isValueReturn, imageRefName, imageRefId) {
             var valueToreturn = "";
             if (isValueReturn) {
-                return getImageRefData("patientImage")
+                return getImageRefData("patientImage");
             }
             else {
-                loadImageToImageDiv(imageRefId, "patientImage", true)
+                loadImageToImageDiv(imageRefId, "patientImage", true);
             }
+            return valueToreturn;
         },
         loadPatientInEditMode: function (strUrlOfPatient) {
             startAjaxLoader();

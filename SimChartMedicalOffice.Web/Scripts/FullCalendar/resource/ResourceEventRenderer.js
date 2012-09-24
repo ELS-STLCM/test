@@ -1,4 +1,11 @@
+/*
+Note : File modified for Event title display in SimChart for Medical Office
+A)        Line Changed from : Ln.No 337 -   htmlEscape(event.title) +
+          Line Changed to : Ln.No 339 - replaceHTMLBreak(event.title) +
 
+B)        Line Changed from : Ln.No 290 - .text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);  
+          Line Changed to : Ln.No 292 -   .html(formatDate(event.start, opt('timeFormat')) + '   ' + event.title);
+*/
 function ResourceEventRenderer() {
     var t = this;
 	
@@ -279,7 +286,10 @@ function ResourceEventRenderer() {
                 if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
                     // not enough room for title, put it in the time header
                     eventElement.find('div.fc-event-time')
-                    .text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
+                    //Commented for customizing title display - Original Line in js 
+                        //.text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
+                    //Customizing Title display for SimChart for Medical office
+                        .html(formatDate(event.start, opt('timeFormat')) + '   ' + event.title);
                     eventElement.find('div.fc-event-title')
                     .remove();
                 }
@@ -326,7 +336,10 @@ function ResourceEventRenderer() {
         "</div>" +
         "<div class='fc-event-content'>" +
         "<div class='fc-event-title'>" +
-        htmlEscape(event.title) +
+        //Commented for customizing title display - Original Line in js 
+            //  htmlEscape(event.title) +
+        //Customizing Title display for SimChart for Medical office
+        replaceHTMLBreak(event.title) +
         "</div>" +
         "</div>" +
         "<div class='fc-event-bg'></div>" +

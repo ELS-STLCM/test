@@ -1,19 +1,11 @@
 ﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.SkillSetBuilder;
-using SimChartMedicalOffice.Core.Patient;
 using SimChartMedicalOffice.Core.QuestionBanks;
+using SimChartMedicalOffice.Core.SkillSetBuilder;
 
 namespace SimChartMedicalOffice.Core.AssignmentBuilder
 {
     public class Assignment : DocumentEntity
     {
-        /// <summary>
-        /// Constructor of Assignment object
-        /// </summary>
-        public Assignment() { }
-
         /// <summary>
         /// This property holds the title of the Assignment
         /// </summary>

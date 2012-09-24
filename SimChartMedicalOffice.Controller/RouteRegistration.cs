@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using System.Web.Routing;
-using SimChartMedicalOffice.ApplicationServices;
 using SimChartMedicalOffice.Common;
 
 namespace SimChartMedicalOffice.Web.Controllers
@@ -20,7 +14,7 @@ namespace SimChartMedicalOffice.Web.Controllers
             routes.MapRoute(
                 "Default", // Route name
                 "{controller}/{action}/{id}", // URL with parameters
-                new { controller = "Account", action = "Logon", id = UrlParameter.Optional } // Parameter defaults
+                new { controller = "Account", action = "TestDropBox", id = UrlParameter.Optional } // Parameter defaults
             );
 
             AppCommon.RegisterLog4Net();

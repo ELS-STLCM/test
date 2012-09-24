@@ -1,15 +1,17 @@
 ﻿@{
     Layout = null;
 }
-<div class="grid_24">
+<div class="grid_24 competency-holder-height">
     <div class="clear-height-spacing clear">
     </div>
+    <div style="height: 25px">
     <div class="grid_22 form-page-header" style="padding-top: 0px">
         Competency Maintenance
     </div>
     <div class="grid_10 remove-div-space" style="float:right" >
         @Html.TextBox("competencySearchByText", "", new { id = "competencySearchByText", @class = "grid_27" })
         <img id="competencyButtonSearch" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")"  onclick ="searchCompetency()"/>
+    </div>
     </div>
     <div class="clear-min-height-spacing clear">
     </div>
@@ -19,7 +21,6 @@
     <div id="showCreateNewCompetency">   
     </div>
     </div>
-
     <script type="text/javascript">
         $(document).ready(function () {
             //disableAButton("btnDeleteCompetency");

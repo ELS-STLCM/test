@@ -5,10 +5,6 @@ namespace SimChartMedicalOffice.Core.SkillSetBuilder
 {
     public class SkillSetRepository : DocumentEntity
     {
-        public SkillSetRepository()
-        {
-
-        }
         /// <summary>
         /// This property holds the dictionary of skillset with new GUID 
         /// Relationship is one to many .

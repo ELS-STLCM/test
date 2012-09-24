@@ -38,7 +38,15 @@
                     <div class="assignment-accordion assignment-accordion-inner-header select-hand" id="-@indexInnerAccordionVal">
                         <div class="clear clear-min-height-spacing">
                             &nbsp;</div>
-                        <div class="grid_31 assignment-step4-header header-text">@items.Name</div>
+                            @if (items.Name != "")
+            {
+                 <div class="grid_31 assignment-step4-header header-text">@items.Name</div>
+            }
+            else
+            {
+                 <div class="grid_31 assignment-step4-header header-text">&nbsp;</div>
+            }
+                        
                         <div class="align-div-inline">
                             <img id="accordion-img--@indexInnerAccordionVal" src="../../../Content/Images/arrow_black_section_right_normal.png" alt="x" class="assignment-accordion-close"/></div>
                         <div class="clear clear-min-height-spacing">
@@ -88,8 +96,8 @@
         <div class="hide-content assignment-accordion-body" id="accordion-body-resources">
                     <div class="clear clear-min-height-spacing">
                 &nbsp;</div>
-                        @{ bool isSeperator = false;
-                           int countOfResources = 0;
+                        @{
+                            int countOfResources = 0;
                            foreach (Resource itemResource in assignmentResources)
                            {
                                countOfResources++;
@@ -113,7 +121,7 @@
                             <div class="grid_27">@itemResource.PageRange</div>
                                                                                         <div class="clear clear-min-height-spacing">
                                   &nbsp;</div>
-                                            if (!(countOfResources == assignmentResources.Count))
+                                            if (countOfResources != assignmentResources.Count)
                                             {
 
                                    <div class="grid_32 section-seperator"/>

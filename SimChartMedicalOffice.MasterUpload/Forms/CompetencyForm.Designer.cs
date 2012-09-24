@@ -62,7 +62,7 @@
             this.btnFireBase.TabIndex = 6;
             this.btnFireBase.Text = "To Firebase";
             this.btnFireBase.UseVisualStyleBackColor = true;
-            this.btnFireBase.Click += new System.EventHandler(this.btnFireBase_Click);
+            this.btnFireBase.Click += new System.EventHandler(this.BtnFireBaseClick);
             // 
             // button1
             // 
@@ -72,7 +72,7 @@
             this.button1.TabIndex = 7;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.button1.Click += new System.EventHandler(this.Button1Click);
             // 
             // CompetencyForm
             // 
@@ -84,7 +84,7 @@
             this.Controls.Add(this.groupBox1);
             this.Name = "CompetencyForm";
             this.Text = "Competency";
-            this.Load += new System.EventHandler(this.Competency_Load);
+            this.Load += new System.EventHandler(this.CompetencyLoad);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);

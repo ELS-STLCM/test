@@ -5,6 +5,9 @@
             cache: false
         });
         forms.PatientRecordsAccessForm.OnPageLoad('@ViewBag.FormValue');
+        setFormsRepositoryHeight();
+        setFormsContentHeight();
+        setPatientRecordsInnerContentHeight();
     });
     //For adding the SavePriorAuthorizationForm row to the DB.
     $("#savePatientRecord-5").click(function () {
@@ -44,7 +47,8 @@
         });
     });
 </script>
-<div class="grid_24 standard-text">
+<div class="grid_24 standard-text forms-content-height" id="patient_records_access_outer_content">
+    <div style="height: 60px;">
     <div class="form-page-header">
         Patient Records Access Request
     </div>
@@ -58,9 +62,10 @@
         <div class="grid_32 guidance-text-spacing">
     </div>
     </div>
+    </div>
     <div class="clear clear-height-spacing">
     </div>
-    <div id="patient_records_access_main_content" class="div-with-border grid_32 form-patient-records-content vertical-content-scroll">
+    <div id="patient_records_access_main_content" class="div-with-border grid_32 form-patient-records-content vertical-content-scroll PatientRecord-inner-content-height">
         <div id="validationSummary" class="error-message grid_32">
         </div>
         <div class="grid_32">

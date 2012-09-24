@@ -1,5 +1,4 @@
 ﻿<!DOCTYPE html>
-@using System.Web.Mvc
 @using System.Configuration
 <html>
 <head>
@@ -62,7 +61,7 @@
                 </div>
             @if (ConfigurationManager.AppSettings["ENVIRONMENT"] == "OFFSHORE")
             {
-                <a id="debug" onclick="showOrhideDebugDiv()" class="debug-font"><u >Debug</u></a>
+                <a id="debug" onclick="showOrhideDebugDiv()" class="debug-font"><u>Debug</u></a>
                 <a id="clearDebug" onclick="clearDebugDiv()" class="debug-font"><u>Clear</u></a>
                 <div class="grid_32 hide-content div-with-border loading-time" id="loadTime">
                      <ul id="loaddata"></ul>
@@ -70,21 +69,26 @@
             }
             </div>
             <div id="footer" class="remove-div-space" style="height: 15px">
-                Copyright © 2013 <a href="http://www.elsevier.com/" class="link select-hand" target="_blank">
-                    Elsevier Inc.</a> All Rights Reserved.</div>
+                Copyright © 2014 <a href="http://www.elsevier.com/" class="link select-hand" target="_blank">
+                    Elsevier</a> Inc. All Rights Reserved.</div>
         </div>
+    </div>
+
+<div id="heartBeat" style="display: none;">
+        <iframe id="iheartBeat" frameborder="0" width="0%" height="0px" style="display: none;"
+            src="../Account/HeartBeat"></iframe>
     </div>
     <script type="text/javascript">
         var start;
         var environmentVar = '@ConfigurationManager.AppSettings["ENVIRONMENT"]';
-        $('#main').ajaxStart(function (event) {
+        $('#main').ajaxStart(function () {
             start = new Date().getTime();
         });
-        $('#main').ajaxComplete(function (e, xhr, settings) { 
+        $('#main').ajaxComplete(function (e, xhr, settings) {
             var end = new Date(e.timeStamp).getTime();
             var time = end - start;
-            if(environmentVar=="OFFSHORE")
-                $("#loaddata").append("<LI>"+settings.url.split('?')[0]+ ":" + time + " ms</LI>");
+            if (environmentVar == "OFFSHORE")
+                $("#loaddata").append("<LI>" + settings.url.split('?')[0] + ":" + time + " ms</LI>");
         });
         function showOrhideDebugDiv() {
             if($("#loadTime").hasClass('hide-content')){
@@ -97,6 +101,14 @@
             $("#loaddata").empty();
             $("#loadTime").removeClass('show-content').addClass('hide-content');
         }
+        $(document).ready(function () {
+            var windowHeight = $(window).height();
+            var headerHeight = $('#header').innerHeight();
+            var footerHeight = $('#footer').innerHeight();
+            var clearSpace = 40;
+            var appheight = windowHeight - headerHeight - footerHeight - clearSpace;
+            $('#main').css('height', appheight);
+        });
     </script>
 </body>
 </html>

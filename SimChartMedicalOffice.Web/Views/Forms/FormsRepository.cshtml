@@ -29,6 +29,10 @@
     {
         @Html.Partial("../../Views/Forms/Confirmation") 
     }
+     @if (ViewBag.FormValue != null && (int)ViewBag.FormValue == (int)SimChartMedicalOffice.Common.AppEnum.FormsRepository.MedicalRecordsRelease)
+    {
+        @Html.Partial("../../Views/Forms/MedicalRecordsRelease") 
+    }
 </div>
 <div id="PatientSearchGrid" class="grid_32 container-grid-height" style="display: none">
 </div>

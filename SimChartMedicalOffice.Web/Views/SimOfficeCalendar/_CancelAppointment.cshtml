@@ -3,39 +3,52 @@
 }
 @{
     string strCancelName = (ViewData["CancelValue"] != null) ? ViewData["CancelValue"].ToString() : String.Empty;
+    string strCurrent = (ViewData["CancelValue"] != null && ViewData["CancelValue"].ToString() != "Edit") ? "Only this appointment" : "Open this occurence";
+    string strAll = (ViewData["CancelValue"] != null && ViewData["CancelValue"].ToString() != "Edit") ? "All appointments in this series" : "Open the series";
 }
 <script type="text/javascript">
 </script>
 <div id="appointment_cancel_view">
     <div class="clear-height-spacing clear">
     </div>
-    <div>
-        Would you like to @strCancelName this appointment only or all appointments in the
-        series?
-    </div>
+    @if (strCancelName != "Edit")
+    {
+        <div>
+            Would you like to @strCancelName this appointment only or all appointments in the
+            series?
+        </div>
+    }
+    else
+    {
+        <div>
+            This appointment is recurring appointment. Do you want to open only this occurence
+            or the series?
+        </div>
+    }
+    @Html.Hidden("AppointmentMode", @strCancelName)
     <div class="clear-height-spacing clear">
     </div>
     <div class="grid_32">
         @Html.RadioButton("CancelAppointment", "Current", true, new { @id = "rbtnCurrentOccurence" })
-        <label for="Current">
-            Only this appointment</label>
+        <label for="rbtnCurrentOccurence">
+            @strCurrent</label>
         <div class="clear-height-spacing clear">
         </div>
         @Html.RadioButton("CancelAppointment", "All", false, new { @id = "rbtnEntireOccurence" })
-        <label for="All">
-            All appointments in this series</label>
+        <label for="rbtnEntireOccurence">
+            @strAll</label>
     </div>
     <div class="clear-height-spacing clear">
     </div>
     <div class="clear-height-spacing clear">
     </div>
     <div class="grid_32">
-        <div class="align-div-inline">
+        <div class="prefix_8 align-div-inline">
             <div class="align-div-inline">
                 <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_grey.jpg")"
                      class="standard-height-for-buttons" /></div>
             <input type="button" class="cancel-button align-div-inline standard-height-for-buttons"
-                style="width: 32px;" value="OK" title="OK" id="btnOk" onclick="appointment.SubmitCancelledAppointment;" />
+                style="width: 32px;" value="OK" title="OK" id="btnOk" onclick="appointment.SubmitCancelledAppointment()" />
             <div class="align-div-inline">
                 <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_grey.jpg")"
                      class="standard-height-for-buttons" /></div>

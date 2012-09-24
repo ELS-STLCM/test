@@ -29,15 +29,12 @@
         "bProcessing": false,
         "bServerSide": true,
         "sAjaxSource": "../SkillSet/GetSkillSetSearchList?strSearchText=" + "@ViewBag.SearchText" + "&strSource=" + "@ViewBag.searchSource",
-        "fnInitComplete": function (oSettings, json) {
-            //startAjaxLoader();
-        },
         "fnServerData": function (sSource, aoData, fnCallback) {
             //startAjaxLoader();
             $.getJSON(sSource, aoData, function (json) {
                 /* Do whatever additional processing you want on the callback, then tell DataTables */               
                 fnCallback(json);
-                if ($('#skillSet_search .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                if ($('#skillSet_search .dataTables_scrollBody').css('height').replace('px', '') > setInnerAdjustedHeight()) {
                     setScrollableTableBorder(true, 'skillSet_search');
                 }
                 else {
@@ -63,7 +60,7 @@
         "sPaginationType": "full_numbers",
         "bSort": true,
         "sScrollX": "100%",
-        "sScrollY": "270px",
+        "sScrollY": setAdjustedHeightSearchGrid() + "px",
         "bScrollCollapse": true,
         "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
         "fnDrawCallback": function () {

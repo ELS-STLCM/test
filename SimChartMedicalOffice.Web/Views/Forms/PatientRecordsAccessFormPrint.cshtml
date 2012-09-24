@@ -4,7 +4,7 @@
      Layout = "~/Views/Shared/_LayoutPartialForPrint.cshtml";
  }
  @{
-     PatientRecordsAccessForm patientRecordsFormObject = null;
+     PatientRecordsAccessForm patientRecordsFormObject;
      bool blankform = false;
      if (ViewBag.patientRecordsAccess == null)
      {

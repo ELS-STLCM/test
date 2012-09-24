@@ -1,4 +1,4 @@
-﻿<div class="grid_24 standard-text">
+﻿<div class="grid_24 standard-text forms-content-height">
     <div class="form-page-header">
         Patient Bill of Rights</div>
     <div class="grid_32 alpha  guidance-message ">
@@ -12,15 +12,18 @@
     </div>
     <div class="clear clear-height-spacing">
     </div>
-    <div id="billOfRights" class="grid_32" style="overflow:hidden">
+    <div id="billOfRights" class="grid_32 forms-inner-content-height" style="overflow:hidden">
     @*Do not change the class name of the iframe. Class names are used for selectors*@
-        <iframe id="billOfRightsPdfId" scrolling="no" class="forms-pdf-content" src="@Url.Action("GetPdfAttachment", "Forms", new { strFormName = @ViewBag.BillOfRightsFormPdfid, nocache = '1' })">
+        <iframe id="billOfRightsPdfId" scrolling="no" class="forms-pdf-content forms-inner-content-height" src="@Url.Action("GetPdfAttachment", "Forms", new { strFormName = @ViewBag.BillOfRightsFormPdfid, nocache = '1' })">
         </iframe>
     </div>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        disableAButtonForForms("savePatientRecord-3");       
+        disableAButtonForForms("savePatientRecord-3");
+        setFormsRepositoryHeight();
+        setFormsContentHeight();
+        setFormsInnerContentHeight();
     });
     $("#savePatientRecord-3").click(function () {
         forms.PatientBillofRights.Save('@ViewBag.FormValue');

@@ -1,27 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Script.Serialization;
-using SimChartMedicalOffice.Core.Forms;
+﻿using System.Web.Mvc;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Forms;
-using SimChartMedicalOffice.Core.Patient;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.TempObject;
-using SimChartMedicalOffice.Common.Utility;
-using SimChartMedicalOffice.Core;
 
 
 namespace SimChartMedicalOffice.Web.Controllers
 {
     public class FormRepositoryController : BaseController
     {
-        private readonly IFormsService _formsService;
+        //private readonly IFormsService _formsService;
 
         public FormRepositoryController(IFormsService formsService)
         {
-            this._formsService = formsService;
+          //  this._formsService = formsService;
         }
 
         public ActionResult Index()

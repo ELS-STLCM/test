@@ -2,6 +2,7 @@
 using SimChartMedicalOffice.Core.ProxyObjects;
 using SimChartMedicalOffice.Core.QuestionBanks;
 using SimChartMedicalOffice.Core.SkillSetBuilder;
+using SimChartMedicalOffice.Core.DropBox;
 
 namespace SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder
 {
@@ -18,7 +19,7 @@ namespace SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.
 
         IList<DocumentProxy> GetCompetencyQuestionListInSkillSet(string skillSetUniqueIdentifier, string strSearchText,
                                                                  string strQuestionType);
-        bool SaveSkillSet(SkillSet skillSetObjectFromUi, string courseId, string skillSetUrl, string folderIdentifier,
+        bool SaveSkillSet(SkillSet skillSetObjectFromUi, DropBoxLink dropBox, string skillSetUrl, string folderIdentifier,
                           bool isEditMode,out string skillSetIdentifier);
         IList<Core.Competency.Competency> GetAllCompetenciesForSkillSets(IList<SkillSet> skillSets);
         IList<string> GetLinkedCompetencySources(IList<string> competencyGuids,
@@ -29,7 +30,7 @@ namespace SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.
         bool SaveSkillStructure(string uniqueIdentifier, List<DocumentProxy> documentProxyQuestionOrderList);
         List<SkillSetProxy> GetAllSkillSetsInSkillSetRepository();
         List<SkillSetProxy> GetFilteredSkillSetsBasedOnCompetency(string competencyGuid);
-        List<SkillSetProxy> TransformSkillSetsToSkillSetProxy(IList<Core.SkillSetBuilder.SkillSet> skillSetList,
+        List<SkillSetProxy> TransformSkillSetsToSkillSetProxy(IList<SkillSet> skillSetList,
                                                               Folder parentFolder);
         IList<Core.Competency.Competency> GetAllCompetenciesForASkillSet(SkillSet skillSet);
         void SwapSkillSetSave(SkillSet skillSetObjToSave, string skillSetUrl);

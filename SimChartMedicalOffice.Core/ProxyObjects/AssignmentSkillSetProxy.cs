@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.AssignmentBuilder;
-
+﻿
 namespace SimChartMedicalOffice.Core.ProxyObjects
 {
     public class AssignmentSkillSetProxy : DocumentEntity

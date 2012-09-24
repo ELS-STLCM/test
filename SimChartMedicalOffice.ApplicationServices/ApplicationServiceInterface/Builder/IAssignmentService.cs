@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using SimChartMedicalOffice.Core.AssignmentBuilder;
-using SimChartMedicalOffice.Core.ProxyObjects;
 using SimChartMedicalOffice.Core.Patient;
-using SimChartMedicalOffice.Core.SkillSetBuilder;
+using SimChartMedicalOffice.Core.ProxyObjects;
 using SimChartMedicalOffice.Core.QuestionBanks;
+using SimChartMedicalOffice.Core.SkillSetBuilder;
 
 namespace SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder
 {

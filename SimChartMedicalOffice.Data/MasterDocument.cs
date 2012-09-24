@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SimChartMedicalOffice.Core.DataInterfaces;
-using SimChartMedicalOffice.Data.Repository;
-using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.QuestionBanks;
+using SimChartMedicalOffice.Common.Utility;
+using SimChartMedicalOffice.Core.DataInterfaces;
 
 namespace SimChartMedicalOffice.Data
 {
@@ -14,22 +11,22 @@ namespace SimChartMedicalOffice.Data
     {
         public MasterDocument()
         {
-            this.GetProviderValues();
-            this.GetPatientInsuranceValues();
-            this.GetAppointmentVisitTypeValues();
-            this.GetExamRoomList();
-            this.LoadBlockType();
-            this.LoadAppointmentStatus();
-            this.GetOtherTypeValues();
+            GetProviderValues();
+            GetPatientInsuranceValues();
+            GetAppointmentVisitTypeValues();
+            GetExamRoomList();
+            LoadBlockType();
+            LoadAppointmentStatus();
+            GetOtherTypeValues();
         }
 
-        private static Dictionary<int, string> providerList = new Dictionary<int, string>();
-        private static List<string> patientInsuranceList = new List<string>();
-        private static List<string> appointmentVisitTypeList = new List<string>();
-        private static List<string> examRoomList = new List<string>();
-        private static List<string> m_BlockType = new List<string>();
-        private static List<string> m_appointmentStatus = new List<string>();
-        private static List<string> otherTypeList = new List<string>();
+        private static Dictionary<int, string> _providerList = new Dictionary<int, string>();
+        private static List<string> _patientInsuranceList = new List<string>();
+        private static List<string> _appointmentVisitTypeList = new List<string>();
+        private static List<string> _examRoomList = new List<string>();
+        private static List<string> _mBlockType = new List<string>();
+        private static List<string> _mAppointmentStatus = new List<string>();
+        private static List<string> _otherTypeList = new List<string>();
         
 
         /// <summary>
@@ -38,15 +35,15 @@ namespace SimChartMedicalOffice.Data
         public void GetOtherTypeValues()
         {
             ClearOtherTypeList();
-            otherTypeList = new List<string>();
+            _otherTypeList = new List<string>();
             StringBuilder jsonString = new StringBuilder();
-            string otherTypeUrl = "SimApp/Master/AppointmentOtherType";
+            const string otherTypeUrl = "SimApp/Master/AppointmentOtherType";
             jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(otherTypeUrl)));
             string resultList = jsonString.ToString();
             if (!AppCommon.CheckIfStringIsEmptyOrNull(resultList))
             {
-                otherTypeList = JsonSerializer.DeserializeObject<List<string>>(resultList);
-                otherTypeList = otherTypeList.Where(x => !x.Equals(AppConstants.Select_DropDown)).OrderBy(x => x).ToList();
+                _otherTypeList = JsonSerializer.DeserializeObject<List<string>>(resultList);
+                _otherTypeList = _otherTypeList.Where(x => !x.Equals(AppConstants.SelectDropDown)).OrderBy(x => x).ToList();
             }
         }
 
@@ -55,17 +52,16 @@ namespace SimChartMedicalOffice.Data
         /// </summary>
         private static void ClearOtherTypeList()
         {
-            if (otherTypeList != null && otherTypeList.Count > 0)
+            if (_otherTypeList != null && _otherTypeList.Count > 0)
             {
-                otherTypeList.Clear();
+                _otherTypeList.Clear();
             }
         }
 
         public List<string> GetOtherType()
         {
-            List<string> otherType = new List<string>();
-            otherType.Add(AppConstants.Select_DropDown);
-            otherType.AddRange(otherTypeList);
+            List<string> otherType = new List<string> {AppConstants.SelectDropDown};
+            otherType.AddRange(_otherTypeList);
             return otherType;
         }
         /// <summary>
@@ -74,14 +70,14 @@ namespace SimChartMedicalOffice.Data
         private void GetProviderValues()
         {
             ClearproviderList();
-            providerList = new Dictionary<int, string>();
+            _providerList = new Dictionary<int, string>();
             StringBuilder jsonString = new StringBuilder();
-            string providerUrl = "SimApp/Master/PatientProvider";
+            const string providerUrl = "SimApp/Master/PatientProvider";
             jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(providerUrl)));
             string resultList = jsonString.ToString();
             if (!AppCommon.CheckIfStringIsEmptyOrNull(resultList))
             {
-                providerList = JsonSerializer.DeserializeObject<Dictionary<int, string>>(resultList);
+                _providerList = JsonSerializer.DeserializeObject<Dictionary<int, string>>(resultList);
                 //providerList = providerList.Where(x => !x.Equals(AppConstants.Select_DropDown)).OrderBy(x => x).ToList();
             }
 
@@ -97,15 +93,15 @@ namespace SimChartMedicalOffice.Data
             //List<string> provider = new List<string>();
             //provider.Add(AppConstants.Select_DropDown);
             //provider.AddRange(providerList);
-            return providerList;
+            return _providerList;
         }
 
 
         private static void ClearproviderList()
         {
-            if (providerList != null && providerList.Count > 0)
+            if (_providerList != null && _providerList.Count > 0)
             {
-                providerList.Clear();
+                _providerList.Clear();
             }
         }
 
@@ -116,15 +112,15 @@ namespace SimChartMedicalOffice.Data
         private void GetPatientInsuranceValues()
         {
             ClearpatientInsuranceList();
-            patientInsuranceList = new List<string>();
+            _patientInsuranceList = new List<string>();
             StringBuilder jsonString = new StringBuilder();
-            string providerUrl = "SimApp/Master/PatientInsurance";
+            const string providerUrl = "SimApp/Master/PatientInsurance";
             jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(providerUrl)));
             string resultList = jsonString.ToString();
             if (!AppCommon.CheckIfStringIsEmptyOrNull(resultList))
             {
-                patientInsuranceList = JsonSerializer.DeserializeObject<List<string>>(resultList);
-                patientInsuranceList = patientInsuranceList.Where(x => !x.Equals(AppConstants.Select_DropDown)).OrderBy(x => x).ToList();
+                _patientInsuranceList = JsonSerializer.DeserializeObject<List<string>>(resultList);
+                _patientInsuranceList = _patientInsuranceList.Where(x => !x.Equals(AppConstants.SelectDropDown)).OrderBy(x => x).ToList();
             }
 
         }
@@ -135,17 +131,16 @@ namespace SimChartMedicalOffice.Data
         /// <returns></returns>
         public List<string> GetPatientInsuranceUrl()
         {
-            List<string> insurance = new List<string>();
-            insurance.Add(AppConstants.Select_DropDown);
-            insurance.AddRange(patientInsuranceList);
+            List<string> insurance = new List<string> {AppConstants.SelectDropDown};
+            insurance.AddRange(_patientInsuranceList);
             return insurance;
         }
 
         private static void ClearpatientInsuranceList()
         {
-            if (patientInsuranceList != null && patientInsuranceList.Count > 0)
+            if (_patientInsuranceList != null && _patientInsuranceList.Count > 0)
             {
-                patientInsuranceList.Clear();
+                _patientInsuranceList.Clear();
             }
         }
 
@@ -155,9 +150,8 @@ namespace SimChartMedicalOffice.Data
         /// <returns></returns>
         public List<string> GetAppointmentVisitType()
         {
-            List<string> appointmentVisit = new List<string>();
-            appointmentVisit.Add(AppConstants.Select_DropDown);
-            appointmentVisit.AddRange(appointmentVisitTypeList);
+            List<string> appointmentVisit = new List<string> {AppConstants.SelectDropDown};
+            appointmentVisit.AddRange(_appointmentVisitTypeList);
             return appointmentVisit;
         }
 
@@ -167,23 +161,23 @@ namespace SimChartMedicalOffice.Data
         private void GetAppointmentVisitTypeValues()
         {
             ClearappointmentVisitType();
-            appointmentVisitTypeList = new List<string>();
+            _appointmentVisitTypeList = new List<string>();
             StringBuilder jsonString = new StringBuilder();
-            string providerUrl = "SimApp/Master/AppointmentVisitType";
+            const string providerUrl = "SimApp/Master/AppointmentVisitType";
             jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(providerUrl)));
             string resultList = jsonString.ToString();
             if (!AppCommon.CheckIfStringIsEmptyOrNull(resultList))
             {
-                appointmentVisitTypeList = JsonSerializer.DeserializeObject<List<string>>(resultList);
-                appointmentVisitTypeList = appointmentVisitTypeList.Where(x => !x.Equals(AppConstants.Select_DropDown)).OrderBy(x => x).ToList();
+                _appointmentVisitTypeList = JsonSerializer.DeserializeObject<List<string>>(resultList);
+                _appointmentVisitTypeList = _appointmentVisitTypeList.Where(x => !x.Equals(AppConstants.SelectDropDown)).OrderBy(x => x).ToList();
             }
         }
 
         private static void ClearappointmentVisitType()
         {
-            if (appointmentVisitTypeList != null && appointmentVisitTypeList.Count > 0)
+            if (_appointmentVisitTypeList != null && _appointmentVisitTypeList.Count > 0)
             {
-                appointmentVisitTypeList.Clear();
+                _appointmentVisitTypeList.Clear();
             }
         }
 
@@ -193,9 +187,8 @@ namespace SimChartMedicalOffice.Data
         /// <returns></returns>
         public List<string> GetExamRooms()
         {
-            List<string> examRoom = new List<string>();
-            examRoom.Add(AppConstants.Select_DropDown);
-            examRoom.AddRange(examRoomList);
+            List<string> examRoom = new List<string> {AppConstants.SelectDropDown};
+            examRoom.AddRange(_examRoomList);
             return examRoom;
         }
 
@@ -205,85 +198,86 @@ namespace SimChartMedicalOffice.Data
         private void GetExamRoomList()
         {
             ClearExamRoomList();
-            examRoomList = new List<string>();
+            _examRoomList = new List<string>();
             StringBuilder jsonString = new StringBuilder();
-            string providerUrl = "SimApp/Master/ExamRoom";
+            const string providerUrl = "SimApp/Master/ExamRoom";
             jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(providerUrl)));
             string resultList = jsonString.ToString();
             if (!AppCommon.CheckIfStringIsEmptyOrNull(resultList))
             {
-                examRoomList = JsonSerializer.DeserializeObject<List<string>>(resultList);
-                examRoomList = examRoomList.Where(x => !x.Equals(AppConstants.Select_DropDown)).ToList();
+                _examRoomList = JsonSerializer.DeserializeObject<List<string>>(resultList);
+                _examRoomList = _examRoomList.Where(x => !x.Equals(AppConstants.SelectDropDown)).ToList();
             }
         }
 
         private static void ClearExamRoomList()
         {
-            if (examRoomList != null && examRoomList.Count > 0)
+            if (_examRoomList != null && _examRoomList.Count > 0)
             {
-                examRoomList.Clear();
+                _examRoomList.Clear();
             }
         }
 
         private void LoadBlockType()
         {
             ClearLoadBlockType();
-            List<string> blocktype = new List<string>();
             StringBuilder jsonString = new StringBuilder();
-            string providerUrl = "SimApp/Master/BlockType";
+            const string providerUrl = "SimApp/Master/BlockType";
             jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(providerUrl)));
             string resultList = jsonString.ToString();
             if (!AppCommon.CheckIfStringIsEmptyOrNull(resultList))
             {
-                m_BlockType = JsonSerializer.DeserializeObject<List<string>>(resultList);
-                m_BlockType = m_BlockType.Where(x => !x.Equals(AppConstants.Select_DropDown)).OrderBy(x => x).ToList();
+                _mBlockType = JsonSerializer.DeserializeObject<List<string>>(resultList);
+                _mBlockType = _mBlockType.Where(x => !x.Equals(AppConstants.SelectDropDown)).OrderBy(x => x).ToList();
             }
         }
 
         private static void ClearLoadBlockType()
         {
-            if (m_BlockType != null && m_BlockType.Count > 0)
+            if (_mBlockType != null && _mBlockType.Count > 0)
             {
-                m_BlockType.Clear();
+                _mBlockType.Clear();
             }
         }
 
         public List<string> GetBlockType()
         {
-            List<string> blockType = new List<string>();
-            blockType.Add(AppConstants.Select_DropDown);
-            blockType.AddRange(m_BlockType);
+            List<string> blockType = new List<string> {AppConstants.SelectDropDown};
+            blockType.AddRange(_mBlockType);
             return blockType;
         }
 
         private void LoadAppointmentStatus()
         {
             ClearLoadAppointmentStatus();
+            List<string> appointmentStatus = new List<string>();
             StringBuilder jsonString = new StringBuilder();
-            string providerUrl = "SimApp/Master/AppointmentStatus";
+            const string providerUrl = "SimApp/Master/AppointmentStatus";
             jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(providerUrl)));
             string resultList = jsonString.ToString();
             if (!AppCommon.CheckIfStringIsEmptyOrNull(resultList))
             {
-                m_appointmentStatus = JsonSerializer.DeserializeObject<List<string>>(resultList);
-                m_appointmentStatus = m_appointmentStatus.Where(x => !x.Equals(AppConstants.Select_DropDown)).OrderBy(x => x).ToList();
+                _mAppointmentStatus = JsonSerializer.DeserializeObject<List<string>>(resultList);
+                _mAppointmentStatus = _mAppointmentStatus.Where(x => !x.Equals(AppConstants.SelectDropDown)).OrderBy(x => x).ToList();
             }
+            appointmentStatus.Add(AppConstants.SelectDropDown);
+            appointmentStatus.AddRange(_mAppointmentStatus);
+            _mAppointmentStatus = appointmentStatus;
         }
 
 
         private static void ClearLoadAppointmentStatus()
         {
-            if (m_appointmentStatus != null && m_appointmentStatus.Count > 0)
+            if (_mAppointmentStatus != null && _mAppointmentStatus.Count > 0)
             {
-                m_appointmentStatus.Clear();
+                _mAppointmentStatus.Clear();
             }
         }
 
         public List<string> GetAppointmentStatus()
         {
-            List<string> appoinmentstatus = new List<string>();
-            appoinmentstatus.Add(AppConstants.Select_DropDown);
-            appoinmentstatus.AddRange(m_appointmentStatus);
+            List<string> appoinmentstatus = new List<string> {AppConstants.SelectDropDown};
+            appoinmentstatus.AddRange(_mAppointmentStatus);
             return appoinmentstatus;
         }
     }

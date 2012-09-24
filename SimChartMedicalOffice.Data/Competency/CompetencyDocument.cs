@@ -1,64 +1,51 @@
-﻿using SimChartMedicalOffice.Data.Repository;
-using SimChartMedicalOffice.Core.DataInterfaces.Competency;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
-using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.Common;
-using System.Linq;
-using System.Collections;
-using System;
+using SimChartMedicalOffice.Common.Utility;
+using SimChartMedicalOffice.Core.DataInterfaces.Competency;
+using SimChartMedicalOffice.Data.Repository;
 
 namespace SimChartMedicalOffice.Data
 {
     public class CompetencyDocument : KeyValueRepository<Core.Competency.Competency>, ICompetencyDocument
     {
-        private static IList<string> m_categoryMasterList;
-        private static IList<Core.Competency.Competency> m_competencyMasterList;
-        public override string Url
-        {
-            get
-            {
-                return "SimApp/Master/Competencies{0}{1}";
-            }
-        }
+        private static IList<string> _mCategoryMasterList;
+        private static IList<Core.Competency.Competency> _mCompetencyMasterList;
+       
 
         /// <summary>
-        /// To cache the list of competencies and list of category in sataic list 
+        /// To cache the list of competencies and list of category in sataic list
         /// </summary>
-        /// <param name=""></param>
-        /// <returns></returns>
         public CompetencyDocument()
         {
-            this.LoadCompetencies();
+            LoadCompetencies();
         }
 
         /// <summary>
         /// To load the list of competencies and list of category in sataic list 
         /// </summary>
-        /// <param name=""></param>
-        /// <returns></returns>
         public void LoadCompetencies()
         {
             StringBuilder jsonString = new StringBuilder();
-            jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(string.Format(this.Url,"",""))));
+            jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(string.Format(GetAssignmentUrl(Core.DocumentPath.Module.Masters,AppConstants.Competencies),"",""))));
             if (jsonString.ToString() != "null")
             {
                 ClearCompetencyMasters();
                 ClearCategoryMasters();
-                m_categoryMasterList = JsonSerializer.GetAllKeysFromJson(jsonString.ToString());
+                _mCategoryMasterList = JsonSerializer.GetAllKeysFromJson(jsonString.ToString());
                 var competencyDictionary = JsonSerializer.DeserializeObject<Dictionary<string, Dictionary<string, Core.Competency.Competency>>>(jsonString.ToString());
-                m_competencyMasterList = new List<Core.Competency.Competency>();
+                _mCompetencyMasterList = new List<Core.Competency.Competency>();
                 if (competencyDictionary != null)
                 {
                     foreach (var categoryKey in competencyDictionary)
                     {
                         foreach (var competencyValue in categoryKey.Value)
                         {
-                            Core.Competency.Competency competency = (Core.Competency.Competency)competencyValue.Value;
-                            competency.UniqueIdentifier = competencyValue.Key.ToString();
-                            competency.Category = categoryKey.Key.ToString();
-                            competency.Url = FormCompetencyUrl(this.Url, true, competency);
-                            m_competencyMasterList.Add(competency);
+                            Core.Competency.Competency competency = competencyValue.Value;
+                            competency.UniqueIdentifier = competencyValue.Key;
+                            competency.Category = categoryKey.Key;
+                            competency.Url = FormCompetencyUrl(GetAssignmentUrl(Core.DocumentPath.Module.Masters, AppConstants.Competencies), true, competency);
+                            _mCompetencyMasterList.Add(competency);
                         }
                     }
                 }
@@ -68,47 +55,41 @@ namespace SimChartMedicalOffice.Data
         /// <summary>
         /// To clear the list of competencies 
         /// </summary>
-        /// <param name=""></param>
-        /// <returns></returns>
         private static void ClearCompetencyMasters()
         {
-            if (m_competencyMasterList != null && m_competencyMasterList.Count > 0)
+            if (_mCompetencyMasterList != null && _mCompetencyMasterList.Count > 0)
             {
-                m_competencyMasterList.Clear();
+                _mCompetencyMasterList.Clear();
             }
         }
 
         /// <summary>
         /// To clear the list of category 
         /// </summary>
-        /// <param name=""></param>
-        /// <returns></returns>
         private static void ClearCategoryMasters()
         {
-            if (m_categoryMasterList != null && m_categoryMasterList.Count > 0)
+            if (_mCategoryMasterList != null && _mCategoryMasterList.Count > 0)
             {
-                m_categoryMasterList.Clear();
+                _mCategoryMasterList.Clear();
             }
         }
 
         /// <summary>
         /// To get list of Competency with category value as property.
         /// </summary>
-        /// <param name=""></param>
-        /// <returns>IList<Competency></returns>
+        /// <returns></returns>
         public IList<Core.Competency.Competency> GetAllCompetencies()
         {
-            return m_competencyMasterList;
+            return _mCompetencyMasterList;
         }
 
         /// <summary>
         /// To get list of dropdown values for Categories Dropdown.
         /// </summary>
-        /// <param ></param>
-        /// <returns>IList<string></returns>
+        /// <returns></returns>
         public IList<string> GetAllCategories()
         {
-            return m_categoryMasterList;
+            return _mCategoryMasterList;
         }
 
         /// <summary>
@@ -117,27 +98,19 @@ namespace SimChartMedicalOffice.Data
         /// <param ></param>
         /// <param name="competencyUrl"></param>
         /// <param name="isEditMode"></param>
-        /// <param name="competencyUIObject"></param>
+        /// <param name="competencyUiObject"></param>
         /// <returns>string</returns>
-        public string FormCompetencyUrl(string competencyUrl, bool isEditMode, Core.Competency.Competency competencyUIObject)
+        public string FormCompetencyUrl(string competencyUrl, bool isEditMode, Core.Competency.Competency competencyUiObject)
         {
             if (isEditMode)
             {
-                if (AppCommon.CheckIfStringIsEmptyOrNull(competencyUIObject.UniqueIdentifier))
+                if (AppCommon.CheckIfStringIsEmptyOrNull(competencyUiObject.UniqueIdentifier))
                 {
                     return competencyUrl;
                 }
-                else
-                {
-                    return string.Format(this.Url, string.Concat("/", competencyUIObject.Category), string.Concat("/", competencyUIObject.UniqueIdentifier));                    
-                }                
+                return string.Format(GetAssignmentUrl(Core.DocumentPath.Module.Masters, AppConstants.Competencies), string.Concat("/", competencyUiObject.Category), string.Concat("/", competencyUiObject.UniqueIdentifier));
             }
-            else
-            {
-                return string.Format(this.Url, string.Concat("/",competencyUIObject.Category),string.Concat("/",competencyUIObject.GetNewGuidValue()));
-            }
+            return string.Format(GetAssignmentUrl(Core.DocumentPath.Module.Masters, AppConstants.Competencies), string.Concat("/", competencyUiObject.Category), string.Concat("/", competencyUiObject.GetNewGuidValue()));
         }
-
-
     }
 }

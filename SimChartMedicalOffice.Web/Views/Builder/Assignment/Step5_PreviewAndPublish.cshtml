@@ -2,11 +2,11 @@
     Layout = null;
 }
 @{
-    bool isPublished = ViewBag.assignmentStatus != null ? (bool)ViewBag.assignmentStatus : false;
+    bool isPublished = ViewBag.assignmentStatus != null && (bool)ViewBag.assignmentStatus;
 }
 <div class="clear clear-min-height-spacing">
     &nbsp;</div>
-<div id="assignmentPreviewContent" class="div-with-border grid_32 assignment-preview-content vertical-content-scroll" style="width:784px;">
+<div id="assignmentPreviewContent" class="div-with-border grid_32 preview-publish-height vertical-content-scroll" style="width:784px;">
     <div class="grid_32 page-title">
         Step 5 of 5: Preview & Publish
     </div>
@@ -102,6 +102,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
+        setPreviewPublishHeight();
         $("#stepwiseImage").empty();
         $("#stepwiseImage").append("<img alt='' src='../../Content/Images/Buttons/step5AssignmentBuilder.PNG'/>");
         var isPublished = @isPublished.ToString().ToLower();

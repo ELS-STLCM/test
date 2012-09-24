@@ -1,17 +1,8 @@
-﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.Patient;
-
+﻿
 namespace SimChartMedicalOffice.Core.FrontOfficeCalendar
 {
     public class Appointment : DocumentEntity
     {
-        /// <summary>
-        /// Constructor of Calendar object
-        /// </summary>
-        public Appointment() { }
-
         /// <summary>
         /// This property holds the type of the appointment-- enum value
         /// </summary>

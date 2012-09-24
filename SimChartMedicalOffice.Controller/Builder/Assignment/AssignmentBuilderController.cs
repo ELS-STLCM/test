@@ -1,25 +1,21 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using System.Web;
 using System.IO;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
 using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Logging;
 using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.Core.Competency;
 using SimChartMedicalOffice.Core.DataInterfaces.QuestionBanks;
-using SimChartMedicalOffice.Core.DataInterfaces.SkillSetBuilder;
 using SimChartMedicalOffice.Core.Json;
 using SimChartMedicalOffice.Core.ProxyObjects;
 using SimChartMedicalOffice.Core.QuestionBanks;
 using SimChartMedicalOffice.Core.SkillSetBuilder;
-using SimChartMedicalOffice.Data.Repository;
 using SimChartMedicalOffice.Core.AssignmentBuilder;
-using SimChartMedicalOffice.ApplicationServices.Builder;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder;
 using SimChartMedicalOffice.Common.Extensions;
 using SimChartMedicalOffice.Core.Patient;
@@ -33,17 +29,17 @@ namespace SimChartMedicalOffice.Web.Controllers
         private readonly IQuestionBankDocument _questionBankDocument;
         private readonly ICompetencyService _competencyService;
         private readonly IQuestionBankService _questionBankService;
-        private readonly ISkillSetDocument _skillSetDocument;
+        //private readonly ISkillSetDocument _skillSetDocument;
         private readonly ISkillSetService _skillSetService;
 
-        public AssignmentBuilderController(IAssignmentService assignmentService, IQuestionBankDocument questionBankDocument, ICompetencyService competencyService, IQuestionBankService questionBankService, ISkillSetDocument skillSetDocument,ISkillSetService skillSetService)
+        public AssignmentBuilderController(IAssignmentService assignmentService, IQuestionBankDocument questionBankDocument, ICompetencyService competencyService, IQuestionBankService questionBankService,ISkillSetService skillSetService)
         {
-            this._assignmentService = assignmentService;
-            this._questionBankDocument = questionBankDocument;
-            this._competencyService = competencyService;
-            this._questionBankService = questionBankService;
-            this._skillSetDocument = skillSetDocument;
-            this._skillSetService = skillSetService;
+            _assignmentService = assignmentService;
+            _questionBankDocument = questionBankDocument;
+            _competencyService = competencyService;
+            _questionBankService = questionBankService;
+          //  this._skillSetDocument = skillSetDocument;
+            _skillSetService = skillSetService;
         }
         /// <summary>
         /// Method to set viewbg values to populate question type flexbox
@@ -60,10 +56,10 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// Method to save the assignment metadata step 1
         /// </summary>
         /// <param name="folderUrl"></param>
+        /// <param name="isEditMode"> </param>
         /// <returns></returns>
         public ActionResult SaveAssignmentMetadata(string folderUrl,bool isEditMode)
         {
-            string result = "";
             string assignmentId="";
             try
             {
@@ -75,26 +71,23 @@ namespace SimChartMedicalOffice.Web.Controllers
             }
             catch (Exception ex)
             {
-                result = AjaxCallResult(new AjaxResult(SimChartMedicalOffice.Common.AppEnum.ResultType.Error, ex.ToString(), ""));
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
             }
             return Json(new { assignmentUrl = assignmentId });
         }
         
         public ActionResult SaveAssignment()
         {
-            string assignmentJson = "";
             string result = "";
             bool isEditMode = false;
             string assignmentUrl = "";
-            Assignment assignmentObject = new Assignment();
             Assignment assignment = new Assignment();
             IList<SkillSetProxy> skillSetList = new List<SkillSetProxy>();
             IList<Question> questionList = new List<Question>();
             try
             {
-                assignmentJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                assignmentObject = JsonSerializer.DeserializeObject<Assignment>(assignmentJson);                
-                Type assignmentType = assignmentObject.GetType();
+                string assignmentJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                Assignment assignmentObject = JsonSerializer.DeserializeObject<Assignment>(assignmentJson);
                 //foreach (System.Reflection.PropertyInfo objProp in assignmentType.GetProperties())
                 //{
                 //    if (objProp.CanWrite && objProp.Name.ToUpper() != "ID")
@@ -109,7 +102,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                 {
                     assignment.Questions.Add(question.Key, question.Value);
                 }
-                if (assignment.Url != null && assignment.Url != "")
+                if (!string.IsNullOrEmpty(assignment.Url))
                 {
                     isEditMode = true;
                     assignmentUrl = assignment.Url;
@@ -124,7 +117,7 @@ namespace SimChartMedicalOffice.Web.Controllers
             }
             catch (Exception ex)
             {                
-                result = AjaxCallResult(new AjaxResult(SimChartMedicalOffice.Common.AppEnum.ResultType.Error, ex.ToString(), ""));
+                result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
             }
             return Json(new { AssignmentUrl = assignment.Url, skillSetList = skillSetList, questionList = questionList,AjaxResult=result });
 
@@ -137,12 +130,10 @@ namespace SimChartMedicalOffice.Web.Controllers
         public ActionResult SaveOrientation()
         {
             string result = "";
-            Assignment assignmentStream;
             Assignment assignment = new Assignment();
             try
             {
-                assignmentStream = new Assignment();                                
-                assignmentStream = DeSerialize<Assignment>();
+                Assignment assignmentStream = DeSerialize<Assignment>();
                 assignment = _assignmentService.GetAssignment(assignmentStream.Url);
                 assignment.Orientation = assignmentStream.Orientation;
                 assignment.PatientImageReferance = assignmentStream.PatientImageReferance;
@@ -153,14 +144,16 @@ namespace SimChartMedicalOffice.Web.Controllers
             }
             catch (Exception ex)
             {
-                result = AjaxCallResult(new AjaxResult(SimChartMedicalOffice.Common.AppEnum.ResultType.Error, ex.ToString(), ""));
+                result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
             }
             return Json(new { AssignmentUrl = assignment.Url, AjaxResult = result });
         }
+
         /// <summary>
         /// Method to get the question objects from the guids
         /// </summary>
         /// <param name="questionGuids"></param>
+        /// <param name="assignmentUrl"> </param>
         /// <returns></returns>
         public ActionResult GetSelectedQuestionObjectsFromGuid(string[] questionGuids, string assignmentUrl)
         {
@@ -176,7 +169,7 @@ namespace SimChartMedicalOffice.Web.Controllers
             {
                 string urlOfQuestion = _questionBankService.GetQuestionUrlToUpdate(questionGuid);
                 Question questionObjectFromQuestionBank = _questionBankService.GetQuestion(urlOfQuestion);
-                questionObjectFromQuestionBank.ParentReferenceGuid = questionGuid;
+                questionObjectFromQuestionBank.ParentReferenceGuid = urlOfQuestion;
                 string newGuidValue = questionObjectFromQuestionBank.GetNewGuidValue();
                 questionObjectFromQuestionBank.Url = assignmentUrl + "/Questions/" + newGuidValue;
                 questionObjectFromQuestionBank.SequenceNumber = nextSequenceNumber;
@@ -189,19 +182,18 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <summary>
         /// Get the Assignment for perticular Unique Identifier
         /// </summary>
-        /// <param name="assignmentUrl"></param>
+        /// <param name="assignmentUniqueIdentifier"></param>
         /// <returns></returns>
         public JsonResult GetAssignment(string assignmentUniqueIdentifier)
         {
             Assignment assignmentObj = new Assignment();
-            string result = "";
             try
             {                
                 assignmentObj = _assignmentService.GetAssignment(assignmentUniqueIdentifier);
             }
             catch (Exception ex)
             {
-                result = AjaxCallResult(new AjaxResult(SimChartMedicalOffice.Common.AppEnum.ResultType.Error, ex.ToString(), ""));
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
             }
             return Json(new { Result = assignmentObj });
         }
@@ -222,14 +214,13 @@ namespace SimChartMedicalOffice.Web.Controllers
         {
             ViewData["AssignmentDurationHrs"] = new SelectList(AppCommon.AssignmentDurationHrs.ToList(), "AssignmentDurationHrs");
             ViewData["AssignmentDurationMns"] = new SelectList(AppCommon.AssignmentDurationMns.ToList(), "AssignmentDurationMns");
-            ViewData["officeType"] = new SelectList(AppCommon.officeTypeOptions, "officeType");
-            ViewData["provider"] = new SelectList(AppCommon.providerOptions, "provider");
-            List<SkillSetProxy> skillList = new List<SkillSetProxy>();
+            ViewData["officeType"] = new SelectList(AppCommon.OfficeTypeOptions, "officeType");
+            ViewData["provider"] = new SelectList(AppCommon.ProviderOptions, "provider");
             List<SkillSetProxy> savedSkillList = new List<SkillSetProxy>();
 
             AssignmentProxySave assignmentToEdit=null;
 
-            skillList = _skillSetService.GetAllSkillSetsInSkillSetRepository();
+            List<SkillSetProxy> skillList = _skillSetService.GetAllSkillSetsInSkillSetRepository();
             skillList.RemoveAll(skillset => skillset.Status == null);
             skillList = (from skillSet in skillList where skillSet.Status.ToLower().Equals("published") select skillSet).ToList();
             // if edit mode, get saved and formatted competency list for the assignment
@@ -251,15 +242,17 @@ namespace SimChartMedicalOffice.Web.Controllers
                 // assigning other assignment attributes to assignmentToEdit proxy object
                 if (assignmentObj != null)
                 {
-                    assignmentToEdit= new AssignmentProxySave();
-                    assignmentToEdit.Title = assignmentObj.Title;
-                    assignmentToEdit.Module = assignmentObj.Module;
-                    assignmentToEdit.Keywords = assignmentObj.Keywords;
-                    assignmentToEdit.Duration = assignmentObj.Duration;
+                    assignmentToEdit = new AssignmentProxySave
+                                           {
+                                               Title = assignmentObj.Title,
+                                               Module = assignmentObj.Module,
+                                               Keywords = assignmentObj.Keywords,
+                                               Duration = assignmentObj.Duration
+                                           };
                     if (assignmentObj.Patients != null)
                     {
                         var patientObj =
-                            assignmentObj.Patients.Select(x => x.Value).Where(x => x.IsAssignmentPatient == true).ToList();
+                            assignmentObj.Patients.Select(x => x.Value).Where(x => x.IsAssignmentPatient).ToList();
                         if (patientObj.Count > 0)
                         {
                             assignmentToEdit.Patient = patientObj[0];
@@ -300,9 +293,8 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <param name="selectedAssignmentList"></param>
         /// <param name="folderUrl"></param>
         /// <returns></returns>
-        public ActionResult GetAssignmentList(jQueryDataTableParamModel param, string parentFolderIdentifier, int folderType, string filterByModule, string selectedAssignmentList, string folderUrl)
+        public ActionResult GetAssignmentList(JQueryDataTableParamModel param, string parentFolderIdentifier, int folderType, string filterByModule, string selectedAssignmentList, string folderUrl)
         {
-            int assignmentListCount = 0;
             string[] gridColumnList = { "Title", "Module", "LinkedCompetencies", "Duration", "CreatedTimeStamp", "Status" };
             List<Assignment> assignmentList = (List<Assignment>)_assignmentService.GetAssignmentItems(parentFolderIdentifier, folderType,
                                                                                      GetLoginUserCourse() + "/" +
@@ -353,12 +345,12 @@ namespace SimChartMedicalOffice.Web.Controllers
                     break;
                 default:
                     var sortableList = assignmentList.AsQueryable();
-                    assignmentList = sortableList.OrderBy<Assignment>(sortColumnName, sortColumnOrder).ToList<Assignment>();
+                    assignmentList = sortableList.OrderBy(sortColumnName, sortColumnOrder).ToList();
                     break;
             }
 
             IList<Assignment> assignmentListToRender = assignmentList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
-            assignmentListCount = assignmentList.Count;
+            int assignmentListCount = assignmentList.Count;
             string[] strArray = AppCommon.GetStringArrayAfterSplitting(selectedAssignmentList);
             var data = (from assignmentItem in assignmentListToRender
                         select new[]
@@ -404,9 +396,11 @@ namespace SimChartMedicalOffice.Web.Controllers
             {
                 foreach (var competencyItem in skillSetItem.Value.Competencies)
                 {
-                    AutoCompleteProxy competencyItemToAdd = new AutoCompleteProxy();
-                    competencyItemToAdd.id = competencyItem;
-                    competencyItemToAdd.name = GetLinkedCompetencyForAGuid(competencyItem);
+                    AutoCompleteProxy competencyItemToAdd = new AutoCompleteProxy
+                                                                {
+                                                                    id = competencyItem,
+                                                                    name = GetLinkedCompetencyForAGuid(competencyItem)
+                                                                };
                     competencyListForSkillSets.Add(competencyItemToAdd);
                 }
             }
@@ -421,13 +415,12 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public ActionResult GetQuestionItemsBasedOnCompetencyAndFilter(string selectedCompetency, string selectedFilter, string assignmentUrl)
         {
-            IList<DocumentProxy> questionList = new List<DocumentProxy>();
-            questionList = _questionBankDocument.GetAllQuestionsInAQuestionBank();
+            IList<DocumentProxy> questionList = _questionBankDocument.GetAllQuestionsInAQuestionBank();
             //Assignment assignmentObject = _assignmentService.GetAssignment(assignmentUrl);
             //Dictionary<string, SkillSet> skillSetsForTheAssignment = assignmentObject.SkillSets;
             IList<AutoCompleteProxy> competencyListForSkillSets = GetCompetenciesForAnAssignment(assignmentUrl);
             questionList =
-                (from qus in questionList join compGuid in competencyListForSkillSets on qus.LinkedItemReference equals compGuid.id.ToString() select qus).ToList();
+                (from qus in questionList join compGuid in competencyListForSkillSets on qus.LinkedItemReference equals compGuid.id select qus).ToList();
             if (!string.IsNullOrEmpty(selectedCompetency))
             {
                 questionList = (from questionListItem in questionList
@@ -461,7 +454,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public ActionResult FilterSkillSetsBasedOnCompetencies(string guidOfCompetency)
         {
-            List<SkillSetProxy> skillSetProxyList = (List<SkillSetProxy>) _skillSetService.GetFilteredSkillSetsBasedOnCompetency(guidOfCompetency);
+            List<SkillSetProxy> skillSetProxyList = _skillSetService.GetFilteredSkillSetsBasedOnCompetency(guidOfCompetency);
             skillSetProxyList.RemoveAll(skillset => skillset.Status == null);
             skillSetProxyList = (from skillSet in skillSetProxyList where skillSet.Status.ToLower().Equals("published") select skillSet).ToList();
             return Json(new { Result = skillSetProxyList });
@@ -498,6 +491,8 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// Method to load Step 3 of assignment builder
         /// </summary>
         /// <param name="assignmentUrl"></param>
+        /// <param name="selectedAttempts"></param>
+        /// <param name="selectedPassRate"></param>
         /// <returns></returns>
         public ActionResult LoadAssignmentStep3(string assignmentUrl, string selectedAttempts, string selectedPassRate)
         {
@@ -521,7 +516,10 @@ namespace SimChartMedicalOffice.Web.Controllers
             }
             double noOfQuestions = skillSetCount + questionList.Count();
             List<string> percentages = AppCommon.CalculatePassRate(noOfQuestions);
-            ViewData["PassRate"] = new SelectList(percentages, "PassRate");
+            //ViewData["PassRate"] = new SelectList(percentages, "PassRate");
+            int passIndex = 0;
+            var passPer = percentages.Select(pass => new { id = passIndex++, name = pass }).ToList();
+            ViewBag.AssignmentPassRateList = passPer;
             return View("../Builder/Assignment/_Step3SkillSets");
             //return Json(new { Result = "Success" });
         }
@@ -531,19 +529,16 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public ActionResult SaveAssignmentStep3()
         {
-            string assignmentJson = "";
-            string result = "";
+            string result;
             bool isEditMode = false;
             string assignmentUrl = "";
-            Assignment assignmentObject = new Assignment();
             Assignment assignment = new Assignment();
             IList<SkillSetProxy> skillSetList = new List<SkillSetProxy>();
             IList<Question> questionList = new List<Question>();
             try
             {
-                assignmentJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                assignmentObject = JsonSerializer.DeserializeObject<Assignment>(assignmentJson);
-                Type assignmentType = assignmentObject.GetType();
+                string assignmentJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                Assignment assignmentObject = JsonSerializer.DeserializeObject<Assignment>(assignmentJson);
                 assignment = _assignmentService.GetAssignment(assignmentObject.Url);
                 assignment.NoOfAttemptsAllowed = assignmentObject.NoOfAttemptsAllowed;
                 assignment.AssignmentPassRate = assignmentObject.AssignmentPassRate;
@@ -555,6 +550,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                         {
                             if (!assignment.Questions.ContainsKey(question.Key))
                             {
+                                _questionBankService.CloneImagesForQuestion(question.Value);
                                 assignment.Questions.Add(question.Key, question.Value);
                             }
                         }
@@ -562,9 +558,16 @@ namespace SimChartMedicalOffice.Web.Controllers
                 }
                 else
                 {
-                    assignment.Questions = assignmentObject.Questions;
+                    if (assignmentObject.Questions != null)
+                    {
+                        foreach (var item in assignmentObject.Questions)
+                        {
+                            _questionBankService.CloneImagesForQuestion(item.Value);
+                        }
+                        assignment.Questions = assignmentObject.Questions;
+                    }
                 }
-                if (assignment.Url != null && assignment.Url != "")
+                if (!string.IsNullOrEmpty(assignment.Url))
                 {
                     isEditMode = true;
                     assignmentUrl = assignment.Url;
@@ -575,13 +578,15 @@ namespace SimChartMedicalOffice.Web.Controllers
                 questionList = GetQuestionsForAssignment(assignmentUrl);
                 //questionList = ((assignment.Questions != null) ? (assignment.Questions.Select(questionItem => questionItem.Value).ToList()) : new List<Question>());
                 //skillSetList = ((assignment.SkillSets != null) ? (assignment.SkillSets.Select(skillSetItem => skillSetItem.Value).ToList()) : new List<SkillSet>());
-
+                result = "success";
             }
             catch (Exception ex)
             {
-                result = "A problem was encountered preventing" + ex;
+                result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("error: ControllerName: Assignment, MethodName: SaveAssignmentStep3", ex);
+                //errorMessage = AppConstants.Error;
             }
-            return Json(new { AssignmentUrl = assignment.Url, skillSetList = skillSetList, questionList = questionList });
+            return Json(new { AssignmentUrl = assignment.Url, skillSetList = skillSetList, questionList = questionList, Result = result });
 
         }
         /// <summary>
@@ -598,48 +603,49 @@ namespace SimChartMedicalOffice.Web.Controllers
                 skillSetsForTheAssignment = assignmentObject.SkillSets;
             }
             IList<string> competencyListForSkillSets = new List<string>();
-            if (skillSetsForTheAssignment != null)
+            foreach (var skillSetItem in skillSetsForTheAssignment)
             {
-                foreach (var skillSetItem in skillSetsForTheAssignment)
+                foreach (var competencyItem in skillSetItem.Value.Competencies)
                 {
-                    foreach (var competencyItem in skillSetItem.Value.Competencies)
+                    competencyListForSkillSets.Add(GetLinkedCompetencyForAGuid(competencyItem));
+                }
+                skillSetItem.Value.UniqueIdentifier = skillSetItem.Key;
+                Dictionary<string, Question> questionsForSkillSet = skillSetItem.Value.Questions;
+                if (questionsForSkillSet != null)
+                {
+                    foreach (var questionItem in questionsForSkillSet)
                     {
-                        competencyListForSkillSets.Add(GetLinkedCompetencyForAGuid(competencyItem));
-                    }
-                    skillSetItem.Value.UniqueIdentifier = skillSetItem.Key;
-                    Dictionary<string, Question> questionsForSkillSet = skillSetItem.Value.Questions;
-                    if (questionsForSkillSet != null)
-                    {
-                        foreach (var questionItem in questionsForSkillSet)
-                        {
-                            questionItem.Value.UniqueIdentifier = questionItem.Key;
-                        }
+                        questionItem.Value.UniqueIdentifier = questionItem.Key;
                     }
                 }
             }
             IList<SkillSetProxy> skillSetProxyObject = new List<SkillSetProxy>();
-            IList<SkillSet> skillSetList = ((skillSetsForTheAssignment != null) ? (skillSetsForTheAssignment.Select(assignmentItem => assignmentItem.Value).ToList()).OrderBy(x => x.SequenceNumber).ToList() : new List<SkillSet>());
-            if (skillSetList != null)
+            IList<SkillSet> skillSetList = ((skillSetsForTheAssignment.Select(assignmentItem => assignmentItem.Value).ToList()).OrderBy(x => x.SequenceNumber).ToList());
+            foreach (SkillSet skillSet in skillSetList)
             {
-                foreach (SkillSet skillSet in skillSetList)
-                {
-                    SkillSetProxy skillSetProxy = new SkillSetProxy();
-                    skillSetProxy.UniqueIdentifier = skillSet.UniqueIdentifier;
-                    skillSetProxy.SkillSetTitle = skillSet.SkillSetTitle;
-                    skillSetProxy.Questions = ((skillSet.Questions != null) ? (skillSet.Questions.Select(questionItem => questionItem.Value).ToList()).OrderBy(x => x.SequenceNumber).ToList() : new List<Question>());
-                    skillSetProxy.Guid = skillSet.UniqueIdentifier;
-                    skillSetProxy.Url = skillSet.Url;
-                    skillSetProxyObject.Add(skillSetProxy);
-                }
+                SkillSetProxy skillSetProxy = new SkillSetProxy
+                                                  {
+                                                      UniqueIdentifier = skillSet.UniqueIdentifier,
+                                                      SkillSetTitle = skillSet.SkillSetTitle,
+                                                      Questions =
+                                                          ((skillSet.Questions != null)
+                                                               ? (skillSet.Questions.Select(
+                                                                   questionItem => questionItem.Value).ToList()).
+                                                                     OrderBy(x => x.SequenceNumber).ToList()
+                                                               : new List<Question>()),
+                                                      Guid = skillSet.UniqueIdentifier,
+                                                      Url = skillSet.Url
+                                                  };
+                skillSetProxyObject.Add(skillSetProxy);
             }
             //ViewBag.CompetencyListForSelectedSkillSet = competencyListForSkillSets;
             return skillSetProxyObject;
         }
+
         /// <summary>
         /// Method to get the list of questions in a skill set
         /// </summary>
         /// <param name="assignmentUrl"></param>
-        /// <param name="skillSetGuid"></param>
         /// <returns></returns>
         public ActionResult GetSkillSetsForAssignmentTree(string assignmentUrl)
         {
@@ -661,16 +667,13 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public ActionResult SwapSkillSets(string sourceUrl, string destinationUrl, string assignmentUrl)
         {
-            SkillSet skillSetSource = new SkillSet();
-            SkillSet skillSetDestination = new SkillSet();
-            string skillSetIdentifierSource = string.Empty;
-            string skillSetIdentifierDestination = string.Empty;
-            skillSetSource = _skillSetService.GetSkillSet(sourceUrl);
-            skillSetDestination = _skillSetService.GetSkillSet(destinationUrl);
-            int tempSequenceNumber = 0;
-            tempSequenceNumber = (skillSetSource != null) ? skillSetSource.SequenceNumber : 1;
-            skillSetSource.SequenceNumber = (skillSetDestination != null) ? skillSetDestination.SequenceNumber : 1;
-            skillSetDestination.SequenceNumber = (tempSequenceNumber != 0) ? tempSequenceNumber : 1;
+            SkillSet skillSetSource = _skillSetService.GetSkillSet(sourceUrl);
+            SkillSet skillSetDestination = _skillSetService.GetSkillSet(destinationUrl);
+            int tempSequenceNumber = (skillSetSource != null) ? skillSetSource.SequenceNumber : 1;
+            if (skillSetSource != null)
+                skillSetSource.SequenceNumber = (skillSetDestination != null) ? skillSetDestination.SequenceNumber : 1;
+            if (skillSetDestination != null)
+                skillSetDestination.SequenceNumber = (tempSequenceNumber != 0) ? tempSequenceNumber : 1;
             _skillSetService.SwapSkillSetSave(skillSetSource, sourceUrl);
             _skillSetService.SwapSkillSetSave(skillSetDestination, destinationUrl);
 
@@ -693,16 +696,15 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         public ActionResult SwapQuestions(string sourceUrl, string destinationUrl, string assignmentUrl)
         {
-            Question questionSource = new Question();
-            Question questionDestination = new Question();
-            questionSource = _questionBankService.GetQuestion(sourceUrl);
-            questionDestination = _questionBankService.GetQuestion(destinationUrl);
-            int tempSequenceNumber = 0;
-            tempSequenceNumber = (questionSource != null) ? questionSource.SequenceNumber : 1;
-            questionSource.SequenceNumber = (questionDestination != null) ? questionDestination.SequenceNumber : 1;
-            questionDestination.SequenceNumber = (tempSequenceNumber != 0) ? tempSequenceNumber : 1;
-            _questionBankService.SaveQuestion(questionSource, "", sourceUrl, "", true);
-            _questionBankService.SaveQuestion(questionDestination, "", destinationUrl, "", true);
+            Question questionSource = _questionBankService.GetQuestion(sourceUrl);
+            Question questionDestination = _questionBankService.GetQuestion(destinationUrl);
+            int tempSequenceNumber = (questionSource != null) ? questionSource.SequenceNumber : 1;
+            if (questionSource != null)
+                questionSource.SequenceNumber = (questionDestination != null) ? questionDestination.SequenceNumber : 1;
+            if (questionDestination != null)
+                questionDestination.SequenceNumber = (tempSequenceNumber != 0) ? tempSequenceNumber : 1;
+            _questionBankService.SaveQuestion(questionSource, GetDropBoxFromCookie(), sourceUrl, "", true,true);
+            _questionBankService.SaveQuestion(questionDestination, GetDropBoxFromCookie(), destinationUrl, "", true,true);
             return Json(new { Result = string.Empty, strSourceUrl = sourceUrl });
         }
         /// <summary>
@@ -718,40 +720,39 @@ namespace SimChartMedicalOffice.Web.Controllers
             {
                 questionListObject = assignmentObject.Questions;
             }
-            if (questionListObject != null)
+            foreach (var question in questionListObject)
             {
-                foreach (var question in questionListObject)
-                {
-                    question.Value.UniqueIdentifier = question.Key;
-                }
+                question.Value.UniqueIdentifier = question.Key;
             }
-            IList<Question> questionList = ((questionListObject != null) ? (questionListObject.Select(questionItem => questionItem.Value).ToList()) : new List<Question>());
+            IList<Question> questionList = ((questionListObject.Select(questionItem => questionItem.Value).ToList()));
             questionList = questionList.OrderBy(x => x.SequenceNumber).ToList();
             return questionList;
         }
+
         /// <summary>
         /// Method to revert the selected question to the original vaersion as in question bank
         /// </summary>
         /// <param name="questionUrl"></param>
         /// <param name="questionGuid"></param>
         /// <param name="skillSetGuid"></param>
+        /// <param name="isSelectedItemQuestion"> </param>
         public void RevertQuestionToOriginal(string questionUrl, string questionGuid, string skillSetGuid, bool isSelectedItemQuestion)
         {
             Question questionItemSelected = _questionBankService.GetQuestion(questionUrl);
-            string questionReferenceGuid = "";
-            if (isSelectedItemQuestion)
-            {
-                questionReferenceGuid = questionItemSelected.SkillSetReferenceUrlOfQuestion;
-            }
-            else
-            {
-                questionReferenceGuid = questionItemSelected.ParentReferenceGuid;
-            }
+            string questionReferenceGuid = isSelectedItemQuestion ? questionItemSelected.SkillSetReferenceUrlOfQuestion : questionItemSelected.ParentReferenceGuid;
             //Question questionObjectFromSkillSet = _questionBankService.GetQuestion(questionUrl);
+            _questionBankService.DeleteImagesForQuestion(questionItemSelected);
             Question questionFromQuestionBank =
                 _questionBankService.GetQuestion(questionReferenceGuid);
+            questionFromQuestionBank.SkillSetReferenceUrlOfQuestion =
+                questionItemSelected.SkillSetReferenceUrlOfQuestion;
+            //to-Do= Clone images of questionFromQuestionBank
+                //--TO_DO
+
+            questionFromQuestionBank.ParentReferenceGuid = questionItemSelected.ParentReferenceGuid;
+            _questionBankService.CloneImagesForQuestion(questionFromQuestionBank);
             //string questionUrlToSave = _questionBankService.FormUrlForSkillSetQuestionToQuestionBank(GetLoginUserCourse() + "/" + GetLoginUserRole(), questionGuid);
-            _questionBankService.SaveQuestion(questionFromQuestionBank, GetLoginUserCourse() + "/" + GetLoginUserRole(), questionUrl, "", true);
+            _questionBankService.SaveQuestion(questionFromQuestionBank, GetDropBoxFromCookie(), questionUrl, "", true,true);
             //_assignmentService.DeleteAssignmentQuestion(questionUrl);
         }
         /// <summary>
@@ -773,16 +774,17 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// </summary>
         /// <param name="param"></param>
         /// <param name="strSearchText"></param>
+        /// <param name="strModule"> </param>
         /// <returns></returns>
-        public ActionResult GetAssignmentSearchList(jQueryDataTableParamModel param, string strSearchText, string strModule)
+        public ActionResult GetAssignmentSearchList(JQueryDataTableParamModel param, string strSearchText, string strModule)
         {
-            IList<AssignmentProxy> lstAssignmentSearchResult = new List<AssignmentProxy>();
+            string result;
             int sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             string sortColumnOrder = Request["sSortDir_0"];
             try
             {
                 IList<AssignmentProxy> lstAssignmentSearchResultTemp = _assignmentService.GetSearchResultsForAssignment(strSearchText, sortColumnIndex, sortColumnOrder, strModule);
-                lstAssignmentSearchResult = lstAssignmentSearchResultTemp.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
+                IList<AssignmentProxy> lstAssignmentSearchResult = lstAssignmentSearchResultTemp.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
                 var data = (from assignmentItem in lstAssignmentSearchResult
                             select new[]
                                    {
@@ -805,11 +807,12 @@ namespace SimChartMedicalOffice.Web.Controllers
             JsonRequestBehavior.AllowGet);
 
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: AssignmentBuilder, MethodName:GetAssignmentSearchList", ex);
             }
-            return Json(new { Result = string.Empty });
+            return Json(new { Result = result });
         }
 
         /// <summary>
@@ -833,8 +836,7 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         public ActionResult GetPatientList(string assignmentUrl)
         {
-            List<Patient> patientList;            
-            patientList = _assignmentService.GetPatientListOfAssignment(assignmentUrl);
+            List<Patient> patientList = _assignmentService.GetPatientListOfAssignment(assignmentUrl);
             return Json(new { Result = patientList });
         }
 
@@ -845,12 +847,11 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         private string GetAssignmentPatientName(Assignment assignmentObj)
         {
-            Patient patient = new Patient();
             string nameOfPatient = String.Empty;
             if (assignmentObj != null && assignmentObj.Patients != null && assignmentObj.Patients.Count > 0)
             {
                 IList<Patient> patientList= assignmentObj.Patients.Select(s => s.Value).ToList();
-                patient = (from lstpat in patientList where lstpat.IsAssignmentPatient == true select lstpat).FirstOrDefault();
+                Patient patient = (from lstpat in patientList where lstpat.IsAssignmentPatient select lstpat).FirstOrDefault();
                 if (patient != null)
                 {
                     nameOfPatient = patient.LastName + ", " + patient.FirstName + ", " + patient.MiddleInitial;
@@ -866,9 +867,8 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult GetAllPatientsName()
         {
-            List<Patient> patientsList = new List<Patient>();
-            int patientindex = 0;
-            patientsList = _assignmentService.GetAllPatientName();
+            //int patientindex = 0;
+            List<Patient> patientsList = _assignmentService.GetAllPatientName();
             var patientName = patientsList.Select(patient => new { id = patient.Url, name = (patient.LastName.ToString() + ", " + patient.FirstName.ToString() + " " + patient.MiddleInitial.ToString()) }).ToList();
             return Json(new { PatientList = JsonSerializer.SerializeObject(patientName) });
 
@@ -877,7 +877,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <summary>
         /// Step 4 of skillset builder
         /// </summary>
-        /// <param name="skillSetUrl"></param>
+        /// <param name="assignmentUrl"></param>
         /// <returns></returns>
         public ActionResult PreviewAndPublishStep5(string assignmentUrl)
         {
@@ -887,19 +887,19 @@ namespace SimChartMedicalOffice.Web.Controllers
                 IList<Resource> resourceListForAssignment = _assignmentService.GetResourcesForAnAssignment(assignmentUrl);
                 Assignment assignmentObj = _assignmentService.GetAssignment(assignmentUrl);
                 ViewBag.assignmentName = (assignmentObj!=null && !string.IsNullOrEmpty(assignmentObj.Title))?assignmentObj.Title:String.Empty;
-                ViewBag.Modules = (assignmentObj.Module != null && assignmentObj.Module.Count > 0) ? String.Join(", ", assignmentObj.Module.Select(m=>m)) : String.Empty;
+                ViewBag.Modules = assignmentObj != null && (assignmentObj.Module != null && assignmentObj.Module.Count > 0) ? String.Join(", ", assignmentObj.Module.Select(m=>m)) : String.Empty;
                 ViewBag.Keywords = (assignmentObj != null && !string.IsNullOrEmpty(assignmentObj.Keywords)) ? assignmentObj.Keywords : String.Empty;
                 ViewBag.Duration = (assignmentObj != null && !string.IsNullOrEmpty(assignmentObj.Duration)) ? assignmentObj.Duration : String.Empty;
                 ViewBag.Patient = GetAssignmentPatientName(assignmentObj); 
                 ViewBag.assignmentInfos = questionsForSkillSetProxy;
                 ViewBag.assignmentResources = resourceListForAssignment;
                 ViewBag.assignmentOrientation = (assignmentObj != null && !string.IsNullOrEmpty(assignmentObj.Orientation)) ? assignmentObj.Orientation : String.Empty;
-                ViewBag.assignmentStatus = (assignmentObj != null && !string.IsNullOrEmpty(assignmentObj.Status)) ? AppCommon.CheckIfPublished(assignmentObj.Status): false;
+                ViewBag.assignmentStatus = (assignmentObj != null && !string.IsNullOrEmpty(assignmentObj.Status)) && AppCommon.CheckIfPublished(assignmentObj.Status);
             }
-            catch
+            catch (Exception ex)
             {
-
-                //TO-dO
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: AssignmentBuilder, MethodName:PreviewAndPublishStep5", ex);
             }
             return View("../Builder/Assignment/Step5_PreviewAndPublish");
         }
@@ -908,11 +908,11 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <summary>
         /// To publish a in progress assignment
         /// </summary>
-        /// <param name="skillSetUrl"></param>
+        /// <param name="assignmentUrl"></param>
         /// <returns></returns>
         public JsonResult PublishAnAssignment(string assignmentUrl)
         {
-            bool isPublishedSuccessfully = false;
+            bool isPublishedSuccessfully;
             try
             {
                 isPublishedSuccessfully = _assignmentService.PublishAnAssignment(assignmentUrl);

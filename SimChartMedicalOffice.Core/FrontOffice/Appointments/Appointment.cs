@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SimChartMedicalOffice.Common;
 namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
 {
-    public abstract class Appointment : DocumentEntity
+    public abstract class Appointment : AbstractChartData
     {
         //private Appointment()
         //{
@@ -21,7 +18,7 @@ namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
 
         //private DateTime _startDateTime;
         //private DateTime _endDateTime;
-        private bool _isRecurrence = false;
+        //private bool _isRecurrence = false;
         /// <summary>
         /// For Patient Visit - this property maps to Visit Type
         /// For Block - this property maps to Block Type
@@ -34,13 +31,27 @@ namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
         public string OtherText { get; set; }
         public DateTime StartDateTime { get; set; }
         public DateTime EndDateTime { get; set; }
-        public int Duration { get { return (StartDateTime - EndDateTime).Minutes; } }
-        public bool IsRecurrence { get { if (this.Recurrence != null) { return true; } else { return false; } } }
+        public int Duration
+        {
+            get
+            {
+                TimeSpan durationTime = (EndDateTime - StartDateTime);
+                return (int)durationTime.TotalMinutes;
+            }
+        }
+        public bool IsRecurrence { get
+        {
+            if (this.Recurrence != null) { return true; }
+            return false;
+        }
+        }
         //For other Appointment we have more than one Attendee
         //For Patient Visit Appointment we have only one Provider
         //For Block Appointment, if "All Staff" was selected then we need to add all the Provider Id to the List
-        public int ProviderId { get; set; }
-        public string Description { get; set; }
+        //public int ProviderId { get; set; }
+        public bool IsAllStaffSelected { get; set; }
+        public IList<int> ProviderId { get; set; }
+        public string Description {  get; set; }
         public string ExamRoomIdentifier { get; set; }
         public int Status { get; set; }
         public int StatusLocation { get; set; }
@@ -51,16 +62,17 @@ namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MiddleInitial { get; set; }
+        public string OtherAttendeesList { get; set; }
         public string Name { get { return string.Format("{1},{0} {2}", FirstName, LastName, MiddleInitial); } }
         //public abstract IList<Appointment> GetAppointments();
         public void ClearRecurrenceGroup()
         {
-            this.Recurrence = null;
+            Recurrence = null;
         }
         //public virtual Appointment Clone()
         //{
         //}
         public virtual Appointment Clone() { return null; }
-     
+
     }
 }

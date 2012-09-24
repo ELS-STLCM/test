@@ -1,5 +1,4 @@
-﻿@using SimChartMedicalOffice.Core.QuestionBanks
-@{
+﻿@{
     Layout = null;
 }
 @{
@@ -9,11 +8,9 @@
     string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
     string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
     string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty;
-    string strQuestionguid = string.Empty;
     string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty;
     string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
     bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
-    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
     string noOfLabels = (ViewBag.NoOfLabelsToLoad != "" || ViewBag.NoOfLabelsToLoad != null) ? ViewBag.NoOfLabelsToLoad : "";
     List<string> answerItemsToLoad = (ViewBag.AnswerListToLoad);
     strquestionText = String.IsNullOrEmpty(strCompetencyText) ? String.Empty : strquestionText;
@@ -50,7 +47,7 @@
                 <a href="#" id="uploadImageLink" class="link">Upload</a><span class="mandatory-field">*</span></div>
             <div class="grid_21">
                 <div id="question_image" class="grid_17 image-holder-div">
-                    <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="Image" id="qnImageRefId" class="image-holder" />
+                    <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="qnImageRefId" class="image-holder" />
                 </div>
                 <div class="grid_15 hide-content" id="qnImageRefId_remove">
                     <div class="align-div-inline">

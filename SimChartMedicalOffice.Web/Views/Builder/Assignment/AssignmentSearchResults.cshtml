@@ -1,43 +1,14 @@
 ﻿@{
     Layout = null;
 }
-<div class="grid_32 standard-text" id="assignmentHolder">
-<div class="grid_32 div-with-bottom-border">
-    <div class="clear-height-spacing clear">
-    </div>
-    <div class="grid_15 form-page-header" style="padding-top: 0px">
-        Assignment Builder
-    </div>
-    <div class="grid_7 align-div-inline" id="filterByModuleForSearch">
-    </div>
-    <div class="align-div-inline standard-text">And / Or</div>
-    <div class="grid_8 align-div-inline">
-        @Html.TextBox("searchByTextAssign", "", new { id = "searchByTextAssign", @class = "grid_28" })
-        <img id="buttonSearchAssign" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
-    </div>
-    <div class="clear-min-height-spacing clear">
-    </div>
-</div>
-    <div class="grid_8">
-        @Html.Partial("../../Views/Builder/Assignment/ReturnToAssignmentBuilder")
-    </div>
-    <div class="grid_24">
-    <div class="grid_32 search-result-text">Search Results for "@ViewBag.SearchText"</div>
-        <div class="clear clear-height-spacing">
-    </div>
-        <div class="clear clear-height-spacing">
-    </div>
-       @Html.Partial("../../Views/Builder/Assignment/_AssignmentSearchGrid")
-    </div>
-    <div class="clear clear-height-spacing">
-    </div>
-</div> 
-
 <script type="text/javascript">
     var filterByModuleList = @Html.Raw(Json.Encode(ViewBag.ModuleList)); 
     var searchText="@ViewBag.SearchText";
     var searchModule="@ViewBag.SearchModule";
+    
     $(document).ready(function () {
+        setAdjustedHeightSearchResultsContainer();
+        setRightHolderHeight('assignmentHeader'); 
         setMaxLenthSearchText("searchByTextAssign");
         isSearchPageForAssignment = true;
         initializeFlexBoxForFilterByModuleForSearch("filterByModuleForSearch", filterByModuleList);
@@ -97,6 +68,34 @@ function initializeFlexBoxForFilterByModuleForSearch(divId, lstOfItems) {
     });
 }
 </script>
-
-
-
+<div class="grid_32 standard-text" id="assignmentHolder">
+<div class="grid_32 div-with-bottom-border">
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_15 form-page-header" style="padding-top: 0px">
+        Assignment Builder
+    </div>
+    <div class="grid_7 align-div-inline" id="filterByModuleForSearch">
+    </div>
+    <div class="align-div-inline standard-text">And/Or</div>
+    <div class="grid_8 align-div-inline">
+        @Html.TextBox("searchByTextAssign", "", new { id = "searchByTextAssign", @class = "grid_28" })
+        <img id="buttonSearchAssign" alt="x" src="@Url.Content("~/Content/Images/Buttons/button_search.png")" class="select-hand"/>
+    </div>
+    <div class="clear-min-height-spacing clear">
+    </div>
+</div>
+    <div class="grid_8 search-result-height">
+        @Html.Partial("../../Views/Builder/Assignment/ReturnToAssignmentBuilder")
+    </div>
+    <div class="grid_24 search-result-height">
+    <div class="grid_32 search-result-text">Search Results for "@ViewBag.SearchText"</div>
+        <div class="clear clear-height-spacing">
+    </div>
+        <div class="clear clear-height-spacing">
+    </div>
+       @Html.Partial("../../Views/Builder/Assignment/_AssignmentSearchGrid")
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+</div>

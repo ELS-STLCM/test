@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
 {
@@ -29,7 +26,7 @@ namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
         //}
         public override Appointment Clone()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             PatientVisit deepCopyData = new PatientVisit();
             foreach (System.Reflection.PropertyInfo objProp in type.GetProperties())
             {
@@ -38,7 +35,7 @@ namespace SimChartMedicalOffice.Core.FrontOffice.Appointments
                     objProp.SetValue(deepCopyData, type.GetProperty(objProp.Name).GetValue(this, null), null);
                 }
             }
-            return (Appointment)deepCopyData;
+            return deepCopyData;
         }
     }
 }

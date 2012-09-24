@@ -7,12 +7,10 @@
     string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
     string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
     string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
-    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty; ;
-    string strQuestionguid = string.Empty;
-    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty; ;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty;
     string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
     bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
-    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
     string answerText1 = (ViewData["AnswerOption_1"] != null) ? ViewData["AnswerOption_1"].ToString() : String.Empty;
     string answerText2 = (ViewData["AnswerOption_2"] != null) ? ViewData["AnswerOption_2"].ToString() : String.Empty;
     string answerText3 = (ViewData["AnswerOption_3"] != null) ? ViewData["AnswerOption_3"].ToString() : String.Empty;
@@ -23,16 +21,16 @@
     string answerText8 = (ViewData["AnswerOption_8"] != null) ? ViewData["AnswerOption_8"].ToString() : String.Empty;
     string answerText9 = (ViewData["AnswerOption_9"] != null) ? ViewData["AnswerOption_9"].ToString() : String.Empty;
     string answerText10 = (ViewData["AnswerOption_10"] != null) ? ViewData["AnswerOption_10"].ToString() : String.Empty;
-    string answerMatch_1 = (ViewData["AnswerMatch_1"] != null) ? ViewData["AnswerMatch_1"].ToString() : String.Empty;
-    string answerMatch_2 = (ViewData["AnswerMatch_2"] != null) ? ViewData["AnswerMatch_2"].ToString() : String.Empty;
-    string answerMatch_3 = (ViewData["AnswerMatch_3"] != null) ? ViewData["AnswerMatch_3"].ToString() : String.Empty;
-    string answerMatch_4 = (ViewData["AnswerMatch_4"] != null) ? ViewData["AnswerMatch_4"].ToString() : String.Empty;
-    string answerMatch_5 = (ViewData["AnswerMatch_5"] != null) ? ViewData["AnswerMatch_5"].ToString() : String.Empty;
-    string answerMatch_6 = (ViewData["AnswerMatch_6"] != null) ? ViewData["AnswerMatch_6"].ToString() : String.Empty;
-    string answerMatch_7 = (ViewData["AnswerMatch_7"] != null) ? ViewData["AnswerMatch_7"].ToString() : String.Empty;
-    string answerMatch_8 = (ViewData["AnswerMatch_8"] != null) ? ViewData["AnswerMatch_8"].ToString() : String.Empty;
-    string answerMatch_9 = (ViewData["AnswerMatch_9"] != null) ? ViewData["AnswerMatch_9"].ToString() : String.Empty;
-    string answerMatch_10 = (ViewData["AnswerMatch_10"] != null) ? ViewData["AnswerMatch_10"].ToString() : String.Empty;
+    string answerMatch1 = (ViewData["AnswerMatch_1"] != null) ? ViewData["AnswerMatch_1"].ToString() : String.Empty;
+    string answerMatch2 = (ViewData["AnswerMatch_2"] != null) ? ViewData["AnswerMatch_2"].ToString() : String.Empty;
+    string answerMatch3 = (ViewData["AnswerMatch_3"] != null) ? ViewData["AnswerMatch_3"].ToString() : String.Empty;
+    string answerMatch4 = (ViewData["AnswerMatch_4"] != null) ? ViewData["AnswerMatch_4"].ToString() : String.Empty;
+    string answerMatch5 = (ViewData["AnswerMatch_5"] != null) ? ViewData["AnswerMatch_5"].ToString() : String.Empty;
+    string answerMatch6 = (ViewData["AnswerMatch_6"] != null) ? ViewData["AnswerMatch_6"].ToString() : String.Empty;
+    string answerMatch7 = (ViewData["AnswerMatch_7"] != null) ? ViewData["AnswerMatch_7"].ToString() : String.Empty;
+    string answerMatch8 = (ViewData["AnswerMatch_8"] != null) ? ViewData["AnswerMatch_8"].ToString() : String.Empty;
+    string answerMatch9 = (ViewData["AnswerMatch_9"] != null) ? ViewData["AnswerMatch_9"].ToString() : String.Empty;
+    string answerMatch10 = (ViewData["AnswerMatch_10"] != null) ? ViewData["AnswerMatch_10"].ToString() : String.Empty;
     string answerImage1 = (ViewData["AnsImage_1"] != null) ? ViewData["AnsImage_1"].ToString() : String.Empty;
     string answerImage2 = (ViewData["AnsImage_2"] != null) ? ViewData["AnsImage_2"].ToString() : String.Empty;
     string answerImage3 = (ViewData["AnsImage_3"] != null) ? ViewData["AnsImage_3"].ToString() : String.Empty;
@@ -51,7 +49,7 @@
         @Html.ValidationSummary()</div>
     <div class="clear clear-height-spacing">
     </div>  
-    <span class="header-text">Matching:</span>
+    <span class="header-text">Matching</span>
 </div>
 <div class="grid_32 clear clear-height-spacing">
 </div>
@@ -105,7 +103,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_1", answerMatch_1, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_1", answerMatch1, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -162,7 +160,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_2", answerMatch_2, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_2", answerMatch2, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -219,7 +217,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_3", answerMatch_3, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_3", answerMatch3, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -276,7 +274,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_4", answerMatch_4, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_4", answerMatch4, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -333,7 +331,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_5", answerMatch_5, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_5", answerMatch5, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -390,7 +388,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_6", answerMatch_6, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_6", answerMatch6, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -447,7 +445,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_7", answerMatch_7, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_7", answerMatch7, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -504,7 +502,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_8", answerMatch_8, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_8", answerMatch8, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -561,7 +559,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_9", answerMatch_9, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_9", answerMatch9, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">
@@ -618,7 +616,7 @@
         </div>
         <div class="grid_11 align-div-inline">
             <div class="grid_31">
-                @Html.TextArea("AnswerMatch_10", answerMatch_10, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
+                @Html.TextArea("AnswerMatch_10", answerMatch10, new { rows = 5, onkeypress = "return isAlphaNumeric(event)", @class = "standard-text multiple-choice-textarea" })
             </div>
         </div>
         <div class="grid_10 remove-div-space" style="width: 33%">

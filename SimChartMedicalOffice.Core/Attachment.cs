@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-
+﻿
 namespace SimChartMedicalOffice.Core
 {
     public class Attachment : DocumentEntity

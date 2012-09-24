@@ -45,7 +45,10 @@
     <Compile Include="AttachmentDocument.cs" />
     <Compile Include="Competency\ApplicationModuleDocument.cs" />
     <Compile Include="Competency\CompetencySourceDocument.cs" />
+    <Compile Include="DbCommon.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="Forms\BillOfRightsDocument.cs" />
+    <Compile Include="Forms\MedicalRecordsReleaseDocument.cs" />
     <Compile Include="Forms\NoticeOfPrivacyPracticeDocument.cs" />
     <Compile Include="Forms\ReferralFormDocument.cs" />
     <Compile Include="Authoring\AuthoringDocument.cs" />

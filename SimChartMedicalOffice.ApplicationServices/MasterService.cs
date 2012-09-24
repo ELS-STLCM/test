@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface;
-using SimChartMedicalOffice.Data;
+using SimChartMedicalOffice.Common;
 using SimChartMedicalOffice.Core.DataInterfaces;
 using SimChartMedicalOffice.Core.ProxyObjects;
-using SimChartMedicalOffice.Common;
 
 namespace SimChartMedicalOffice.ApplicationServices
 {
@@ -16,7 +13,7 @@ namespace SimChartMedicalOffice.ApplicationServices
 
         public MasterService(IMasterDocument masterDocumentInstance)
         {
-            this._masterDocument = masterDocumentInstance;
+            _masterDocument = masterDocumentInstance;
         }
 
         public Dictionary<int, string> GetPatientProviderValues()
@@ -26,17 +23,13 @@ namespace SimChartMedicalOffice.ApplicationServices
              providerSortedList.Sort(
                  delegate(KeyValuePair<int, string> firstPair,
                  KeyValuePair<int, string> nextPair)
-                 {
-                     if (!nextPair.Value.Equals(AppConstants.Select_DropDown))
                      {
-                         return firstPair.Value.CompareTo(nextPair.Value);
+                         if (!nextPair.Value.Equals(AppConstants.SelectDropDown))
+                     {
+                         return System.String.CompareOrdinal(firstPair.Value, nextPair.Value);
                      }
-                     else
-                     {
                          return 0;
                      }
-                 }
-
                  );             
              patientProviderValues = providerSortedList.Where(x => !x.Value.Equals("All Staff")).ToDictionary(x => x.Key, x => x.Value);
              return patientProviderValues;
@@ -66,12 +59,9 @@ namespace SimChartMedicalOffice.ApplicationServices
             List<AutoCompleteProxy> examRoomViewResourceList = new List<AutoCompleteProxy>();
             foreach (var item in examRoomList)
             {
-                if (item != AppCommon.DROPDOWN_SELECT)
+                if (item != AppCommon.DropdownSelect)
                 {
-                    AutoCompleteProxy autoCompleteProxy = new AutoCompleteProxy();
-                    autoCompleteProxy.id = item;
-                    autoCompleteProxy.name = item;
-                    autoCompleteProxy.Sources = null;
+                    AutoCompleteProxy autoCompleteProxy = new AutoCompleteProxy {id = item, name = item, Sources = null};
                     examRoomViewResourceList.Add(autoCompleteProxy);
                 }
             }
@@ -89,7 +79,13 @@ namespace SimChartMedicalOffice.ApplicationServices
         }
         public string GetProviderName(int providerId)
         {
-            return GetPatientProviderValues().Where(s => s.Key.Equals(providerId)).Select(s => s.Value.ToString()).SingleOrDefault();
+            return GetPatientProviderValuesBlock().Where(s => s.Key.Equals(providerId)).Select(s => s.Value.ToString()).SingleOrDefault();
+        }
+        public string GetProviderName(IList<int> providerIds,string seperatorForNames)
+        {
+             List<string> providerNameList = new List<string>();
+            providerIds.ToList().ForEach(s=>providerNameList.Add(GetProviderName(s)));
+            return string.Join(seperatorForNames, providerNameList);
         }
         public Dictionary<int, string> GetPatientProviderValuesBlock()
         {
@@ -98,17 +94,13 @@ namespace SimChartMedicalOffice.ApplicationServices
             providerSortedList.Sort(
                 delegate(KeyValuePair<int, string> firstPair,
                 KeyValuePair<int, string> nextPair)
-                {
-                    if (!nextPair.Value.Equals(AppConstants.Select_DropDown))
                     {
-                        return firstPair.Value.CompareTo(nextPair.Value);
+                        if (!nextPair.Value.Equals(AppConstants.SelectDropDown))
+                    {
+                        return System.String.CompareOrdinal(firstPair.Value, nextPair.Value);
                     }
-                    else
-                    {
                         return 0;
                     }
-                }
-
                 );
             patientProviderValues = providerSortedList.ToDictionary(x => x.Key, x => x.Value);
             return patientProviderValues;

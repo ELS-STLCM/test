@@ -1,5 +1,4 @@
-﻿@using SimChartMedicalOffice.Core.QuestionBanks
-@{
+﻿@{
     Layout = null;
 }
 @{
@@ -7,12 +6,10 @@
     string strRationaleText = (ViewBag.CorrectAnswerRationale != null) ? ViewBag.CorrectAnswerRationale : String.Empty;
     string strCompetencyText = (ViewBag.LinkedCompetency != null) ? ViewBag.LinkedCompetency : String.Empty;
     string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
-    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty; ;
-    string strQuestionguid = string.Empty;
-    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty; ;
+    string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty;
+    string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty;
     string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
     bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
-    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
     string strAnswer1 = (ViewData["AnswerOption_1"] != null) ? ViewData["AnswerOption_1"].ToString() : String.Empty;
     string strAnswer2 = (ViewData["AnswerOption_2"] != null) ? ViewData["AnswerOption_2"].ToString() : String.Empty;
     string strAnswer3 = (ViewData["AnswerOption_3"] != null) ? ViewData["AnswerOption_3"].ToString() : String.Empty;
@@ -50,7 +47,7 @@
             <a href="#" id="uploadImageLink" class="link">Upload</a>&nbsp;</div>
         <div class="grid_25 alpha">
             <div id="question_image" class="grid_13 image-holder-div">
-                <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="Image" id="qnImageRefId" class="image-holder" />
+                <img src="@Url.Content("~/Content/Images/Image_Div.png")" alt="" id="qnImageRefId" class="image-holder" />
             </div>
             <div class="grid_17 prefix_1 hide-content" id="qnImageRefId_remove">
                 <div class="align-div-inline">

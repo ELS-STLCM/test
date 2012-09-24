@@ -1,6 +1,4 @@
-﻿@using SimChartMedicalOffice.Core.ProxyObjects
-@using SimChartMedicalOffice.Core.QuestionBanks
-@{
+﻿@{
     Layout = null;
 }
 <script type="text/javascript">
@@ -24,6 +22,7 @@
     }
 
     $(document).ready(function () {
+       setRightHolderInnerHeight();
        skillSet.commonFunctions.setSkillSetUniqueIdentifier('@ViewBag.SkillSetUrl');
        skillSet.commonFunctions.loadImageForAStep("1");
        if(!isNullOrEmpty('@ViewBag.SkillSetUrl')){
@@ -50,13 +49,17 @@
         });
     });
 </script>
+<div style="height:38px">
 <div class="page-title">
     Step 1 of 4: Skill Set Metadata
 </div>
-<div class="grid_32 mandatory-field-note">
-    Fields with " <span class="mandatory-field">*</span> " are mandatory
+
+    <div class="grid_32 mandatory-field-note">
+        Fields with " <span class="mandatory-field">*</span> " are mandatory
+    </div>
+
 </div>
-<div class="grid_32 div-with-border standard-text skillset-builder-panel-step1 vertical-content-scroll"
+<div class="grid_32 div-with-border standard-text vertical-content-scroll right-inner-content-height"
     style="width: 775px" id="skillSet-Metadata-Main-Content">
     <div id="validationSummary" class="error-message grid_32">
     </div>
@@ -191,7 +194,7 @@
 </div>
 <div class="clear-height-spacing clear">
 </div>
-<div>
+<div id = "skillSetStep1Buttons">
     @Html.Partial("../../Views/Builder/SkillSet/_SkillSetsActions")
 </div>
 

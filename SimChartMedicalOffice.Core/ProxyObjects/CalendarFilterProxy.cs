@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System;
+﻿using System;
 using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.Patient;
 
 namespace SimChartMedicalOffice.Core.ProxyObjects
 {
@@ -18,6 +16,7 @@ namespace SimChartMedicalOffice.Core.ProxyObjects
         public string CourseId { get; set; }
         public string ScenarioId { get; set; }
         public string UserId { get; set; }
+        public string PatientGuid { get; set; }
         public AppEnum.ApplicationRole Role { get; set; }
     }
 }

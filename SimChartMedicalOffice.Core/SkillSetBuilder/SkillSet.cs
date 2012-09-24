@@ -1,21 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using SimChartMedicalOffice.Core.QuestionBanks;
 
 namespace SimChartMedicalOffice.Core.SkillSetBuilder
 {
     public class SkillSet : DocumentEntity
     {
-        /// <summary>
-        /// Constructor of SkillSet object
-        /// </summary>
-        public SkillSet()
-        {
-                
-        }
-
         /// <summary>
         /// This property holds the skillset title
         /// </summary>

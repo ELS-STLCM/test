@@ -508,8 +508,9 @@
 
             if (!d)
                 return;
-			
-			$hdn.val($input.val());
+            if (!o.doNotClearId) {
+                $hdn.val($input.val());
+            }
             if (parseInt(d[o.totalProperty]) === 0 && o.noResultsText && o.noResultsText.length > 0) {
                 $content.addClass(o.noResultsClass).html(o.noResultsText);
                 $ctr.show();
@@ -843,6 +844,7 @@
         resultsProperty: 'results', // json property in response that references array of results
         totalProperty: 'total', // json property in response that references the total results (for paging)
         maxVisibleRows: 0, // default is 0, which means it is ignored.  use either this, or paging.pageSize
+        doNotClearId: false,
         paging: {
             style: 'input', // or 'links'
             cssClass: 'paging', // prefix with containerClass (e.g. .ffb .paging)

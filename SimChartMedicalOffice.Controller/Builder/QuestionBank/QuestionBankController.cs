@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
 using System.Web;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder;
+using SimChartMedicalOffice.Common.Logging;
 using SimChartMedicalOffice.Core;
-using System.Web.Script.Serialization;
 using System.Configuration;
 using SimChartMedicalOffice.Common;
 using System.IO;
@@ -28,11 +26,11 @@ namespace SimChartMedicalOffice.Web.Controllers
         private readonly ICompetencyService _competencyService;
         private readonly ISkillSetService _skillSetService;
 
-        public QuestionBankController(IQuestionBankService questionBankService, ICompetencyService competencyService,ISkillSetService skillSetService)
+        public QuestionBankController(IQuestionBankService questionBankService, ICompetencyService competencyService, ISkillSetService skillSetService)
         {
-            this._questionBankService = questionBankService;
-            this._competencyService = competencyService;
-            this._skillSetService = skillSetService;
+            _questionBankService = questionBankService;
+            _competencyService = competencyService;
+            _skillSetService = skillSetService;
         }
 
         /// <summary>
@@ -43,12 +41,11 @@ namespace SimChartMedicalOffice.Web.Controllers
             try
             {
                 ViewData["QuestionBankList"] = new SelectList(AppCommon.QuestionTypeOptions, "Key", "Value", 1);
-                List<string> linkedCompetency = new List<string>();
-
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: QuestionBank", ex);
             }
             return View("../Builder/QuestionBank/QuestionBank");
         }
@@ -65,9 +62,10 @@ namespace SimChartMedicalOffice.Web.Controllers
                 ViewData["BlankOrientation"] = new SelectList(AppCommon.BlankOrientation, "BlankOrientation");
                 ViewData["NoOfLabels"] = new SelectList(AppCommon.NoOfLabels, "NoOfLabels");
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: LoadQuestionType", ex);
             }
             return View("../Builder/QuestionBank/" + AppCommon.GetKeyBasedOnQuestionType(strQuestionType));
         }
@@ -83,65 +81,48 @@ namespace SimChartMedicalOffice.Web.Controllers
             List<AutoCompleteProxy> competencyStringListTemp = new List<AutoCompleteProxy>();
             try
             {
-                if (!String.IsNullOrEmpty(strFilterText))
-                {
-                    competencyStringListTemp = _competencyService.GetAllCompetencyListForDropDown();
-                }
-                else
-                {
-                    competencyStringListTemp = _competencyService.GetFilteredCompetenciesBasedOnString(strFilterText);
-                }
+                competencyStringListTemp = !String.IsNullOrEmpty(strFilterText) ? _competencyService.GetAllCompetencyListForDropDown() : _competencyService.GetFilteredCompetenciesBasedOnString(strFilterText);
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: GetCompetenciesForDropDown", ex);
             }
-            return Json(new { competencyStringListTemp = JsonSerializer.SerializeObject(competencyStringListTemp), competencyArray = competencyStringListTemp.Select(S => S.name).ToArray() });
+            return Json(new { competencyStringListTemp = JsonSerializer.SerializeObject(competencyStringListTemp), competencyArray = competencyStringListTemp.Select(s => s.name).ToArray() });
         }
         #endregion
 
         #region To Load Question in Edit mode
+
         /// <summary>
         /// To render question in edit mode
         /// </summary>
         /// <param name="questionQuid">Url of question to load</param>
         /// <param name="iQuestionType">ApCommon dictionary key of the question type to be loaded</param>
+        /// <param name="folderType"> </param>
         /// <returns></returns>
-        public ActionResult RenderQuestionInEditMode(string questionQuid, int iQuestionType, int ?folderType)
+        public ActionResult RenderQuestionInEditMode(string questionQuid, int iQuestionType, int? folderType)
         {
 
             try
             {
-                Question questionObject = new Question();
-                IList<string> AnswerOptionOrderedList = new List<string>();
-                IList<AnswerOption> answerOptionList = new List<AnswerOption>();
-
-                if (String.IsNullOrEmpty(folderType.ToString()))
-                {
-                    ViewBag.IsQuestionBank = false;
-                }
-                else 
-                {
-                    if (folderType.ToString().Equals("1")){
-                     ViewBag.IsQuestionBank = true;
-                    }else
-                        ViewBag.IsQuestionBank = false;
-                }
-                if(folderType.ToString().Equals("2"))
+                //IList<string> AnswerOptionOrderedList = new List<string>();
+                ViewBag.IsQuestionBank = !String.IsNullOrEmpty(folderType.ToString()) && folderType.ToString().Equals("1");
+                if (folderType.ToString().Equals("2"))
                 {
                     ViewBag.IsAssignmentQuestion = true;
                 }
-                questionObject = _questionBankService.GetQuestion(questionQuid);
-                Question clonedQuestion = questionObject.Clone();
+                Question questionObject = _questionBankService.GetQuestion(questionQuid);
                 SetViewBagsForEditMode(questionObject, iQuestionType);
                 ViewBag.Url = questionObject.Url;
+                ViewData["BlankOrientation"] = new SelectList(AppCommon.BlankOrientation, "BlankOrientation");
+                ViewData["NoOfLabels"] = new SelectList(AppCommon.NoOfLabels, "NoOfLabels");
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: RenderQuestionInEditMode", ex);
             }
-            ViewData["BlankOrientation"] = new SelectList(AppCommon.BlankOrientation, "BlankOrientation");
-            ViewData["NoOfLabels"] = new SelectList(AppCommon.NoOfLabels, "NoOfLabels");
             return View("../Builder/QuestionBank/" + AppCommon.GetKeyBasedOnQuestionType(iQuestionType));
         }
 
@@ -169,8 +150,8 @@ namespace SimChartMedicalOffice.Web.Controllers
                 ViewBag.QuestionText = questionObject.QuestionText;
                 ViewBag.QuestionImage = String.IsNullOrEmpty(questionObject.QuestionImageReference) ? String.Empty : questionObject.QuestionImageReference;
                 ViewBag.CorrectAnswerRationale = questionObject.Rationale;
-                ViewBag.LinkedCompetency = GetLinkedCompetencyForAGuid(questionObject.CompetencyReferenceGUID);
-                ViewBag.LinkedCompetencyGuid = questionObject.CompetencyReferenceGUID;
+                ViewBag.LinkedCompetency = GetLinkedCompetencyForAGuid(questionObject.CompetencyReferenceGuid);
+                ViewBag.LinkedCompetencyGuid = questionObject.CompetencyReferenceGuid;
                 ViewBag.IsEditMode = true;
                 ViewBag.questionTypeLoadedFlag = questionObject.QuestionType;
                 ViewBag.BlankOrientationToLoad = questionObject.BlankOrientation;
@@ -195,13 +176,12 @@ namespace SimChartMedicalOffice.Web.Controllers
                         break;
                     case AppEnum.QuestionTypes.TrueFalseQuestionSetUp:
                         break;
-                    default:
-                        break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: SetViewBagsForEditMode", ex);
             }
 
         }
@@ -228,9 +208,10 @@ namespace SimChartMedicalOffice.Web.Controllers
                 }
                 ViewBag.AnswerListToLoad = answerList;
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: SetAnswerOptionsViewBagsForQuestions", ex);
             }
 
         }
@@ -249,14 +230,15 @@ namespace SimChartMedicalOffice.Web.Controllers
                     iIndexOfOrder++;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: SetCorrectOrderViewBagsForQuestion", ex);
             }
 
         }
         #endregion
-  
+
         /// <summary>
         /// To get all the questions
         /// </summary>
@@ -267,7 +249,7 @@ namespace SimChartMedicalOffice.Web.Controllers
             _questionBankService.GetAllQuestions();
             return Json(new { Result = "success" });
         }
-        
+
         /// <summary>
         /// To load upload control to view
         /// </summary>
@@ -285,11 +267,10 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public FileUploadJsonResult AjaxUploadAFile(HttpPostedFileBase file)
         {
-           
+
             string strMessage = AppConstants.FileUploadSuccess;
             bool isFileUploaded = true;
             string attachmentUrl = String.Empty;
-            Attachment uploadedFile = new Attachment();
             if (file == null)
             {
                 return new FileUploadJsonResult { Data = new { strUploadMessage = AppConstants.FileUploadNoFileSelected, isSuccessfulUpload = false } };
@@ -305,14 +286,19 @@ namespace SimChartMedicalOffice.Web.Controllers
                     {
                         byte[] fileByteToBeSaved = new byte[file.ContentLength];
                         file.InputStream.Read(fileByteToBeSaved, 0, file.ContentLength);
-                        uploadedFile = new Attachment();
-                        uploadedFile.FileType = file.ContentType;
-                        uploadedFile.FileName = String.IsNullOrEmpty(file.FileName) ? AppConstants.StandardFileName : file.FileName.Split('\\').Last();
-                        uploadedFile.FileContent = fileByteToBeSaved;
-                        uploadedFile.IsActive = true;
-                        uploadedFile.IsAutoSave = true;
+                        Attachment uploadedFile = new Attachment
+                                                      {
+                                                          FileType = file.ContentType,
+                                                          FileName =
+                                                              String.IsNullOrEmpty(file.FileName)
+                                                                  ? AppConstants.StandardFileName
+                                                                  : file.FileName.Split('\\').Last(),
+                                                          FileContent = fileByteToBeSaved,
+                                                          IsActive = true,
+                                                          IsAutoSave = true
+                                                      };
                         SetAuditFields(uploadedFile, false);
-                        _questionBankService.SaveAttachment(string.Empty, uploadedFile,true, out attachmentUrl);
+                        _questionBankService.SaveAttachment(string.Empty, uploadedFile, true, out attachmentUrl);
                     }
                     else
                     {
@@ -354,11 +340,12 @@ namespace SimChartMedicalOffice.Web.Controllers
                     stream.WriteTo(response.OutputStream);
                 }
             }
-            catch 
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: GetAttachment", ex);
             }
-            
+
         }
         /// <summary>
         /// to remove the image uploaded
@@ -388,26 +375,25 @@ namespace SimChartMedicalOffice.Web.Controllers
             string savedFolderId = "";
             try
             {
-                IList<BreadCrumbProxy> breadCrumbFolders=new List<BreadCrumbProxy>();
-                string folderJson;
-                Folder folderToCreate;
-                folderJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                folderToCreate = JsonSerializer.DeserializeObject<Folder>(folderJson);
+                IList<BreadCrumbProxy> breadCrumbFolders;
+                string folderJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                Folder folderToCreate = JsonSerializer.DeserializeObject<Folder>(folderJson);
                 IList<Folder> subFolderList = _questionBankService.GetSubfolders(folderGuid, GetLoginUserCourse() + "/" + GetLoginUserRole(),
-                                                                                 folderType, folderUrl, out breadCrumbFolders,false);
+                                                                                 folderType, folderUrl, out breadCrumbFolders, false);
                 if (subFolderList.Any(folderItem => folderItem.Name == folderToCreate.Name))
                 {
                     message = "Folder name already exists";
                     return Json(new { folderGuid = folderGuid, folderUrl = folderUrl, messageToReturn = message });
                 }
                 SetAuditFields(folderToCreate, false);
-                savedFolderId=_questionBankService.SaveFolder(folderToCreate, folderType, GetLoginUserCourse() + "/" + GetLoginUserRole(), folderUrl, folderGuid);
+                savedFolderId = _questionBankService.SaveFolder(folderToCreate, folderType, GetLoginUserCourse() + "/" + GetLoginUserRole(), folderUrl, folderGuid);
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: CreateFolder", ex);
             }
-            return Json(new { folderGuid = folderGuid, folderUrl = folderUrl, messageToReturn = message, newFolderId = savedFolderId});
+            return Json(new { folderGuid = folderGuid, folderUrl = folderUrl, messageToReturn = message, newFolderId = savedFolderId });
         }
 
         /// <summary>
@@ -416,17 +402,18 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <param name="folderType"></param>
         /// <param name="folderUrl"></param>
         /// <param name="folderGuid"></param>
+        /// <param name="parentFolderName"> </param>
+        /// <param name="currentTab"> </param>
+        /// <param name="folderUrlOfParent"> </param>
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult RenameFolder(int folderType, string folderUrl, string folderGuid, string parentFolderName, string currentTab, string folderUrlOfParent)
         {
             string message = "";
             try
             {
-                string folderJson;
-                Folder folderFromForm;
-                IList<BreadCrumbProxy> breadCrumbFolders = new List<BreadCrumbProxy>();
-                folderJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                folderFromForm = JsonSerializer.DeserializeObject<Folder>(folderJson);
+                IList<BreadCrumbProxy> breadCrumbFolders;
+                string folderJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                Folder folderFromForm = JsonSerializer.DeserializeObject<Folder>(folderJson);
                 Folder folderObjectToUpdate = _questionBankService.GetFolder(folderUrl + '/' + folderGuid);
                 IList<Folder> subFolderList = _questionBankService.GetSubfolders(parentFolderName, GetLoginUserCourse() + "/" + GetLoginUserRole(),
                                                                                  folderType, folderUrlOfParent, out breadCrumbFolders, false);
@@ -438,16 +425,21 @@ namespace SimChartMedicalOffice.Web.Controllers
                 _questionBankService.UpdateFolder(folderType, folderUrl, folderGuid, GetLoginUserCourse() + "/" + GetLoginUserRole(), folderObjectToUpdate);
 
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: RenameFolder", ex);
             }
             return Json(new { folderGuid = folderGuid, folderUrl = folderUrl, messageToReturn = message });
         }
+
         /// <summary>
         /// method to delete a folder
         /// </summary>
-        /// <param name="selectedFolderIdentifier"></param>
+        /// <param name="folderType"></param>
+        /// <param name="folderUrl"></param>
+        /// <param name="folderGuid"></param>
+        /// <returns></returns>
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult DeleteFolder(int folderType, string folderUrl, string folderGuid)
         {
@@ -456,9 +448,10 @@ namespace SimChartMedicalOffice.Web.Controllers
             {
                 _questionBankService.DeleteFolder(folderUrl + '/' + folderGuid);
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: DeleteFolder", ex);
             }
             return Json(new { folderGuid = folderGuid, folderUrl = folderUrl });
         }
@@ -473,7 +466,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult GetSubFolders(string parentFolderIdentifier, int folderType, string folderUrl)
         {
-            IList<BreadCrumbProxy> breadCrumbFolders = new List<BreadCrumbProxy>();
+            IList<BreadCrumbProxy> breadCrumbFolders;
             IList<Folder> subFolderList = _questionBankService.GetSubfolders(parentFolderIdentifier, GetLoginUserCourse() + "/" + GetLoginUserRole(), folderType, folderUrl, out breadCrumbFolders, true);
             return Json(new { Result = subFolderList.OrderByDescending(x => Convert.ToInt32(x.SequenceNumber)), BreadCrumbFolders = breadCrumbFolders });
         }
@@ -487,11 +480,11 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <returns></returns>
         public ActionResult GetSubFoldersForSwap(string parentFolderIdentifier, int folderType, string folderUrl)
         {
-            IList<BreadCrumbProxy> breadCrumbFolders = new List<BreadCrumbProxy>();
+            IList<BreadCrumbProxy> breadCrumbFolders;
             IList<Folder> subFolderList = _questionBankService.GetSubfolders(parentFolderIdentifier, GetLoginUserCourse() + "/" + GetLoginUserRole(), folderType, folderUrl, out breadCrumbFolders, false);
-            ViewData["MaxSequenceNumber"] =10;
+            ViewData["MaxSequenceNumber"] = 10;
             ViewData["folderCount"] = subFolderList.Count;
-            return View("../../Views/Builder/QuestionBank/SwapPopUp", subFolderList.OrderByDescending(x=>Convert.ToInt32(x.SequenceNumber)).ToList());
+            return View("../../Views/Builder/QuestionBank/SwapPopUp", subFolderList.OrderByDescending(x => Convert.ToInt32(x.SequenceNumber)).ToList());
         }
 
         /// <summary>
@@ -507,20 +500,18 @@ namespace SimChartMedicalOffice.Web.Controllers
             string message = "";
             try
             {
-                string folderJson;
-                IList<Folder> subFolderListFromForm;
-                IList<BreadCrumbProxy> breadCrumbFolders = new List<BreadCrumbProxy>();
+                IList<BreadCrumbProxy> breadCrumbFolders;
                 Dictionary<string, Folder> subFolderDicToSave = new Dictionary<string, Folder>();
 
-                folderJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                subFolderListFromForm = JsonSerializer.DeserializeObject<IList<Folder>>(folderJson);
+                string folderJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                IList<Folder> subFolderListFromForm = JsonSerializer.DeserializeObject<IList<Folder>>(folderJson);
                 IList<Folder> subFolderList = _questionBankService.GetSubfolders(parentFolderIdentifier, GetLoginUserCourse() + "/" + GetLoginUserRole(), folderType, folderUrl, out breadCrumbFolders, false);
                 //replace each subFolder's sequence number with those from Form
                 foreach (Folder folderFromForm in subFolderListFromForm)
                 {
                     foreach (Folder folder in subFolderList)
                     {
-                        if (folder.UniqueIdentifier==folderFromForm.UniqueIdentifier)
+                        if (folder.UniqueIdentifier == folderFromForm.UniqueIdentifier)
                         {
                             //update new sequence number, remove its uniqueIdentifier, add it to dictionary
                             folder.SequenceNumber = folderFromForm.SequenceNumber;
@@ -542,9 +533,10 @@ namespace SimChartMedicalOffice.Web.Controllers
                     message = result ? "Success" : "";
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: RearrangeSubFolderSequenceNumber", ex);
             }
             return Json(new { folderGuid = parentFolderIdentifier, folderUrl = folderUrl, messageToReturn = message });
         }
@@ -562,11 +554,10 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// <param name="selectedQuestionList"></param>
         /// <param name="folderUrl"></param>
         /// <returns></returns>
-        public ActionResult GetQuestionBankList(jQueryDataTableParamModel param, string parentFolderIdentifier, int folderType, string filterByType, string selectedQuestionList, string folderUrl)
+        public ActionResult GetQuestionBankList(JQueryDataTableParamModel param, string parentFolderIdentifier, int folderType, string filterByType, string selectedQuestionList, string folderUrl)
         {
-            int questionBankCount = 0;
             string[] gridColumnList = { "QuestionText", "Competency", "QuestionType", "CreatedTimeStamp" };
-            IList<Question> questionBankList = _questionBankService.GetQuestionItems(parentFolderIdentifier, folderType, GetLoginUserCourse() + "/" + GetLoginUserRole(), folderUrl);
+            IList<Question> questionBankList = _questionBankService.GetQuestionItems(parentFolderIdentifier, folderType, GetDropBoxFromCookie(), folderUrl);
             if (filterByType != "")
             {
                 string filterValue = AppCommon.QuestionTypeOptionsForLanding.Single(x => x.Value == filterByType).Key.ToString(CultureInfo.InvariantCulture);
@@ -574,8 +565,8 @@ namespace SimChartMedicalOffice.Web.Controllers
             }
             int sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             string sortColumnOrder = Request["sSortDir_0"];
-            string sortColumnName = gridColumnList[sortColumnIndex-1];
-            switch (gridColumnList[sortColumnIndex-1])
+            string sortColumnName = gridColumnList[sortColumnIndex - 1];
+            switch (gridColumnList[sortColumnIndex - 1])
             {
 
                 case "Competency":
@@ -583,16 +574,16 @@ namespace SimChartMedicalOffice.Web.Controllers
                     {
                         questionBankList = (from question in questionBankList
                                             let competency =
-                                                GetLinkedCompetencyForAGuid(question.CompetencyReferenceGUID)
+                                                GetLinkedCompetencyForAGuid(question.CompetencyReferenceGuid)
                                             orderby competency
                                             select question).ToList();
                     }
                     else
                     {
-                     
+
                         questionBankList = (from question in questionBankList
                                             let competency =
-                                                GetLinkedCompetencyForAGuid(question.CompetencyReferenceGUID)
+                                                GetLinkedCompetencyForAGuid(question.CompetencyReferenceGuid)
                                             orderby competency descending
                                             select question).ToList();
                     }
@@ -614,25 +605,25 @@ namespace SimChartMedicalOffice.Web.Controllers
                                                 let questionType =
                                                     AppCommon.GetKeyBasedOnQuestionType(
                                                         Convert.ToInt32(question.QuestionType))
-                                                orderby questionType descending 
+                                                orderby questionType descending
                                                 select question).ToList();
                         }
                     }
                     break;
-                 default:
+                default:
                     var sortableList = questionBankList.AsQueryable();
-                    questionBankList = sortableList.OrderBy<Question>(sortColumnName, sortColumnOrder).ToList<Question>();
+                    questionBankList = sortableList.OrderBy(sortColumnName, sortColumnOrder).ToList();
                     break;
             }
             IList<Question> questionBankListToRender = questionBankList.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
-            questionBankCount = questionBankList.Count;
+            int questionBankCount = questionBankList.Count;
             string[] strArray = AppCommon.GetStringArrayAfterSplitting(selectedQuestionList);
             var data = (from questionBankItem in questionBankListToRender
                         select new[]
                                    {
                                        "<input type='checkbox' id='" + questionBankItem.UniqueIdentifier + "' onClick='questionBank.commonFunctions.gridOperations.questionItemChanged(this)'" + AppCommon.CheckForFlagAndReturnValue(strArray, questionBankItem.UniqueIdentifier) + "/>",
-                                       !string.IsNullOrEmpty(questionBankItem.QuestionText) ? "<a href='#' onclick=\"questionBank.commonFunctions.loadQuestionInEditMode('"+questionBankItem.Url+"','"+questionBankItem.QuestionType+"')\" class=\"link select-hand\">" + AppCommon.breakWord(AppCommon.ReplaceEscapeCharacterWithHtmlForReports(questionBankItem.QuestionText), 20) + "</a>" : "",
-                                       !string.IsNullOrEmpty(questionBankItem.CompetencyReferenceGUID) ? GetLinkedCompetencyForAGuid(questionBankItem.CompetencyReferenceGUID) : "",
+                                       !string.IsNullOrEmpty(questionBankItem.QuestionText) ? "<a href='#' onclick=\"questionBank.commonFunctions.loadQuestionInEditMode('"+questionBankItem.Url+"','"+questionBankItem.QuestionType+"')\" class=\"link select-hand\">" + AppCommon.BreakWord(AppCommon.ReplaceEscapeCharacterWithHtmlForReports(questionBankItem.QuestionText), 20) + "</a>" : "",
+                                       !string.IsNullOrEmpty(questionBankItem.CompetencyReferenceGuid) ? GetLinkedCompetencyForAGuid(questionBankItem.CompetencyReferenceGuid) : "",
                                        !string.IsNullOrEmpty(questionBankItem.QuestionType) && questionBankItem.QuestionType != "-1" ? ((AppCommon.QuestionTypeOptions.Single(x => x.Key == Convert.ToInt32(questionBankItem.QuestionType))).Value).ToString(CultureInfo.InvariantCulture) : "",
                                        !string.IsNullOrEmpty(questionBankItem.CreatedTimeStamp.ToString("MM/dd/yyyy")) ? questionBankItem.CreatedTimeStamp.ToString("MM/dd/yyyy") : ""
                                    }).ToArray();
@@ -645,44 +636,43 @@ namespace SimChartMedicalOffice.Web.Controllers
             },
             JsonRequestBehavior.AllowGet);
         }
+
         /// <summary>
         /// To save a question
         /// </summary>
         /// <param name="questionUrlReference"></param>
         /// <param name="folderIdentifier"></param>
         /// <param name="isEditMode"></param>
+        /// <param name="isNewQuestion"> </param>
+        /// <param name="isExistingQuestion"> </param>
+        /// <param name="questionGuid"> </param>
+        /// <param name="authoringType"> </param>
+        /// <param name="authoringUrl"> </param>
+        /// <param name="questionNewTextToSave"> </param>
         /// <returns></returns>
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveQuestion(string questionUrlReference, string folderIdentifier, bool isEditMode, bool isNewQuestion, bool isExistingQuestion, string questionGuid, int authoringType, string authoringUrl, string questionNewTextToSave)
         {
             Question questionItemToEdit = new Question();
-            Question questionObject = new Question();
-            bool isProceedToStep4Valid=false;
+            bool isProceedToStep4Valid = false;
             bool isQuestionSavedToQuestionBankValue = false;
             try
             {
-                if((isNewQuestion || isExistingQuestion) && questionNewTextToSave != "")
+                if ((isNewQuestion || isExistingQuestion) && questionNewTextToSave != "")
                 {
                     bool isQuestionNameExists = _questionBankService.IsQuestionNameExists(questionNewTextToSave);
-                    if(isQuestionNameExists)
+                    if (isQuestionNameExists)
                     {
-                        return Json(new {isQuestionNameAlreadyExists = isQuestionNameExists});
+                        return Json(new { isQuestionNameAlreadyExists = true });
                     }
                 }
                 string questionObjJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
                 string parentIdentifier = String.Empty;
-                questionObject = JsonSerializer.DeserializeObject<Question>(questionObjJson);
-                if(isEditMode)
-                {
-                    questionItemToEdit = _questionBankService.GetQuestion(questionUrlReference);
-                }
-                else
-                {
-                    questionItemToEdit = questionObject;
-                }
+                Question questionObject = JsonSerializer.DeserializeObject<Question>(questionObjJson);
+                questionItemToEdit = isEditMode ? _questionBankService.GetQuestion(questionUrlReference) : questionObject;
                 questionItemToEdit.AnswerOptions = questionObject.AnswerOptions;
                 questionItemToEdit.BlankOrientation = questionObject.BlankOrientation;
-                questionItemToEdit.CompetencyReferenceGUID = questionObject.CompetencyReferenceGUID;
+                questionItemToEdit.CompetencyReferenceGuid = questionObject.CompetencyReferenceGuid;
                 questionItemToEdit.CorrectOrder = questionObject.CorrectOrder;
                 questionItemToEdit.NoOfLabels = questionObject.NoOfLabels;
                 questionItemToEdit.QuestionImageReference = questionObject.QuestionImageReference;
@@ -695,29 +685,31 @@ namespace SimChartMedicalOffice.Web.Controllers
 
                 if (authoringType == (int)AppCommon.AuthoringType.SkillSet || authoringType == (int)AppCommon.AuthoringType.AssignmentBuilder)
                 {
-                    Question QuestionItemForAuthoring = questionItemToEdit.Clone();
+                    Question questionItemForAuthoring = questionItemToEdit.Clone();
+
                     if (isNewQuestion && !String.IsNullOrEmpty(questionNewTextToSave))
                     {
                         questionItemToEdit.QuestionText = questionNewTextToSave;
-                        QuestionItemForAuthoring.QuestionText = questionNewTextToSave;
+                        questionItemForAuthoring.QuestionText = questionNewTextToSave;
                     }
-                    parentIdentifier = saveQuestionsForSkillSet(QuestionItemForAuthoring, isNewQuestion,
+                    parentIdentifier = SaveQuestionsForSkillSet(questionItemForAuthoring, isNewQuestion,
                                                                 isExistingQuestion, questionGuid);
-                    if(isNewQuestion || isExistingQuestion)
+                    if (isNewQuestion || isExistingQuestion)
                     {
                         isQuestionSavedToQuestionBankValue = true;
                     }
                 }
                 questionItemToEdit.ParentReferenceGuid = parentIdentifier;
-                _questionBankService.SaveQuestion(questionItemToEdit, GetLoginUserCourse() + "/" + GetLoginUserRole(), questionUrlReference, folderIdentifier, isEditMode);
+                _questionBankService.SaveQuestion(questionItemToEdit, GetDropBoxFromCookie(), questionUrlReference, folderIdentifier, isEditMode, false);
                 if (!String.IsNullOrEmpty(authoringUrl))
                 {
                     isProceedToStep4Valid = CheckIfAllQuestionsTemplatesAreConfigured(authoringUrl, authoringType);
                 }
             }
-            catch 
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: SaveQuestion", ex);
             }
             return Json(new { Success = "", questionResult = questionItemToEdit, isProceedToStep4Valid = isProceedToStep4Valid, isQuestionSavedToQuestionBank = isQuestionSavedToQuestionBankValue, isQuestionNameAlreadyExists = false });
         }
@@ -725,7 +717,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         private bool CheckIfAllQuestionsTemplatesAreConfigured(string urlOfAuthoring, int authoringType)
         {
             AppCommon.AuthoringType authoringTypeVal = (AppCommon.AuthoringType)authoringType;
-            int countOfConfiguredQuestions=0;
+            int countOfConfiguredQuestions = 0;
             switch (authoringTypeVal)
             {
                 case AppCommon.AuthoringType.SkillSet:
@@ -733,30 +725,28 @@ namespace SimChartMedicalOffice.Web.Controllers
                     if (skillSetObj != null && skillSetObj.Questions != null)
                     {
                         IList<Question> questionList = skillSetObj.Questions.Select(qn => qn.Value).ToList();
-                        countOfConfiguredQuestions = (from skillSetlst in questionList where (skillSetlst.CompetencyReferenceGUID == null || skillSetlst.CompetencyReferenceGUID == String.Empty) select skillSetlst).Count();
+                        countOfConfiguredQuestions = (from skillSetlst in questionList where string.IsNullOrEmpty(skillSetlst.CompetencyReferenceGuid) select skillSetlst).Count();
                     }
                     break;
                 case AppCommon.AuthoringType.AssignmentBuilder:
                     break;
-                default:
-                    break;
             }
             if (countOfConfiguredQuestions > 0)
                 return false;
-            else
-                return true;
+            return true;
         }
 
-        private string saveQuestionsForSkillSet(Question questionItemToEdit, bool isNewQuestion, bool isExistingQuestion, string questionGuid)
+        private string SaveQuestionsForSkillSet(Question questionItemToEdit, bool isNewQuestion, bool isExistingQuestion, string questionGuid)
         {
             if (isNewQuestion)
             {
 
-                string questionUrlToSave = _questionBankService.FormUrlForSkillSetQuestionToQuestionBank(questionItemToEdit, GetLoginUserCourse() + "/" + GetLoginUserRole());
+                string questionUrlToSave = _questionBankService.FormUrlForSkillSetQuestionToQuestionBank(questionItemToEdit, GetDropBoxFromCookie());
                 if (questionUrlToSave != "")
                 {
+                    _questionBankService.CloneImagesForQuestion(questionItemToEdit);
                     SetAuditFields(questionItemToEdit, false);
-                    _questionBankService.SaveQuestion(questionItemToEdit, GetLoginUserCourse() + "/" + GetLoginUserRole(), questionUrlToSave, "", true);
+                    _questionBankService.SaveQuestion(questionItemToEdit, GetDropBoxFromCookie(), questionUrlToSave, "", true, true);
                 }
                 return questionUrlToSave;
             }
@@ -764,21 +754,25 @@ namespace SimChartMedicalOffice.Web.Controllers
             {
                 if (questionItemToEdit.ParentReferenceGuid != "")
                 {
-                     SetAuditFields(questionItemToEdit, true);
+                    SetAuditFields(questionItemToEdit, true);
                     Question questionItemFromQuestionBank =
                         _questionBankService.GetQuestion(questionItemToEdit.ParentReferenceGuid);
+                    _questionBankService.CloneImagesForQuestion(questionItemToEdit);
+                    _questionBankService.DeleteImagesForQuestion(questionItemFromQuestionBank);
                     questionItemToEdit.CreatedBy = questionItemFromQuestionBank.CreatedBy;
                     questionItemToEdit.CreatedTimeStamp = questionItemFromQuestionBank.CreatedTimeStamp;
-                     _questionBankService.SaveQuestion(questionItemToEdit, GetLoginUserCourse() + "/" + GetLoginUserRole(), questionItemToEdit.ParentReferenceGuid, "", true);
+                    _questionBankService.SaveQuestion(questionItemToEdit,GetDropBoxFromCookie(), questionItemToEdit.ParentReferenceGuid, "", true, true);
                 }
                 return questionItemToEdit.ParentReferenceGuid;
             }
             return questionItemToEdit.ParentReferenceGuid;
         }
+
         /// <summary>
         /// To render search page on click of search
         /// </summary>
         /// <param name="strSearchText"></param>
+        /// <param name="strQuestionType"> </param>
         /// <returns></returns>
         public ActionResult GiveSearchResults(string strSearchText, string strQuestionType)
         {
@@ -787,30 +781,31 @@ namespace SimChartMedicalOffice.Web.Controllers
                 strQuestionType = "";
             }
             ViewBag.SearchText = strSearchText;
-            ViewBag.SearchQuestionType = !String.IsNullOrEmpty(strQuestionType)?(AppCommon.QuestionTypeOptions.Single(x => x.Key == Convert.ToInt32(strQuestionType)).Value.ToString()):String.Empty;
+            ViewBag.SearchQuestionType = !String.IsNullOrEmpty(strQuestionType) ? (AppCommon.QuestionTypeOptions.Single(x => x.Key == Convert.ToInt32(strQuestionType)).Value) : String.Empty;
             ViewBag.filterByQuestionTypeSearch = GetQuestionTypeFlexBoxList();
             ViewBag.SearchQuestionTypeText = strQuestionType;
             return View("../Builder/QuestionBank/QuestionSearchResults");
         }
+
         /// <summary>
         /// To refresh the grid on search
         /// </summary>
         /// <param name="param"></param>
         /// <param name="strSearchText"></param>
+        /// <param name="strQuestionType"> </param>
         /// <returns></returns>
-        public ActionResult GetQuestionBankSearchList(jQueryDataTableParamModel param, string strSearchText, string strQuestionType)
+        public ActionResult GetQuestionBankSearchList(JQueryDataTableParamModel param, string strSearchText, string strQuestionType)
         {
-            IList<DocumentProxy> lstQuestionSearchResult = new List<DocumentProxy>();
             int sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
-            string sortColumnOrder = Request["sSortDir_0"]; 
+            string sortColumnOrder = Request["sSortDir_0"];
             try
             {
-               IList<DocumentProxy> lstQuestionSearchResultTemp = _questionBankService.GetSearchResultsForQuestionBank(strSearchText, sortColumnIndex, sortColumnOrder ,strQuestionType);
-               lstQuestionSearchResult = lstQuestionSearchResultTemp.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
+                IList<DocumentProxy> lstQuestionSearchResultTemp = _questionBankService.GetSearchResultsForQuestionBank(strSearchText, sortColumnIndex, sortColumnOrder, strQuestionType);
+                IList<DocumentProxy> lstQuestionSearchResult = lstQuestionSearchResultTemp.Skip(param.iDisplayStart).Take(param.iDisplayLength).ToList();
                 var data = (from questionBankItem in lstQuestionSearchResult
                             select new[]
                                    {
-                                       !string.IsNullOrEmpty(questionBankItem.Text) ? "<a href='#' onclick=\"questionBank.commonFunctions.loadQuestionInEditMode('"+questionBankItem.Url+"','"+Convert.ToInt32(((AppCommon.QuestionTypeOptionsForLanding.Single(x => x.Value == questionBankItem.TypeOfQuestion)).Key).ToString(CultureInfo.InvariantCulture))+"')\" class=\"link select-hand\">" + AppCommon.breakWord(AppCommon.ReplaceEscapeCharacterWithHtmlForReports(questionBankItem.Text), 20) + "</a>" : "",
+                                       !string.IsNullOrEmpty(questionBankItem.Text) ? "<a href='#' onclick=\"questionBank.commonFunctions.loadQuestionInEditMode('"+questionBankItem.Url+"','"+Convert.ToInt32(((AppCommon.QuestionTypeOptionsForLanding.Single(x => x.Value == questionBankItem.TypeOfQuestion)).Key).ToString(CultureInfo.InvariantCulture))+"')\" class=\"link select-hand\">" + AppCommon.BreakWord(AppCommon.ReplaceEscapeCharacterWithHtmlForReports(questionBankItem.Text), 20) + "</a>" : "",
                                        !string.IsNullOrEmpty(questionBankItem.LinkedItemReference) ? questionBankItem.LinkedItemReference : String.Empty,
                                         "<a href='#' onclick=\"questionBank.commonFunctions.loadFolder('"+questionBankItem.FolderUrl+"','"+questionBankItem.FolderIdentifier+"')\" class=\"link select-hand\">" + (!String.IsNullOrEmpty(questionBankItem.FolderName)? questionBankItem.FolderName: AppCommon.QuestionBankLandingPageFolderName) + "</a>",
                                         (!String.IsNullOrEmpty(questionBankItem.TypeOfQuestion)) ? questionBankItem.TypeOfQuestion :String.Empty,
@@ -824,32 +819,31 @@ namespace SimChartMedicalOffice.Web.Controllers
                     aaData = data
                 },
             JsonRequestBehavior.AllowGet);
-     
+
             }
-            catch
+            catch (Exception ex)
             {
-                //To-Do
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: ControllerName: QuestionBank, MethodName: GetQuestionBankSearchList", ex);
             }
-            return Json(new { Result = string.Empty }); 
+            return Json(new { Result = string.Empty });
         }
 
 
         /// <summary>
         /// Get list of question type with id.
         /// </summary>
-        /// <returns>Dictionary<string, int></returns>
+        /// <returns></returns>
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult GetQuestionType()
         {
-            Dictionary<string, int> questionType = GetGetQuestionTypeList();
             var varQuestionType = GetQuestionTypeFlexBoxList();
-            var autoCompleteProxyQuestionType = (from qt in questionType select new { name = qt.Key, id = qt.Value });
-            return Json(new { ResultList = varQuestionType, questionList = JsonSerializer.SerializeObject(GetQuestionTypeFlexBoxList()), questionNameArray = GetQuestionTypeFlexBoxList().Select(S => S.name).ToArray() }, JsonRequestBehavior.AllowGet);
+            return Json(new { ResultList = varQuestionType, questionList = JsonSerializer.SerializeObject(GetQuestionTypeFlexBoxList()), questionNameArray = GetQuestionTypeFlexBoxList().Select(s => s.name).ToArray() }, JsonRequestBehavior.AllowGet);
         }
 
         public Dictionary<string, int> GetGetQuestionTypeList()
         {
-            return _questionBankService.GetQuestionType();            
+            return _questionBankService.GetQuestionType();
         }
 
     }

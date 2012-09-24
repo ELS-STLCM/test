@@ -1,12 +1,13 @@
 ﻿using SimChartMedicalOffice.Core.Forms;
 using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Core.DropBox;
 
 namespace SimChartMedicalOffice.Core.DataInterfaces.Forms
 {
     public interface IBillOfRightsDocument : IKeyValueRepository<BillOfRights>
     {
-        BillOfRights GetBillOfRightsDocument(string patientGUID, string courseId, string userRole, string UID, string SID);
-        string SaveBillOfRightsUrl(string patientGUID, string courseId, string userRole, string UID, string SID);
+        BillOfRights GetBillOfRightsDocument(string patientGuid, DropBoxLink dropBox);
+        string SaveBillOfRightsUrl(string patientGuid, DropBoxLink dropBox);
         Attachment GetBillOfRightsPdfData();
     }
 }

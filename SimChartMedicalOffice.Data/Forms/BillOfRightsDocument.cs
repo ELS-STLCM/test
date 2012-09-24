@@ -1,46 +1,41 @@
-﻿using SimChartMedicalOffice.Data.Repository;
-using SimChartMedicalOffice.Core.DataInterfaces.Forms;
-using SimChartMedicalOffice.Core.Forms;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.Core;
+using SimChartMedicalOffice.Core.DataInterfaces.Forms;
+using SimChartMedicalOffice.Core.Forms;
+using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Core.DropBox;
+using SimChartMedicalOffice.Common;
 
 namespace SimChartMedicalOffice.Data.Forms
 {
-    public class BillOfRightsDocument : KeyValueRepository<SimChartMedicalOffice.Core.Forms.BillOfRights>, IBillOfRightsDocument
+    public class BillOfRightsDocument : KeyValueRepository<BillOfRights>, IBillOfRightsDocument
     {
-        public override string Url
+       
+        public BillOfRights GetBillOfRightsDocument(string patientGuid, DropBoxLink dropBox)
         {
-            get
-            {
-                return "SimApp/Courses/{0}/Patients/{1}";
-            }
-        }
-        public BillOfRights GetBillOfRightsDocument(string patientGUID, string courseId, string userRole, string UID, string SID)
-        {
-            string billOfRightsUrl = string.Format(Url, courseId + "/" + userRole + "/" + UID + "/Assignments/" + SID, patientGUID);
-            billOfRightsUrl = billOfRightsUrl + "/BillOfRights";
+            string billOfRightsUrl = string.Format(GetAssignmentUrl(dropBox, DocumentPath.Module.BillOfRights), patientGuid);
+            //billOfRightsUrl = billOfRightsUrl + "/BillOfRights";
             string billOfRightsJSON = GetJsonDocument(billOfRightsUrl);
-            BillOfRights billOfRightsJSONForm =
+            BillOfRights billOfRightsJsonForm =
                 JsonSerializer.DeserializeObject<BillOfRights>(billOfRightsJSON);
-            return billOfRightsJSONForm;
+            return billOfRightsJsonForm;
         }
-        public string SaveBillOfRightsUrl(string patientGUID, string courseId, string userRole, string UID, string SID)
+        public string SaveBillOfRightsUrl(string patientGuid, DropBoxLink dropBox)
         {
-            string billOfRightsUrl = string.Format(Url, courseId + "/" + userRole + "/" + UID + "/Assignments/" + SID, patientGUID);
-            billOfRightsUrl = billOfRightsUrl + "/BillOfRights";
+            string billOfRightsUrl = string.Format(GetAssignmentUrl(dropBox, DocumentPath.Module.BillOfRights), patientGuid);
+            //billOfRightsUrl = billOfRightsUrl + "/BillOfRights";
             return billOfRightsUrl;
         }
         public Attachment GetBillOfRightsPdfData()
         {
-            Dictionary<string, Attachment> billOfRightPdf = new Dictionary<string, Attachment>();
             Attachment billOfRight = new Attachment();
-            string pdfUrl = "SimApp/Master/Forms/BillofRights";
-            string billOfRightPdfJSON = GetJsonDocument(pdfUrl);
-            billOfRightPdf = JsonSerializer.DeserializeObject<Dictionary<string, Attachment>>(billOfRightPdfJSON);
+            string pdfUrl = GetAssignmentUrl(DocumentPath.Module.Masters,AppConstants.BillofRights);
+            string billOfRightPdfJson = GetJsonDocument(pdfUrl);
+            Dictionary<string, Attachment> billOfRightPdf = JsonSerializer.DeserializeObject<Dictionary<string, Attachment>>(billOfRightPdfJson);
             foreach (var item in billOfRightPdf)
             {
-                billOfRight = ( Attachment )item.Value;
+                billOfRight = item.Value;
             }
             return billOfRight;
         }

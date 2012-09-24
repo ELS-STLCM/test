@@ -2,9 +2,12 @@
     Layout = null;
 }
 @using SimChartMedicalOffice.Common
-<div class="info-panel grid_8" id="frontOfficeInfoPanel">
+<div class="info-panel grid_8 forms-content-height" id="frontOfficeInfoPanel">
     <ul class="menu">
         <li id="infopanel_header" class="info-panel-header">INFO PANEL</li>
+        <li class="info-panel-content"  id="panel-@Convert.ToInt32(AppEnum.FormsRepository.MedicalRecordsRelease)">
+            <a class="select-hand" id="@Convert.ToInt32(AppEnum.FormsRepository.MedicalRecordsRelease)"><span>
+                Medical Records Release</span></a></li>
         <li class="info-panel-content" id="panel-@Convert.ToInt32(AppEnum.FormsRepository.PatientInformation)" >
             <a class="select-hand" id="@Convert.ToInt32(AppEnum.FormsRepository.PatientInformation)">
                 <span>Patient Information</span></a></li>
@@ -23,5 +26,6 @@
         <li class="info-panel-content"  id="panel-@Convert.ToInt32(AppEnum.FormsRepository.ReferrelForm)">
             <a class="select-hand" id="@Convert.ToInt32(AppEnum.FormsRepository.ReferrelForm)"><span>
                 Referral</span></a></li>
+         
     </ul>
 </div>

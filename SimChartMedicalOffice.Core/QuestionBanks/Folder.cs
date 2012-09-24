@@ -1,16 +1,11 @@
 ﻿using System.Collections.Generic;
-using SimChartMedicalOffice.Core.Patient;
-using System;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.SkillSetBuilder;
 using SimChartMedicalOffice.Core.AssignmentBuilder;
+using SimChartMedicalOffice.Core.SkillSetBuilder;
 
 namespace SimChartMedicalOffice.Core.QuestionBanks
 {
     public class Folder : DocumentEntity
     {
-        public Folder() { }
-
         /// <summary>
         /// This property holds the Name of the Folder.
         /// </summary>
@@ -29,7 +24,7 @@ namespace SimChartMedicalOffice.Core.QuestionBanks
         /// <summary>
         /// This holds list of Patients associated with a folder
         /// </summary>        
-        public virtual Dictionary<string, Core.Patient.Patient> Patients { get; set; }
+        public virtual Dictionary<string, Patient.Patient> Patients { get; set; }
 
         /// <summary>
         /// This holds list of SkillSets associated with a folder

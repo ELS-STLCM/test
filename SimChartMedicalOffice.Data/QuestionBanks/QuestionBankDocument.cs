@@ -1,64 +1,57 @@
-﻿using SimChartMedicalOffice.Data.Repository;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.Core.DataInterfaces.QuestionBanks;
 using SimChartMedicalOffice.Core.QuestionBanks;
-using System.Collections.Generic;
-using SimChartMedicalOffice.Common.Utility;
-using System.Linq;
-using System;
-using SimChartMedicalOffice.Common;
-using System.Globalization;
+using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Core;
 
 
 namespace SimChartMedicalOffice.Data
 {
-    public class QuestionBankDocument : KeyValueRepository<Core.QuestionBanks.QuestionBankFolder>, IQuestionBankDocument
+    public class QuestionBankDocument : KeyValueRepository<QuestionBankFolder>, IQuestionBankDocument
     {
 
-        private static Dictionary<string, int> m_QuestionTypeList;
+        private static Dictionary<string, int> _mQuestionTypeList;
 
         public QuestionBankDocument()
         {
-            this.LoadQuestionType();
+            LoadQuestionType();
         }
 
 
         public void LoadQuestionType()
         {
-            Dictionary<string, int> questionTemplate = new Dictionary<string, int>();
-            string jsonString = GetJsonDocument("SimApp/Master/QuestionType");
-            if (jsonString.ToString() != "null")
+            string jsonString = GetJsonDocument(GetAssignmentUrl(DocumentPath.Module.Masters,AppConstants.QuestionType));
+            if (jsonString != "null")
             {
                 ClearQuestionType();
-                questionTemplate = JsonSerializer.DeserializeObject<Dictionary<string, int>>(jsonString);
-                m_QuestionTypeList = questionTemplate;
+                Dictionary<string, int> questionTemplate = JsonSerializer.DeserializeObject<Dictionary<string, int>>(jsonString);
+                _mQuestionTypeList = questionTemplate;
             }
             
         }
 
         private static void ClearQuestionType()
         {
-            if (m_QuestionTypeList != null && m_QuestionTypeList.Count > 0)
+            if (_mQuestionTypeList != null && _mQuestionTypeList.Count > 0)
             {
-                m_QuestionTypeList.Clear();
+                _mQuestionTypeList.Clear();
             }
         }
 
 
-        public override string Url
-        {
-            get
-            {
-                return "SimApp/Courses/ELSEVIER_CID/Admin/QuestionBank";
-            }
-        }
-        public IList<DocumentProxy> allQuestions = new List<DocumentProxy>();
+        
+        public IList<DocumentProxy> AllQuestions = new List<DocumentProxy>();
         /// <summary>
         /// To get question bank object
         /// </summary>
         /// <returns></returns>
         public Folder GetQuestionBank()
         {
-            string jsonString = GetJsonDocument(this.Url);
+            string jsonString = GetJsonDocument(GetAssignmentUrl(DocumentPath.Module.QuestionBank));
             Folder questionBank = JsonSerializer.DeserializeObject<Folder>(jsonString);
             return questionBank;
         }
@@ -74,7 +67,6 @@ namespace SimChartMedicalOffice.Data
                 TraverseEachFolderForQuestions(parentFolder.SubFolders);
                 CollectQuestionsFromQuestionBank(parentFolder.QuestionItems, parentFolder);
             }
-            return;
         }
 
         /// <summary>
@@ -86,7 +78,7 @@ namespace SimChartMedicalOffice.Data
             if (folderContent != null && folderContent.Count > 0)
             {
                 IList<Folder> folders = folderContent.Select(folder => folder.Value).ToList();
-                folders.ToList().ForEach(F => GetTotalQuestionList(F));
+                folders.ToList().ForEach(f => GetTotalQuestionList(f));
             }
         }
 
@@ -94,12 +86,13 @@ namespace SimChartMedicalOffice.Data
         /// 
         /// </summary>
         /// <param name="questions"></param>
+        /// <param name="parentFolder"> </param>
         private void CollectQuestionsFromQuestionBank(Dictionary<string, Question> questions,Folder parentFolder)
         {
             if (questions != null && questions.Count > 0)
             {
                 var questionList = questions.Select(question => question.Value).ToList();
-                allQuestions = allQuestions.Concat(TransformQuestionsToDocumentProxy(questionList, parentFolder)).ToList();
+                AllQuestions = AllQuestions.Concat(TransformQuestionsToDocumentProxy(questionList, parentFolder)).ToList();
             }
         }
 
@@ -118,12 +111,12 @@ namespace SimChartMedicalOffice.Data
                                                           FolderIdentifier =(!String.IsNullOrEmpty(parentFolder.Url)?parentFolder.Url.Split('/').Last():String.Empty),
                                                           FolderUrl = (!String.IsNullOrEmpty(parentFolder.Url) ? parentFolder.Url.Replace((!String.IsNullOrEmpty(parentFolder.Url) ? "/" + parentFolder.Url.Split('/').Last() : String.Empty), "") : String.Empty),
                                                           Text = lstquestionItem.QuestionText,
-                                                          LinkedItemReference = lstquestionItem.CompetencyReferenceGUID,
-                                                          TypeOfQuestion = (AppCommon.QuestionTypeOptionsForLanding.Single(x => x.Key == Convert.ToInt32(lstquestionItem.QuestionType)).Value.ToString()),
+                                                          LinkedItemReference = lstquestionItem.CompetencyReferenceGuid,
+                                                          TypeOfQuestion = (AppCommon.QuestionTypeOptionsForLanding.Single(x => x.Key == Convert.ToInt32(lstquestionItem.QuestionType)).Value),
                                                           CreatedTimeStamp = lstquestionItem.CreatedTimeStamp,
                                                           Url = lstquestionItem.Url,
                                                           UniqueIdentifier = (!String.IsNullOrEmpty(lstquestionItem.Url) ? lstquestionItem.Url.Split('/').Last() : String.Empty),
-                                                          AnswerTexts = ((lstquestionItem.AnswerOptions != null && lstquestionItem.AnswerOptions.Count>0) ? lstquestionItem.AnswerOptions.Select(F => F.AnswerText).ToList() : ((lstquestionItem.CorrectOrder != null && lstquestionItem.CorrectOrder.Count>0)? lstquestionItem.CorrectOrder : new List<string>())),
+                                                          AnswerTexts = ((lstquestionItem.AnswerOptions != null && lstquestionItem.AnswerOptions.Count>0) ? lstquestionItem.AnswerOptions.Select(f => f.AnswerText).ToList() : ((lstquestionItem.CorrectOrder != null && lstquestionItem.CorrectOrder.Count>0)? lstquestionItem.CorrectOrder : new List<string>())),
                                                           Rationale=lstquestionItem.Rationale
                                                       }).ToList();
             return lstOfQuestionProxy;
@@ -136,15 +129,15 @@ namespace SimChartMedicalOffice.Data
         public List<DocumentProxy> GetAllQuestionsInAQuestionBank()
         {
             Folder questionBank = GetQuestionBank();
-            allQuestions = new List<DocumentProxy>();
+            AllQuestions = new List<DocumentProxy>();
             GetTotalQuestionList(questionBank); 
-            return allQuestions.ToList();
+            return AllQuestions.ToList();
         }
 
 
         public Dictionary<string, int> GetQuestionType()
         {
-            return m_QuestionTypeList;
+            return _mQuestionTypeList;
         }
     }
  

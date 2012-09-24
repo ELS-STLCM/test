@@ -5,12 +5,12 @@ using SimChartMedicalOffice.Data.Repository;
 
 namespace SimChartMedicalOffice.Core.DataInterfaces.SkillSetBuilder
 {
-    public interface ISkillSetDocument : IKeyValueRepository<Core.SkillSetBuilder.SkillSet>
+    public interface ISkillSetDocument : IKeyValueRepository<SkillSet>
     {
         IList<Question> GetQuestionsForSkillSet(string skillSetUrl);
         IList<SkillSet> GetSkillSetItems(string parentFolderIdentifier, int folderType, string courseId);
         SkillSet GetSkillSet(string skillSetUrl);
         IList<string> GetCompetencyGuidListInSkillSet(string skillSetUniqueIdentifier);
-
+        Folder GetSkillSetRepository();
     }
 }

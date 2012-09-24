@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SimChartMedicalOffice.Data.Repository;
+﻿using System.Collections.Generic;
+using SimChartMedicalOffice.Common;
 using SimChartMedicalOffice.Core.FrontOffice.Appointments;
 using SimChartMedicalOffice.Core.ProxyObjects;
-using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Data.Repository;
 
 namespace SimChartMedicalOffice.Core.DataInterfaces.FrontOffice
 {

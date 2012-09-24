@@ -1,18 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core.FrontOffice.Appointments;
 using SimChartMedicalOffice.Common.Utility;
+using SimChartMedicalOffice.Core.FrontOffice.Appointments;
+using SimChartMedicalOffice.Common;
 
 namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatterns
 {
     public class AppointmentStrategy<T> :IAppointmentTypeStrategy where T:Appointment
     {
-        T _appointmentDocument;
+        readonly T _appointmentDocument;
         IList<T> _appoinmentDocumentList;
-        AppEnum.AppointmentTypes _appointmentType;
         //,AppEnum.AppointmentTypes appointmentType;
         public AppointmentStrategy(T appointmentDocument)
         {
@@ -21,12 +18,11 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
         }
         public string GenerateAppointments()
         {
-
-            DateTime endByDate;
             _appoinmentDocumentList = new List<T>();
-            if (_appointmentDocument.IsRecurrence == true)
+            if (_appointmentDocument.IsRecurrence)
             {
-                if (_appointmentDocument.Recurrence.Pattern == Common.AppEnum.RecurrencePattern.Daily)
+                DateTime endByDate;
+                if (_appointmentDocument.Recurrence.Pattern == AppEnum.RecurrencePattern.Daily)
                 {
                     if (_appointmentDocument.Recurrence.NumberOfOccurences > 0)
                     {
@@ -37,7 +33,7 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
                         DailyAppointmentByEndDate(endByDate);
                     }
                 }
-                else if (_appointmentDocument.Recurrence.Pattern == Common.AppEnum.RecurrencePattern.Weekly)
+                else if (_appointmentDocument.Recurrence.Pattern == AppEnum.RecurrencePattern.Weekly)
                 {
                     if (_appointmentDocument.Recurrence.NumberOfOccurences > 0)
                     {
@@ -48,7 +44,7 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
                         WeeklyAppointmentByEndDate(endByDate);
                     }
                 }
-                else if (_appointmentDocument.Recurrence.Pattern == Common.AppEnum.RecurrencePattern.Monthly)
+                else if (_appointmentDocument.Recurrence.Pattern == AppEnum.RecurrencePattern.Monthly)
                 {
                     if (_appointmentDocument.Recurrence.NumberOfOccurences > 0)
                     {
@@ -65,12 +61,10 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
         private void DailyAppointmentsByOccurence()
         {
             int numberOfOccurenceCreated = 0;
-            int numberOfOccurenceToCreate;
-            numberOfOccurenceToCreate = _appointmentDocument.Recurrence.NumberOfOccurences;
+            int numberOfOccurenceToCreate = _appointmentDocument.Recurrence.NumberOfOccurences;
             while (numberOfOccurenceCreated < numberOfOccurenceToCreate)
             {
-                T newAppointment;
-                newAppointment = (T)_appointmentDocument.Clone();
+                T newAppointment = (T)_appointmentDocument.Clone();
                 newAppointment.StartDateTime = newAppointment.StartDateTime.AddDays(numberOfOccurenceCreated);
                 newAppointment.EndDateTime = newAppointment.EndDateTime.AddDays(numberOfOccurenceCreated);
                 _appoinmentDocumentList.Add(newAppointment);
@@ -80,12 +74,10 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
         private void WeeklyAppointmentsByOccurence()
         {
             int numberOfOccurenceCreated = 0;
-            int numberOfOccurenceToCreate;
-            numberOfOccurenceToCreate = _appointmentDocument.Recurrence.NumberOfOccurences;
+            int numberOfOccurenceToCreate = _appointmentDocument.Recurrence.NumberOfOccurences;
             while (numberOfOccurenceCreated < numberOfOccurenceToCreate)
             {
-                T newAppointment;
-                newAppointment = (T)_appointmentDocument.Clone();
+                T newAppointment = (T)_appointmentDocument.Clone();
                 newAppointment.StartDateTime = newAppointment.StartDateTime.AddDays(7 * numberOfOccurenceCreated);
                 newAppointment.EndDateTime = newAppointment.EndDateTime.AddDays(7 * numberOfOccurenceCreated);
                 _appoinmentDocumentList.Add(newAppointment);
@@ -94,13 +86,11 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
         }
         private void WeeklyAppointmentByEndDate(DateTime endBy)
         {
-            DateTime startDateTime;
-            startDateTime = _appointmentDocument.StartDateTime;
+            DateTime startDateTime = _appointmentDocument.StartDateTime;
             int numberOfOccurenceCreated = 0;
             while (startDateTime <= endBy)
             {
-                T newAppointment;
-                newAppointment =(T)_appointmentDocument.Clone();
+                T newAppointment = (T)_appointmentDocument.Clone();
                 newAppointment.StartDateTime = newAppointment.StartDateTime.AddDays(7 * numberOfOccurenceCreated);
                 newAppointment.EndDateTime = newAppointment.EndDateTime.AddDays(7 * numberOfOccurenceCreated);
                 startDateTime = startDateTime.AddDays(1);
@@ -110,13 +100,11 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
         }
         private void DailyAppointmentByEndDate(DateTime endBy)
         {
-            DateTime startDateTime;
-            startDateTime = _appointmentDocument.StartDateTime;
+            DateTime startDateTime = _appointmentDocument.StartDateTime;
             int numberOfOccurenceCreated = 0;
             while (startDateTime <= endBy)
             {
-                T newAppointment;
-                newAppointment = (T)_appointmentDocument.Clone();
+                T newAppointment = (T)_appointmentDocument.Clone();
                 newAppointment.StartDateTime = newAppointment.StartDateTime.AddDays(numberOfOccurenceCreated);
                 newAppointment.EndDateTime = newAppointment.EndDateTime.AddDays(numberOfOccurenceCreated);
                 startDateTime = startDateTime.AddDays(1);
@@ -127,12 +115,10 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
         private void MonthlyAppointmentByOccurence()
         {
             int numberOfOccurenceCreated = 0;
-            int numberOfOccurenceToCreate;
-            numberOfOccurenceToCreate = _appointmentDocument.Recurrence.NumberOfOccurences;
+            int numberOfOccurenceToCreate = _appointmentDocument.Recurrence.NumberOfOccurences;
             while (numberOfOccurenceCreated < numberOfOccurenceToCreate)
             {
-                T newAppointment;
-                newAppointment = (T)_appointmentDocument.Clone();
+                T newAppointment = (T)_appointmentDocument.Clone();
                 newAppointment.StartDateTime = newAppointment.StartDateTime.AddMonths(numberOfOccurenceCreated);
                 newAppointment.EndDateTime = newAppointment.EndDateTime.AddMonths(numberOfOccurenceCreated);
                 _appoinmentDocumentList.Add(newAppointment);
@@ -141,13 +127,11 @@ namespace SimChartMedicalOffice.ApplicationServices.FrontOffice.AppointmentPatte
         }
         private void MonthlyAppointmentByEndDate(DateTime endBy)
         {
-            DateTime startDateTime;
-            startDateTime = _appointmentDocument.StartDateTime;
+            DateTime startDateTime = _appointmentDocument.StartDateTime;
             int numberOfOccurenceCreated = 0;
             while (startDateTime <= endBy)
             {
-                T newAppointment;
-                newAppointment = (T)_appointmentDocument.Clone();
+                T newAppointment = (T)_appointmentDocument.Clone();
                 newAppointment.StartDateTime = newAppointment.StartDateTime.AddMonths(numberOfOccurenceCreated);
                 newAppointment.EndDateTime = newAppointment.EndDateTime.AddMonths(numberOfOccurenceCreated);
                 startDateTime = startDateTime.AddMonths(1);

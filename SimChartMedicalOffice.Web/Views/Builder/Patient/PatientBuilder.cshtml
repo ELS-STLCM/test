@@ -1,6 +1,35 @@
 ﻿@{
     Layout = null;
 }
+<script type="text/javascript">
+    $(document).ready(function () {
+        adjustHeight();
+        startAjaxLoader();
+        waterMarkTextForSearch();
+        setMaxLenthSearchText("searchText");
+        $("#filterByAge").change(function () {
+            patientBuilderDataTable.fnDraw();
+        });
+    });
+    function waterMarkTextForSearch() {
+        $('#searchText').val('');
+        $("#searchText").watermark("Search by text", { className: 'watermark-text' });
+    }
+
+
+    $(function () {
+
+        $("#buttonSearch").click(function () {
+            patient.commonFunctions.searchByText();
+        });
+        $("#searchText").keyup(function (e) {
+            var code = (e.keyCode ? e.keyCode : e.which);
+            if (code == 13) {
+                patient.commonFunctions.searchByText();
+            }
+        });
+    });
+</script>
     <div class="clear-height-spacing clear">
     </div>
     <div class="grid_24 form-page-header" style="padding-top: 0px">
@@ -28,46 +57,20 @@
             <div class="clear-min-height-spacing clear">
             </div>
         </div>
-<div class="grid_32">
-    <div id="PatientFolderPanel" class="grid_8 remove-div-space container-folder-height">
+<div class="grid_32 dynamicHeight" id = "patientFolderGridContainer">
+    <div class="grid_8 remove-div-space dynamicHeight" id="PatientFolderPanel" >
         @Html.Partial("../../Views/Builder/QuestionBank/Folder", new ViewDataDictionary { new KeyValuePair<string, object>("currentFolderPanel", "practiceTab") })
     </div>
-    <div class="grid_24 remove-div-space">
-        <div class="grid_32 container-folder-height" >
-            <div class="grid_32 container-grid-height">
+    <div class="grid_24 remove-div-space dynamicHeight" id = "patientGridButtonContainer" style="width:75%">
+        <div class="grid_32 grid-height" id = "innerPatientGridButtonContainer" style="width:100%">
+            <div class="grid_32 grid-inner-height" id = "patientGridContainer" style="float: left;width:100%">
                 @Html.Partial("../../Views/Builder/Authoring/_PatientBuilderGrid")
             </div>
-            <div class="grid_32">
+            <div class="clear-min-height-spacing clear">
+            </div>
+            <div class="grid_32" id="patientButtonContainer" style="width:100%">
                 @Html.Partial("../../Views/Builder/Authoring/PatientActions")
             </div>
         </div>
     </div>
 </div>
-<script type="text/javascript">
-    $(document).ready(function () {
-        startAjaxLoader();
-        waterMarkTextForSearch();
-        setMaxLenthSearchText("searchText");
-        $("#filterByAge").change(function () {
-            patientBuilderDataTable.fnDraw();
-        });
-    });
-    function waterMarkTextForSearch() {
-        $('#searchText').val('');
-        $("#searchText").watermark("Search by text", { className: 'watermark-text' });
-    }
-     
-
-    $(function () {
-
-        $("#buttonSearch").click(function () {
-            patient.commonFunctions.searchByText();
-        });
-        $("#searchText").keyup(function (e) {
-            var code = (e.keyCode ? e.keyCode : e.which);
-            if (code == 13) {
-                patient.commonFunctions.searchByText();
-            }
-        });
-    });
-</script>

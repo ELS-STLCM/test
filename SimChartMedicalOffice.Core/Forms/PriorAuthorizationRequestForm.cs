@@ -34,9 +34,9 @@
 
         public string ServiceRequested { get; set; }
 
-        public string DiagonsisOrICD9Code8 { get; set; }
+        public string DiagonsisOrIcd9Code8 { get; set; }
 
-        public string ProcedureCPT4Codes { get; set; }
+        public string ProcedureCpt4Codes { get; set; }
 
         public string StartingServiceDate { get; set; }
 

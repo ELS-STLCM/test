@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
 
 namespace SimChartMedicalOffice.Core.QuestionBanks
 {
     public class DocumentProxy : DocumentEntity
     {
-        public DocumentProxy() { }
         public string FolderName { get; set; }
 
         public string FolderIdentifier { get; set; }

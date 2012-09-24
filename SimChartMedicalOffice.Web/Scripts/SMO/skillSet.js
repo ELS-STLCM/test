@@ -36,7 +36,7 @@ var skillSet = {
     /*Common functions used in skillSet module*/
     commonFunctions: {
         getListOfCompetencyForSkillSetFlexBoxInQnBank: function () {
-            var urlForString = "../SkillSet/GetCompetencyForSkillSetFlexBox?UniqueIdentifier=" + skillSet.commonFunctions.getSkillSetUniqueIdentifier();
+            var urlForString = "../SkillSet/GetCompetencyForSkillSetFlexBox?uniqueIdentifier=" + skillSet.commonFunctions.getSkillSetUniqueIdentifier();
             doAjaxCall("POST", "", urlForString, skillSet.commonFunctions.initializeFlexBoxForSkillSetQnBank);
 
         },
@@ -49,8 +49,7 @@ var skillSet = {
                 competencyArray = result.competencyArray;
                 initializeFlexBox("LinkedCompetency", competencyQuestionStringListTemp1);
             }
-            else
-                return null;
+            return null;
         },
         getSkillSetUniqueIdentifier: function () {
             return $("#authoringSkillSetBuilder").data("skillSetIdentifier");
@@ -62,7 +61,7 @@ var skillSet = {
             setDivData($("#authoringSkillSetBuilder"), "skillSetIdentifier", "");
         },
         loadImageForAStep: function (stepInfo) {
-            var imgSrc;
+            var imgSrc = "";
             switch (stepInfo) {
                 case "1":
                     imgSrc = "../../Content/Images/Step1_Of_4.png";
@@ -98,7 +97,7 @@ var skillSet = {
             if (isNullOrEmpty(searchText) || searchText.length < 2) {
                 if (!(searchText == "" && isSearchPage)) {
                     isSearchValid = false;
-                    jAlert(SEARCH_VALIDATION, ALERT_TITLE, function (isOk) {
+                    jAlert(SEARCH_VALIDATION, ALERT_TITLE, function () {
                     });
                 }
             }
@@ -133,7 +132,7 @@ var skillSet = {
                 $('#competencySuggest').removeClass("competency-suggest");
             });
         },
-        getUrlReferenceForQuestionSave: function (strUrlReferenceForQnSave) {
+        getUrlReferenceForQuestionSave: function () {
             return $("#authoringSkillSetBuilder").data("strUrlReferenceForQnSave");
 
         },
@@ -144,6 +143,9 @@ var skillSet = {
             if (isNewQuestion) {
                 if (questionType == "4") {
                     questionNewTextToSave = questionBank.commonFunctions.getQuestionForFillIn($("#BlankOrientation").val(), "newQuestionTextDivFillIn");
+                    if (isNullOrEmpty(questionNewTextToSave)) {
+                        questionNewTextToSave = questionBank.commonFunctions.getQuestionForFillIn($("#BlankOrientation").val(), "dynamicRenderDiv");
+                    }
                 }
                 else if (questionType == "9") {
                     questionNewTextToSave = getControlValueByElementId("QuestionTextNew", TEXTBOX_CONTROL);
@@ -169,6 +171,7 @@ var skillSet = {
             if (questionBank.commonFunctions.checkIfCorrectAnswer("QuestionToQuestionBankExisting") && isNewQuestionChecked) {
                 isExistingQuestion = true;
                 isNewQuestionRequired = false;
+                isNewQuestion = false;
             }
             if (questionBank.commonFunctions.validateQuestionBankFields(questionType, isNewQuestion)) {
                 var questionJson = questionBank.commonFunctions.formJsonForQuestion();
@@ -186,7 +189,7 @@ var skillSet = {
         },
         saveSkillSetQuestionSuccess: function (result) {
             if (result.isQuestionNameAlreadyExists) {
-                jAlert(QUESTION_NAME_EXISTS, "Alert", function (isOk) {
+                jAlert(QUESTION_NAME_EXISTS, "Alert", function () {
                     return false;
                 });
             }
@@ -232,21 +235,25 @@ var skillSet = {
             });
         },
 
-        loadStep3SkillSet: function (SkillSetUrl) {
-            strSkillSetUrl = SkillSetUrl;
+        loadStep3SkillSet: function (skillSetUrl) {
+            strSkillSetUrl = skillSetUrl;
+
             $("#QuestionTemplateSlide").addClass('question-slide-out-skillset');
             $("#rationaleLinkedCompetency").hide();
             $("#QuestionBankSlideButton").hide();
             $("#questiontosave").hide();
+
             skillSet.commonFunctions.loadImageForAStep("3");
             $("#content_skillset_changed :input").live('change', function () {
                 isContentChanged = true;
             });
             $('#QuestionToQuestionBankNew').click(function () {
+
                 $("#newQuestionDiv").show();
                 skillSet.commonFunctions.loadQuestionForNewQuestion();
             });
             $('#QuestionToQuestionBankExisting').click(function () {
+                $('#QuestionTextAreaNew').val("");
                 $("#newQuestionDiv").hide();
                 //isNewQuestionRequired = false;
             });
@@ -258,20 +265,21 @@ var skillSet = {
                 skillSet.commonFunctions.loadQuestions(QuestionList[0].ParentReferenceGuid, QuestionList[0].UniqueIdentifier, QuestionList[0].QuestionType, QuestionList[0].Url, QuestionList[0].CompetencyReferenceGUID);
             }
         },
-        contentChanged: function (parentReferenceGuid, divID, questionType, questionUrl, competencyGuid) {
+        contentChanged: function (parentReferenceGuid, divId, questionType, questionUrl, competencyGuid) {
             if (!isContentChanged) {
-                skillSet.commonFunctions.loadQuestions(parentReferenceGuid, divID, questionType, questionUrl, competencyGuid);
+                skillSet.commonFunctions.loadQuestions(parentReferenceGuid, divId, questionType, questionUrl, competencyGuid);
             } else {
                 var status = "Are you sure you want to proceed? Your changes will not be saved.";
                 jConfirm(status, 'Proceed', function (isCancel) {
                     if (isCancel) {
-                        skillSet.commonFunctions.loadQuestions(parentReferenceGuid, divID, questionType, questionUrl, competencyGuid);
+                        skillSet.commonFunctions.loadQuestions(parentReferenceGuid, divId, questionType, questionUrl, competencyGuid);
                     }
                 });
             }
         },
         addQuestionToQbClickFunction: function () {
             if ($('#AddQuestionToQuestionBank').is(':checked')) {
+                $('#QuestionTextAreaNew').val("");
                 $("#questiontosave").show();
                 if (isNewQuestionRequired) {
                     $("#newQuestionDiv").show();
@@ -284,14 +292,16 @@ var skillSet = {
                 $("#QuestionToQuestionBankExisting").attr("checked", false);
                 $("#questiontosave").hide();
                 $("#newQuestionDiv").hide();
+
             }
         },
-        loadQuestions: function (parentReferenceGuid, divID, questionType, questionUrl, competencyGuid) {
+        loadQuestions: function (parentReferenceGuid, divId, questionType, questionUrl, competencyGuid) {
+
             strParentReferenceGuidOfQuestion = parentReferenceGuid;
             $(".clear-background").removeClass("question-highlight");
-            $("#" + divID).addClass("question-highlight");
+            $("#" + divId).addClass("question-highlight");
             skillSet.commonFunctions.setUrlReferenceForQuestionSave(questionUrl);
-            skillSet.commonFunctions.loadQuestionInEditModeForSkillSet(questionUrl, questionType, divID);
+            skillSet.commonFunctions.loadQuestionInEditModeForSkillSet(questionUrl, questionType, divId);
             if (isNullOrEmpty(competencyGuid)) {
                 $("#QuestionBankLabel").hide();
                 $("#AddQuestionToQuestionBank_lbl").html("Add the question to the Question Bank");
@@ -493,14 +503,14 @@ var skillSet = {
                 }
             }
             if (isValid) {
-                var urlSwap = "../SkillSet/SwapQuestionsForSkillSet?sourceUrl=" + sourceUrl + "&destinationUrl=" + destinationUrl + "&SkillSetUrl=" + strSkillSetUrl;
+                var urlSwap = "../SkillSet/SwapQuestionsForSkillSet?sourceUrl=" + sourceUrl + "&destinationUrl=" + destinationUrl + "&skillSetUrl=" + strSkillSetUrl;
                 doAjaxCall("POST", "", urlSwap, this.successSwap);
             }
             closeAjaxLoader();
         },
 
         successSwap: function (result) {
-            var sourceIndex = 0;
+//            var sourceIndex = 0;
             if (result.questionList != null) {
                 $("#QuestionList").empty();
                 //                for (var indexSource = 0; indexSource < result.questionList.length; indexSource++) {
@@ -562,7 +572,7 @@ var skillSet = {
                 skillSet.commonFunctions.setSkillSetUniqueIdentifier(result.uniqueIdentifier);
                 isSkillSetEditMode = true;
                 if (result.messageToReturn != "") {
-                    jAlert("Saved", ALERT_TITLE, function (isOk) {
+                    jAlert("Saved", ALERT_TITLE, function () {
                         skillSet.commonFunctions.loadStep2(skillSet.commonFunctions.getSkillSetUniqueIdentifier());
                     });
                 } else {
@@ -599,7 +609,7 @@ var skillSet = {
                 skillSet.commonFunctions.setSkillSetUniqueIdentifier(result.uniqueIdentifier);
                 isSkillSetEditMode = true;
                 if (result.messageToReturn != "") {
-                    jAlert("Saved", ALERT_TITLE, function (isOk) {
+                    jAlert("Saved", ALERT_TITLE, function () {
                         closeAjaxLoader();
                     });
                 } else {
@@ -641,12 +651,12 @@ var skillSet = {
 
                     $('#competency_skillSet_load_view_content').html(strQuestionList);
 
-                    var $dialog = $('#competency_skillSet_load_view_content_view').dialog({
+                    $('#competency_skillSet_load_view_content_view').dialog({
                         autoOpen: false,
                         modal: true,
                         closeOnEscape: false,
                         resizable: false,
-                        open: function (event, ui) {
+                        open: function () {
                             applyClassForDialogHeader();
                         },
                         title: 'Message',
@@ -685,13 +695,13 @@ var skillSet = {
                 });
             },
             RefreshCompetencySearch: function () {
-                var abc = "";
+//                var abc = "";
                 skillSet.SkillSetMetadata.GetSelectedCompetencyList();
                 var isSearchValid = true;
                 if (isNullOrEmpty(competencySearchText_Filter)) {
                     if (!(competencySearchText_Filter == "" && isSearchPage)) {
                         isSearchValid = false;
-                        jAlert(SEARCH_VALIDATION, ALERT_TITLE, function (isOk) {
+                        jAlert(SEARCH_VALIDATION, ALERT_TITLE, function () {
                         });
                     }
                 }
@@ -769,7 +779,7 @@ var skillSet = {
                     $(obj).parent().removeClass("competency-highlight");
                 }
             },
-            OnPageLoad: function (skillSetUrl) { }
+            OnPageLoad: function () { }
         },
 
     stepTwoSkillStructure: {
@@ -778,7 +788,7 @@ var skillSet = {
             doAjaxCall("POST", "", urlQuestionTemplate, this.successFlexBoxForFilterByQuestionType);
         },
         getListOfCompetencyForSkillSetFlexBox: function () {
-            var urlForString = "../SkillSet/GetCompetencyForSkillSetFlexBox?UniqueIdentifier=" + skillSet.commonFunctions.getSkillSetUniqueIdentifier();
+            var urlForString = "../SkillSet/GetCompetencyForSkillSetFlexBox?uniqueIdentifier=" + skillSet.commonFunctions.getSkillSetUniqueIdentifier();
             doAjaxCall("POST", "", urlForString, this.successCompetencyFetch);
 
         },
@@ -790,9 +800,8 @@ var skillSet = {
                 questionTypeList.total = questionTypeList.results.length;
                 skillSet.stepTwoSkillStructure.initializeFlexBoxForFilterByQuestionType(questionTypeList);
             }
-            else {
-                return null;
-            }
+            return null;
+
         },
         successCompetencyFetch: function (result) {
             if (result.competencyStringListTemp != null) {
@@ -801,8 +810,8 @@ var skillSet = {
                 competencyQuestionStringListTemp.total = competencyQuestionStringListTemp.results.length;
                 skillSet.stepTwoSkillStructure.initializeFlexBoxForCompetencySkill(competencyQuestionStringListTemp);
             }
-            else
-                return null;
+
+            return null;
         },
         initializeFlexBoxForFilterByQuestionType: function (lstOfItems) {
             var divId = "FilterByQuestionType";
@@ -880,7 +889,7 @@ var skillSet = {
                 }
             });
         },
-        getQuestionTemplate: function (obj) {
+        getQuestionTemplate: function () {
             var urlQuestionTemplate = "../QuestionBank/GetQuestionType";
             doAjaxCall("POST", "", urlQuestionTemplate, this.successQuestionTemplate);
         },
@@ -895,7 +904,7 @@ var skillSet = {
                 }
             }
         },
-        getQuestionBank: function (obj) {
+        getQuestionBank: function () {
             skillSet.stepTwoSkillStructure.RefreshCompetencyQuestionSearch();
         },
         successQuestionBank: function (result) {
@@ -917,12 +926,14 @@ var skillSet = {
         loadCompetencyQuestionBankList: function (competencyQuestionList, isFromRemove) {
             var placeHolderId = "#loadQuestionBankCheckBoxDiv";
             var controlName = "competencyQuestionBankCheckBox";
-            (!isFromRemove) ? $(placeHolderId).empty() : "";
+            if (!isFromRemove) {
+                $(placeHolderId).empty();
+            }
             if (competencyQuestionList != null && competencyQuestionList.length > 0) {
                 for (var compCount = 0; compCount < competencyQuestionList.length; compCount++) {
                     var valueId = "competencyQuestionBankCheckBox_" + competencyQuestionList[compCount].UniqueIdentifier;
                     var strValue = competencyQuestionList[compCount].Text;
-                    var checkedStatusBool = false;
+//                    var checkedStatusBool = false;
                     var comptencyQuestion = "";
                     comptencyQuestion += "<div class='grid_32 bottom-only-border' id='skillSetCompetencyQuestion_" + competencyQuestionList[compCount].UniqueIdentifier + "' >";
                     comptencyQuestion += "<input type='checkbox' IsQuestionFromTemplate='false' OrderSequenceNumber='' ParentReferenceGuid='" + competencyQuestionList[compCount].ParentReferenceGuid + "' TypeOfQuestion='" + competencyQuestionList[compCount].TypeOfQuestion + "' UniqueIdentifier='" + competencyQuestionList[compCount].UniqueIdentifier + "' name='" + controlName + "' id='" + valueId + "' value ='" + strValue + "' Url='" + competencyQuestionList[compCount].Url + "' class='grid_2' onclick='skillSet.SkillSetMetadata.HighlightCompetency(this);' />";
@@ -938,7 +949,7 @@ var skillSet = {
             }
 
         },
-        loadSkillQuestionList: function (SkillQuestionList) {
+        loadSkillQuestionList: function () {
         },
         addQuestion: function () {
             skillSet.stepTwoSkillStructure.GetQuestionOrderList();
@@ -971,18 +982,18 @@ var skillSet = {
             var appenToCheckBoxQuestionFromSelectList = [];
             $("#loadQuestionOrderList > option:selected").each(function () {
                 var isFromQuestionTemplate = eval(this.getAttribute("IsQuestionFromTemplate"));
-                var UniqueIdentifier = this.getAttribute("UniqueIdentifier");
-                var TypeOfQuestion = this.getAttribute("TypeOfQuestion");
-                var ParentReferenceGuid = this.getAttribute("ParentReferenceGuid");
-                var Text = this.value;
-                var Url = this.getAttribute("Url");
-                if (Url != "" && !isFromQuestionTemplate) {
+                var uniqueIdentifier = this.getAttribute("UniqueIdentifier");
+                var typeOfQuestion = this.getAttribute("TypeOfQuestion");
+                var parentReferenceGuid = this.getAttribute("ParentReferenceGuid");
+                var textValue = this.value;
+                var url = this.getAttribute("Url");
+                if (url != "" && !isFromQuestionTemplate) {
                     var removedQuestion = {
-                        UniqueIdentifier: UniqueIdentifier,
-                        TypeOfQuestion: TypeOfQuestion,
-                        Text: Text,
-                        ParentReferenceGuid: ParentReferenceGuid,
-                        Url: Url
+                        UniqueIdentifier: uniqueIdentifier,
+                        TypeOfQuestion: typeOfQuestion,
+                        Text: textValue,
+                        ParentReferenceGuid: parentReferenceGuid,
+                        Url: url
                     };
                     appenToCheckBoxQuestionFromSelectList.push(removedQuestion);
                 }
@@ -1028,23 +1039,23 @@ var skillSet = {
             var orderSequenceNumberCount = 0;
             $('select#loadQuestionOrderList').find('option').each(function () {
                 var isQuestionFromTemplate = eval(this.getAttribute("IsQuestionFromTemplate"));
-                var QuestionTypeId = "";
-                var TypeOfQuestion = this.getAttribute("TypeOfQuestion");
+                var questionTypeId = "";
+//                var TypeOfQuestion = this.getAttribute("TypeOfQuestion");
                 if (isQuestionFromTemplate) {
-                    QuestionTypeId = this.getAttribute("QuestionTypeId");
+                    questionTypeId = this.getAttribute("QuestionTypeId");
                 }
-                var TemplateSequenceNumber = this.getAttribute("TemplateSequenceNumber");
-                if (TemplateSequenceNumber == null || TemplateSequenceNumber == "") {
-                    TemplateSequenceNumber = "0";
+                var templateSequenceNumber = this.getAttribute("TemplateSequenceNumber");
+                if (templateSequenceNumber == null || templateSequenceNumber == "") {
+                    templateSequenceNumber = "0";
                 }
                 var selectedQuestionOrder = {
                     "Text": $(this).val(),
                     "IsQuestionFromTemplate": isQuestionFromTemplate,
-                    "TypeOfQuestion": QuestionTypeId,
-                    "QuestionTypeId": QuestionTypeId,
+                    "TypeOfQuestion": questionTypeId,
+                    "QuestionTypeId": questionTypeId,
                     "UniqueIdentifier": this.getAttribute("UniqueIdentifier"),
                     "OrderSequenceNumber": ++orderSequenceNumberCount,
-                    "TemplateSequenceNumber": TemplateSequenceNumber,
+                    "TemplateSequenceNumber": templateSequenceNumber,
                     "ParentReferenceGuid": this.getAttribute("ParentReferenceGuid"),
                     "Url": this.getAttribute("Url")
                 };
@@ -1089,16 +1100,16 @@ var skillSet = {
                     isAnyOneSelected = true;
                     if (multileCount == 0) {
                         var isQuestionFromTemplate = eval(this.getAttribute("IsQuestionFromTemplate"));
-                        var QuestionTypeId = "";
-                        var TypeOfQuestion = this.getAttribute("TypeOfQuestion");
+                        var questionTypeId = "";
+                        var typeOfQuestion = this.getAttribute("TypeOfQuestion");
                         if (isQuestionFromTemplate) {
-                            QuestionTypeId = this.getAttribute("QuestionTypeId");
+                            questionTypeId = this.getAttribute("QuestionTypeId");
                         }
                         selectedQuestionSwap = {
                             "Text": $(this).val(),
                             "IsQuestionFromTemplate": isQuestionFromTemplate,
-                            "QuestionTypeId": QuestionTypeId,
-                            "TypeOfQuestion": TypeOfQuestion,
+                            "QuestionTypeId": questionTypeId,
+                            "TypeOfQuestion": typeOfQuestion,
                             "UniqueIdentifier": this.getAttribute("UniqueIdentifier"),
                             "ParentReferenceGuid": this.getAttribute("ParentReferenceGuid"),
                             "OrderSequenceNumber": this.getAttribute("OrderSequenceNumber"),
@@ -1113,7 +1124,7 @@ var skillSet = {
                     var selectedIndexOrderSequenceNumber = "";
                     if (action == "downArrow") {
                         if (selectedQuestionSwap.OrderSequenceNumber != selectQuestionOrderCount) {
-                            selectedIndexOrderSequenceNumber = selectQuestionOrderList[(selectedQuestionSwap.OrderSequenceNumber) - 1].OrderSequenceNumber
+                            selectedIndexOrderSequenceNumber = selectQuestionOrderList[(selectedQuestionSwap.OrderSequenceNumber) - 1].OrderSequenceNumber;
                             selectQuestionOrderList[(selectedQuestionSwap.OrderSequenceNumber) - 1].OrderSequenceNumber = selectedIndexOrderSequenceNumber + 1;
                             selectedQuestionDestinationOrderSeqNo = selectedIndexOrderSequenceNumber + 1;
                             selectQuestionOrderList[(selectedIndexOrderSequenceNumber + 1) - 1].OrderSequenceNumber = selectQuestionOrderList[selectedIndexOrderSequenceNumber - 1].OrderSequenceNumber - 1;
@@ -1122,7 +1133,7 @@ var skillSet = {
                     }
                     else if (action == "upArrow") {
                         if (selectedQuestionSwap.OrderSequenceNumber != 1) {
-                            selectedIndexOrderSequenceNumber = selectQuestionOrderList[(selectedQuestionSwap.OrderSequenceNumber) - 1].OrderSequenceNumber
+                            selectedIndexOrderSequenceNumber = selectQuestionOrderList[(selectedQuestionSwap.OrderSequenceNumber) - 1].OrderSequenceNumber;
                             selectQuestionOrderList[(selectedQuestionSwap.OrderSequenceNumber) - 1].OrderSequenceNumber = selectedIndexOrderSequenceNumber - 1;
                             selectedQuestionDestinationOrderSeqNo = selectedIndexOrderSequenceNumber - 1;
                             selectQuestionOrderList[(selectedIndexOrderSequenceNumber - 1) - 1].OrderSequenceNumber = selectQuestionOrderList[selectedIndexOrderSequenceNumber - 1].OrderSequenceNumber + 1;
@@ -1144,14 +1155,14 @@ var skillSet = {
         GetSelectedQuestionTemplate: function () {
             selectedQuestionTemplateList = [];
             $("#loadQuestionTemplate > option:selected").each(function () {
-                var QuestionTypeId = this.getAttribute("QuestionTypeId");
-                var TypeOfQuestion = this.getAttribute("TypeOfQuestion");
-                var templateSequenceNumber = skillSet.stepTwoSkillStructure.GetMaxNumberQuestionType(QuestionTypeId);
+                var questionTypeId = this.getAttribute("QuestionTypeId");
+                var typeOfQuestion = this.getAttribute("TypeOfQuestion");
+                var templateSequenceNumber = skillSet.stepTwoSkillStructure.GetMaxNumberQuestionType(questionTypeId);
                 var selectedQuestion = {
-                    "QuestionTypeId": QuestionTypeId,
+                    "QuestionTypeId": questionTypeId,
                     "QuestionTemplateValue": this.value + " Template " + templateSequenceNumber,
                     "TemplateSequenceNumber": templateSequenceNumber,
-                    "TypeOfQuestion": TypeOfQuestion
+                    "TypeOfQuestion": typeOfQuestion
                 };
                 selectedQuestionTemplateList.push(selectedQuestion);
             });
@@ -1198,18 +1209,14 @@ var skillSet = {
         },
         successSaveSkillStructure1: function () {
             if (true) {
-                jAlert("Saved", ALERT_TITLE, function (isOk) {
+                jAlert("Saved", ALERT_TITLE, function () {
                     skillSet.commonFunctions.loadStep2(skillSet.commonFunctions.getSkillSetUniqueIdentifier());
                 });
-            } else {
-                jAlert("Failed");
             }
         },
         successSaveSkillStructure2: function () {
             if (true) {
                 skillSet.commonFunctions.loadStep3(skillSet.commonFunctions.getSkillSetUniqueIdentifier());
-            } else {
-                jAlert("Failed");
             }
         },
         GetSelectedCompetencyQuestionCheckBox: function () {
@@ -1233,7 +1240,7 @@ var skillSet = {
             competencyQuestionSearchFiltertext = $("#LinkedCompetencyQuestion_input").val() != "" ? $("#LinkedCompetencyQuestion_hidden").val() : "";
             //skillSet.stepTwoSkillStructure.GetSelectedCompetencyQuestionList(); // this is for question order list to do 
             var skillSetUniqueIdentifier = skillSet.commonFunctions.getSkillSetUniqueIdentifier();
-            var selectedQuestionType = ""; // to do fiter by type
+//            var selectedQuestionType = ""; // to do fiter by type
             var skillSetQuestionProxyObj = {
                 "UniqueIdentifier": skillSetUniqueIdentifier,
                 "FilterQuestionType": selectedQuestionTypeFilterText,

@@ -6,12 +6,12 @@ namespace SimChartMedicalOffice.Data
 {
     public class SimAppDocument : KeyValueRepository<SimApp>, ISimAppDocument
     {
-        public override string Url
-        {
-            get
-            {
-                return "SimApp";
-            }
-        }
+        //protected override string NewUrl
+        //{
+        //    get
+        //    {
+        //        return "SimApp";
+        //    }
+        //}
     }
 }

@@ -11,18 +11,14 @@
     string strEndTime = (ViewBag.EditEndTime != null) ? ViewBag.EditEndTime : String.Empty;
     string strDescription = (ViewBag.EditDescription != null) ? ViewBag.EditDescription : String.Empty;
     string strAppointmentType = (ViewBag.AppointmentType != null) ? ViewBag.AppointmentType : String.Empty;
-    string strBlockType = (ViewBag.EditBlockType != null) ? ViewBag.EditBlockType : String.Empty;
-    int iFor = (ViewBag.For != null) ? ViewBag.For : 0;
-    string strlocation = (ViewBag.Location != null) ? ViewBag.Location : String.Empty;
-    string strOtherText = (ViewBag.OtherText != null) ? ViewBag.OtherText : String.Empty;
     string strRecurrenceGroup = "";
     int iNoOfOccurences = 0;
     string strEndBy = "";
     string strRecurrencePattern = "";
-    int iappointmentStatus = 1;
+    string strappointmentStatus = "";
     if (ViewBag.AppointmentObject != null)
     {
-        iappointmentStatus = (ViewBag.AppointmentObject.Status != null) ? ViewBag.AppointmentObject.Status : 0;
+        strappointmentStatus = (ViewBag.AppointmentObject.Status != 0) ? SimChartMedicalOffice.Common.AppCommon.AppointmentStatus[ViewBag.AppointmentObject.Status] : "";
         strVisitType = (ViewBag.AppointmentObject.Type != null) ? ViewBag.AppointmentObject.Type : String.Empty;
     }
     if (ViewBag.AppointmentObject != null && ViewBag.AppointmentObject.RecurrenceGroup != null && ViewBag.AppointmentObject.Recurrence != null)
@@ -37,7 +33,9 @@
     appointmentEditModeJson = @Html.Raw(Json.Encode(ViewBag.AppointmentObject));
     appointmentEditURL = @Html.Raw(Json.Encode(ViewBag.AppointmentURL));
     $(document).ready(function () {
-        $("#View-appointment-type").html("@strAppointmentType");
+    if ("@strAppointmentType" == PATIENTVISIT){
+        $("#View-appointment-type").html(PATIENTVISIT_TITLE);
+        }
         $("#View-visit-type").html("@strVisitType");
         $("#View-patient-name").html("@strPatientName");
         $("#View-provider").html("@strProvider");
@@ -46,7 +44,7 @@
         $("#View-starttime").html("@strStartTime");
         $("#View-endtime").html("@strEndTime");
         $("#View-description").html("@strDescription");
-        $("#View-Status").html("Checked out");
+        $("#View-Status").html("@strappointmentStatus");
         if("@strRecurrenceGroup" != null && "@strRecurrenceGroup" != "") {
             $("#View-recurrencepattern").html("@strRecurrencePattern");
             if (@iNoOfOccurences > 0) {
@@ -63,7 +61,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Appointment Type :
+            Appointment Type:
         </div>
         <div class="grid_22">
             <label id="View-appointment-type"></label>
@@ -73,7 +71,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Visit Type :
+            Visit Type:
         </div>
         <div class="grid_22">
             <label id="View-visit-type"></label>
@@ -83,7 +81,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Patient :
+            Patient:
         </div>
         <div class="grid_22">
             <label id="View-patient-name"></label>
@@ -93,7 +91,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Provider :
+            Provider:
         </div>
         <div class="grid_22">
             <label id="View-provider"></label>
@@ -103,7 +101,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Exam Room :
+            Exam Room:
         </div>
         <div class="grid_22">
             <label id="View-examroom"></label>
@@ -117,7 +115,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Date :
+            Date:
         </div>
         <div class="grid_22">
             <label id="View-date"></label>
@@ -127,14 +125,14 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Start Time :
+            Start Time:
         </div>
         <div class="grid_22 align-div-inline">
                 <div class="align-div-inline grid_11">
                     <label id="View-starttime"></label>
                 </div>
                 <div class="header-text align-div-inline grid_7">
-                    EndTime :
+                    EndTime:
                 </div>
                 <div class="align-div-inline grid_7">
                     <label id="View-endtime"></label>
@@ -145,7 +143,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Recurrence Pattern :
+            Recurrence Pattern:
         </div>
         <div class="grid_22">
             <label id="View-recurrencepattern"></label>
@@ -155,7 +153,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Recurrence Duration :
+            Recurrence Duration:
         </div>
         <div class="grid_22">
             <label id="View-recurrenceduration"></label>
@@ -169,7 +167,7 @@
     </div>
     <div class="grid_32">
         <div class="grid_10 header-text">
-            Description :
+            Description:
         </div>
         <div class="grid_22">
             <label id="View-description"></label>
@@ -179,7 +177,7 @@
     </div>
       <div class="grid_32">
         <div class="grid_10 header-text">
-            Status :
+            Status:
         </div>
         <div class="grid_22">
             <label id="View-Status"></label>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface;
-using SimChartMedicalOffice.Data;
+﻿using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface;
 using SimChartMedicalOffice.Core.DataInterfaces;
 
 namespace SimChartMedicalOffice.ApplicationServices
@@ -12,12 +7,12 @@ namespace SimChartMedicalOffice.ApplicationServices
     {
         public TestService(ITestDocument testDoc)
         {
-            this.testDocumentObject = testDoc;
+            testDocumentObject = testDoc;
         }
         public virtual string HelloWorld()
         {
             return testDocumentObject.Welcome();
         }
-        private ITestDocument testDocumentObject;
+        private readonly ITestDocument testDocumentObject;
     }
 }

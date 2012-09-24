@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using SimChartMedicalOffice.Core.TempObject;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.TempObject;
 using SimChartMedicalOffice.Common.Utility;
@@ -11,24 +9,26 @@ namespace SimChartMedicalOffice.Web.Controllers
 {
     public class RegistrationController:BaseController
     {
-        private IRegistrationService _registrationService;
+        private readonly IRegistrationService _registrationService;
         public RegistrationController(IRegistrationService registrationService)
         {
-            this._registrationService = registrationService;
+            _registrationService = registrationService;
         }
         public void NewPatient()
         {
-            Registration registrationObject = new Registration();
-            registrationObject.FirstName = "FirstName" + DateTime.Now.ToString();
-            registrationObject.LastName = "LastName" + DateTime.Now.ToString();
+            Registration registrationObject = new Registration
+                                                  {
+                                                      FirstName = "FirstName" + DateTime.Now.ToString(),
+                                                      LastName = "LastName" + DateTime.Now.ToString(),
+                                                      Gender = "Male",
+                                                      CreatedTimeStamp = DateTime.Now
+                                                  };
             //registrationObject.Address = new Address();
             //registrationObject.Address.City = "STL";
             //registrationObject.Address.State = "MO";
             //registrationObject.Address.StreetLine1 = "StreetLine1" + DateTime.Now.ToString();
             //registrationObject.Address.StreetLine2 = "StreetLine1" + DateTime.Now.ToString();
             //registrationObject.Address.ZipCode = "63043";
-            registrationObject.Gender = "Male";
-            registrationObject.CreatedTimeStamp = DateTime.Now;
             //registrationObject.PhoneNumber = new PhoneNumber();
             //registrationObject.PhoneNumber.EmergencyContact = "123-456-7890";
             //registrationObject.PhoneNumber.Home = "123-456-HOME";
@@ -55,22 +55,23 @@ namespace SimChartMedicalOffice.Web.Controllers
         }
         public void SavePatientAddress(string patientGuid)
         {
-            Registration registrationObject;
-            Address addressObject;
-            registrationObject = _registrationService.GetPatientRegistration(patientGuid);
-            addressObject = new Address();
-            addressObject.City = "STL";
-            addressObject.State = "MO";
-            addressObject.StreetLine1 = "StreetLine1" + DateTime.Now.ToString();
-            addressObject.StreetLine2 = "StreetLine1" + DateTime.Now.ToString();
-            addressObject.ZipCode = "63043";
+            _registrationService.GetPatientRegistration(patientGuid);
+            Address addressObject = new Address
+                                        {
+                                            City = "STL",
+                                            State = "MO",
+                                            StreetLine1 = "StreetLine1" + DateTime.Now.ToString(),
+                                            StreetLine2 = "StreetLine1" + DateTime.Now.ToString(),
+                                            ZipCode = "63043"
+                                        };
             _registrationService.SavePatientAddress(addressObject);
         }
         public void AddPatientAppointment(string patientGuid)
         {
-            Appointment patientAppointment = new Appointment();           
-            patientAppointment.ScheduledTimeStamp = DateTime.Now.AddDays(3);            
-            patientAppointment.IsRecurrence = false;                
+            Appointment patientAppointment = new Appointment
+                                                 {ScheduledTimeStamp = DateTime.Now.AddDays(3), IsRecurrence = false};
+
+
             patientAppointment.IsRecurrence = true;
             _registrationService.SavePatientAppointment(patientGuid,patientAppointment);
         }
@@ -80,11 +81,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         }
         public string GetAppointmentsJson()
         {
-            string jsonString;
-            jsonString = _registrationService.GetAppointmentsJson();
-            //Dictionary<string, string> data = JsonSerializer.DeserializeObject<Dictionary<string, string>>(jsonString);
-            List<Appointment> appointmentList = new List<Appointment>();
-            //GetAppointmentList(jsonString, ref appointmentList);
+            string jsonString = _registrationService.GetAppointmentsJson();
             JsonSerializer.Jobject(jsonString);
             return jsonString;
         }
@@ -94,8 +91,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         }
         private bool GetAppointmentList(string jsonString,ref List<Appointment> appointmentList)
         {
-            Dictionary<string, object> data;
-            data = JsonSerializer.DeserializeObject<Dictionary<string, object>>(jsonString);
+            Dictionary<string, object> data = JsonSerializer.DeserializeObject<Dictionary<string, object>>(jsonString);
             foreach (KeyValuePair<string, object> kp in data)
             {
                 if (IsDeserializable<Appointment>(kp.Value.ToString()))
@@ -103,10 +99,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                     appointmentList.Add(JsonSerializer.DeserializeObject<Appointment>(kp.Value.ToString()));
                     return true;
                 }
-                else
-                {
-                    return GetAppointmentList(kp.Value.ToString(),ref appointmentList);
-                }
+                return GetAppointmentList(kp.Value.ToString(),ref appointmentList);
             }
             return true;
         }

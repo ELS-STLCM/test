@@ -383,11 +383,14 @@
     <Content Include="Scripts\SMO\specialCharactersHandler.js" />
     <Content Include="Scripts\tinyMCE\langs\en.js" />
     <Content Include="Scripts\tinyMCE\langs\en_dlg.js" />
+    <Content Include="Scripts\tinyMCE\plugins\iespell\editor_plugin.js" />
+    <Content Include="Scripts\tinyMCE\plugins\iespell\editor_plugin_src.js" />
     <Content Include="Scripts\tinyMCE\plugins\spellchecker\css\content.css" />
     <Content Include="Scripts\tinyMCE\plugins\spellchecker\editor_plugin.js" />
     <Content Include="Scripts\tinyMCE\plugins\spellchecker\editor_plugin_src.js" />
     <Content Include="Scripts\tinyMCE\plugins\spellchecker\img\wline.gif" />
     <Content Include="Scripts\tree.jquery.js" />
+    <Content Include="Versions.asp" />
     <Content Include="Views\Builder\Authoring\AssignmentBuilderLanding.cshtml">
       <SubType>Code</SubType>
     </Content>
@@ -789,6 +792,25 @@
   <ItemGroup>
     <Content Include="Views\SimOfficeCalendar\_CancelAppointment.cshtml" />
     <Content Include="Views\SimOfficeCalendar\_ViewAppointment.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Forms\MedicalRecordsRelease.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Shared\HeartBeat.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Account\SessionExpiredError.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Forms\MedicalRecordsReleaseFormPrint.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.dev.config" />
+    <Content Include="Web.int.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Web.cert.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" />

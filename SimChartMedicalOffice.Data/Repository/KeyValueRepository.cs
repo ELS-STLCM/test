@@ -1,21 +1,20 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SimChartMedicalOffice.Common.Utility;
 using System.Collections;
-using SimChartMedicalOffice.Common;
-using SimChartMedicalOffice.Core;
-using SimChartMedicalOffice.Core.TempObject;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text;
+using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Utility;
+using SimChartMedicalOffice.Core;
+using SimChartMedicalOffice.Core.DropBox;
 
 namespace SimChartMedicalOffice.Data.Repository
 {
     public abstract class KeyValueRepository<T> : IKeyValueRepository<T> where T : DocumentEntity
     {
-        public abstract string Url { get; }
-
+        //protected abstract string Url { get; }
+            
         #region Get document
         /// <summary>
         /// To fetch object from database given the appropriate Url
@@ -25,8 +24,7 @@ namespace SimChartMedicalOffice.Data.Repository
         public T Get(string path)
         {
             string jsonDocument = HttpClient.Get(AppCommon.GetDocumentUrl(path));
-            T result;
-            result = JsonSerializer.DeserializeObject<T>(jsonDocument);
+            T result = JsonSerializer.DeserializeObject<T>(jsonDocument);
             return result;
         }
         /// <summary>
@@ -46,11 +44,10 @@ namespace SimChartMedicalOffice.Data.Repository
         /// <returns></returns>
         public List<T> GetAll(string path)
         {
-            List<T> finalResultList;
             StringBuilder jsonString = new StringBuilder();
             jsonString.Append(HttpClient.Get(AppCommon.GetDocumentUrl(path)));
             var resultList = JsonSerializer.DeserializeObject<Hashtable>(jsonString.ToString());
-            finalResultList = new List<T>();
+            List<T> finalResultList = new List<T>();
             if (resultList != null)
             {
                 foreach (DictionaryEntry ucs in resultList)
@@ -88,17 +85,17 @@ namespace SimChartMedicalOffice.Data.Repository
             string jsonResult;
             return SaveOrUpdate(path, dataToSave, out jsonResult);
         }
+
         /// <summary>
         /// Insert/Update a document
         /// </summary>
         /// <param name="path">URL path value</param>
         /// <param name="dataToSave">Dcoument to put in repository</param>
+        /// <param name="outputJson"> </param>
         /// <returns>Returns the URL path of the saved document</returns>
         public string SaveOrUpdate(string path, T dataToSave, out string outputJson)
         {
-
-            string urlPath;
-            urlPath = string.Format(path, dataToSave.GetNewGuidValue());
+            string urlPath = string.Format(path, dataToSave.GetNewGuidValue());
             dataToSave.Url = urlPath;
             outputJson = HttpClient.Put(AppCommon.GetDocumentUrl(urlPath), JsonSerializer.SerializeObject(dataToSave));
             return urlPath;
@@ -149,32 +146,38 @@ namespace SimChartMedicalOffice.Data.Repository
         #endregion
 
         #region Delete action
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="path"></param>
         /// <param name="guidValue"></param>
+        /// <param name="deleteResult"> </param>
         /// <returns></returns>
         public bool Delete(string path, string guidValue, out string deleteResult)
         {
             //string jsonString = HttpClient.Delete(AppCommon.GetDocumentUrl(path + "/" + guidValue));
             return Delete(path + "/" + guidValue, out deleteResult);
         }
+
         /// <summary>
         /// 
         /// </summary>
         /// <param name="path">URL path value</param>
         /// <param name="guidValue">Unique GUID value to the node</param>
         /// <param name="keyToDelete">Key value to be deleted</param>
+        /// <param name="deleteResult"> </param>
         /// <returns></returns>
         public bool Delete(string path, string guidValue, string keyToDelete, out string deleteResult)
         {
             return Delete(path + "/" + guidValue + "/" + keyToDelete, out deleteResult);
         }
+
         /// <summary>
         /// Delete the document from the database
         /// </summary>
         /// <param name="path">URL path value</param>
+        /// <param name="deleteResult"> </param>
         /// <returns></returns>
         public bool Delete(string path, out string deleteResult)
         {
@@ -200,10 +203,11 @@ namespace SimChartMedicalOffice.Data.Repository
             var sourceVariable = Expression.Variable(sourceType, "castedSource");
             var targetVariable = Expression.Variable(targetType, "castedTarget");
 
-            var expressions = new List<Expression>();
-
-            expressions.Add(Expression.Assign(sourceVariable, Expression.Convert(sourceParameter, sourceType)));
-            expressions.Add(Expression.Assign(targetVariable, Expression.Convert(targetParameter, targetType)));
+            var expressions = new List<Expression>
+                                  {
+                                      Expression.Assign(sourceVariable, Expression.Convert(sourceParameter, sourceType)),
+                                      Expression.Assign(targetVariable, Expression.Convert(targetParameter, targetType))
+                                  };
 
             foreach (var property in sourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
             {
@@ -266,6 +270,37 @@ namespace SimChartMedicalOffice.Data.Repository
         public string SaveOrUpdate(string path, string dataToSave)
         {
             return HttpClient.Put(AppCommon.GetDocumentUrl(path), dataToSave);
+        }
+        //public string FormatUrlBasedOnDropbox(DropBoxLink dropbox)
+        //{
+        //    return string.Format("SimApp/Courses/{0}/{1}/{2}/Assignments/{3}", dropbox.CID, dropbox.UserRole, dropbox.UID, dropbox.SID);
+        //}
+
+        public string GetAssignmentUrl(DocumentPath.Module docPath, string customValue = "")
+        {
+            DropBoxLink dropBox = new DropBoxLink
+                                      {Cid = AppConstants.AdminCourseId, UserRole = AppConstants.AdminRole};
+            return GetAssignmentUrl(dropBox, docPath,customValue);
+        }
+        public string GetAssignmentUrl(DropBoxLink dropBox,DocumentPath.Module docPath,string customValue="")
+        {
+            //return AppCommon.FormatAssignmentUrl(dropBox.CID, AppCommon.GetCurrentUserRole(dropBox.UserRole), dropBox.UID, dropBox.SID) +"/"+ this.Url;// "/{0}/{1}/{2}";
+            return Respository.GetDocumentPath(docPath, dropBox, customValue);
+        }
+        public string GetAssignmentUrl(DropBoxLink dropBox, DocumentPath.Module docPath)
+        {
+            //return AppCommon.FormatAssignmentUrl(dropBox.CID, AppCommon.GetCurrentUserRole(dropBox.UserRole), dropBox.UID, dropBox.SID) +"/"+ this.Url;// "/{0}/{1}/{2}";
+            return Respository.GetDocumentPath(docPath, dropBox, "");
+        }
+        //public string GetAssignmentUrl()
+        //{
+        //    return "";
+        //}
+        protected DropBoxLink GetAdminDropBox()
+        {
+            DropBoxLink dropBox = new DropBoxLink
+                                      {Cid = AppConstants.AdminCourseId, UserRole = AppConstants.AdminRole};
+            return dropBox;
         }
     }
 }

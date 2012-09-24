@@ -20,7 +20,7 @@
                 Date of Birth <span class="mandatory-field">*</span>:
             </div>
             <div class="grid_17">
-                <input type="readonly" id="patient_dateaobirth" class="grid_27" name="" value="" readonly="true" />
+                <input id="patient_dateaobirth" class="grid_27" name="" value="" readonly="readonly" />
                 <div class="grid_2">
                     <img id="patientAppointmentCalendarImage" alt="" src="@Url.Content("~/Content/Images/Buttons/smo_calendar.png")"/>
                 </div>
@@ -100,12 +100,12 @@
     <div id="PatientSearch_Btns" class="prefix_12 grid_20">
     <div class="align-div-inline">
         <div class="align-div-inline">
-            <img id="PatientSearch_BtnSelect-LeftCurve" alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+            <img id="PatientSearch_Btn-LeftCurve" alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
                  style="height: 22px;" /></div>
         <input id="save-patient" type="submit" class="navigation-button align-div-inline standard-text standard-height-for-buttons" style="width: 60px;"
                value="Save" title="Save" onclick="appointment.patientFunctions.saveAppointmentPatient()"/>
         <div class="align-div-inline">
-            <img id="PatientSearch_BtnSelect-RightCurve" alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+            <img id="PatientSearch_Btn-RightCurve" alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
                  style="height: 22px;" /></div>
     </div>
     <div class="grid_1 button-seperator">&nbsp;</div>

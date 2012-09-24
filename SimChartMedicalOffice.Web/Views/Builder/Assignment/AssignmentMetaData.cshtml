@@ -51,7 +51,6 @@
             CompetencyListTemp.total = CompetencyListTemp.results.length;
             assignBuilder.commonFunctions.initializeFlexBoxForCompetencyList('CompetencyList',CompetencyListTemp);
         }
-        else
             return null;
     }
 
@@ -68,6 +67,7 @@
     }
     var patientTypeList = {};
     $(document).ready(function () {
+    setRightHolderInnerHeight();
     $("#stepwiseImage").empty();
     $("#stepwiseImage").append("<img alt='' src='../../Content/Images/Buttons/step1AssignmentBuilder.PNG'/>");
         //if assignmentToEdit not null load all elements excepts savedSkillset
@@ -141,7 +141,7 @@
     }
 
 </script>
-<div>
+<div style="height:38px">
 <div class="page-title">
     Step 1 of 5: Assignment Metadata
 </div>
@@ -151,8 +151,8 @@
     </div>
 </div>
 </div>
-<div class="grid_32 div-with-border standard-text assignment-builder-panel vertical-content-scroll"
-     style="width: 770px;height: 297px" id="assignment-Metadata-Main-Content">
+<div class="grid_32 div-with-border standard-text vertical-content-scroll right-inner-content-height"
+    style="width: 770px" id="assignment-Metadata-Main-Content">
     <div id="validationSummary" class="error-message grid_32 align-inline">
     </div>
     <div class="clear-height-spacing clear">

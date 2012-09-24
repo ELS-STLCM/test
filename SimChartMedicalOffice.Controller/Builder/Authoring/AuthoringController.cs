@@ -1,24 +1,11 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Web.Mvc;
-using System.Web;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder;
-using SimChartMedicalOffice.Core;
-using System.Web.Script.Serialization;
-using System.Configuration;
-using SimChartMedicalOffice.Common;
-using System.IO;
 using SimChartMedicalOffice.Core.Competency;
-using SimChartMedicalOffice.Core.ProxyObjects;
-using SimChartMedicalOffice.Core.QuestionBanks;
-using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
-using System.Globalization;
-using SimChartMedicalOffice.Core.Competency;
+//using System.Globalization;
+//using SimChartMedicalOffice.Core.Competency;
 
 namespace SimChartMedicalOffice.Web.Controllers
 {
@@ -28,7 +15,7 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         public AuthoringController(ICompetencyService competencyService)
         {
-            this._competencyService = competencyService;
+            _competencyService = competencyService;
         }
 
         public ActionResult Practice()
@@ -37,8 +24,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         }
         public ActionResult PatientBuilder()
         {
-            List<string> filterAge = new List<string>();
-            filterAge.Add("Filter by Age");
+            List<string> filterAge = new List<string> {"Filter by Age"};
             for (int ageCount = 1; ageCount <= 100; ageCount++)
             {
                 filterAge.Add(ageCount.ToString());
@@ -48,7 +34,6 @@ namespace SimChartMedicalOffice.Web.Controllers
         }
         public ActionResult QuestionBankLanding()
         {
-            List<string> filterByType = new List<string>(); 
             ViewBag.FilterByQuestionType = GetQuestionTypeFlexBoxList();
             return View("../Builder/Authoring/QuestionBankLanding");
         }

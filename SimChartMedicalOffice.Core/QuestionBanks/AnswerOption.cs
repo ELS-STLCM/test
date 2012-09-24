@@ -1,12 +1,9 @@
-﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
+﻿using System;
 
 namespace SimChartMedicalOffice.Core.QuestionBanks
 {
     public class AnswerOption : DocumentEntity
     {
-        public AnswerOption() { }
         /// <summary>
         /// This property is a reference to Object Attachments
         /// Relationship is one to one.
@@ -43,7 +40,7 @@ namespace SimChartMedicalOffice.Core.QuestionBanks
 
         public AnswerOption Clone()
         {
-            Type type = this.GetType();
+            Type type = GetType();
             AnswerOption answerOptionData = new AnswerOption();
             foreach (System.Reflection.PropertyInfo objProp in type.GetProperties())
             {

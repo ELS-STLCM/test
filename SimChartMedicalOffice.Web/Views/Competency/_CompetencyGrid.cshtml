@@ -37,14 +37,15 @@
             aoData.push({ "name": "isCompetencySave", "value": isCompetencySave });
             aoData.push({ "name": "isCompetencyDelete", "value": isCompetencyDelete });
             $.getJSON(sSource, aoData, function (json) {
-                fnCallback(json);                
+                fnCallback(json);
                 // to set border for the table div when the table height increases
-                if ($('#competency_grid_display .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                if ($('#competency_grid_display .dataTables_scrollBody').css('height').replace('px', '') > calculateCompetencyContainerAdjustedHeight()) {
                     setScrollableTableBorder(true, 'competency_grid_display');
                 }
                 else {
                     setScrollableTableBorder(false, 'competency_grid_display');
                 }
+                setCompetencyTableHeight();
             });
         },
         "sAjaxSource": '@Url.Action("GetCompetencyList", "Competency")',
@@ -66,7 +67,7 @@
         "bPaginate": true,
         "sPaginationType": "full_numbers",
         "bSort": true,
-        "sScrollY": "270px",
+        "sScrollY": calculateCompetencyContainerAdjustedHeight() + "px",
         "sScrollX": "100%",
         "bScrollCollapse": true,
         "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,
@@ -82,5 +83,3 @@
 
 
 </script>
-
-

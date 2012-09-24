@@ -1,15 +1,9 @@
 ﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SimChartMedicalOffice.Core.AssignmentBuilder
 {
     public class Resource : DocumentEntity
     {
-        public Resource() { }
-
         /// <summary>
         /// This property holds Author name
         /// </summary>

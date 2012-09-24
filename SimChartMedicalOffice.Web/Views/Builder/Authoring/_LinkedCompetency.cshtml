@@ -2,7 +2,7 @@
     Layout = null;
 }
 @{
-    bool IsQuestionBank=(ViewBag.IsQuestionBank!=null)?ViewBag.IsQuestionBank:true;
+    bool isQuestionBank=(ViewBag.IsQuestionBank!=null)?ViewBag.IsQuestionBank:true;
     bool isAssignmentQuestion = (ViewBag.IsAssignmentQuestion != null) ? ViewBag.IsAssignmentQuestion : false;
 }
 <div id="linked_Competency" class="grid_32">
@@ -17,7 +17,7 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
-        var isFromQuestionBank = @IsQuestionBank.ToString().ToLower();
+        var isFromQuestionBank = @isQuestionBank.ToString().ToLower();
         var isAssignmentQuestion = @isAssignmentQuestion.ToString().ToLower();
         if(isAssignmentQuestion) {
             assignBuilder.commonFunctions.getListOfCompetencyForAssignmentFlexbox();

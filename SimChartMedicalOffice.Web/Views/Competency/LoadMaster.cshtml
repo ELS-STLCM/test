@@ -12,5 +12,12 @@
     {
         @Html.Partial("../../Views/Competency/Competency")
     }
+    <div class="clear-height-spacing clear">
+    </div>
     @Html.Partial("../../Views/Competency/_UCAdminAction")
 </div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        setCompetencyContainerAdjustedHeight();
+    });
+</script>

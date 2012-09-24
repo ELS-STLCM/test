@@ -1,37 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using SimChartMedicalOffice.Core.FrontOffice.Appointments;
-using SimChartMedicalOffice.Data.Repository;
-using SimChartMedicalOffice.Core.DataInterfaces.FrontOffice;
-using SimChartMedicalOffice.Core.ProxyObjects;
 using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Core.DataInterfaces.FrontOffice;
+using SimChartMedicalOffice.Core.FrontOffice.Appointments;
+using SimChartMedicalOffice.Core.ProxyObjects;
+using SimChartMedicalOffice.Data.Repository;
 
 namespace SimChartMedicalOffice.Data.FrontOffice
 {
     public class AppointmentDocument : KeyValueRepository<Appointment>,IAppointmentDocument
     {
-        private IBlockAppointmentDocument _blockAppointmentDocument;
-        private IOtherAppointmentDocument _otherAppointmentDocument;
-        private IPatientVisitAppointmentDocument _patientVisitAppointmentDocument;
-        public override string Url
-        {
-            get
-            {
-                //"SimApp/Courses/{CourseId}/{Role}/{UID}/Assignments/{SID}/Appointments/Type/Block/{YYYYMM}/{dd}/{ProvideInteger}/{DictionaryofAppointments}
-                return "SimApp/Courses/{0}/{1}/{2}/Assignments/{3}/Appointments/Type";
-            }
-        }
+        private readonly IBlockAppointmentDocument _blockAppointmentDocument;
+        private readonly IOtherAppointmentDocument _otherAppointmentDocument;
+        private readonly IPatientVisitAppointmentDocument _patientVisitAppointmentDocument;
+       
 
         public AppointmentDocument(IPatientVisitAppointmentDocument patientVisitAppointmentDocument,
                                     IBlockAppointmentDocument blockAppointmentDocument,
                                     IOtherAppointmentDocument otherAppointmentDocument 
                                   )
         {
-            this._blockAppointmentDocument = blockAppointmentDocument;
-            this._otherAppointmentDocument = otherAppointmentDocument;
-            this._patientVisitAppointmentDocument = patientVisitAppointmentDocument; 
+            _blockAppointmentDocument = blockAppointmentDocument;
+            _otherAppointmentDocument = otherAppointmentDocument;
+            _patientVisitAppointmentDocument = patientVisitAppointmentDocument; 
         }
         public IList<Appointment> GetAppointments(CalendarFilterProxy calendarFilter, AppEnum.CalendarFilterTypes filterType)
         {
@@ -60,8 +51,6 @@ namespace SimChartMedicalOffice.Data.FrontOffice
                                         appointments.AddRange(GetAppointmentsForOtherType(calendarFilter, filterType));
                                         break;
                                     }
-                                default:
-                                    break;
                             } 
                             break;
                         }

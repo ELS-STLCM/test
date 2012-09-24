@@ -4,10 +4,6 @@ namespace SimChartMedicalOffice.Core.Competency
 {
     public class Competency : DocumentEntity
     {
-        public Competency()
-        {
-
-        }
         /// <summary>
         /// This property holds the description of the current competency
         /// </summary>

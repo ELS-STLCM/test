@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Castle.Core;
 using Castle.MicroKernel.Registration;
-using Castle.Windsor;
 using Castle.MicroKernel.SubSystems.Configuration;
+using Castle.Windsor;
 using SimChartMedicalOffice.ApplicationServices;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface;
-using Castle.Core;
-using SimChartMedicalOffice.Infrastructure.Aspects;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.TempObject;
-using SimChartMedicalOffice.ApplicationServices.TempObject;
-using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Forms;
-using SimChartMedicalOffice.ApplicationServices.Forms;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Builder;
-using SimChartMedicalOffice.ApplicationServices.Builder;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Competency;
-using SimChartMedicalOffice.ApplicationServices.Competency;
+using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Forms;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.FrontOffice;
+using SimChartMedicalOffice.ApplicationServices.Builder;
+using SimChartMedicalOffice.ApplicationServices.Competency;
+using SimChartMedicalOffice.ApplicationServices.Forms;
 using SimChartMedicalOffice.ApplicationServices.FrontOffice;
+using SimChartMedicalOffice.Infrastructure.Aspects;
 //using SimChartMedicalOffice.ApplicationServices.Aspects;
 
 namespace SimChartMedicalOffice.Infrastructure.Installer
@@ -35,9 +29,7 @@ namespace SimChartMedicalOffice.Infrastructure.Installer
                 .Interceptors(new InterceptorReference(typeof(ServiceInterceptor))).First,
                 Component.For<ITestService>()
                 .ImplementedBy<Test2Service>()
-                .Interceptors(new InterceptorReference(typeof(ServiceInterceptor))).First,
-                Component.For<IRegistrationService>()
-                .ImplementedBy<RegistrationService>(),
+                .Interceptors(new InterceptorReference(typeof(ServiceInterceptor))).First,               
                 Component.For<IFormsService>()
                 .ImplementedBy<FormsService>()
                 .Interceptors(new InterceptorReference(typeof(ServiceInterceptor))).First,

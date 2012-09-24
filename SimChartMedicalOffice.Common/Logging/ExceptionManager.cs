@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SimChartMedicalOffice.Common.Logging
 {
@@ -13,22 +10,22 @@ namespace SimChartMedicalOffice.Common.Logging
             Warn=2,
             Error=3
         }
-        static Log4NetLogger loggingHandler = new Log4NetLogger();
+        static readonly Log4NetLogger LoggingHandler = new Log4NetLogger();
         public static void Error(Exception applicationException)
         {
-            loggingHandler.Error(applicationException);
+            LoggingHandler.Error(applicationException);
         }
         public static void Error(string information,Exception applicationException)
         {
-            loggingHandler.Error(information,applicationException);
+            LoggingHandler.Error(information,applicationException);
         }
         public static void Fatal(Exception applicationException)
         {
-            loggingHandler.Fatal(applicationException);
+            LoggingHandler.Fatal(applicationException);
         }
         public static void Info(string message)
         {
-            loggingHandler.Error(message);
+            LoggingHandler.Error(message);
         }
     }
 }

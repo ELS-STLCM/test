@@ -178,8 +178,8 @@
     }
 
     function SetBreadCrumb(parentFolderName, currentTab,folderUrl, folderActualName) {
-        var hiddendBreadCrumb = "";
-        var visibleBreadCrumb = "";
+        var hiddendBreadCrumb;
+        var visibleBreadCrumb;
         var renderDoubleClick = parentFolderName == "" ? "renderFoldersOnDoubleclick(\"" : "renderFoldersOnDoubleclick(\"";
         var parentFolderNameSub = "";
         var currentNodeLabel = "";
@@ -261,6 +261,7 @@
                 //once the current folder's link encountered
                 return false;
             }
+             return false;
         });
         $("div[id='BreadCrumb_Hidden']").empty();
         return hiddenCrumb;

@@ -9,8 +9,8 @@
                 <th title="Last Name" class="datatable-tooltip datatable-background" style="width: 15%">
                     Last Name
                 </th>
-                <th title="Gender" class="datatable-tooltip datatable-background" style="width: 13%">
-                    Gender
+                <th title="Sex" class="datatable-tooltip datatable-background" style="width: 13%">
+                    Sex
                 </th>
                 <th title="Date Of Birth" class="datatable-tooltip datatable-background" style="width: 14%">
                     DOB
@@ -35,11 +35,25 @@
         "bProcessing": false,
         "bServerSide": true,
         "sAjaxSource": '@Url.Action("GetPatientSearchList", "Patient", new {strSearchText= ViewBag.SearchText})',
-        "bRetrieve": true,      
+        "bRetrieve": true,
+        "fnServerData": function (sSource, aoData, fnCallback) {
+            //startAjaxLoader();
+            $.getJSON(sSource, aoData, function (json) {
+                /* Do whatever additional processing you want on the callback, then tell DataTables */
+                fnCallback(json);
+                if ($('#patientBuilder_search_grid_display .dataTables_scrollBody').css('height').replace('px', '') > setAdjustedHeightPatientSearchGrid()) {
+                    setScrollableTableBorder(true, 'patientBuilder_search_grid_display');
+                }
+                else {
+                    setScrollableTableBorder(false, 'patientBuilder_search_grid_display');
+                }
+                closeAjaxLoader();
+            });
+        },
         "aoColumns": [
             { "bSortable": true, "sName": "FirstName" },
             { "bSortable": true, "sName": "LastName" },
-            { "bSortable": true, "sName": "Gender" },
+            { "bSortable": true, "sName": "Sex" },
             { "bSortable": true, "sName": "DOB" },
             { "bSortable": true, "sName": "Age" },
             { "bSortable": true, "sName": "CreatedOn" },
@@ -54,7 +68,7 @@
         "bPaginate": true,
         "sPaginationType": "full_numbers",
         "bSort": true,
-        "sScrollY": "270px",
+        "sScrollY": setAdjustedHeightPatientSearchGrid() + "px",
         "sScrollX": "100%",
         "bScrollCollapse": true,
         "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,

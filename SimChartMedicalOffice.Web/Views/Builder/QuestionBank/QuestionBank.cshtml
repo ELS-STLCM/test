@@ -1,22 +1,21 @@
-﻿@using SimChartMedicalOffice.Common
-@{
+﻿@{
     Layout = null;
 }
-<div class="grid_32 standard-text" id="questionHolder">
+<div class="grid_32 standard-text holder-height" id="questionHolder">
     <div class="clear clear-min-height-spacing">
     </div>
-    <div class="grid_32 form-page-header div-with-bottom-border" style="width: 920px">
+    <div id = "questionBankHeader" class="grid_32 form-page-header div-with-bottom-border" style="width: 920px">
         &nbsp;Question Bank
         <div class="clear clear-min-height-spacing">
         </div>
     </div>
-    <div class="grid_8">
+    <div class="grid_8 right-content-height">
         @Html.Partial("../../Views/Builder/QuestionBank/ReturnToQuestionBank")
     </div>
-    <div class="grid_24 remove-div-space" style="float: left">
+    <div class="grid_24 remove-div-space right-content-height" style="float: left">
         <div class="clear-height-spacing clear">
         </div>
-        <div class="grid_32 div-with-border standard-text question-bank-panel" style="overflow-y: auto;
+        <div class="grid_32 div-with-border standard-text question-inner-content-height" style="overflow-y: auto;
             width: 700px" id="qn-type-holder-all-questions">
             <div class="question-bank-select-list" id="qn_select_template">
                 <div class="multiple-choice-index-spacing">
@@ -85,12 +84,15 @@
     </div>
     <div id="image_view_load" style="display: none">
         <div id="image_view_load_inner_content" style="height: 420px;">
-            <img id="image_view" src="" alt="x" class="image-view-larger" />
+            <img id="image_view" src="" alt="" class="image-view-larger" />
         </div>
     </div>
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
+        setContentHeightForAllBuilders();
+        setRightHolderHeight('questionBankHeader');
+        setQuestionHolderInnerHeight();
         disableAButton("btnSaveQuestion");
         $("#rationaleLinkedCompetency").hide();
         $("#validationSummary").hide();

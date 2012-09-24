@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using System.Web.Routing;
-using System.Web.Security;
-using SimChartMedicalOffice.Core.Account;
-using SimChartMedicalOffice.Common;
 using System.Configuration;
+using System.Web.Mvc;
+using System.Web.Security;
+using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Core.Account;
 
 namespace SimChartMedicalOffice.Web.Controllers
 {
@@ -39,7 +35,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         [HttpPost]
         public ActionResult LogOn(LogOnModel model, string returnUrl)
         {
-            string userName="";
+            //string userName="";
             FormsAuthentication.SignOut();
             if (ModelState.IsValid)
             //model.Password = "#infy123";
@@ -54,37 +50,30 @@ namespace SimChartMedicalOffice.Web.Controllers
                     {
                         return Redirect(returnUrl);
                     }
-                    else
-                    {
-                        string environment = ConfigurationManager.AppSettings["ENVIRONMENT"];
-                        /*Handle the redirections once Dropbox integration is done.*/
-                        //if (environment != null && (environment == "DEV" || environment == "QA" || environment == "TEST"))
-                        //{
-                            return RedirectToAction("TestDropBox", "Account");
-                        //}
-                        //else
-                        //{
-                        //    //userName = Page.User.Identity.Name
-                        //    //userName = Request.LogonUserIdentity.Name;
-                        //    string[] parts = userName.Split('\\');
-                        //    if (parts.Length > 1)
-                        //    {
-                        //        userName = parts[1];
-                        //    }
-                        //    var elsevierParams = new
-                        //    {   Target = "QuestionBankBuilder",
-                        //        UID = userName,
-                        //        CID = AppConstants.ADMIN_COURSE_ID
-                        //    };
-                        //    return RedirectToAction("QuestionBankBuilder", "SMOInterface", elsevierParams);
-                        //}
-                        
-                    }
+                    string environment = ConfigurationManager.AppSettings["ENVIRONMENT"];
+                    /*Handle the redirections once Dropbox integration is done.*/
+                    //if (environment != null && (environment == "DEV" || environment == "QA" || environment == "TEST"))
+                    //{
+                    return RedirectToAction("TestDropBox", "Account");
+                    //}
+                    //else
+                    //{
+                    //    //userName = Page.User.Identity.Name
+                    //    //userName = Request.LogonUserIdentity.Name;
+                    //    string[] parts = userName.Split('\\');
+                    //    if (parts.Length > 1)
+                    //    {
+                    //        userName = parts[1];
+                    //    }
+                    //    var elsevierParams = new
+                    //    {   Target = "QuestionBankBuilder",
+                    //        UID = userName,
+                    //        CID = AppConstants.ADMIN_COURSE_ID
+                    //    };
+                    //    return RedirectToAction("QuestionBankBuilder", "SMOInterface", elsevierParams);
+                    //}
                 }
-                else
-                {
-                    ModelState.AddModelError("", "The user name or password provided is incorrect.");
-                }
+                ModelState.AddModelError("", "The user name or password provided is incorrect.");
             }
 
             // If we got this far, something failed, redisplay form
@@ -133,10 +122,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                     FormsAuthentication.SetAuthCookie(model.UserName, false /* createPersistentCookie */);
                     return RedirectToAction("Index", "Home");
                 }
-                else
-                {
-                    ModelState.AddModelError("", ErrorCodeToString(createStatus));
-                }
+                ModelState.AddModelError("", ErrorCodeToString(createStatus));
             }
 
             // If we got this far, something failed, redisplay form
@@ -179,10 +165,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                 {
                     return RedirectToAction("ChangePasswordSuccess");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
-                }
+                ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
             }
 
             // If we got this far, something failed, redisplay form
@@ -205,6 +188,11 @@ namespace SimChartMedicalOffice.Web.Controllers
         {
             return View();
         }
+        public ActionResult HeartBeat()
+        {
+            return View("../../Views/Shared/HeartBeat");
+        }
+
         #region Status Codes
         private static string ErrorCodeToString(MembershipCreateStatus createStatus)
         {

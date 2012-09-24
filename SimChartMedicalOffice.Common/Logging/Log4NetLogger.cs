@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 using log4net;
 
@@ -10,11 +7,11 @@ namespace SimChartMedicalOffice.Common.Logging
     public class Log4NetLogger //: ILogger
     {
 
-        private ILog _logger;
+        private readonly ILog _logger;
 
         public Log4NetLogger()
         {
-            _logger = LogManager.GetLogger(this.GetType());
+            _logger = LogManager.GetLogger(GetType());
         }
 
         public void Info(string message)

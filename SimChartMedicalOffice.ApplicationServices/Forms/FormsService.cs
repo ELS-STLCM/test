@@ -1,11 +1,9 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Forms;
-using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.Core;
-using SimChartMedicalOffice.Core.DataInterfaces;
 using SimChartMedicalOffice.Core.DataInterfaces.Forms;
 using SimChartMedicalOffice.Core.DataInterfaces.Patient;
-using System.Collections.Generic;
+using SimChartMedicalOffice.Core.DropBox;
 using SimChartMedicalOffice.Core.Forms;
 using SimChartMedicalOffice.Core.Patient;
 
@@ -15,239 +13,241 @@ namespace SimChartMedicalOffice.ApplicationServices.Forms
 {
     public class FormsService : IFormsService
     {
-        private readonly ISimAppDocument _simOfficeDocument;
         private readonly IPriorAuthorizationRequestFormDocument _priorAuthorizationRequestFormDocument;
         private readonly IPatientDocument _patientDocument;
         private readonly IPatientRecordsAccessFormDocument _patientRecordsAccessForm;
         private readonly IReferralFormDocument _referralForm;
         private readonly INoticeOfPrivacyPracticeDocument _noticeOfPrivacyPracticeDocument;
-        private readonly IAttachmentDocument _attachmentDocument;
+       // private readonly IAttachmentDocument _attachmentDocument;
         private readonly IBillOfRightsDocument _billOfRightsDocument;
+        private readonly IMedicalRecordsRelease _medicalRecordsRelease;
         
 
-        public FormsService(ISimAppDocument simOfficeDocumentInstance,
-                                IPriorAuthorizationRequestFormDocument priorAuthorizationRequestFormDocumentInstance
+        public FormsService(IPriorAuthorizationRequestFormDocument priorAuthorizationRequestFormDocumentInstance
                                 , IPatientDocument patientDocumentInstance, IPatientRecordsAccessFormDocument patientRecordsAccessForm,
-            IReferralFormDocument referralFormDocumentInstance, INoticeOfPrivacyPracticeDocument noticeOfPrivacyPracticeDocument, 
-            IAttachmentDocument attachmentDocument, IBillOfRightsDocument billOfRightsDocument)
+            IReferralFormDocument referralFormDocumentInstance, INoticeOfPrivacyPracticeDocument noticeOfPrivacyPracticeDocument,
+            IBillOfRightsDocument billOfRightsDocument, IMedicalRecordsRelease medicalRecordsRelease)
         {
-            this._simOfficeDocument = simOfficeDocumentInstance;
-            this._priorAuthorizationRequestFormDocument = priorAuthorizationRequestFormDocumentInstance;
-            this._patientDocument = patientDocumentInstance;
-            this._patientRecordsAccessForm = patientRecordsAccessForm;
-            this._referralForm = referralFormDocumentInstance;
-            this._noticeOfPrivacyPracticeDocument = noticeOfPrivacyPracticeDocument;
-            this._attachmentDocument = attachmentDocument;
-            this._billOfRightsDocument = billOfRightsDocument;
+            _priorAuthorizationRequestFormDocument = priorAuthorizationRequestFormDocumentInstance;
+            _patientDocument = patientDocumentInstance;
+            _patientRecordsAccessForm = patientRecordsAccessForm;
+            _referralForm = referralFormDocumentInstance;
+            _noticeOfPrivacyPracticeDocument = noticeOfPrivacyPracticeDocument;
+          //  _attachmentDocument = attachmentDocument;
+            _billOfRightsDocument = billOfRightsDocument;
+            _medicalRecordsRelease = medicalRecordsRelease;
         }
 
-        public bool SavePriorAuthorizationRequestForm(PriorAuthorizationRequestForm priorAuthorizationRequestFormObject, string courseId, string userRole,
-                                                                                  string UID, string SID)
+        public bool SavePriorAuthorizationRequestForm(PriorAuthorizationRequestForm priorAuthorizationRequestFormObject, DropBoxLink dropBox)
         {
-            _priorAuthorizationRequestFormDocument.SaveOrUpdate(_priorAuthorizationRequestFormDocument.FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,priorAuthorizationRequestFormObject.PatientReferenceId,priorAuthorizationRequestFormObject.UniqueIdentifier), priorAuthorizationRequestFormObject);
+            _priorAuthorizationRequestFormDocument.SaveOrUpdate(_priorAuthorizationRequestFormDocument.FormAndSetUrlForStudentPatient(dropBox, priorAuthorizationRequestFormObject.PatientReferenceId, priorAuthorizationRequestFormObject.UniqueIdentifier), priorAuthorizationRequestFormObject);
+            return true;
+        }
+
+        public bool SaveMedicalRecordsReleaseForm(MedicalRecordsRelease medicalRecordsReleaseFormObject, DropBoxLink dropBox)
+        {
+            _medicalRecordsRelease.SaveOrUpdate(_medicalRecordsRelease.FormAndSetUrlForStudentPatient(dropBox, medicalRecordsReleaseFormObject.PatientReferenceId, medicalRecordsReleaseFormObject.UniqueIdentifier), medicalRecordsReleaseFormObject);
             return true;
         }
         
 
-        public bool SaveReferralForm(ReferralForm referralFormObject, string courseId, string userRole,
-                                                                                  string UID, string SID)
+        public bool SaveReferralForm(ReferralForm referralFormObject, DropBoxLink dropBox)
         {
-            _referralForm.SaveOrUpdate(_referralForm.FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,referralFormObject.PatientReferenceId,referralFormObject.UniqueIdentifier), referralFormObject);
+            _referralForm.SaveOrUpdate(_referralForm.FormAndSetUrlForStudentPatient(dropBox, referralFormObject.PatientReferenceId, referralFormObject.UniqueIdentifier), referralFormObject);
             return true;
         }
 
-        public bool SavePatientRegistration(Patient patientObject)
-        {
-            _patientDocument.SaveOrUpdate(_patientDocument.Url, patientObject);
-            return true;
-        }
+        //public bool SavePatientRegistration(Patient patientObject)
+        //{
+        //    _patientDocument.SaveOrUpdate(_patientDocument.GetAssignmentUrl(), patientObject);
+        //    return true;
+        //}
 
-        public IList<Patient> GetAllPatient(string courseId, string userRole, string UID,string SID)
+        public IList<Patient> GetAllPatient(DropBoxLink assignmentCredentials)
         {
             //return _patientDocument.GetAll(_patientDocument.FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,""));
-            return _patientDocument.GetAllPatientForAssignment(courseId);
+            return _patientDocument.GetAllPatientForAssignment(assignmentCredentials);
         }
 
-        public Patient GetPatientRegistration(string patientGuid)
+        //public Patient GetPatientRegistration(string patientGuid)
+        //{
+        //    return _patientDocument.Get(_patientDocument.GetAssignmentUrl(), patientGuid);
+        //}
+
+        //public IList<PriorAuthorizationRequestForm> GetAllPriorAuthorizationRequest()
+        //{
+        //    return
+        //        _priorAuthorizationRequestFormDocument.GetAll(string.Format(_priorAuthorizationRequestFormDocument.GetAssignmentUrl(),
+        //                                                                    ""));
+        //}
+
+        //public PriorAuthorizationRequestForm GetPatientPriorAuthorizationRequest(string patientGuid)
+        //{
+        //    return _priorAuthorizationRequestFormDocument.Get(_priorAuthorizationRequestFormDocument.GetAssignmentUrl(), patientGuid);
+        //}
+
+        public Patient GetPatient (string courseId,string userRole, string uid,string sid, string patientGuid)
         {
-            return _patientDocument.Get(_patientDocument.Url, patientGuid);
+            return _patientDocument.Get(_patientDocument.FormAndSetUrlForStudentPatient(courseId,userRole,uid,sid,patientGuid));
         }
 
-        public IList<PriorAuthorizationRequestForm> GetAllPriorAuthorizationRequest()
+        public Patient GetPatientFromPatientRepository (string patientGuid)
         {
-            return
-                _priorAuthorizationRequestFormDocument.GetAll(string.Format(_priorAuthorizationRequestFormDocument.Url,
-                                                                            ""));
+            return _patientDocument.GetPatientFromPatientRepository(patientGuid);
         }
 
-        public PriorAuthorizationRequestForm GetPatientPriorAuthorizationRequest(string patientGuid)
+        public Patient GetPatientFromAssignmentRepository(string patientGuid, DropBoxLink dropDownCredentials)
         {
-            return _priorAuthorizationRequestFormDocument.Get(_priorAuthorizationRequestFormDocument.Url, patientGuid);
+            return _patientDocument.GetPatientFromAssignmentRepository(patientGuid, dropDownCredentials);
         }
 
-        public Patient GetPatient (string courseId,string userRole, string UID,string SID, string patientGuid)
-        {
-            return _patientDocument.Get(_patientDocument.FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,patientGuid));
-        }
-
-        public Patient GetPatientFromPatientRepository (string patientGUID)
-        {
-            return _patientDocument.GetPatientFromPatientRepository(patientGUID);
-        }
-
-        public Patient GetPatientFromAssignmentRepository(string patientGUID)
-        {
-            return _patientDocument.GetPatientFromAssignmentRepository(patientGUID);
-        }
         /// <summary>
         /// To save Notice of privacy form
         /// </summary>
         /// <param name="noticeOfPrivacyPractice"></param>
         /// <param name="patientGuid"></param>
-        /// <param name="courseId"></param>
-        /// <param name="userRole"></param>
-        /// <param name="UID"></param>
-        /// <param name="SID"></param>
+        /// <param name="dropBox"> </param>
         /// <returns></returns>
-        public bool SaveNoticeOfPrivacyPractice(NoticeOfPrivacyPractice noticeOfPrivacyPractice, string patientGuid, string courseId, string userRole, string UID, string SID)
+        public bool SaveNoticeOfPrivacyPractice(NoticeOfPrivacyPractice noticeOfPrivacyPractice, string patientGuid, DropBoxLink dropBox)
         {
-            string _noticeDocumentUrl = "";
-            _noticeDocumentUrl = _noticeOfPrivacyPracticeDocument.SaveNoticeFormUrl(patientGuid, courseId, userRole, UID, SID);
-            _noticeOfPrivacyPracticeDocument.SaveOrUpdate(_noticeDocumentUrl, noticeOfPrivacyPractice);
+            string noticeDocumentUrl = _noticeOfPrivacyPracticeDocument.SaveNoticeFormUrl(patientGuid, dropBox);
+            _noticeOfPrivacyPracticeDocument.SaveOrUpdate(noticeDocumentUrl, noticeOfPrivacyPractice);
             return true;
         }
+
         /// <summary>
         /// To save Bill of rights form
         /// </summary>
         /// <param name="patientRecordsAccessForm"></param>
-        /// <param name="courseId"></param>
-        /// <param name="userRole"></param>
-        /// <param name="UID"></param>
-        /// <param name="SID"></param>
+        /// <param name="dropBox"> </param>
         /// <returns></returns>
-        public bool SavePatientRecordsAccessForm(PatientRecordsAccessForm patientRecordsAccessForm, string courseId, string userRole,
-                                                                                  string UID, string SID)
+        public bool SavePatientRecordsAccessForm(PatientRecordsAccessForm patientRecordsAccessForm, DropBoxLink dropBox)
         {
-            _patientRecordsAccessForm.SaveOrUpdate(_patientRecordsAccessForm.FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,patientRecordsAccessForm.PatientReferenceId,patientRecordsAccessForm.UniqueIdentifier), patientRecordsAccessForm);
+            _patientRecordsAccessForm.SaveOrUpdate(_patientRecordsAccessForm.FormAndSetUrlForStudentPatient(dropBox, patientRecordsAccessForm.PatientReferenceId, patientRecordsAccessForm.UniqueIdentifier), patientRecordsAccessForm);
             return true;
         }
-        public bool UpdatePatientRecordsAccessForm(string patientGuid, PatientRecordsAccessForm patientRecordsAccessForm)
+        //public bool UpdatePatientRecordsAccessForm(string patientGuid, PatientRecordsAccessForm patientRecordsAccessForm)
+        //{
+        //    string patientRecordsAccessFormUrl = string.Format(_patientRecordsAccessForm.GetAssignmentUrl(), patientGuid);
+        //    _patientRecordsAccessForm.SaveOrUpdate(patientRecordsAccessFormUrl,patientRecordsAccessForm);
+        //    return true;
+        //}
+
+        //public bool DeletePatientRecordsAccessForm(string patientGuid)
+        //{
+        //    string result;
+        //    string patientRecordsAccessFormUrl = string.Format(_patientRecordsAccessForm.GetAssignmentUrl(),patientGuid);
+        //    _patientRecordsAccessForm.Delete(patientRecordsAccessFormUrl, out result);
+        //    return true;
+        //}
+
+        //public IList<PatientRecordsAccessForm> GetAllPatientRecordsAccessForm()
+        //{
+        //    return _patientRecordsAccessForm.GetAll(string.Format(_patientRecordsAccessForm.GetAssignmentUrl(),""));
+        //}
+
+        public IList<PatientRecordsAccessForm> GetAllPatientRecordsAccessFormsForPatient(DropBoxLink dropBox, string patientGuid, string formId)
         {
-            string patientRecordsAccessFormUrl = string.Format(_patientRecordsAccessForm.Url, patientGuid);
-            _patientRecordsAccessForm.SaveOrUpdate(patientRecordsAccessFormUrl,patientRecordsAccessForm);
-            return true;
+            return _patientRecordsAccessForm.GetAllPatientRecordsAccessFormsForPatient(dropBox, patientGuid, formId);
         }
 
-        public bool DeletePatientRecordsAccessForm(string patientGuid)
+        public IList<PriorAuthorizationRequestForm> GetAllPriorAuthorizationRequestFormsForPatient(DropBoxLink dropBox,  string patientGuid, string formId)
         {
-            string result;
-            string patientRecordsAccessFormUrl = string.Format(_patientRecordsAccessForm.Url,patientGuid);
-            _patientRecordsAccessForm.Delete(patientRecordsAccessFormUrl, out result);
-            return true;
+            return _priorAuthorizationRequestFormDocument.GetAllPriorAuthorizationRequestFormsForPatient(dropBox, patientGuid, formId);
+        }
+        public IList<MedicalRecordsRelease> GetAllMedicalRecordsReleaseFormsForPatient(DropBoxLink dropBox, string patientGuid, string formId)
+        {
+            return _medicalRecordsRelease.GetAllMedicalRecordsReleaseFormsForPatient(dropBox, patientGuid, formId);
         }
 
-        public IList<PatientRecordsAccessForm> GetAllPatientRecordsAccessForm()
+        public IList<ReferralForm> GetAllReferralFormsForPatient(DropBoxLink dropBox,string patientGuid, string formId)
         {
-            return _patientRecordsAccessForm.GetAll(string.Format(_patientRecordsAccessForm.Url,""));
+            return _referralForm.GetAllReferralFormsForPatient(dropBox, patientGuid, formId);
         }
 
-        public IList<PatientRecordsAccessForm> GetAllPatientRecordsAccessFormsForPatient(string courseId, string userRole, string UID, string SID, string patientGuid, string formId)
-        {
-            return _patientRecordsAccessForm.GetAllPatientRecordsAccessFormsForPatient(courseId,userRole,UID,SID,patientGuid, formId);
-        }
-
-        public IList<PriorAuthorizationRequestForm> GetAllPriorAuthorizationRequestFormsForPatient(string courseId, string userRole, string UID, string SID, string patientGuid, string formId)
-        {
-            return _priorAuthorizationRequestFormDocument.GetAllPriorAuthorizationRequestFormsForPatient(courseId, userRole, UID, SID, patientGuid, formId);
-        }
-
-        public IList<ReferralForm> GetAllReferralFormsForPatient(string courseId, string userRole, string UID, string SID, string patientGuid, string formId)
-        {
-            return _referralForm.GetAllReferralFormsForPatient(courseId, userRole, UID, SID, patientGuid, formId);
-        }
         /// <summary>
         /// To get the Notice of privacy form for perticular patient
         /// </summary>
-        /// <param name="patientGUID"></param>
-        /// <param name="courseId"></param>
-        /// <param name="userRole"></param>
-        /// <param name="UID"></param>
-        /// <param name="SID"></param>
+        /// <param name="patientGuid"></param>
+        /// <param name="dropBox"> </param>
         /// <returns></returns>
-        public NoticeOfPrivacyPractice GetNoticeOfPrivacyPracticeDocument(string patientGUID, string courseId, string userRole, string UID, string SID)
+        public NoticeOfPrivacyPractice GetNoticeOfPrivacyPracticeDocument(string patientGuid, DropBoxLink dropBox)
         {
-            return _noticeOfPrivacyPracticeDocument.GetNoticeOfPrivacyPracticeDocument(patientGUID, courseId, userRole, UID, SID);
+            return _noticeOfPrivacyPracticeDocument.GetNoticeOfPrivacyPracticeDocument(patientGuid, dropBox);
         }
+
         /// <summary>
         /// To get the bill of rights form for perticular patient
         /// </summary>
-        /// <param name="patientGUID"></param>
-        /// <param name="courseId"></param>
-        /// <param name="userRole"></param>
-        /// <param name="UID"></param>
-        /// <param name="SID"></param>
+        /// <param name="patientGuid"></param>
+        /// <param name="dropBox"> </param>
         /// <returns></returns>
-        public BillOfRights GetBillOfRightsDocument(string patientGUID, string courseId, string userRole, string UID, string SID)
+        public BillOfRights GetBillOfRightsDocument(string patientGuid, DropBoxLink dropBox)
         {
-            return _billOfRightsDocument.GetBillOfRightsDocument(patientGUID, courseId, userRole, UID, SID);
+            return _billOfRightsDocument.GetBillOfRightsDocument(patientGuid, dropBox);
         }
-        public PatientRecordsAccessForm GetPatientRecordsAccessForm(string courseId, string userRole, string UID, string SID, string patientGuid, string formId)
+        public PatientRecordsAccessForm GetPatientRecordsAccessForm(DropBoxLink dropBox, string patientGuid, string formId)
         {
-            return _patientRecordsAccessForm.Get(_patientRecordsAccessForm.FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,patientGuid,formId));
-        }
-
-        public PriorAuthorizationRequestForm GetPriorAuthorizationRequestForm(string courseId, string userRole, string UID, string SID, string patientGuid, string formId)
-        {
-            return _priorAuthorizationRequestFormDocument.Get(_priorAuthorizationRequestFormDocument.FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,patientGuid,formId));
+            return _patientRecordsAccessForm.Get(_patientRecordsAccessForm.FormAndSetUrlForStudentPatient(dropBox,patientGuid,formId));
         }
 
-        public ReferralForm GetReferralForm(string courseId, string userRole, string UID, string SID, string patientGuid, string formId)
+        public PriorAuthorizationRequestForm GetPriorAuthorizationRequestForm(DropBoxLink dropBox, string patientGuid, string formId)
         {
-           return _referralForm.Get(_referralForm.FormAndSetUrlForStudentPatient(courseId,userRole,UID,SID,patientGuid,formId));
+            return _priorAuthorizationRequestFormDocument.Get(_priorAuthorizationRequestFormDocument.FormAndSetUrlForStudentPatient(dropBox,patientGuid,formId));
+        }
+         
+              public MedicalRecordsRelease GetMedicalRecordsReleaseForm(DropBoxLink dropBox, string patientGuid, string formId)
+        {
+            return _medicalRecordsRelease.Get(_medicalRecordsRelease.FormAndSetUrlForStudentPatient(dropBox, patientGuid, formId));
         }
 
-        public IList<ReferralForm> GetAllReferralFormItems()
+        public ReferralForm GetReferralForm(DropBoxLink dropBox, string patientGuid, string formId)
         {
-            return _referralForm.GetAll(string.Format(_referralForm.Url,""));
+           return _referralForm.Get(_referralForm.FormAndSetUrlForStudentPatient(dropBox,patientGuid,formId));
         }
 
-        public ReferralForm GetReferralFormItem(string patientGuid)
-        {
-            string referralFormUrl = string.Format(_referralForm.Url, patientGuid);
-            return _referralForm.Get(referralFormUrl);
-        }
+        //public IList<ReferralForm> GetAllReferralFormItems()
+        //{
+        //    return _referralForm.GetAll(string.Format(_referralForm.GetAssignmentUrl(),""));
+        //}
 
-        public bool DeleteReferralForm(string patientGuid)
-        {
-            string referralFormUrlList;
-            string result;
-            referralFormUrlList = string.Format(_referralForm.Url,patientGuid);
-            _patientRecordsAccessForm.Delete(referralFormUrlList, out result);
-            return true;
-        }
+        //public ReferralForm GetReferralFormItem(string patientGuid)
+        //{
+        //    string referralFormUrl = string.Format(_referralForm.GetAssignmentUrl(), patientGuid);
+        //    return _referralForm.Get(referralFormUrl);
+        //}
 
-        public bool UpdateReferralForm(string patientGuid, ReferralForm referralForm)
-        {
-            string referralFormUrl = string.Format(_referralForm.Url,patientGuid);
-            _referralForm.SaveOrUpdate(referralFormUrl, referralForm);
-            return true;
-        }
+        //public bool DeleteReferralForm(string patientGuid)
+        //{
+        //    string referralFormUrlList;
+        //    string result;
+        //    referralFormUrlList = string.Format(_referralForm.GetAssignmentUrl(),patientGuid);
+        //    _patientRecordsAccessForm.Delete(referralFormUrlList, out result);
+        //    return true;
+        //}
+
+        //public bool UpdateReferralForm(string patientGuid, ReferralForm referralForm)
+        //{
+        //    string referralFormUrl = string.Format(_referralForm.GetAssignmentUrl(),patientGuid);
+        //    _referralForm.SaveOrUpdate(referralFormUrl, referralForm);
+        //    return true;
+        //}
 
        
 
-        public bool DeletePriorAuthorizationRequestForm(string patientGuid)
-        {
-            string result;
-            string priorAuthorizationRequestFormUrl = string.Format(_priorAuthorizationRequestFormDocument.Url,patientGuid);
-            _priorAuthorizationRequestFormDocument.Delete(priorAuthorizationRequestFormUrl, out result);
-            return true;
-        }
+        //public bool DeletePriorAuthorizationRequestForm(string patientGuid)
+        //{
+        //    string result;
+        //    string priorAuthorizationRequestFormUrl = string.Format(_priorAuthorizationRequestFormDocument.GetAssignmentUrl(),patientGuid);
+        //    _priorAuthorizationRequestFormDocument.Delete(priorAuthorizationRequestFormUrl, out result);
+        //    return true;
+        //}
 
-        public Attachment GetPdfAttachment(string attachmentGuid)
-        {
-            string attachmentDocumentUrl = string.Format(_attachmentDocument.Url, attachmentGuid);
-            return _attachmentDocument.Get(attachmentDocumentUrl);
-        }
+        //public Attachment GetPdfAttachment(string attachmentGuid)
+        //{
+        //    string attachmentDocumentUrl = string.Format(_attachmentDocument.GetAssignmentUrl(), attachmentGuid);
+        //    return _attachmentDocument.Get(attachmentDocumentUrl);
+        //}
 
         public Attachment GetBillOfRightsPdfData()
         {
@@ -260,10 +260,9 @@ namespace SimChartMedicalOffice.ApplicationServices.Forms
             return _noticeOfPrivacyPracticeDocument.GetNoticeOfPrivacyPracticePdfData();
 
         }
-        public bool SavePatientBillOfRights(BillOfRights patientBillOfRights, string patientGuid, string courseId, string userRole, string UID, string SID)
+        public bool SavePatientBillOfRights(BillOfRights patientBillOfRights, string patientGuid, DropBoxLink dropBox)
         {
-            string billOfRightsUrl = "";
-            billOfRightsUrl = _billOfRightsDocument.SaveBillOfRightsUrl(patientGuid, courseId, userRole, UID, SID);
+            string billOfRightsUrl = _billOfRightsDocument.SaveBillOfRightsUrl(patientGuid, dropBox);
             _billOfRightsDocument.SaveOrUpdate(billOfRightsUrl, patientBillOfRights);
             return true;
         }

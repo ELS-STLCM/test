@@ -1,12 +1,9 @@
 ﻿using System.Collections.Generic;
-using System;
-using SimChartMedicalOffice.Common;
 
 namespace SimChartMedicalOffice.Core.QuestionBanks
 {
     public class QuestionBankFolder : DocumentEntity
     {
-        public QuestionBankFolder() { }
         /// <summary>
         /// This proprty holds the value of Question Bank Tab Folder
         /// </summary>

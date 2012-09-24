@@ -38,15 +38,12 @@
         "bProcessing": false,
         "bServerSide": true,
         "sAjaxSource": "../AssignmentBuilder/GetAssignmentSearchList?strSearchText=" + "@ViewBag.SearchText" + "&strModule=" + "@ViewBag.SearchModule",
-        "fnInitComplete": function (oSettings, json) {
-            //startAjaxLoader();
-        },
         "fnServerData": function (sSource, aoData, fnCallback) {
             //startAjaxLoader();
             $.getJSON(sSource, aoData, function (json) {
                 /* Do whatever additional processing you want on the callback, then tell DataTables */
                 fnCallback(json);
-                if ($('#assignment_search .dataTables_scrollBody').css('height').replace('px', '') > 270) {
+                if ($('#assignment_search .dataTables_scrollBody').css('height').replace('px', '') > setAdjustedHeightSearchGrid()) {
                     setScrollableTableBorder(true, 'assignment_search');
                 }
                 else {
@@ -74,7 +71,7 @@
         "bPaginate": true,
         "sPaginationType": "full_numbers",
         "bSort": true,
-        "sScrollY": "270px",
+        "sScrollY": setAdjustedHeightSearchGrid() + "px",
         "sScrollX": "100%",
         "bScrollCollapse": true,
         "sDom": SHOW_PAGE_INFO_TOP_BOTTOM,

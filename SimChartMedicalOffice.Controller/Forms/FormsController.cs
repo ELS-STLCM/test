@@ -2,17 +2,16 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
 using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Common.Logging;
 using SimChartMedicalOffice.Core.Forms;
 using SimChartMedicalOffice.ApplicationServices.ApplicationServiceInterface.Forms;
 using SimChartMedicalOffice.Core.Json;
 using SimChartMedicalOffice.Core.Patient;
 using SimChartMedicalOffice.Common.Utility;
-using SimChartMedicalOffice.Core.QuestionBanks;
 using SimChartMedicalOffice.Core;
 
 namespace SimChartMedicalOffice.Web.Controllers
@@ -23,7 +22,7 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         public FormsController(IFormsService formsService)
         {
-            this._formsService = formsService;
+            _formsService = formsService;
         }
 
         public ActionResult PatientInformation(string patientInformationSelected)
@@ -38,6 +37,12 @@ namespace SimChartMedicalOffice.Web.Controllers
             ViewBag.Title = "Patient Records Access Form";
             return View();
         }
+        public ActionResult MedicalRecordsRelease(string medicalRecordsReleaseSelected)
+        {
+            //ViewBag.patientRecordsAccessSelected = patientRecordsAccessSelected.Trim();
+            ViewBag.Title = "Medical Records Release Form";
+            return View();
+        }
 
         public ActionResult PriorAuthorizationRequestForm(string priorAuthorizationSelected)
         {
@@ -50,7 +55,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         {
             //ViewBag.HIPAANoticeFormSelected = HIPAANoticeFormSelected.Trim();
             ViewBag.Title = "HIPAA Notice of Privacy Practice";
-            
+
             return View();
         }
 
@@ -70,7 +75,7 @@ namespace SimChartMedicalOffice.Web.Controllers
         public ActionResult FormsRepository(int iReferenceOfFormToLoad, string formName, string patientName)
         {
             iReferenceOfFormToLoad = iReferenceOfFormToLoad == 0 ? 6 : iReferenceOfFormToLoad;
-            if (iReferenceOfFormToLoad==Convert.ToInt32(AppEnum.FormsRepository.Confirmation))
+            if (iReferenceOfFormToLoad == Convert.ToInt32(AppEnum.FormsRepository.Confirmation))
             {
                 @ViewBag.FormName = AppCommon.GetFormName(Convert.ToInt32(formName));
                 @ViewBag.PatientName = patientName;
@@ -85,20 +90,18 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SavePriorAuthorizationRequestForm()
         {
-            string priorAuthorizationRequestFormObjectJson = "";
-            string result = "";
+            string result;
             JavaScriptSerializer js = new JavaScriptSerializer();
 
-            PriorAuthorizationRequestForm priorAuthorizationRequestFormObject = new PriorAuthorizationRequestForm();
             PriorAuthorizationRequestForm priorAuthorizationRequestForm = new PriorAuthorizationRequestForm();
             try
             {
                 //List<Patient> patient = new List<Patient>();
                 //patient = _formsService.GetAllPatient().ToList();
-                priorAuthorizationRequestFormObjectJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                priorAuthorizationRequestFormObject = js.Deserialize<PriorAuthorizationRequestForm>(priorAuthorizationRequestFormObjectJson);
+                string priorAuthorizationRequestFormObjectJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                PriorAuthorizationRequestForm priorAuthorizationRequestFormObject = js.Deserialize<PriorAuthorizationRequestForm>(priorAuthorizationRequestFormObjectJson);
                 Type priorAuthorizationRequestFormType = priorAuthorizationRequestFormObject.GetType();
-                foreach (System.Reflection.PropertyInfo objProp in priorAuthorizationRequestFormType.GetProperties())
+                foreach (var objProp in priorAuthorizationRequestFormType.GetProperties())
                 {
                     if (objProp.CanWrite && objProp.Name.ToUpper() != "ID")
                     {
@@ -107,7 +110,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                 }
                 //priorAuthorizationRequestForm.PatientReferenceId = patient[0].UniqueIdentifier;
                 priorAuthorizationRequestForm.CreatedTimeStamp = DateTime.Now;
-                
+
                 // to check if save/update based on whether UniqueIdentifier is set in View
                 if (priorAuthorizationRequestForm.UniqueIdentifier == null)
                 {
@@ -116,21 +119,23 @@ namespace SimChartMedicalOffice.Web.Controllers
 
                 // temporary fix for saving int uniqueIdentifier
                 //priorAuthorizationRequestForm.UniqueIdentifier=AppendKeyToFormId(priorAuthorizationRequestForm.UniqueIdentifier);
-                
-                _formsService.SavePriorAuthorizationRequestForm(priorAuthorizationRequestForm,GetLoginUserCourse()
-                    ,GetLoginUserRole(),GetLoginUserId(),GetLoginScenarioId());
+
+                _formsService.SavePriorAuthorizationRequestForm(priorAuthorizationRequestForm, GetDropBoxFromCookie());
+                result = "success";
             }
             catch (Exception ex)
             {
-                result = "A problem was encountered preventing" + ex;
+                result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("error: ControllerName: Forms, MethodName: SavePriorAuthorizationRequestForm", ex);
+                //errorMessage = AppConstants.Error;
             }
-            return Json(new { Result = "success" });
+            return Json(new { Result = result });
 
         }
 
-        private string AppendKeyToFormId (string formId)
+        private string AppendKeyToFormId(string formId)
         {
-            if (formId!="")
+            if (formId != "")
             {
                 return formId + "_Key";
             }
@@ -139,7 +144,7 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         private string RemoveKeyFromId(object formId)
         {
-            if (formId!=null)
+            if (formId != null)
             {
                 return formId.ToString().Split('_')[0];
             }
@@ -150,46 +155,41 @@ namespace SimChartMedicalOffice.Web.Controllers
         public ActionResult LoadPatientInfo(string patientGUID)
         {
             Patient patientObj = null;
-            string result = "";
+            string result;
             try
             {
                 // should get patientInfo from Current PAtient assignment when Assignment Copy is implemtented
                 //patientObj = _formsService.GetPatient(GetLoginUserCourse(),GetLoginUserRole(),GetLoginUserId(),GetLoginScenarioId(),patientGUID);
 
                 // till Assignment Copy is implemtented, get PatientInfo from AssignmentRepository
-                patientObj = _formsService.GetPatientFromAssignmentRepository(patientGUID);
+                patientObj = _formsService.GetPatientFromAssignmentRepository(patientGUID,GetDropBoxFromCookie());
                 // extra uniqueIdenitfier check as object is getting returned as new Patient() and not null when the patient is not there 
-                if (!(patientObj!=null && patientObj.UniqueIdentifier!=null))
+                if (!(patientObj != null && patientObj.UniqueIdentifier != null))
                 {
                     patientObj = _formsService.GetPatientFromPatientRepository(patientGUID);
                 }
                 result = "Fetch successful";
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 result = "A problem was encountered preventing" + ex;
             }
-            return Json(new {Result = result, PatientInfo = patientObj});
+            return Json(new { Result = result, PatientInfo = patientObj });
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SavePatientRecordsAccessForm()
         {
-            string PatientRecordsAccessFormObjectJson = "";
-            string result = "";
             JavaScriptSerializer js = new JavaScriptSerializer();
 
-            PatientRecordsAccessForm patientRecordsAccessFormObject = new PatientRecordsAccessForm();
             PatientRecordsAccessForm patientRecordsAccessForm = new PatientRecordsAccessForm();
             try
             {
 
                 //List<Patient> patinet = new List<Patient>();
                 //patinet = _formsService.GetAllPatient().ToList();
-                PatientRecordsAccessFormObjectJson =
-                    HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                patientRecordsAccessFormObject =
-                    js.Deserialize<PatientRecordsAccessForm>(PatientRecordsAccessFormObjectJson);
+                string patientRecordsAccessFormObjectJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                PatientRecordsAccessForm patientRecordsAccessFormObject = js.Deserialize<PatientRecordsAccessForm>(patientRecordsAccessFormObjectJson);
                 patientRecordsAccessForm.Address = patientRecordsAccessFormObject.Address;
                 patientRecordsAccessForm.Charge = patientRecordsAccessFormObject.Charge;
                 patientRecordsAccessForm.CompletedBy = patientRecordsAccessFormObject.CompletedBy;
@@ -220,7 +220,7 @@ namespace SimChartMedicalOffice.Web.Controllers
                 patientRecordsAccessForm.WitnessSignature = patientRecordsAccessFormObject.WitnessSignature;
                 patientRecordsAccessForm.WitnessSignatureDate = patientRecordsAccessFormObject.WitnessSignatureDate;
                 patientRecordsAccessForm.CreatedTimeStamp = DateTime.Now;
-                
+
                 // new code
                 patientRecordsAccessForm.PatientReferenceId = patientRecordsAccessFormObject.PatientReferenceId;
                 // to check if save/update based on whether UniqueIdentifier is set in View
@@ -236,15 +236,88 @@ namespace SimChartMedicalOffice.Web.Controllers
                 // temporary fix for saving int uniqueIdentifier
                 //patientRecordsAccessForm.UniqueIdentifier=AppendKeyToFormId(patientRecordsAccessForm.UniqueIdentifier);
 
-                _formsService.SavePatientRecordsAccessForm(patientRecordsAccessForm,GetLoginUserCourse(),GetLoginUserRole(),GetLoginUserId(),GetLoginScenarioId());
+                _formsService.SavePatientRecordsAccessForm(patientRecordsAccessForm, GetDropBoxFromCookie());
             }
             catch (Exception ex)
             {
-                result = "A problem was encountered preventing" + ex;
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: Controller: Forms, MethodName: SavePatientRecordsAccessForm", ex);
             }
             return Json(new { Result = "success" });
 
         }
+
+        /// <summary>
+        /// to save/update MedicalRecordsReleaseForm
+        /// </summary>
+        /// <returns></returns>
+        [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult SaveMedicalRecordsReleaseForm()
+        {
+            JavaScriptSerializer js = new JavaScriptSerializer();
+
+            MedicalRecordsRelease medicalRecordsReleaseForm = new MedicalRecordsRelease();
+            try
+            {
+
+                //List<Patient> patinet = new List<Patient>();
+                //patinet = _formsService.GetAllPatient().ToList();
+                string medicalRecordsReleaseFormObjectJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                MedicalRecordsRelease medicalRecordsReleaseFormObject = js.Deserialize<MedicalRecordsRelease>(medicalRecordsReleaseFormObjectJson);
+                medicalRecordsReleaseForm.Address = medicalRecordsReleaseFormObject.Address;
+                medicalRecordsReleaseForm.PatientName = medicalRecordsReleaseFormObject.PatientName;
+                medicalRecordsReleaseForm.Ssn = medicalRecordsReleaseFormObject.Ssn;
+                medicalRecordsReleaseForm.DateOfBirth = medicalRecordsReleaseFormObject.DateOfBirth;
+                medicalRecordsReleaseForm.DiffName = medicalRecordsReleaseFormObject.DiffName;
+                medicalRecordsReleaseForm.Authorize = medicalRecordsReleaseFormObject.Authorize;
+                medicalRecordsReleaseForm.Date = medicalRecordsReleaseFormObject.Date;
+                medicalRecordsReleaseForm.Name = medicalRecordsReleaseFormObject.Name;
+                medicalRecordsReleaseForm.DiffAddress = medicalRecordsReleaseFormObject.DiffAddress;
+                medicalRecordsReleaseForm.Other = medicalRecordsReleaseFormObject.Other;
+                medicalRecordsReleaseForm.DiffOther = medicalRecordsReleaseFormObject.DiffOther;
+                medicalRecordsReleaseForm.DiffPhone = medicalRecordsReleaseFormObject.DiffPhone;
+                medicalRecordsReleaseForm.DoctorName = medicalRecordsReleaseForm.DoctorName;
+                medicalRecordsReleaseForm.Fax = medicalRecordsReleaseFormObject.Fax;
+                medicalRecordsReleaseForm.Phone = medicalRecordsReleaseFormObject.Phone;
+                medicalRecordsReleaseForm.DiffDate = medicalRecordsReleaseFormObject.DiffDate;
+                medicalRecordsReleaseForm.PrintedDate = medicalRecordsReleaseFormObject.PrintedDate;
+                medicalRecordsReleaseForm.AuthoritySign = medicalRecordsReleaseFormObject.AuthoritySign;
+                medicalRecordsReleaseForm.Signature = medicalRecordsReleaseFormObject.Signature;
+                medicalRecordsReleaseForm.LaterThan = medicalRecordsReleaseFormObject.LaterThan;
+                medicalRecordsReleaseForm.Event = medicalRecordsReleaseFormObject.Event;
+                medicalRecordsReleaseForm.PrintedName = medicalRecordsReleaseForm.PrintedName;
+               medicalRecordsReleaseForm.MedicalRecordsReleaseForm = medicalRecordsReleaseFormObject.MedicalRecordsReleaseForm;
+               medicalRecordsReleaseForm.MedicalRecordsReleaseFormTwo = medicalRecordsReleaseFormObject.MedicalRecordsReleaseFormTwo;
+
+                medicalRecordsReleaseForm.CreatedTimeStamp = DateTime.Now;
+
+                // new code
+                medicalRecordsReleaseForm.PatientReferenceId = medicalRecordsReleaseFormObject.PatientReferenceId;
+                // to check if save/update based on whether UniqueIdentifier is set in View
+                if (medicalRecordsReleaseFormObject.UniqueIdentifier != null)
+                {
+                    medicalRecordsReleaseForm.UniqueIdentifier = medicalRecordsReleaseFormObject.UniqueIdentifier;
+                }
+                else
+                {
+                    medicalRecordsReleaseForm.UniqueIdentifier = DateTime.Now.ToString("yyyyMMddHHmmss");
+                }
+
+                // temporary fix for saving int uniqueIdentifier
+                //patientRecordsAccessForm.UniqueIdentifier=AppendKeyToFormId(patientRecordsAccessForm.UniqueIdentifier);
+
+                _formsService.SaveMedicalRecordsReleaseForm(medicalRecordsReleaseForm, GetDropBoxFromCookie());
+            }
+            catch (Exception ex)
+            {
+                AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
+                ExceptionManager.Error("Error: Controller: Forms, MethodName: SaveMedicalRecordsReleaseForm", ex);
+            }
+            return Json(new { Result = "success" });
+
+        }
+
+
 
         /// <summary>
         /// To save/update a Notice of Privacy Practice Form
@@ -254,28 +327,25 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveNoticeOfPrivacyPractice()
         {
-            string noticeOfPrivacyPracticeObjectJson = "";
-            string result = "";
+            string result;
             try
             {
-                
-                NoticeOfPrivacyPractice noticeOfPrivacyPracticeObject = new NoticeOfPrivacyPractice();
-                NoticeOfPrivacyPractice noticeOfPrivacyPracticeForm = _formsService.GetNoticeOfPrivacyPracticeDocument("b326d8a2-e2cf-438d-8df8-742090611f0d", GetLoginUserCourse(), GetLoginUserRole(), GetLoginUserId(), GetLoginScenarioId());
+                NoticeOfPrivacyPractice noticeOfPrivacyPracticeForm = _formsService.GetNoticeOfPrivacyPracticeDocument("b326d8a2-e2cf-438d-8df8-742090611f0d", GetDropBoxFromCookie());
                 if (noticeOfPrivacyPracticeForm == null)
                 {
                     noticeOfPrivacyPracticeForm = new NoticeOfPrivacyPractice();
                 }
-                noticeOfPrivacyPracticeObjectJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                noticeOfPrivacyPracticeObject = JsonSerializer.DeserializeObject<NoticeOfPrivacyPractice>(noticeOfPrivacyPracticeObjectJson);
+                string noticeOfPrivacyPracticeObjectJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                NoticeOfPrivacyPractice noticeOfPrivacyPracticeObject = JsonSerializer.DeserializeObject<NoticeOfPrivacyPractice>(noticeOfPrivacyPracticeObjectJson);
                 noticeOfPrivacyPracticeForm.FormName = noticeOfPrivacyPracticeObject.FormName;
                 noticeOfPrivacyPracticeForm.PatientReferenceId = noticeOfPrivacyPracticeObject.PatientReferenceId;
                 SetAuditFields(noticeOfPrivacyPracticeForm, false);
-                _formsService.SaveNoticeOfPrivacyPractice(noticeOfPrivacyPracticeForm, "b326d8a2-e2cf-438d-8df8-742090611f0d", GetLoginUserCourse(), GetLoginUserRole(), GetLoginUserId(), GetLoginScenarioId());
+                _formsService.SaveNoticeOfPrivacyPractice(noticeOfPrivacyPracticeForm, "b326d8a2-e2cf-438d-8df8-742090611f0d", GetDropBoxFromCookie());
                 result = "Notice Of Privacy Practice Form is Saved in Patient Record!";
             }
             catch (Exception ex)
             {
-                result = AjaxCallResult(new AjaxResult(SimChartMedicalOffice.Common.AppEnum.ResultType.Error, ex.ToString(), ""));
+                result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
             }
             return Json(new { Success = result });
         }
@@ -288,27 +358,25 @@ namespace SimChartMedicalOffice.Web.Controllers
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SavePatientBillofRights()
         {
-            string PatientBillofRightsJson = "";
-            string result = "";
+            string result;
             try
             {
-                BillOfRights patientBillofRightsObject = new BillOfRights();
-                BillOfRights patientBillofRightsForm = _formsService.GetBillOfRightsDocument("b326d8a2-e2cf-438d-8df8-742090611f0d", GetLoginUserCourse(), GetLoginUserRole(), GetLoginUserId(), GetLoginScenarioId());
+                BillOfRights patientBillofRightsForm = _formsService.GetBillOfRightsDocument("b326d8a2-e2cf-438d-8df8-742090611f0d", GetDropBoxFromCookie());
                 if (patientBillofRightsForm == null)
                 {
                     patientBillofRightsForm = new BillOfRights();
                 }
-                PatientBillofRightsJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                patientBillofRightsObject = JsonSerializer.DeserializeObject<BillOfRights>(PatientBillofRightsJson);
+                string patientBillofRightsJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+                BillOfRights patientBillofRightsObject = JsonSerializer.DeserializeObject<BillOfRights>(patientBillofRightsJson);
                 patientBillofRightsForm.FormName = patientBillofRightsObject.FormName;
                 patientBillofRightsForm.PatientReferenceId = patientBillofRightsObject.PatientReferenceId;
-                SetAuditFields(patientBillofRightsForm,false);
-                _formsService.SavePatientBillOfRights(patientBillofRightsForm, "b326d8a2-e2cf-438d-8df8-742090611f0d", GetLoginUserCourse(), GetLoginUserRole(), GetLoginUserId(), GetLoginScenarioId());
+                SetAuditFields(patientBillofRightsForm, false);
+                _formsService.SavePatientBillOfRights(patientBillofRightsForm, "b326d8a2-e2cf-438d-8df8-742090611f0d", GetDropBoxFromCookie());
                 result = "Patient Bill of Rights Form is Saved in Patient Record!";
             }
             catch (Exception ex)
             {
-                result = AjaxCallResult(new AjaxResult(SimChartMedicalOffice.Common.AppEnum.ResultType.Error, ex.ToString(), ""));
+                result = AjaxCallResult(new AjaxResult(AppEnum.ResultType.Error, ex.ToString(), ""));
             }
             return Json(new { Success = result });
         }
@@ -317,15 +385,14 @@ namespace SimChartMedicalOffice.Web.Controllers
         public ActionResult LoadPatientRecordsAccessForm(string patientGUID)
         {
             PatientRecordsAccessForm patientRecordsAccessFormObj = null;
-            IList<PatientRecordsAccessForm> patientRecordsAccessFormsAll = new List<PatientRecordsAccessForm>();
-            string result = "";
+            string result;
             try
             {
-                patientRecordsAccessFormsAll = _formsService.GetAllPatientRecordsAccessFormsForPatient(GetLoginUserCourse(),GetLoginUserRole(),GetLoginUserId(),GetLoginScenarioId(),patientGUID,"");
+                IList<PatientRecordsAccessForm> patientRecordsAccessFormsAll = _formsService.GetAllPatientRecordsAccessFormsForPatient(GetDropBoxFromCookie(), patientGUID, "");
                 if (patientRecordsAccessFormsAll.Count > 0)
                 {
                     patientRecordsAccessFormObj = patientRecordsAccessFormsAll[0];
-                    patientRecordsAccessFormObj.UniqueIdentifier= RemoveKeyFromId(patientRecordsAccessFormObj.UniqueIdentifier);
+                    patientRecordsAccessFormObj.UniqueIdentifier = RemoveKeyFromId(patientRecordsAccessFormObj.UniqueIdentifier);
                     result = "Fetch successful";
                 }
                 else
@@ -337,18 +404,17 @@ namespace SimChartMedicalOffice.Web.Controllers
             {
                 result = "A problem was encountered preventing" + ex;
             }
-            return Json((new {Result=result,PatientRecordsAccess=patientRecordsAccessFormObj}));
+            return Json((new { Result = result, PatientRecordsAccess = patientRecordsAccessFormObj }));
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult LoadPriorAuthorizationRequestForm(string patientGUID)
         {
             PriorAuthorizationRequestForm priorAuthorizationRequestFormObj = null;
-            IList<PriorAuthorizationRequestForm> priorAuthorizationRequestFormsAll = new List<PriorAuthorizationRequestForm>();
-            string result = "";
+            string result;
             try
             {
-                priorAuthorizationRequestFormsAll = _formsService.GetAllPriorAuthorizationRequestFormsForPatient(GetLoginUserCourse(),GetLoginUserRole(),GetLoginUserId(),GetLoginScenarioId(),patientGUID,"");
+                IList<PriorAuthorizationRequestForm> priorAuthorizationRequestFormsAll = _formsService.GetAllPriorAuthorizationRequestFormsForPatient(GetDropBoxFromCookie(), patientGUID, "");
                 if (priorAuthorizationRequestFormsAll.Count > 0)
                 {
                     priorAuthorizationRequestFormObj = priorAuthorizationRequestFormsAll[0];
@@ -371,14 +437,42 @@ namespace SimChartMedicalOffice.Web.Controllers
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
+        public ActionResult LoadMedicalRecordsReleaseForm(string patientGUID)
+        {
+            MedicalRecordsRelease medicalRecordsReleaseFormObj = null;
+            string result;
+            try
+            {
+                IList<MedicalRecordsRelease> medicalRecordsReleaseFormsAll = _formsService.GetAllMedicalRecordsReleaseFormsForPatient(GetDropBoxFromCookie(), patientGUID, "");
+                if (medicalRecordsReleaseFormsAll.Count > 0)
+                {
+                    medicalRecordsReleaseFormObj = medicalRecordsReleaseFormsAll[0];
+
+                    // temporary fix for Saved int form uniqueIdentifier with _Key
+                    medicalRecordsReleaseFormObj.UniqueIdentifier =
+                        RemoveKeyFromId(medicalRecordsReleaseFormObj.UniqueIdentifier);
+                    result = "Fetch successful";
+                }
+                else
+                {
+                    result = AppConstants.FormNotFound;
+                }
+            }
+            catch (Exception ex)
+            {
+                result = "A problem was encountered preventing" + ex;
+            }
+            return Json((new { Result = result, MedicalRecordsRelease = medicalRecordsReleaseFormObj }));
+        }
+
+        [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult LoadReferralForm(string patientGUID)
         {
             ReferralForm referralFormObj = null;
-            IList<ReferralForm> referralFormsAll = new List<ReferralForm>();
-            string result = "";
+            string result;
             try
             {
-                referralFormsAll = _formsService.GetAllReferralFormsForPatient(GetLoginUserCourse(),GetLoginUserRole(),GetLoginUserId(),GetLoginScenarioId(),patientGUID,"");
+                IList<ReferralForm> referralFormsAll = _formsService.GetAllReferralFormsForPatient(GetDropBoxFromCookie(), patientGUID, "");
                 if (referralFormsAll.Count > 0)
                 {
                     referralFormObj = referralFormsAll[0];
@@ -399,87 +493,61 @@ namespace SimChartMedicalOffice.Web.Controllers
         }
 
 
-        public ActionResult DeletePatientRecordAccessForm()
-        {
-            List<PatientRecordsAccessForm> patientRecordsAccessFormlst = new List<PatientRecordsAccessForm>();
-            patientRecordsAccessFormlst = _formsService.GetAllPatientRecordsAccessForm().ToList();
-            _formsService.DeletePatientRecordsAccessForm(patientRecordsAccessFormlst[0].UniqueIdentifier);
-            return Json(new { Result = "success" });
-        }
+        //public ActionResult DeletePatientRecordAccessForm()
+        //{
+        //    List<PatientRecordsAccessForm> patientRecordsAccessFormlst;
+        //    patientRecordsAccessFormlst = _formsService.GetAllPatientRecordsAccessForm().ToList();
+        //    _formsService.DeletePatientRecordsAccessForm(patientRecordsAccessFormlst[0].UniqueIdentifier);
+        //    return Json(new { Result = "success" });
+        //}
 
 
-        public JsonResult GetAllPriorAuthorizationRequest()
-        {
-            return Json(new { Result = JsonSerializer.SerializeObject(_formsService.GetAllPriorAuthorizationRequest()) });
-        }
+        //public JsonResult GetAllPriorAuthorizationRequest()
+        //{
+        //    return Json(new { Result = JsonSerializer.SerializeObject(_formsService.GetAllPriorAuthorizationRequest()) });
+        //}
 
-        
-        public ActionResult GetPatientListForGrid(jQueryDataTableParamModel param, string MRNNumber, string firstName, string lastName, string DOB)
+
+        public ActionResult GetPatientListForGrid(JQueryDataTableParamModel param, string MRNNumber, string firstName, string lastName, string DOB)
         {
-            IList<Patient> PatientListForGrid =  new List<Patient>();
-            PatientListForGrid = _formsService.GetAllPatient(GetLoginUserCourse(), GetLoginUserRole(), GetLoginUserId(), GetLoginScenarioId());
-            PatientListForGrid = (from patient in PatientListForGrid
+            IList<Patient> patientListForGrid = _formsService.GetAllPatient(GetDropBoxFromCookie());
+            patientListForGrid = (from patient in patientListForGrid
                                   where
-                                      (patient.FirstName != null ? patient.FirstName.ToLower().Contains(firstName.ToLower()) : (firstName==""?true:false)) && (patient.LastName != null ? patient.LastName.ToLower().Contains(lastName.ToLower()) : (lastName==""?true:false)) && (patient.MedicalRecordNumber != null ? patient.MedicalRecordNumber.ToLower().Contains(MRNNumber.ToLower()) : (MRNNumber==""?true:false)) && (patient.DateOfBirth != null ? patient.DateOfBirth.ToLower().Contains(DOB.ToLower()) : (DOB==""?true:false))
+                                      (patient.FirstName != null ? patient.FirstName.ToLower().Contains(firstName.ToLower()) : (firstName == "")) && (patient.LastName != null ? patient.LastName.ToLower().Contains(lastName.ToLower()) : (lastName == "")) && (patient.MedicalRecordNumber != null ? patient.MedicalRecordNumber.ToLower().Contains(MRNNumber.ToLower()) : (MRNNumber == "")) && (patient.DateOfBirth != null ? patient.DateOfBirth.ToLower().Contains(DOB.ToLower()) : (DOB == ""))
                                   select patient).ToList();
 
-            string[] gridColumnList = { "FirstName", "LastName", "Gender", "DOB" };
+            string[] gridColumnList = { "FirstName", "LastName", "Sex", "DOB" };
             int sortColumnIndex = Convert.ToInt32(Request["iSortCol_0"]);
             string sortColumnOrder = Request["sSortDir_0"];
-            string sortColumnName = gridColumnList[sortColumnIndex - 1];
             int startIndex = param.iDisplayStart;
             int lengthIndex = param.iDisplayLength;
 
             switch (gridColumnList[sortColumnIndex - 1])
             {
                 case "FirstName":
-                    if (sortColumnOrder == "asc")
-                    {
-                        PatientListForGrid = PatientListForGrid.OrderBy(x => x.FirstName).ToList();
-                    }
-                    else
-                    {
-                        PatientListForGrid = PatientListForGrid.OrderByDescending(x => x.FirstName).ToList();
-                    }
+                    patientListForGrid = sortColumnOrder == "asc" ? patientListForGrid.OrderBy(x => x.FirstName).ToList() : patientListForGrid.OrderByDescending(x => x.FirstName).ToList();
                     break;
                 case "LastName":
-                    if (sortColumnOrder == "asc")
-                    {
-                        PatientListForGrid = PatientListForGrid.OrderBy(x => x.LastName).ToList();
-                    }
-                    else
-                    {
-                        PatientListForGrid = PatientListForGrid.OrderByDescending(x => x.LastName).ToList();
-                    }
+                    patientListForGrid = sortColumnOrder == "asc" ? patientListForGrid.OrderBy(x => x.LastName).ToList() : patientListForGrid.OrderByDescending(x => x.LastName).ToList();
                     break;
-                case "Gender":
-                    if (sortColumnOrder == "asc")
-                    {
-                        PatientListForGrid = PatientListForGrid.OrderBy(x => x.Sex).ToList();
-                    }
-                    else
-                    {
-                        PatientListForGrid = PatientListForGrid.OrderByDescending(x => x.Sex).ToList();
-                    }
+                case "Sex":
+                    patientListForGrid = sortColumnOrder == "asc" ? patientListForGrid.OrderBy(x => x.Sex).ToList() : patientListForGrid.OrderByDescending(x => x.Sex).ToList();
                     break;
                 case "DOB":
-                    if (sortColumnOrder == "asc")
-                    {
-                        PatientListForGrid = PatientListForGrid.OrderBy(x => x.DateOfBirth).ToList();
-                    }
-                    else
-                    {
-                        PatientListForGrid = PatientListForGrid.OrderByDescending(x => x.DateOfBirth).ToList();
-                    }
+                    patientListForGrid = sortColumnOrder == "asc"
+                                             ? patientListForGrid.OrderBy(x => Convert.ToDateTime(x.DateOfBirth)).ToList
+                                                   ()
+                                             : patientListForGrid.OrderByDescending(
+                                                 x => Convert.ToDateTime(x.DateOfBirth)).ToList();
                     break;
                 default:
-                    var sortableList = PatientListForGrid.AsQueryable();
-                    PatientListForGrid = sortableList.OrderBy(x=>x.LastName).ToList<Patient>();
+                    var sortableList = patientListForGrid.AsQueryable();
+                    patientListForGrid = sortableList.OrderBy(x => x.LastName).ToList();
                     break;
 
             }
-            IList<Patient> IndexedPatientListForGrid = PatientListForGrid.Skip(startIndex).Take(lengthIndex).ToList();
-            var data = (from patient in IndexedPatientListForGrid
+            IList<Patient> indexedPatientListForGrid = patientListForGrid.Skip(startIndex).Take(lengthIndex).ToList();
+            var data = (from patient in indexedPatientListForGrid
                         select new[]
                                    {
                                        "<input type='radio' name='selectPatient' id='"+patient.UniqueIdentifier+"'/>",
@@ -489,13 +557,13 @@ namespace SimChartMedicalOffice.Web.Controllers
                                        !string.IsNullOrEmpty(patient.DateOfBirth) ? patient.DateOfBirth : "",
                                        !string.IsNullOrEmpty(patient.MedicalRecordNumber) ? patient.MedicalRecordNumber : "",
                                        !string.IsNullOrEmpty(patient.Phone) ? patient.Phone : "",
-                                       !string.IsNullOrEmpty(patient.Address) ? patient.Address : "",
-                                    }).ToArray();
+                                       !string.IsNullOrEmpty(patient.Address) ? patient.Address : ""
+                                   }).ToArray();
             return Json(new
             {
                 sEcho = param.sEcho,
-                iTotalRecords = PatientListForGrid.Count,
-                iTotalDisplayRecords = PatientListForGrid.Count,
+                iTotalRecords = patientListForGrid.Count,
+                iTotalDisplayRecords = patientListForGrid.Count,
                 aaData = data
             },
             JsonRequestBehavior.AllowGet);
@@ -503,68 +571,58 @@ namespace SimChartMedicalOffice.Web.Controllers
 
         public ActionResult FormsPatientSearch()
         {
-            return PartialView(); 
+            return PartialView();
         }
 
         [AcceptVerbs(HttpVerbs.Post)]
         public ActionResult SaveReferralForm()
         {
-            string referralFormJson = "";
-            ReferralForm referralFormOjectFromPage = new ReferralForm();
             ReferralForm referralFormOjectToSave = new ReferralForm();
             JavaScriptSerializer js = new JavaScriptSerializer();
-            try
+            string referralFormJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
+            ReferralForm referralFormOjectFromPage = js.Deserialize<ReferralForm>(referralFormJson);
+            Type priorAuthorizationRequestFormType = referralFormOjectFromPage.GetType();
+            foreach (var objProp in priorAuthorizationRequestFormType.GetProperties())
             {
-                referralFormJson = HttpUtility.UrlDecode(new StreamReader(Request.InputStream).ReadToEnd());
-                referralFormOjectFromPage = js.Deserialize<ReferralForm>(referralFormJson);
-                Type priorAuthorizationRequestFormType = referralFormOjectFromPage.GetType();
-                foreach (System.Reflection.PropertyInfo objProp in priorAuthorizationRequestFormType.GetProperties())
+                if (objProp.CanWrite && objProp.Name.ToUpper() != "ID")
                 {
-                    if (objProp.CanWrite && objProp.Name.ToUpper() != "ID")
-                    {
-                        objProp.SetValue(referralFormOjectToSave, priorAuthorizationRequestFormType.GetProperty(objProp.Name).GetValue(referralFormOjectFromPage, null), null);
-                    }
+                    objProp.SetValue(referralFormOjectToSave, priorAuthorizationRequestFormType.GetProperty(objProp.Name).GetValue(referralFormOjectFromPage, null), null);
                 }
-                referralFormOjectToSave.CreatedTimeStamp = DateTime.Now;
-                // to check if save/update based on whether UniqueIdentifier is set in View
-                if (referralFormOjectToSave.UniqueIdentifier == null)
-                {
-                    referralFormOjectToSave.UniqueIdentifier = DateTime.Now.ToString("yyyyMMddHHmmss");
-                }
-
-                // temporary fix for saving int uniqueIdentifier
-                //referralFormOjectToSave.UniqueIdentifier=AppendKeyToFormId(referralFormOjectToSave.UniqueIdentifier);
-
-                _formsService.SaveReferralForm(referralFormOjectToSave, GetLoginUserCourse(),GetLoginUserRole(),GetLoginUserId(),GetLoginScenarioId());
             }
-            catch (Exception)
+            referralFormOjectToSave.CreatedTimeStamp = DateTime.Now;
+            // to check if save/update based on whether UniqueIdentifier is set in View
+            if (referralFormOjectToSave.UniqueIdentifier == null)
             {
-
-                throw;
+                referralFormOjectToSave.UniqueIdentifier = DateTime.Now.ToString("yyyyMMddHHmmss");
             }
+
+            // temporary fix for saving int uniqueIdentifier
+            //referralFormOjectToSave.UniqueIdentifier=AppendKeyToFormId(referralFormOjectToSave.UniqueIdentifier);
+
+            _formsService.SaveReferralForm(referralFormOjectToSave,GetDropBoxFromCookie());
             return Json(new { Result = "success" });
         }
-        public ActionResult DeletePriorAuthorizationRequestForm()
-        {
-            List<PriorAuthorizationRequestForm> priorAuthorizationRequestFormlst = new List<PriorAuthorizationRequestForm>();
-            priorAuthorizationRequestFormlst = _formsService.GetAllPriorAuthorizationRequest().ToList();
-            _formsService.DeletePriorAuthorizationRequestForm(priorAuthorizationRequestFormlst[0].UniqueIdentifier);
-            return Json(new { Result = "success" });
-        }
+        //public ActionResult DeletePriorAuthorizationRequestForm()
+        //{
+        //    List<PriorAuthorizationRequestForm> priorAuthorizationRequestFormlst;
+        //    priorAuthorizationRequestFormlst = _formsService.GetAllPriorAuthorizationRequest().ToList();
+        //    _formsService.DeletePriorAuthorizationRequestForm(priorAuthorizationRequestFormlst[0].UniqueIdentifier);
+        //    return Json(new { Result = "success" });
+        //}
 
         /// <summary>
         /// to get the paitentRecordsRequest saved object from db and send it to print page
         /// </summary>
         /// <param name="patientGUID"></param>
-        /// <param name="formID"></param>
+        /// <param name="formId"></param>
         /// <returns></returns>
-        public ActionResult FilledPatientRecordsAccessFormPrint(string patientGUID, string formID)
+        public ActionResult FilledPatientRecordsAccessFormPrint(string patientGUID, string formId)
         {
             //string patientRecordsAccessFormPrintJson="";
-            PatientRecordsAccessForm patientRecordsFormObject = new PatientRecordsAccessForm();
+            PatientRecordsAccessForm patientRecordsFormObject;
             try
             {
-                patientRecordsFormObject = _formsService.GetPatientRecordsAccessForm(GetLoginUserCourse(), GetLoginUserRole(), GetLoginUserId(), GetLoginScenarioId(), patientGUID, formID);
+                patientRecordsFormObject = _formsService.GetPatientRecordsAccessForm(GetDropBoxFromCookie(), patientGUID, formId);
             }
             catch
             {
@@ -599,15 +657,15 @@ namespace SimChartMedicalOffice.Web.Controllers
         /// to get the paitentRecordsRequest saved object from db and send it to print page
         /// </summary>
         /// <param name="patientGUID"></param>
-        /// <param name="formID"></param>
+        /// <param name="formId"></param>
         /// <returns></returns>
-        public ActionResult FilledPriorAuthorizationRequestPrint(string patientGUID, string formID)
+        public ActionResult FilledPriorAuthorizationRequestPrint(string patientGUID, string formId)
         {
             //string patientRecordsAccessFormPrintJson="";
-            PriorAuthorizationRequestForm priorAuthReqObject = new PriorAuthorizationRequestForm();
+            PriorAuthorizationRequestForm priorAuthReqObject;
             try
             {
-                priorAuthReqObject = _formsService.GetPriorAuthorizationRequestForm(GetLoginUserCourse(), GetLoginUserRole(), GetLoginUserId(), GetLoginScenarioId(), patientGUID, formID);
+                priorAuthReqObject = _formsService.GetPriorAuthorizationRequestForm(GetDropBoxFromCookie(), patientGUID, formId);
             }
             catch
             {
@@ -617,6 +675,40 @@ namespace SimChartMedicalOffice.Web.Controllers
             ViewBag.PriorAuthorityRequestObj = priorAuthReqObject;
             return View("../../Views/Forms/PriorAuthorizationRequestFormPrint");
         }
+        /// <summary>
+        /// to open the print page wihtout sending any object
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult EmptyMedicalRecordsReleasePrint()
+        {
+            ViewBag.Signature = GetLoginUserId();
+            return View("../../Views/Forms/MedicalRecordsReleaseFormPrint");
+        }
+
+        /// <summary>
+        /// to get the paitentRecordsRequest saved object from db and send it to print page
+        /// </summary>
+        /// <param name="patientGUID"></param>
+        /// <param name="formId"></param>
+        /// <returns></returns>
+        public ActionResult FilledMedicalRecordsReleasePrint(string patientGUID, string formId)
+        {
+            //string patientRecordsAccessFormPrintJson="";
+            MedicalRecordsRelease medicalRecordsReleaseObject;
+            try
+            {
+                medicalRecordsReleaseObject = _formsService.GetMedicalRecordsReleaseForm(GetDropBoxFromCookie(), patientGUID, formId);
+            }
+            catch
+            {
+                medicalRecordsReleaseObject = null;
+            }
+            ViewBag.Signature = GetLoginUserId();
+            ViewBag.MedicalRecordsReleaseFormObj = medicalRecordsReleaseObject;
+            return View("../../Views/Forms/MedicalRecordsReleaseFormPrint");
+        }
+
+      
 
         /// <summary>
         /// to open the print page wihtout sending any object
@@ -628,19 +720,20 @@ namespace SimChartMedicalOffice.Web.Controllers
             return View("../../Views/Forms/ReferralPrint");
         }
 
+
         /// <summary>
         /// to get the paitentRecordsRequest saved object from db and send it to print page
         /// </summary>
         /// <param name="patientGUID"></param>
-        /// <param name="formID"></param>
+        /// <param name="formId"></param>
         /// <returns></returns>
-        public ActionResult FilledReferralFormPrint(string patientGUID, string formID)
+        public ActionResult FilledReferralFormPrint(string patientGUID, string formId)
         {
             //string patientRecordsAccessFormPrintJson="";
-            ReferralForm referralFormObject = new ReferralForm();
+            ReferralForm referralFormObject;
             try
             {
-                referralFormObject = _formsService.GetReferralForm(GetLoginUserCourse(),GetLoginUserRole(),GetLoginUserId(),GetLoginScenarioId(),patientGUID,formID);
+                referralFormObject = _formsService.GetReferralForm(GetDropBoxFromCookie(), patientGUID, formId);
             }
             catch
             {
@@ -682,11 +775,11 @@ namespace SimChartMedicalOffice.Web.Controllers
             {
                 if (strFormName == AppConstants.BillofRights)
                 {
-                    attachment = _formsService.GetBillOfRightsPdfData();                    
+                    attachment = _formsService.GetBillOfRightsPdfData();
                 }
-                else if (strFormName.Equals(AppConstants.NoticePrivacyPractice.ToString()))   
+                else if (strFormName.Equals(AppConstants.NoticePrivacyPractice))
                 {
-                    attachment = _formsService.GetNoticeOfPrivacyPracticePdfData();                    
+                    attachment = _formsService.GetNoticeOfPrivacyPracticePdfData();
                 }
                 var response = HttpContext.Response;
                 response.Clear();

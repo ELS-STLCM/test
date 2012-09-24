@@ -142,7 +142,6 @@
 <script type="text/javascript">
     var UserName = "@User.Identity.Name";
     var UserRole = "";
-    
     var dropBoxUsers = {
         'target': 'none',
         'uid': UserName,
@@ -150,19 +149,20 @@
         'sid': 'ScenarioId1'
     };
     $(document).ready(function () {
+        UserRole = ($('input[name=admin_questionBank]').is(':checked')) ? "Admin" : ($('input[name=student_Form]').is(':checked')) ? "Student" : "";
         $('#dropBoxLink').hide();
         $("#logindisplay").hide();
-        $("input[name='student_Form']").click(function (event) {
+        $("input[name='student_Form']").click(function () {
             $("input[name='admin_questionBank']").attr('checked', false);
             UserRole = "Student";
             dropBoxUsers.cid = "ALL_swhitcomb5_0001";
             LoadDropBoxLinkInfo("FormsRepository");
 
         });
-        $("input[name='admin_questionBank']").click(function (event) {
+        $("input[name='admin_questionBank']").click(function () {
             $("input[name='student_Form']").attr('checked', false);
             UserRole = "Admin";
-            dropBoxUsers.cid ="ELSEVIER_CID";
+            dropBoxUsers.cid = "ELSEVIER_CID";
             LoadDropBoxLinkInfo("QuestionBankBuilder");
         });
     });
@@ -173,7 +173,7 @@
         $("#sid").val(dropBoxUsers.sid);
         
     }
-    $('#btnGenerate').click(function (event) {
+    $('#btnGenerate').click(function () {
         var loc = "../SMOInterface/" + $('#target').val() + '?target=' + $('#target').val() + '&UID=' + $('#uid').val() + '&CID=' + $('#cid').val() + '&SID=' + $('#sid').val() + '&UserRole=' + UserRole;
         $('#dropBoxLink').show();
         $('#dropBoxLink').attr('href', loc);

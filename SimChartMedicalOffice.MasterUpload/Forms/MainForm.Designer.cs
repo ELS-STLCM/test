@@ -39,7 +39,7 @@
             this.btnCompetency.TabIndex = 0;
             this.btnCompetency.Text = "Competency";
             this.btnCompetency.UseVisualStyleBackColor = true;
-            this.btnCompetency.Click += new System.EventHandler(this.btnCompetency_Click);
+            this.btnCompetency.Click += new System.EventHandler(this.BtnCompetencyClick);
             // 
             // MainForm
             // 
@@ -49,7 +49,7 @@
             this.Controls.Add(this.btnCompetency);
             this.Name = "MainForm";
             this.Text = "MainForm";
-            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Load += new System.EventHandler(this.MainFormLoad);
             this.ResumeLayout(false);
 
         }

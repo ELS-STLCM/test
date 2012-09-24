@@ -8,11 +8,9 @@
     string strCorrectAnswerValue = (ViewData["CorrectAnswer"] != null) ? ViewData["CorrectAnswer"].ToString() : String.Empty;
     string imgGuid = (ViewBag.QuestionImage != null) ? ViewBag.QuestionImage : String.Empty;
     string questionUrl = (ViewBag.Url != null) ? ViewBag.Url : String.Empty;
-    string strQuestionguid = string.Empty;
     string questionTypeLoadedFlag = (ViewBag.questionTypeLoadedFlag != null) ? ViewBag.questionTypeLoadedFlag : String.Empty;
     string linkedCompetencyGuid = (ViewBag.LinkedCompetencyGuid != null) ? ViewBag.LinkedCompetencyGuid : String.Empty;
     bool isEditMode = (ViewBag.IsEditMode != null) ? ViewBag.IsEditMode : false;
-    string strUniqueIdentifier = (ViewBag.UniqueIdentifier != "" || ViewBag.UniqueIdentifier != null) ? ViewBag.UniqueIdentifier : "";
     string blankOrientation = (ViewBag.BlankOrientationToLoad != "" || ViewBag.BlankOrientationToLoad != null) ? ViewBag.BlankOrientationToLoad : "";
     string answerText1 = (ViewData["AnswerOption_1"] != null) ? ViewData["AnswerOption_1"].ToString() : String.Empty;
     string answerText2 = (ViewData["AnswerOption_2"] != null) ? ViewData["AnswerOption_2"].ToString() : String.Empty;
@@ -158,7 +156,10 @@
     $(document).ready(function () {
         questionBank.commonFunctions.enableValidRaioButtons();
         if(@isEditMode.ToString().ToLower()) {
-            $("#BlankOrientation").val("@blankOrientation");
+        
+            if(!isNullOrEmpty("@blankOrientation")){
+                    $("#BlankOrientation").val("@blankOrientation");
+            }
             questionBank.commonFunctions.fillInTheBlank.renderDynamicControls("@blankOrientation", "dynamicRenderDiv");
             questionBank.commonFunctions.loadPageInEditMode("@imgGuid", @Html.Raw(Json.Encode(strRationaleText)), "@strCompetencyText", "@strCorrectAnswerValue", "@questionUrl", @isEditMode.ToString().ToLower(), "@linkedCompetencyGuid", "@questionTypeLoadedFlag");
             questionBank.commonFunctions.loadDynamicQuestionTextInEditMode(@Html.Raw(Json.Encode(strquestionText)) , "dynamicRenderDiv");

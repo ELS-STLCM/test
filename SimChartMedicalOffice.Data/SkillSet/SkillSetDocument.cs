@@ -4,20 +4,32 @@ using SimChartMedicalOffice.Common.Utility;
 using SimChartMedicalOffice.Core.DataInterfaces.SkillSetBuilder;
 using SimChartMedicalOffice.Core.QuestionBanks;
 using SimChartMedicalOffice.Data.Repository;
+using SimChartMedicalOffice.Common;
+using SimChartMedicalOffice.Core;
 
 namespace SimChartMedicalOffice.Data.SkillSet
 {
     public class SkillSetDocument : KeyValueRepository<Core.SkillSetBuilder.SkillSet>, ISkillSetDocument
     {
 
-        public override string Url
+        //protected override string NewUrl
+        //{
+        //    get
+        //    {
+        //        return "SimApp/Courses/{0}/SkillSetRepository{1}/SkillSets/{2}";
+        //    }
+        //}
+        /// <summary>
+        /// To get Assignment object
+        /// </summary>
+        /// <returns></returns>
+        public Folder GetSkillSetRepository()
         {
-            get
-            {
-                return "SimApp/Courses/{0}/SkillSetRepository{1}/SkillSets/{2}";
-            }
+            //string jsonString = GetJsonDocument(Url);
+            string jsonString = GetJsonDocument(GetAssignmentUrl(DocumentPath.Module.SkillSets));
+            Folder assignment = JsonSerializer.DeserializeObject<Folder>(jsonString);
+            return assignment;
         }
-
         /// <summary>
         /// Method to get the question items
         /// </summary>
@@ -27,12 +39,13 @@ namespace SimChartMedicalOffice.Data.SkillSet
         /// <returns></returns>
         public IList<Core.SkillSetBuilder.SkillSet> GetSkillSetItems(string parentFolderIdentifier, int folderType, string courseId)
         {
-            string jsonString = GetJsonDocument(((parentFolderIdentifier == "") ? string.Format(Url, courseId, "", "") : (parentFolderIdentifier + "/SkillSets")));
-            Dictionary<string, Core.SkillSetBuilder.SkillSet> skillSetList;
-            skillSetList = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Core.SkillSetBuilder.SkillSet>>(jsonString) : new Dictionary<string, Core.SkillSetBuilder.SkillSet>();
+            string jsonString = GetJsonDocument(((parentFolderIdentifier == "") ? 
+                                            string.Format(GetAssignmentUrl(DocumentPath.Module.SkillSets, AppConstants.Create), "", "") : 
+                                            (parentFolderIdentifier + "/" + Respository.Skillsets)));
+            Dictionary<string, Core.SkillSetBuilder.SkillSet> skillSetList = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Core.SkillSetBuilder.SkillSet>>(jsonString) : new Dictionary<string, Core.SkillSetBuilder.SkillSet>();
             foreach (var folderItem in skillSetList)
             {
-                folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
+                folderItem.Value.UniqueIdentifier = folderItem.Key;
             }
             return ConvertDictionarytoObject(skillSetList);
         }
@@ -51,14 +64,13 @@ namespace SimChartMedicalOffice.Data.SkillSet
 
             string strUrl = skillSetUrl + "/Questions";
             string jsonString = GetJsonDocument(strUrl);
-            Dictionary<string, Question> questionsForSkillSet;
-            questionsForSkillSet = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Question>>(jsonString) : new Dictionary<string, Question>();
+            Dictionary<string, Question> questionsForSkillSet = (jsonString != "null") ? JsonSerializer.DeserializeObject<Dictionary<string, Question>>(jsonString) : new Dictionary<string, Question>();
             if (questionsForSkillSet != null && questionsForSkillSet.Count > 0)
             {
                 foreach (var folderItem in questionsForSkillSet)
                 {
-                    folderItem.Value.UniqueIdentifier = folderItem.Key.ToString();
-                    folderItem.Value.Url = skillSetUrl + "/Questions/" + folderItem.Key.ToString();
+                    folderItem.Value.UniqueIdentifier = folderItem.Key;
+                    folderItem.Value.Url = skillSetUrl + "/Questions/" + folderItem.Key;
                 }
             }
             return ConvertDictionarytoObject(questionsForSkillSet);
@@ -68,8 +80,7 @@ namespace SimChartMedicalOffice.Data.SkillSet
         {
             string strUrl = skillSetUniqueIdentifier + "/Competencies";
             string jsonString = GetJsonDocument(strUrl);
-            IList<string> competencyGuidList;
-            competencyGuidList = (jsonString != "null") ? JsonSerializer.DeserializeObject <IList<string>>(jsonString) : new List<string>();
+            IList<string> competencyGuidList = (jsonString != "null") ? JsonSerializer.DeserializeObject <IList<string>>(jsonString) : new List<string>();
             return competencyGuidList;
         }
 
@@ -82,16 +93,13 @@ namespace SimChartMedicalOffice.Data.SkillSet
         {
             return ((questionItems != null) ? (questionItems.Select(questionItem => questionItem.Value).ToList()) : new List<Question>());
         }
-        /// <summary>
-        /// To get question bank object
-        /// </summary>
-        /// <returns></returns>
-        public Folder GetSkillSets()
-        {
-            string jsonString = GetJsonDocument(this.Url);
-            Folder skillSet = JsonSerializer.DeserializeObject<Folder>(jsonString);
-            return skillSet;
-        }
+
+        //public Folder GetSkillSets()
+        //{
+        //    string jsonString = GetJsonDocument(Url);
+        //    Folder skillSet = JsonSerializer.DeserializeObject<Folder>(jsonString);
+        //    return skillSet;
+        //}
         
 
     }

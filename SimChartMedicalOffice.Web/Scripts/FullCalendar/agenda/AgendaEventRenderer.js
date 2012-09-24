@@ -1,4 +1,8 @@
-
+/*
+    Note : File modified for Event title display in SimChart for Medical Office
+    Line Changed from : Ln.No 275 - .text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title); 
+    Line Changed to : Ln.No 277 - .html(formatDate(event.start, opt('timeFormat')) + ' ' + event.title);
+*/
 function AgendaEventRenderer() {
 	var t = this;
 	
@@ -266,8 +270,11 @@ function AgendaEventRenderer() {
 				event = seg.event;
 				if (seg.contentTop !== undefined && height - seg.contentTop < 10) {
 					// not enough room for title, put it in the time header
-					eventElement.find('div.fc-event-time')
-						.text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title);
+				    eventElement.find('div.fc-event-time')
+                        //Commented for customizing title display - Original Line in js 
+				            // .text(formatDate(event.start, opt('timeFormat')) + ' - ' + event.title); 
+				         //Customizing Title display for SimChart for Medical office
+						.html(formatDate(event.start, opt('timeFormat')) + '   ' + replaceHTMLBreak(event.title));
 					eventElement.find('div.fc-event-title')
 						.remove();
 				}
@@ -309,12 +316,15 @@ function AgendaEventRenderer() {
 			"<div class='fc-event-inner fc-event-skin'" + skinCssAttr + ">" +
 			"<div class='fc-event-head fc-event-skin'" + skinCssAttr + ">" +
 			"<div class='fc-event-time'>" +
-			htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+		        //Commented by krithiga for customizing title display - 7Sep12
+            //htmlEscape(formatDates(event.start, event.end, opt('timeFormat'))) +
+			formatDates(event.start, event.end, opt('timeFormat')) +
 			"</div>" +
 			"</div>" +
 			"<div class='fc-event-content'>" +
 			"<div class='fc-event-title'>" +
-			htmlEscape(event.title) +
+		    //Customizing Title display for Med office - krithiga - - 7Sep12
+			replaceHTMLBreak(event.title)+
 			"</div>" +
 			"</div>" +
 			"<div class='fc-event-bg'></div>" +
