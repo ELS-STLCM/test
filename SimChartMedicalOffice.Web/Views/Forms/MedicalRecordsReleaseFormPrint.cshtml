@@ -1,0 +1,461 @@
+﻿@using SimChartMedicalOffice.Core.Forms
+@using SimChartMedicalOffice.Common
+@{
+    Layout = "~/Views/Shared/_LayoutPartialForPrint.cshtml";
+}
+@{
+    MedicalRecordsRelease medicalRecordsReleaseFormObj;
+    bool blankform = false;
+    if (ViewBag.MedicalRecordsReleaseFormObj == null)
+    {
+        medicalRecordsReleaseFormObj = new MedicalRecordsRelease();
+        blankform = true;
+    }
+    else
+    {
+        medicalRecordsReleaseFormObj = (MedicalRecordsRelease)ViewBag.MedicalRecordsReleaseFormObj;
+    }
+}
+<script type="text/javascript">
+    function printpage() {
+        $("#PrintButtonSection").hide();
+        window.print();
+        $("#PrintButtonSection").show();
+    }
+
+    $(document).ready(function () {
+        var isBlankForm = '@blankform';
+        if (isBlankForm.toLowerCase() != 'true') {
+            $('.text-line-print').addClass('text-line-print-edit').removeClass('text-line-print');
+            $('.text-in-box-print').addClass('text-line-print-edit').removeClass('text-in-box-print');
+        }
+    });
+</script>
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_4 prefix_29" id="PrintButtonSection">
+    <div class="align-div-inline">
+        <div class="align-div-inline">
+            <img alt="left" src="@Url.Content("~/Content/Images/Buttons/Button_left_curve_orange.png")"
+                 style="height: 22px;" /></div>
+        <input type="submit" class="navigation-button align-div-inline standard-height-for-buttons"
+            style="width: 60px;" value="Print" onclick="printpage()" />
+        <div class="align-div-inline">
+            <img alt="right" src="@Url.Content("~/Content/Images/Buttons/Button_right_curve_orange.png")"
+                 style="height: 22px;" /></div>
+    </div>
+</div>
+<div class="clear clear-height-spacing">
+</div>
+<div class="grid_32 print-main-content standard-text-print">
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="">
+        <div class="grid_16">
+            <img alt="X" src="../../Content/Images/print_header.png" class="print-header" />
+        </div>
+        <div class="grid_16 standard-label-print text-signature">
+            Student: @ViewBag.Signature</div>
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="clear clear-height-spacing">
+    </div>
+    <div class="grid_32">
+        <div class="clear clear-height-spacing">
+        </div>
+        <div class="grid_32 form-page-header-print">
+            Medical Records Release
+        </div>
+        <div class="clear clear-height-spacing">
+        </div>
+        <hr />
+        <div class="clear clear-height-spacing">
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32 section-seperator">
+        <div class="grid_16">
+            <div class="standard-label-print grid_14 ">
+                Patient Name:
+            </div>
+            <div class="grid_18  text-line-print">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.PatientName, blankform)
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-label-print grid_14 ">
+                SSN:
+            </div>
+            <div class="grid_18  text-line-print">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Ssn, blankform)
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-label-print grid_14 ">
+                Address:
+            </div>
+            <div class="grid_18  text-in-box-print">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Address, blankform)
+            </div>
+             <div class="clear-height-spacing clear">
+            </div>
+        </div>
+        <div class="grid_16">
+            <div class="standard-label-print grid_14 ">
+                Date of Birth:
+            </div>
+            <div class="grid_18  text-line-print">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.DateOfBirth, blankform)
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="standard-label-print grid_14 ">
+                Phone:
+            </div>
+            <div class="grid_18  text-line-print">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Phone, blankform)
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="standard-label-print grid_1">
+            I,
+        </div>
+        <div class="grid_8  text-line-print">
+            @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.DoctorName, blankform)
+        </div>
+        <div class="standard-label-print grid_3">
+            authorize
+        </div>
+        <div class="grid_10 text-line-print">
+            @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Authorize, blankform)
+        </div>
+        <div class="standard-label-print grid_10">
+            (Doctor's office) to disclose/release
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="standard-label-print grid_32">
+            the following information *(check all applicable):
+        </div>
+    </div>
+    <div class="grid_32 section-seperator standard-label-print">
+        @if (blankform)
+        {
+            <div class="grid_16">
+                <div class="grid_32 standard-text">
+                    @Html.CheckBox("MedicalRecordRelease", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordRelease_AllRecords">
+                        All Records</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    @Html.CheckBox("MedicalRecordRelease", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordRelease_LabOrPathology">
+                        Laboratory/pathology records</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    @Html.CheckBox("MedicalRecordRelease", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordRelease_XrayOrRadiology">
+                        X-ray/radiology records</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    @Html.CheckBox("MedicalRecordRelease", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordRelease_BillingRecords">
+                        Billing records</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                </div>
+            </div>
+            <div class="grid_16">
+                <div class="grid_32 standard-text">
+                    @Html.CheckBox("MedicalRecordRelease", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordRelease_AbstractOrSummary">
+                        Abstract/Summary</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    @Html.CheckBox("MedicalRecordRelease", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordRelease_PharmacyOrPrescription">
+                        Pharmacy/prescription records</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="grid_16">
+                        @Html.CheckBox("MedicalRecordRelease", false, new { disabled = "disabled" })
+                        <label for="MedicalRecordRelease_Other">
+                            Other</label>
+                    </div>
+                    <div class="grid_16 text-line-print">
+                       
+                    </div>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="grid_32 ">
+                  
+                    @if (medicalRecordsReleaseFormObj.MedicalRecordsReleaseForm != null)
+                    {
+                        foreach (MedicalRecordsReleaseForm medicalRequest in medicalRecordsReleaseFormObj.MedicalRecordsReleaseForm)
+                        {
+                            <div class="grid_32 align-inline ">
+                                @medicalRequest.Value
+                            </div>
+                        }
+                    }
+               
+                 
+             
+            </div>
+        }
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32 standard-text-print">
+        <span class="medical-fontweight medical-fontstyle">*Note:</span><span class="medical-fontstyle" >If these records contain any information from previous providers or information about HIV/AIDS status, 
+                   cancer diagnosis, drug alcohol abuse, or sexually transmitted disease, you are hereby authorizing disclosure of this 
+                   information. A copy of this signed authorization must be given to the individual.</span>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32">
+        <div class="grid_22 standard-label-print">
+            These records are for services provided on the following date(s):
+        </div>
+        <div class="grid_10  text-line-print">
+            @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Date, blankform)
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32 standard-label-print ">
+            Please send the records listed above to (use additional sheets if necessary):
+        </div>
+    </div>
+    <div class="clear-height-spacing clear">
+    </div>
+    <div class="grid_32 section-seperator">
+        <div class="grid_16">
+            <div class="standard-label-print grid_14 ">
+                Name:
+            </div>
+            <div class="grid_18  text-line-print">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Name, blankform)
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class=" standard-label-print grid_14 ">
+                Address:
+            </div>
+            <div class="grid_18  text-in-box-print ">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.DiffAddress, blankform)
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+        </div>
+        <div class="grid_16">
+            <div class="standard-label-print grid_14 ">
+                Phone:
+            </div>
+            <div class="grid_18  text-line-print">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.DiffPhone, blankform)
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class=" standard-label-print grid_14 ">
+                Fax:
+            </div>
+            <div class="grid_18  text-line-print">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Fax, blankform)
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+        </div>
+   </div>
+   
+    <div class="grid_32 standard-label-print">
+     <div class="clear-height-spacing clear">
+    </div>
+        The information may be used/disclosed for each of the following purposes:
+    </div>
+    <div class="grid_32 standard-label-print">
+        @if (blankform)
+        {
+            <div class="grid_16">
+                <div class="grid_32 standard-text">
+                    @Html.CheckBox("MedicalRecordReleaseTwo", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordReleaseTwo_AtPatientRequest">
+                        At patient’s request</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    @Html.CheckBox("MedicalRecordReleaseTwo", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordReleaseTwo_ForPatientHealthCare">
+                        For patient’s health care</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    @Html.CheckBox("MedicalRecordReleaseTwo", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordReleaseTwo_ForPaymentOrInsurance">
+                        For payment/insurance
+                    </label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                </div>
+            </div>
+            <div class="grid_16">
+                <div class="grid_32 standard-text">
+                    @Html.CheckBox("MedicalRecordReleaseTwo", false, new { disabled = "disabled" })
+                    <label for="MedicalRecordReleaseTwo_ForEmploymentPurposes">
+                        For employment purposes</label>
+                    <div class="clear-height-spacing clear">
+                    </div>
+                    <div class="grid_32">
+                        <div class="grid_16">
+                            @Html.CheckBox("MedicalRecordReleaseTwo", false, new { disabled = "disabled" })
+                            <label for="MedicalRecordReleaseTwo_ForOther">
+                                Other</label>
+                        </div>
+                        <div class="grid_16 text-line-print">
+                          
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        }
+        else
+        {
+            <div class="grid_32 ">
+                     @if (medicalRecordsReleaseFormObj.MedicalRecordsReleaseFormTwo != null)
+                     {
+                         foreach (MedicalRecordsReleaseForm medicalRequest in medicalRecordsReleaseFormObj.MedicalRecordsReleaseFormTwo)
+                         {
+                            <div class="grid_32 align-inline ">
+                                @medicalRequest.Value
+                            </div>
+                         }
+                     }
+               
+            </div>
+        }
+</div>
+   
+    <div class="grid_32 ">
+    
+        <div class="grid_13 standard-label-print">
+            This authorization shall expire no later than:
+        </div>
+        <div class="grid_3 text-line-print">
+            @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.LaterThan, blankform)
+        </div>
+        <div class="grid_8 standard-label-print">
+            or upon the following event
+        </div>
+        <div class="grid_3 text-line-print">
+            @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Event, blankform)
+        </div>
+        <div class="grid_5 standard-label-print">
+            ,and may not
+        </div>
+        <div class="clear-height-spacing clear">
+        </div>
+        <div class="grid_32 standard-label-print">
+            be valid for greater than one year from the date of signature for medical records.
+        </div>
+   </div>
+    <div class="clear-height-spacing clear ">
+    </div>
+    <div class=" grid_32 section-seperator"></div>
+   
+    <div class="grid_32 standard-text-print">
+    
+        <div class="grid_32 standard-label-print">
+         <div class="clear-height-spacing ">
+    </div>
+            I understand that after the custodian of records discloses my health information,
+            it may no longer be protected by federal privacy laws. I understand that this authorization
+            is voluntary and I may refuse to sign this authorization which will not affect my
+            ability to obtain treatment; receive payment; or eligibility for benefits unless
+            allowed by law. By signing below I represent and warrant that I have authority to
+            sign this document and authorize the use or disclosure of protected health information
+            and that there are no claims or orders that would prohibit, limit, or otherwise
+            restrict my ability to authorize the use or disclosure of this protected health
+            information.
+        </div>
+    </div>
+    <div class="grid_32 section-seperator">
+        <div class="grid_16">
+              <div class="clear-height-spacing clear">
+            </div>
+             <div class="clear-height-spacing clear">
+            </div>
+               <div class=" text-line-print grid_32 ">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.Signature, blankform)
+            </div>
+            <div class="standard-label-print grid_32 ">
+               Patient signature 
+            </div>
+            
+            <div class="standard-label-print grid_32">
+               (or patient’s personal representative)
+            </div>
+         
+         
+            
+            <div class="clear-height-spacing clear">
+            </div>
+             <div class="clear-height-spacing clear">
+            </div>
+               <div class=" text-line-print ">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.PrintedName, blankform)
+            </div>
+             <div class="standard-label-print">
+                 Printed name of patient representative
+            </div>
+              <div class="clear-height-spacing clear">
+            </div>
+            
+        </div>
+        <div class="grid_16">
+            <div class="clear-height-spacing clear">
+            </div>
+            <div class="clear-height-spacing clear">
+            </div>
+                <div class=" text-line-print grid_32 ">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.DiffDate, blankform)
+            </div>
+            <div class="standard-label-print grid_32 ">
+              Date
+            </div>
+              <div class="clear-height-spacing clear">
+            </div>
+        
+            <div class="clear-height-spacing clear">
+            </div>
+             <div class="clear-height-spacing clear">
+            </div>
+           
+              <div class="grid_32 text-line-print text-line-height">
+                @AppCommon.GetObjectPropertyVal(medicalRecordsReleaseFormObj.AuthoritySign, blankform)
+            </div>
+            <div class=" standard-label-print grid_32">
+                 Representative’s authority to sign for patient 
+            </div>
+            <div class=" standard-label-print grid_32">
+              (i.e. parent, guardian, power of attorney, executor) 
+            </div>
+
+          
+            <div class="clear-height-spacing clear">
+            </div>
+    </div>
+   </div>
+    <div class="clear-height-spacing">
+     </div>
+     <div class="clear-height-spacing">
+     </div>
+</div>

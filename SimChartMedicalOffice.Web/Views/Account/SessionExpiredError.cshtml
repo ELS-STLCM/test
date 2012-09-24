@@ -1,0 +1,15 @@
+﻿@model HandleErrorInfo
+@{
+    ViewBag.Title = "Error";
+    //try
+    //{
+        FormsAuthentication.SignOut();
+        SimChartMedicalOffice.Common.Logging.ExceptionManager.Error("Session Expired Error", ViewData.Model.Exception);
+    //}
+    //catch { }
+}
+<br />
+<br />
+<div class='grid_32'>
+    <b>Error:@SimChartMedicalOffice.Common.AppCommon.SessionExpiredMessage</b>
+</div>

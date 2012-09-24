@@ -1,0 +1,451 @@
+﻿<script type="text/javascript">
+    $(document).ready(function () {
+        $.ajaxSetup({
+            cache: false
+        });
+        forms.MedicalRecordReleaseForm.OnPageLoadOfMedicalRecordRelease('@ViewBag.FormValue');
+        setFormsRepositoryHeight();
+        setFormsContentHeight();
+        setMedicalFormInnerContentHeight();
+    });
+    $("#searchPatientButton").click(function () {
+        // load patient search popup 
+        forms.PatientSearch.LoadPatientSearch('@ViewBag.FormValue');
+    });
+
+    //For adding the SaveMedicalRecordsReleaseForm row to the DB.
+    $("#savePatientRecord-8").click(function () {
+        forms.MedicalRecordReleaseForm.funpatientMedicalRecordReleaseLst();
+        forms.MedicalRecordReleaseForm.Save('@ViewBag.FormValue');
+    });
+    function printpage() {
+        forms.MedicalRecordReleaseForm.Print();
+    }
+    $('input:checkbox[id=MedicalRecordRelease_Other]').click(function () {
+
+        if ($('input:checkbox[id=MedicalRecordRelease_Other]')[0].checked) {
+            $("#other").attr('disabled', false);
+        }
+        else {
+
+            $("#other").attr('disabled', 'disabled');
+        }
+    });
+    $('input:checkbox[id=MedicalRecordReleaseTwo_ForOther]').click(function () {
+        if ($('input:checkbox[id=MedicalRecordReleaseTwo_ForOther]')[0].checked) {
+            $("#diffOther").attr('disabled', false);
+        }
+        else {
+            $("#diffOther").attr('disabled', 'disabled');
+        }
+    });
+</script>
+<div class="grid_24 standard-text">
+    <div class="form-page-header">
+         Medical Records Release and Authorization for Use or Disclosure of Protected Health Information
+    </div>
+  <div class="grid_32 alpha  guidance-message ">
+    <div class="grid_32 guidance-text-spacing">
+    </div>
+   <div class="grid_32 ">
+             Please perform a patient search to find a specific patient.
+    </div>
+     <div class="grid_32 guidance-text-spacing">
+    </div>
+  </div>
+    <div class="clear clear-height-spacing">
+    </div>
+             <div id="medical_records_release_main_content" class="div-with-border grid_32 vertical-content-scroll medical-form-inner-content-height">
+             <div id="validationSummary" class="error-message grid_32">
+             </div>
+                   <div class="grid_32">
+                   <div class="clear clear-height-spacing">
+                   </div>
+                           <div class="grid_17">
+                                 <div class="grid_10">
+                                 Patient Name:
+                                 </div>
+                                 <div class="grid_21"> @Html.TextBox("PatientName", null, new {@class="grid_30"})</div>
+                                 <div class="clear clear-height-spacing">
+                                 </div>
+                                 <div class="grid_10">
+                                 SSN:
+                                 </div>
+                                 <div class="grid_21"> @Html.TextBox("SSN", null, new {@class="grid_30"})</div>
+                                 <div class="clear clear-height-spacing">
+                                 </div>
+                                 <div class="grid_10">
+                                 Address:
+                                 </div>
+                                 <div class="grid_21"> @Html.TextArea("address", null, new {@class="grid_30",rows=3})</div>
+                            </div>
+                            <div class="grid_15">
+                                 <div class="grid_10">
+                                 Date of Birth:
+                                 </div>
+                                 <div class="grid_21"> @Html.TextBox("dateOfBirth", null, new {@class="grid_32"})</div>
+                                 <div class="clear clear-height-spacing">
+                                 </div>
+                                 <div class="grid_10">
+                                 Phone:
+                                 </div>
+                                 <div class="grid_21"> @Html.TextBox("phone", null, new {@class="grid_32"})</div>
+                                 <div class="clear clear-height-spacing">
+                                 </div>
+                            </div>
+                      </div>
+             <div class="clear clear-height-spacing">
+             </div>
+             <div class="grid_32 section-seperator">
+             </div>
+             <div class="clear clear-height-spacing">
+             </div>        
+                    <div class="grid_32">                            
+                            <div class=" align-inline " style="padding-right: 0.5px; padding-left: 5px;">
+                            I,
+                            </div>
+                            <div class="align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+                            @Html.TextBox("doctorName", null, new {  style = "width:140px;" })
+                            </div>
+                            <div class="alpha align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+                            authorize
+                            </div>
+                            <div class="align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+                            @Html.TextBox("authorize", null, new {  style = "width:240px;" })
+                            </div>
+                            <div class="alpha align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+                            (Doctor's office) to disclose/release
+                            </div>
+                      </div>
+                      <div class="grid_32">
+                            <div class=" align-inline" style="padding-right: 0.5px; padding-left: 5px;">
+                            the following information <span class="mandatory-field">*</span> (check all applicable): 
+                            </div>
+                      </div>
+             <div class="grid_16">
+             <div class="clear clear-height-spacing">
+             </div>
+                     <div class="grid_32">
+                     @Html.CheckBox("MedicalRecordRelease", new { @id = "MedicalRecordRelease_AllRecords", @value = "AllRecords" })
+                     <label for="MedicalRecordRelease_AllRecords">
+                     All Records</label>
+                     </div>
+                     <div class="grid_32">
+                     @Html.CheckBox("MedicalRecordRelease", new { @id = "MedicalRecordRelease_LabOrPathology", @value = "LabOrPathology" })
+                     <label for="MedicalRecordRelease_LabOrPathology">
+                     Laboratory/pathology records</label>
+                     </div>
+                     <div class="grid_32">
+                     @Html.CheckBox("MedicalRecordRelease", new { @id = "MedicalRecordRelease_XrayOrRadiology", @value = "XrayOrRadiology" })
+                     <label for="MedicalRecordRelease_XrayOrRadiology">
+                     X-ray/radiology records</label>
+                     </div>
+                     <div class="grid_32">
+                     @Html.CheckBox("MedicalRecordRelease", new { @id = "MedicalRecordRelease_BillingRecords", @value = "BillingRecords" })
+                     <label for="MedicalRecordRelease_BillingRecords">
+                     Billing records</label>
+                     </div>
+            </div>
+            <div class="grid_16">
+            <div class="clear clear-height-spacing">
+            </div>
+                    <div class="grid_32">
+                    @Html.CheckBox("MedicalRecordRelease", new { @id = "MedicalRecordRelease_AbstractOrSummary", @value = "AbstractOrSummary" })
+                    <label for="MedicalRecordRelease_AbstractOrSummary">
+                    Abstract/Summary</label>
+                    </div>
+                    <div class="grid_32">
+                    @Html.CheckBox("MedicalRecordRelease", new { @id = "MedicalRecordRelease_PharmacyOrPrescription", @value = "PharmacyOrPrescription" })
+                    <label for="MedicalRecordRelease_PharmacyOrPrescription">
+                    Pharmacy/prescription records</label>
+                    </div>
+                    <div class="clear clear-height-spacing">
+                    </div>
+                    <div class="grid_32">
+                    <div class="grid_7">
+                    @Html.CheckBox("MedicalRecordRelease", new { @id = "MedicalRecordRelease_Other", @value = "Other" })
+                    <label for="MedicalRecordRelease_Other">
+                    Other </label></div>
+                    <div class="grid_25">@Html.TextBox("other", null, new { style = "width:100px;" })</div>
+                    </div>
+            </div>
+            <div class="clear clear-height-spacing">
+            </div>
+            <div class="grid_32">
+            <div class="grid_32  align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+             <span class="medical-fontweight medical-fontstyle">*Note:</span><span class="medical-fontstyle" >If these records contain any information from previous providers or information about HIV/AIDS status, 
+                   cancer diagnosis, drug alcohol abuse, or sexually transmitted disease, you are hereby authorizing disclosure of this 
+                   information. A copy of this signed authorization must be given to the individual.</span>
+            </div>
+            </div>
+            <div class="grid_32">
+            <div class="clear clear-height-spacing">
+            </div>
+                    <div class="grid_32">
+                    <div class="align-inline" style="padding-left: 3px;">
+                    These records are for services provided on the following date(s):
+                    </div>
+                    <div class="align-inline " style="padding-right: 0.5px; padding-left: 3px;">
+                    @Html.TextBox("date", null, new {  style = "width:210px;" })
+                    </div>
+                    </div>
+             <div class="clear clear-height-spacing">
+             </div>
+                    <div class="grid_32">
+                    <div class=" align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+                    Please send the records listed above to (use additional sheets if necessary):
+                    </div>
+                   </div>
+             </div>
+             <div class="clear clear-height-spacing">
+             </div>
+             <div class="grid_32">
+             <div class="clear clear-height-spacing">
+             </div>
+                    <div class="grid_17">
+                           <div class="grid_10">
+                           Name:
+                           </div>
+                           <div class="grid_21"> @Html.TextBox("name", null, new {@class="grid_30"})</div>
+                           <div class="clear clear-height-spacing">
+                           </div>
+                           <div class="grid_10">
+                           Address:
+                           </div>
+                           <div class="grid_21"> @Html.TextArea("diffAddress", null, new {@class="grid_30",rows=4})</div>
+                           <div class="clear clear-height-spacing">
+                           </div>
+                     </div>
+                     <div class="grid_15">
+                           <div class="grid_10">
+                           Phone:
+                           </div>
+                           <div class="grid_21"> @Html.TextBox("diffPhone", null, new {@class="grid_32"})</div>
+                           <div class="clear clear-height-spacing">
+                           </div>
+                           <div class="grid_10">
+                           Fax:
+                           </div>
+                           <div class="grid_21"> @Html.TextBox("fax", null, new {@class="grid_32"})</div>
+                           <div class="clear clear-height-spacing">
+                           </div>
+                     </div>
+              </div>
+              <div class="grid_32 section-seperator">
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="clear clear-height-spacing">
+              </div>
+              <div class="grid_32">
+                     
+                     <div class="align-inline grid_32" style="padding-left: 3px;">
+                     The information may be used/disclosed for each of the following purposes: 
+                     </div>
+               <div class="clear clear-height-spacing">
+               </div>     
+                    <div class="grid_16">
+                          <div class="grid_32">
+                           @Html.CheckBox("MedicalRecordReleaseTwo", new { @id = "MedicalRecordReleaseTwo_AtPatientRequest", @value = "AtPatientRequest" })
+                           <label for="MedicalRecordReleaseTwo_AtPatientRequest">
+                           At patient’s request</label>
+                           </div>
+                           <div class="grid_32">
+                           @Html.CheckBox("MedicalRecordReleaseTwo", new { @id = "MedicalRecordReleaseTwo_ForPatientHealthCare", @value = "ForPatientHealthCare" })
+                           <label for="MedicalRecordReleaseTwo_ForPatientHealthCare">
+                           For patient’s health care</label>
+                           </div>
+                           <div class="grid_32">
+                           @Html.CheckBox("MedicalRecordReleaseTwo", new { @id = "MedicalRecordReleaseTwo_ForPaymentOrInsurance", @value = "ForPaymentOrInsurance" })
+                           <label for="MedicalRecordReleaseTwo_ForPaymentOrInsurance">
+                           For payment/insurance     </label>
+                           </div>
+                     </div>
+                     <div class="grid_16">
+                     <div class="clear clear-height-spacing">
+                     </div>
+                            <div class="grid_32">
+                            @Html.CheckBox("MedicalRecordReleaseTwo", new { @id = "MedicalRecordReleaseTwo_ForEmploymentPurposes", @value = "ForEmploymentPurposes" })
+                            <label for="MedicalRecordReleaseTwo_ForEmploymentPurposes">
+                            For employment purposes</label>
+                            </div>
+                            <div class="clear clear-height-spacing">
+                            </div>
+                            <div class="grid_32">
+                                 <div class="grid_7">
+                                 @Html.CheckBox("MedicalRecordReleaseTwo", new { @id = "MedicalRecordReleaseTwo_ForOther", @value = "Other" })
+                                 <label for="MedicalRecordReleaseTwo_ForOther" style="padding-right: 3px">
+                                 Other</label> </div> 
+                                 <div class="grid_25">  @Html.TextBox("diffOther", null, new { style = "width:100px;" }) </div>
+                                </div>
+                            </div>
+                            <div class="clear clear-height-spacing">
+                            </div>
+                 </div>
+                 <div class="grid_32">
+                 <div class=" align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+                 This authorization shall expire no later than:           
+                 </div>
+                 <div class="align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+                 @Html.TextBox("laterThan", null, new {  style = "width:100px;" })
+                 </div>
+                 <div class=" align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+                 or upon the following event          
+                 </div>
+                 <div class="align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+                 @Html.TextBox("event", null, new {  style = "width:100px;" })
+                 </div>
+                 <div class=" align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+                 ,and may not      
+                 </div>
+                 <div class="grid_32 align-inline"  style="padding-right: 0.5px; padding-left: 3px;">
+                 be valid for greater than one year from the date of signature for medical records.         
+                 </div>
+                 <div class="clear clear-height-spacing">
+                 </div> 
+                 <div class="grid_32 section-seperator">
+                 </div>
+                 <div class="clear clear-height-spacing">
+                 </div>         
+                 <div class="grid_32 align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+                 I understand that after the custodian of records discloses my health information, it may no longer be protected by federal privacy laws. I understand that this authorization is voluntary and I may refuse to sign this authorization which  will not affect my ability to obtain treatment; receive payment; or eligibility for benefits unless allowed by law. By signing below I represent and warrant that I have authority to sign this document and authorize the use or disclosure of protected health information and that there are no claims or orders that would prohibit, limit, or otherwise restrict my ability to authorize the use or disclosure of this protected health information.
+                 </div>
+                       <div class="grid_16">
+                       <div class="clear clear-height-spacing">
+                       </div>
+                       <div class=" align-inline grid_32" style="padding-right: 0.5px; padding-left: 3px;">
+                       Patient signature 
+                       </div>
+                       <div class="disabled-text  grid_32" style="padding-right: 0.5px; padding-left: 3px;">
+                       (or patient’s personal representative)
+                       </div>
+                       <div class="align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+                       @Html.TextBox("signature", null, new { @class="grid_31"})
+                       </div>
+                       <div class="clear clear-height-spacing">
+                       </div> 
+                       </div>
+                       <div class="grid_16">
+                       <div class="clear clear-height-spacing">
+                       </div>
+                       <div class="clear clear-height-spacing">
+                       </div>
+                       <div class=" align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+                       Date
+                       </div>
+                       <div class="align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+                       @Html.TextBox("diffDate", null, new { @class="grid_31"})
+                       </div>
+                       </div>
+                <div class="clear clear-height-spacing">
+                </div> 
+                       <div class="grid_16">
+                       <div class=" align-inline" style="padding-right: 0.5px; padding-left: 3px;">
+                       Printed name of patient representative
+                       </div>
+                       <div class="align-inline" style="padding-right: 0.5px; padding-left: 0.5px;">
+                       @Html.TextBox("printedName", null, new { @class="grid_31"})
+                       </div>
+                       </div>
+                       <div class="grid_16">
+                       <div class=" align-inline grid_32 " style="padding-right: 0.5px; padding-left: 3px;">
+                       Representative’s authority to sign for patient 
+                       </div>                       
+                       <div class=" align-inline disabled-text medical-fontstyle grid_32" style="padding-right: 0.5px; padding-left: 3px;">
+                       (i.e. parent, guardian, power of attorney, executor) 
+                       </div>
+                       <div class="align-inline grid_32" style="padding-right: 0.5px; padding-left: 0.5px;">
+                       @Html.TextBox("authoritySign", null, new { @class="grid_31"})
+                       </div>
+                       <div class="clear clear-height-spacing">
+                       </div> 
+
+                       </div>
+                  </div>
+         </div>
+  </div>
+
+
+  
+
+                 
+                
+
+              
+              
+            
+                          
+                   
+                 
+                 
+                       
+                 
+                   
+               
+                  
+                    
+             
+         
+                 
+                           
+            
+            
+                  
+                    
+                 
+               
+           
+                 
+              
+                        
+                
+               
+
+
+
+                    
+
+              
+        
+                 
+           
+          
+                 
+         
+
+                   
+                 
+                      
+                   
+                 
+       
+
+          
+        
+          
+         
+
+          
+
+    
+                
+     
+
+
+
+                
+
+            
+               
+              
+
+
+
+    
+      
+          
+          
+
+      
+   
+
