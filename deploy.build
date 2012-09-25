@@ -115,6 +115,10 @@
 		
 		<property name="CONFIGS.DIR" value="${WORKSPACE}\${JOB}.${BUILD.NUM}\configs\${TO}" />
 		
+		<!--Temp Echo for info-->
+		<echo message="PKG.Target is: ${PKG.TARGET}">
+		<echo message="CONFIGS.DIR is: ${CONFIGS.DIR}">
+		
 		<copy todir="${PKG.TARGET}" verbose="true" >
 			<fileset basedir="${CONFIGS.DIR}" >
 				<include name="**/**" />
@@ -201,6 +205,19 @@ Please check Jenkins promtion log to see what happened.">
 			<call target="Fail Email" />	
 		</if>
 	</target>
+	
+	<target name="Execute Git Deployment" >
+		<exec program="perl" failonerror="true" resultproperty="EXITSTATUS">
+			<arg value="D:/tools/admin/tools/repliweb_deploy.pl" />
+			<arg value="${SVN_USER}" />
+			<arg value="${SVN_PASS}" />
+			<arg value="${RepliWeb.JobName}" />
+			<arg value="${TO}" />
+		</exec>
+		<if test="${EXITSTATUS!='0'}">
+			<call target="Fail Email" />	
+		</if>
+	</target>	
   
   
 </project>

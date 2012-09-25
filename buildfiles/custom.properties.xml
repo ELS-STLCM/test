@@ -12,7 +12,7 @@
 	<property name="uri_path" 		value="" />
 	<property name="Marimba.JobName" value="SimOffice" />
 	<property name="Stage.dir"		value="C:\builds" />
-	<property name="PKG.REPO"		value="C:\builds" />
+	<property name="PKG.REPO"		value="C:\builds" />  <!-- Will be S3 -->
 	
   <!-- project SVN settings -->
 	<property name="SVNRepo" 		value="https://github.com/ELS-STLCM/test.git"/>
