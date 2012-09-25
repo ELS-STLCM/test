@@ -116,8 +116,8 @@
 		<property name="CONFIGS.DIR" value="${WORKSPACE}\${JOB}.${BUILD.NUM}\configs\${TO}" />
 		
 		<!--Temp Echo for info-->
-		<echo message="PKG.Target is: ${PKG.TARGET}">
-		<echo message="CONFIGS.DIR is: ${CONFIGS.DIR}">
+		<echo message="PKG.Target is: ${PKG.TARGET}"/>
+		<echo message="CONFIGS.DIR is: ${CONFIGS.DIR}"/>
 		
 		<copy todir="${PKG.TARGET}" verbose="true" >
 			<fileset basedir="${CONFIGS.DIR}" >
