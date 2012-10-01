@@ -127,7 +127,7 @@
 		
 		<delete dir="${WORKSPACE}\${JOB}.${BUILD.NUM}" />
 		
-		<call target="Execute RepliWeb Deployment" />
+		<call target="Execute Load to S3" />
 	
 	</target>
 	
@@ -206,7 +206,24 @@ Please check Jenkins promtion log to see what happened.">
 		</if>
 	</target>
 	
-	<target name="Execute Git Deployment" >
+	<target name="Execute Load to S3" >
+
+		<exec program="powershell"
+			  commandline='–File c:\config\Jenkins-Build.ps1 -Server Jenkins-w.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds\Builds -Filename C:\builds\${TO}\${JOB}.${BUILD.NUM}.zip'/>
+	</target>	
+	
+	<target name="Execute Git Deployment2" >
+	
+		<copy file="C:/tools/admin/tools/git_deploy.pl" tofile="\\dev-app.simoffice.ptgels.com">
+		
+		</copy>	
+
+		<copy todir="${PKG.TARGET}" verbose="true" >
+			<fileset basedir="${CONFIGS.DIR}" >
+				<include name="**/**" />
+			</fileset>
+		</copy>	
+	
 		<exec program="perl" failonerror="true" resultproperty="EXITSTATUS">
 			<arg value="D:/tools/admin/tools/repliweb_deploy.pl" />
 			<arg value="${SVN_USER}" />
