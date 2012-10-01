@@ -209,7 +209,7 @@ Please check Jenkins promtion log to see what happened.">
 	<target name="Execute Load to S3" >
 
 		<exec program="powershell"
-			  commandline='–File c:\config\Jenkins-Build.ps1 -Server Jenkins-w.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds\Builds -Filename C:\builds\${TO}\${JOB}.${BUILD.NUM}.zip'/>
+			  commandline='c:\config\Jenkins-Build.ps1 -Server Jenkins-w.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds\Builds -Filename C:\builds\${TO}\${JOB}.${BUILD.NUM}.zip'/>
 	</target>	
 	
 	<target name="Execute Git Deployment2" >
