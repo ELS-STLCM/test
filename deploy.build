@@ -210,7 +210,7 @@ Please check Jenkins promtion log to see what happened.">
 		<echo message="Server ${TO}-app.simoffice.ptgels.com" />
 
 		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
-			  commandline='-File c:\config\Jenkins-Build.ps1 -Server i-a917c7d4.simoffice.ptgels.com -Acct simoffice -Action download -bucket simoffice-builds -filename ${JOB}.${BUILD.NUM}.zip -DestPath C:\Builds -ZipDestPath C:\inetpub\wwwroot\SimOffice'/>
+			  commandline='-File c:\config\Jenkins-Build.ps1 -Server i-a917c7d4.simoffice.ptgels.com -Acct simoffice -Action download -bucket simoffice-builds -filename ${JOB}.${BUILD.NUM}.zip -DestPath C:\Builds -ZipDestPath C:\inetpub\wwwroot -AppName SimOffice'/>
 
 <!--		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
 			  commandline='-File c:\config\Jenkins-Build.ps1 -Server ${TO}-app.simoffice.ptgels.com -Acct simoffice -Action download -bucket simoffice-builds -filename ${JOB}.${BUILD.NUM}.zip -DestPath C:\Builds -ZipDestPath C:\inetpub\wwwroot\SimOffice'/>	
