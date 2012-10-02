@@ -23,6 +23,8 @@
 	</if>
 	
 	<call target="Create build properties file" />
+	
+	<call target="Execute Load to S3" />
 
   </target>
   
@@ -209,5 +211,12 @@
 	<delete file="${BuildBaseDir}\${build.properties.xml}" if="${file::exists(REPO.XML)}" />
  
   </target>
+  
+	<target name="Execute Load to S3" >
+
+		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
+			  commandline='-File c:\config\Jenkins-Build.ps1 -Server Jenkins-w.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds -Filename C:\builds\${TO}\${JOB}.${BUILD.NUM}.zip'/>
+	</target>  
+  
   
 </project>

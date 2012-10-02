@@ -126,14 +126,8 @@
 		</copy>
 		
 		<delete dir="${WORKSPACE}\${JOB}.${BUILD.NUM}" />
-		
-		<if test="${string::contains(TO,'DEV')}">
-			<echo message="Loading to S3"/>
-			<call target="Execute Load to S3" />	
-		</if>		
 			
-		
-<!--		<call target="Execute Download From S3" />	-->
+<!--		<call target="Execute Download From S3" />  -->
 	
 	</target>
 	
@@ -212,18 +206,11 @@ Please check Jenkins promtion log to see what happened.">
 		</if>
 	</target>
 	
-	<target name="Execute Load to S3" >
-
-		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
-			  commandline='-File c:\config\Jenkins-Build.ps1 -Server Jenkins-w.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds -Filename C:\builds\${TO}\${JOB}.${BUILD.NUM}.zip'/>
-	</target>	
-	
 	<target name="Execute Download From S3" >
 	
 		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
-			  commandline='-File c:\config\Jenkins-Build.ps1 -Server ${TO}-app.simoffice.ptgels.com -Acct simoffice -Action download -bucket simoffice-builds -filename ${JOB}.${BUILD.NUM}.zip -DestPath {DESTPATH} -ZipDestPath {ZIPDESTPATH}'/>	
+			  commandline='-File c:\config\Jenkins-Build.ps1 -Server ${TO}-app.simoffice.ptgels.com -Acct simoffice -Action download -bucket simoffice-builds -filename ${JOB}.${BUILD.NUM}.zip -DestPath C:\Builds -ZipDestPath C:\inetpub\wwwroot\SimOffice'/>	
 	
 	</target>	
-  
   
 </project>
