@@ -213,10 +213,8 @@
   </target>
   
 	<target name="Execute Load to S3" >
-	<property name="JOB" 			value="${environment::get-variable('PROMOTED_JOB_NAME')}" />
-	<property name="BUILD.NUM" 		value="${environment::get-variable('PROMOTED_NUMBER')}" />
 		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
-			  commandline='-File c:\config\Jenkins-Build.ps1 -Server Jenkins-w.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds -Filename C:\builds\${JOB}.${BUILD.NUM}.zip'/>
+			  commandline='-File c:\config\Jenkins-Build.ps1 -Server Jenkins-w.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds -Filename C:\builds\${build.name}.zip'/>
 	</target>  
   
   
