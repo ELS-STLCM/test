@@ -207,10 +207,14 @@ Please check Jenkins promtion log to see what happened.">
 	</target>
 	
 	<target name="Execute Download From S3" >
-	
+		<echo message="Server ${TO}-app.simoffice.ptgels.com" />
+
 		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
+			  commandline='-File c:\config\Jenkins-Build.ps1 -Server ia917c7d4.simoffice.ptgels.com -Acct simoffice -Action download -bucket simoffice-builds -filename ${JOB}.${BUILD.NUM}.zip -DestPath C:\Builds -ZipDestPath C:\inetpub\wwwroot\SimOffice'/>
+
+<!--		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
 			  commandline='-File c:\config\Jenkins-Build.ps1 -Server ${TO}-app.simoffice.ptgels.com -Acct simoffice -Action download -bucket simoffice-builds -filename ${JOB}.${BUILD.NUM}.zip -DestPath C:\Builds -ZipDestPath C:\inetpub\wwwroot\SimOffice'/>	
-	
+	-->
 	</target>	
   
 </project>
