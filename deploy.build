@@ -128,6 +128,8 @@
 		<delete dir="${WORKSPACE}\${JOB}.${BUILD.NUM}" />
 			
 		<call target="Execute Download From S3" />
+		
+		<echo message="ECHO ECHO ECHO ECHO ECHO"/>
 	
 	</target>
 	
