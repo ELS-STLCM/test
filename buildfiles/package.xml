@@ -97,8 +97,6 @@
     <copy todir="${ProjBuildDir}" verbose="true" >
 		<fileset basedir="${PublishDir}" >
 			<include name="**/*.*" />
-			<exclude name="**/web.config" />
-			<exclude name="**/Views/web.config" />
 			<exclude name="**/web.config.tmpl" />
 			<exclude name="**/*.cs"/>
 			<exclude name="**/*.resx" />
