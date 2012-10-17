@@ -97,6 +97,7 @@
     <copy todir="${ProjBuildDir}" verbose="true" >
 		<fileset basedir="${PublishDir}" >
 			<include name="**/*.*" />
+			<exclude name="**/SimChartMedicalOffice.Web/web.config" />
 			<exclude name="**/web.config.tmpl" />
 			<exclude name="**/*.cs"/>
 			<exclude name="**/*.resx" />
