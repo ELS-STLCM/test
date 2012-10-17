@@ -94,6 +94,9 @@
   </target>
 
   <target name="Create Release" >
+ <echo message="{ProjBuildDir}" />
+<echo message="${PublishDir}" /> 
+  
     <copy todir="${ProjBuildDir}" verbose="true" >
 		<fileset basedir="${PublishDir}" >
 			<include name="**/*.*" />
