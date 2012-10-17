@@ -98,6 +98,7 @@
 		<fileset basedir="${PublishDir}" >
 			<include name="**/*.*" />
 			<exclude name="**/web.config" />
+			<include name="**/Views/web.config" />
 			<exclude name="**/web.config.tmpl" />
 			<exclude name="**/*.cs"/>
 			<exclude name="**/*.resx" />
