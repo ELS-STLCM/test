@@ -217,7 +217,7 @@
   
 	<target name="Execute Load to S3" >
 		<exec program="C:\Windows\sysWOW64\Windowspowershell\v1.0\powershell.exe"
-			  commandline='-File c:\config\Jenkins-Build.ps1 -Server Jenkins-w.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds -Filename D:\builds\${build.name}.zip'/>
+			  commandline='-File c:\config\Jenkins-Build.ps1 -Server i-40f8063f.simoffice.ptgels.com -Acct simoffice -Action upload -Bucket simoffice-builds -Filename D:\builds\${build.name}.zip'/>
 	</target>  
   
   
